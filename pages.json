@@ -1,0 +1,139 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "uni-app"
+			}
+		},
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom"
+			}
+
+		},
+		{
+			"path": "pages/mine/index",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/mine/changeArea",
+			"style": {
+				"navigationBarTitleText": "变更专区",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/mine/reservation",
+			"style": {
+				"navigationBarTitleText": "我的预约",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/mine/appeal",
+			"style": {
+				"navigationBarTitleText": "我的申诉",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/mine/driveRecord",
+			"style": {
+				"navigationBarTitleText": "驾驶记录",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/mine/set",
+			"style": {
+				"navigationBarTitleText": "设置"
+			}
+		},
+		{
+			"path": "pages/user/modifyPwd",
+			"style": {
+				"navigationBarTitleText": "修改密码"
+			}
+		},
+		{
+			"path": "pages/user/modifyPhone",
+			"style": {
+				"navigationBarTitleText": "修改手机号"
+			}
+		},
+		{
+			"path": "pages/set/privacy",
+			"style": {
+				"navigationBarTitleText": "隐私政策"
+			}
+		},
+		{
+			"path": "pages/set/sdkSheet",
+			"style": {
+				"navigationBarTitleText": "SDK共享清单"
+			}
+		},
+		{
+			"path": "pages/set/infoSheet",
+			"style": {
+				"navigationBarTitleText": "用户资料信息"
+			}
+		},
+		{
+			"path": "pages/set/userPolicy",
+			"style": {
+				"navigationBarTitleText": "用户协议"
+			}
+		},
+		{
+			"path": "pages/mine/battery",
+			"style": {
+				"navigationBarTitleText": "我的电池",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/mine/recharge",
+			"style": {
+				"navigationBarTitleText": "我的电池",
+				"navigationStyle": "custom"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#fff",
+		"backgroundColor": "#F8F8F8",
+		"rpxCalcMaxDeviceWidth": 960,
+		"rpxCalcBaseDeviceWidth": 375,
+		"rpxCalcIncludeWidth": 750
+	},
+	"tabBar": {
+		"color": "#999",
+		"selectedColor": "#222",
+		"borderStyle": "#000",
+		"backgroundColor": "#fff",
+
+		"list": [{
+				"text": "首页",
+				"pagePath": "pages/index/index",
+				"iconPath": "static/images/tabBar/icon_home@2x.png",
+				"selectedIconPath": "static/images/tabBar/icon_home_selected@2x.png"
+			},
+			{
+				"text": "我的",
+				"pagePath": "pages/mine/index",
+				"iconPath": "static/images/tabBar/icon_mine@2x.png",
+				"selectedIconPath": "static/images/tabBar/icon_mine_selected@2x.png"
+			}
+		]
+	},
+	"uniIdRouter": {}
+}
