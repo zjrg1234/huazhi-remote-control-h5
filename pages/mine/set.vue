@@ -55,7 +55,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 	import CustomModal from '@/components/common-modal/common-modal.vue'
-import {logoutAccount} from "/api/mine.js"
+import {logoutAccount} from "@/axios/mine.js"
 const cacheSize = ref('34.23kb')
 const logoutModal = ref(false)
 // 模拟获取缓存大小

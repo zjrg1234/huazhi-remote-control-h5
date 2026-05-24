@@ -90,7 +90,7 @@ export function logoutAccount(obj) {
 //     },
 //     "traceId": "6a06ddfe26c58"
 // }
-export function  getUserWalletLog() {
+export function  GetUserWalletLog() {
 	return post('/api/user/wallet/list')
 }
 

@@ -5,6 +5,7 @@ import {
 export const useUserStore = defineStore('user', {
 	state: () => ({
 		token: uni.getStorageSync('token') || '',
+		id: uni.getStorageSync('id') || '',
 		userInfo: uni.getStorageSync('userInfo') || {}
 	}),
 
@@ -12,15 +13,17 @@ export const useUserStore = defineStore('user', {
 		// 登录保存信息
 		setUser(data) {
 			this.userInfo = data
+			this.id = data.id
 			uni.setStorageSync('userInfo', data)
+			uni.setStorageSync('id', data.id)
 		},
 		setToken(token) {
-			console.log(token)
 			this.token = token
 			uni.setStorageSync('token', token)
 		},
 		// 退出登录
 		logout() {
+			this.id = ''
 			this.token = ''
 			this.userInfo = {}
 			uni.clearStorageSync()
@@ -28,8 +31,11 @@ export const useUserStore = defineStore('user', {
 				url: '/pages/login/login'
 			})
 		},
-		
-		
+
+		getLoginId() {
+			// 有可能是用户，代理
+			return uni.getStorageSync('id')
+		},		
 		getUserInfo() {
 			return uni.getStorageSync('userInfo')
 		}

@@ -88,7 +88,7 @@
 	} from '@dcloudio/uni-app'
 
 	import NavBar from "@/components/nav-bar/nav-bar.vue"
-	import {getUserWalletLog} from "@/axios/mine.js"
+	import {GetUserWalletLog} from "@/axios/mine.js"
 	import {formatTime} from "@/utils/date.js"
 	import {getNavBarHeight} from "@/utils/system.js"
 	// ==================== 数据 ====================
@@ -138,19 +138,13 @@
 		loading.value = true
 
 		try {
-			await new Promise(r => setTimeout(r, 500))
-			const res = Array(10).fill(0).map(() => ({
-				  "agent_id": 6,
-				                "type": 2,
-				                "type_name": "收入",
-				                "amount": -2,
-				                "time": 1778831525 //时间
-			}))
 
-			if (page.value === 1) list.value = res
-			else list.value.push(...res)
+			const {data} = await GetUserWalletLog()
 
-			if (res.length < pageSize.value) noMore.value = true
+			if (page.value === 1) list.value = data.content
+			else list.value.push(...data.content)
+
+			if (data.length < pageSize.value) noMore.value = true
 			page.value++
 		} finally {
 			loading.value = false

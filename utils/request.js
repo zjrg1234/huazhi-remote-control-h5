@@ -1,5 +1,5 @@
 import { baseUrl } from '@/config/env'
-//import { useUserStore } from '@/store/modules/user'
+import { useUserStore } from '@/store/modules/user'
 
 // 超时时间
 const TIME_OUT = 10000
@@ -17,9 +17,8 @@ const request = (options) => {
       noLoading = false
     } = options
 
-   // const userStore = useUserStore()
-   // const token = userStore.token
-    const token = "ff"
+   const userStore = useUserStore()
+   const token = userStore.token
 
     // 白名单判断
     const isWhite = whiteList.some(item => url.includes(item))
@@ -40,7 +39,7 @@ const request = (options) => {
       timeout: TIME_OUT,
       header: {
         'Content-Type': 'application/json;charset=UTF-8',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(token ? { Authorization: `${token}` } : {}),
         ...header
       },
       success: (res) => {
@@ -69,6 +68,16 @@ const request = (options) => {
 
 // 导出请求方法
 export const get = (url, data = {}, opts = {}) => request({ url, method: 'GET', data, ...opts })
-export const post = (url, data = {}, opts = {}) => request({ url, method: 'POST', data, ...opts })
+export const post = (url, data = {}, opts = {}) => {
+  return request({ url, method: 'POST', data:{...data, uid: getParam().id}, ...opts });
+}
 export const put = (url, data = {}, opts = {}) => request({ url, method: 'PUT', data, ...opts })
 export const del = (url, data = {}, opts = {}) => request({ url, method: 'DELETE', data, ...opts })
+
+const getParam = () => {
+  const userStore = useUserStore()
+  const id = userStore.id
+  return {
+    id
+  }
+}
