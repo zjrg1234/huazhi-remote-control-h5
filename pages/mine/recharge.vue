@@ -73,7 +73,7 @@
 			<view class="package-list" v-if="tab == 'first'">
 				<view class="package-item" :class="{ active: selectedPackage === item.payment_amount }"
 					v-for="item in packageFirstList" :key="item.payment_amount"
-					@click="selectedPackageIndex(2, item.payment_amount)">
+					@click="selectedPackageIndex(2, item)">
 					<view class="num">
 						<text> {{ item.payment_amount }} </text>
 						<image class="icon" src="/static/images/common/icon_battery@2x.png" />
@@ -132,7 +132,7 @@
 
 	import NavBar from "@/components/nav-bar/nav-bar.vue"
 	import {
-		getUserWalletLog
+		GetUserWalletLog
 	} from "@/axios/mine.js"
 	import {
 		GetDepositList,
@@ -156,6 +156,15 @@
 	const balance = computed(() => {
 		return userStore.getUserInfo().wallet.balance
 	})
+		// 当前选中标签
+	const tab = ref('normal')
+
+	// 选中的套餐
+	const selectedPackage = ref(null)
+
+	const packageFirstList = ref(null)
+
+	const activityId = ref(null)
 
 	const tabs = [{
 			id: 'normal',
@@ -180,13 +189,7 @@
 			packageList.value = res.data
 		}).catch()
 	}
-	// 当前选中标签
-	const tab = ref('normal')
 
-	// 选中的套餐
-	const selectedPackage = ref(null)
-
-	const packageFirstList = ref(null)
 
 	const getFirstDepositList = () => {
 		GetFirstDepositList({
@@ -212,9 +215,15 @@
 	// 套餐列表
 	const packageList = ref()
 
-	const selectedPackageIndex = (num, amount) => {
-		selectedPackage.value = amount
+	const selectedPackageIndex = (type, item) => {
+		selectedPackage.value = item
 		customNum.value = ""
+		activityId.value = undefined
+		// 首充
+		if (type == 2) {
+			selectedPackage.value = item.payment_amount
+			activityId.value = item.activity_id
+		}
 	}
 	const handleSelect = (val) => {
 		tab.value = val
@@ -227,7 +236,7 @@
 
 	// 提交
 	const handleSubmit = async () => {
-		debugger
+
 		let amount = 0
 		if (selectedPackage.value && selectedPackage.value != -1) {
 			amount = selectedPackage.value
@@ -243,7 +252,8 @@
 		let res;
 		let obj = {
 			uid: userStore.getUserInfo().id,
-			amount: selectedPackage.value || customNum.value
+			amount: selectedPackage.value || customNum.value,
+			activity_id: activityId.value || undefined
 		}
 		if (payType.value == 'alipay') {
 			const {

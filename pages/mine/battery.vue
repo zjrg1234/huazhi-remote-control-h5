@@ -7,7 +7,6 @@
 
 		<view class="wrap-content">
 			<!-- #ifdef H5 -->
-
 			<NavBar title="我的电池" url="/pages/mine/index"></NavBar>
 			
 			<view class="bg-image">
@@ -30,9 +29,7 @@
 				<view class="card-content">
 					<view class="card-left">
 						<view class="label">
-							<view class="label-text">
-								我的电池
-							</view>
+							<view class="label-text">我的电池</view>
 							<image class="battery" src="/static/images/mine/icon_battery@2x.png" mode="widthFix"></image>
 						</view>
 						<view class="num">{{ balance }}</view>
@@ -48,19 +45,27 @@
 		</view>
 
 		<!-- 标签栏 -->
-
-
 		<view class="tabs">
 			<view v-for="item in tabs" :key="item.id" class="tab-item" :class="{ active: currentTab === item.id }"
 				@click="handleTab(item.id)">
 				<text>{{ item.name }}</text>
-				<!-- 底部激活横线 -->
 				<view v-if="currentTab === item.id" class="line"></view>
 			</view>
 		</view>
 
 		<!-- 列表 -->
 		<view class="list">
+			<!-- 1. 加载中 -->
+			<view class="load-tip" v-if="loading">加载中...</view>
+			
+			<!-- 2. 无数据空状态 -->
+			
+			<view class="empty-box" v-if="!loading && list.length === 0">
+				<image class="empty-img" src="/static/images/common/car_nodata@2x.jpg" mode="widthFix"></image>
+				<text class="empty-text">暂时没有内容哦～</text>
+			</view>
+
+			<!-- 3. 数据列表 -->
 			<view class="item" v-for="(item, index) in list" :key="index">
 				<text class="type">{{ item.type == 1 ? '收入' : '消费' }}</text>
 				<view class="middle">
@@ -71,49 +76,45 @@
 				</view>
 				<text class="common-text time">{{ formatTime(item.time) }}</text>
 			</view>
-			<view class="load-tip" v-if="loading">加载中...</view>
+			
+			<!-- 4. 没有更多 -->
 			<view class="load-tip" v-if="noMore && list.length > 0">没有更多了</view>
 		</view>
 	</view>
 </template>
 
 <script setup>
-	import {
-		ref,
-		onMounted
-	} from 'vue'
-	import {
-		onReachBottom,
-		onPullDownRefresh
-	} from '@dcloudio/uni-app'
-
+	import { ref, onMounted, computed } from 'vue'
+	import { onReachBottom, onPullDownRefresh } from '@dcloudio/uni-app'
 	import NavBar from "@/components/nav-bar/nav-bar.vue"
-	import {GetUserWalletLog} from "@/axios/mine.js"
-	import {formatTime} from "@/utils/date.js"
-	import {getNavBarHeight} from "@/utils/system.js"
-	// ==================== 数据 ====================
-	const balance = ref('13123.00')
+	import { GetUserWalletLog } from "@/axios/mine.js"
+	import { formatTime } from "@/utils/date.js"
+	import { getNavBarHeight } from "@/utils/system.js"
+	import {
+		useUserStore
+	} from '@/store/modules/user'
 
+	const userStore = useUserStore();
+
+	// ==================== 数据 ====================
+	
+	const balance = computed(() => {
+		return userStore.getUserInfo().wallet.balance
+	})
 	const list = ref([])
 	const page = ref(1)
 	const pageSize = ref(10)
 	const loading = ref(false)
 	const noMore = ref(false)
-	const tabs = [{
-			id: 'all',
-			name: '全部'
-		},
-		{
-			id: 'recharge',
-			name: '充值'
-		},
-		{
-			id: 'consume',
-			name: '消费'
-		}
+
+	const tabs = [
+		{ id: '', name: '全部' },
+		{ id: '1', name: '充值' },
+		{ id: '2', name: '消费' }
 	];
-	const currentTab = ref('all');
-	// ==================== 防抖切换TAB ====================
+	const currentTab = ref('');
+
+	// ==================== TAB 切换 ====================
 	let tabTimer = null
 	const handleTab = (tab) => {
 		if (tab === currentTab.value) return
@@ -121,10 +122,10 @@
 		tabTimer = setTimeout(() => {
 			currentTab.value = tab
 			resetAndLoad()
-		}, 300)
+		}, 200)
 	}
 
-	// ==================== 重置并加载 ====================
+	// ==================== 重置 ====================
 	const resetAndLoad = () => {
 		page.value = 1
 		list.value = []
@@ -138,15 +139,26 @@
 		loading.value = true
 
 		try {
+			const { data } = await GetUserWalletLog({
+				type: currentTab.value,
+			})
+			const dataList = data?.content || []
 
-			const {data} = await GetUserWalletLog()
+			if (page.value === 1) {
+				list.value = dataList
+			} else {
+				list.value = [...list.value ,...dataList]
+			}
 
-			if (page.value === 1) list.value = data.content
-			else list.value.push(...data.content)
+			// 无更多数据判断
+			if (dataList.length < pageSize.value) {
+				noMore.value = true
+			} else {
+				page.value++
+			}
 
-			if (data.length < pageSize.value) noMore.value = true
-			page.value++
 		} finally {
+			console.log(123)
 			loading.value = false
 			uni.stopPullDownRefresh()
 		}
@@ -191,7 +203,6 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-
 		font-family: PingFangSC, PingFang SC;
 		font-weight: 500;
 		font-size: 32rpx;
@@ -231,7 +242,6 @@
 		padding: 20rpx;
 		padding-bottom: 0;
 		overflow: hidden;
-
 		height: 196rpx;
 	}
 
@@ -245,7 +255,6 @@
 		.card-bg-img {
 			width: 100%;
 			height: 196rpx;
-
 		}
 	}
 
@@ -259,9 +268,7 @@
 	}
 
 	.label {
-
 		padding-top: 10rpx;
-
 		display: flex;
 		justify-content: left;
 		align-items: center;
@@ -276,6 +283,7 @@
 		.battery {
 			width: 38rpx;
 			height: 38rpx;
+			margin-left: 8rpx;
 		}
 	}
 
@@ -296,12 +304,11 @@
 		font-size: 24rpx;
 		color: #1A1A1A;
 		padding: 10rpx 40rpx;
-
 	}
 
 	/* 说明 */
 	.desc {
-		padding: 0 20rpx;
+		padding: 0 20rpx 20rpx;
 		font-family: PingFangSC, PingFang SC;
 		font-weight: 400;
 		font-size: 24rpx;
@@ -330,9 +337,7 @@
 				color: #777777;
 			}
 
-			/* 激活状态样式 */
 			&.active text {
-
 				font-weight: 500;
 				font-size: 30rpx;
 				color: #1A1A1A;
@@ -345,7 +350,6 @@
 				transform: translateX(-50%);
 				width: 40rpx;
 				height: 4rpx;
-
 				background: #1A1A1A;
 				border-radius: 2rpx;
 			}
@@ -378,26 +382,40 @@
 		color: #333333;
 	}
 
-
 	.middle {
 		display: flex;
 		justify-content: space-between;
 		align-items: baseline;
 		color: #999;
+		margin-top: 12rpx;
 		
 		.amount {
 			font-family: DINAlternate, DINAlternate;
 			font-weight: bold;
 			font-size: 40rpx;
 		}
-		.red {
-		  color: #EE4040;
-		}
-		.green {
-			color: #07C160;
-		}
+		.red { color: #EE4040; }
+		.green { color: #07C160; }
 	}
 
+	/* 空状态 */
+	.empty-box {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		padding: 150rpx 0;
+
+		.empty-img {
+			width: 206rpx;
+			height: 174rpx;
+		}
+		.empty-text {
+			margin-top: 20rpx;
+			font-size: 26rpx;
+			color: #999;
+		}
+	}
 
 	.load-tip {
 		text-align: center;

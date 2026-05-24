@@ -96,6 +96,7 @@
 			console.log(res)
 			if (res.code == 200) {
 				userStore.setToken(res.data.session_key)
+				userStore.setAreaId(res.data.special_area)
 				
 				GetUserInfo({uid: res.data.id}).then(res => {
 					

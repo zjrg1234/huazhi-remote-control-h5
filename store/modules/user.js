@@ -6,7 +6,8 @@ export const useUserStore = defineStore('user', {
 	state: () => ({
 		token: uni.getStorageSync('token') || '',
 		id: uni.getStorageSync('id') || '',
-		userInfo: uni.getStorageSync('userInfo') || {}
+		userInfo: uni.getStorageSync('userInfo') || {},
+		areaId: uni.getStorageSync('areaId') || ''
 	}),
 
 	actions: {
@@ -20,6 +21,10 @@ export const useUserStore = defineStore('user', {
 		setToken(token) {
 			this.token = token
 			uni.setStorageSync('token', token)
+		},
+		setAreaId(areaId) {
+			this.areaId = areaId
+			uni.setStorageSync('areaId', areaId)
 		},
 		// 退出登录
 		logout() {

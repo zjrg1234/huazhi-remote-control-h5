@@ -62,11 +62,12 @@
 <script setup>
 	import {
 		ref,
-		computed
+		computed,
+		onMounted
 	} from 'vue';
 	import BusinessModal from '@/components/business-modal/business-modal.vue'
 	import CustomModal from '@/components/common-modal/common-modal.vue'
-
+	import {GetMine} from "@/axios/mine"
 	import {
 		useUserStore
 	} from '@/store/modules/user'
@@ -123,6 +124,10 @@
 		}
 	])
 
+
+	// onMounted(() => {
+	// 	GetMine()
+	// })
 	const goPage = () => {
 		uni.navigateTo({
 			url: "/pages/mine/battery"

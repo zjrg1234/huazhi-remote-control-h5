@@ -17,8 +17,7 @@ const request = (options) => {
       noLoading = false
     } = options
 
-   const userStore = useUserStore()
-   const token = userStore.token
+   const token = data?.token || undefined 
 
     // 白名单判断
     const isWhite = whiteList.some(item => url.includes(item))
@@ -67,17 +66,17 @@ const request = (options) => {
 }
 
 // 导出请求方法
-export const get = (url, data = {}, opts = {}) => request({ url, method: 'GET', data, ...opts })
-export const post = (url, data = {}, opts = {}) => {
-  return request({ url, method: 'POST', data:{...data, uid: getParam().id}, ...opts });
-}
-export const put = (url, data = {}, opts = {}) => request({ url, method: 'PUT', data, ...opts })
-export const del = (url, data = {}, opts = {}) => request({ url, method: 'DELETE', data, ...opts })
+export const get = (url, data = {}, opts = {}) => request({ url, method: 'GET', data:{...data, ...getParam()}, ...opts })
+export const post = (url, data = {}, opts = {}) => request({ url, method: 'POST', data:{...data, ...getParam()}, ...opts });
+export const put = (url, data = {}, opts = {}) => request({ url, method: 'PUT', data:{...data, ...getParam()}, ...opts })
+export const del = (url, data = {}, opts = {}) => request({ url, method: 'DELETE', data:{...data, ...getParam()}, ...opts })
 
 const getParam = () => {
   const userStore = useUserStore()
   const id = userStore.id
+  const token = userStore.token
   return {
-    id
+    uid: id,
+    token
   }
 }
