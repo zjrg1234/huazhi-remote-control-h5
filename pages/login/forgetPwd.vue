@@ -1,9 +1,5 @@
 <template>
 	<view class="page">
-		<!-- 头像 -->
-		<view class="avatar-wrap">
-			<image class="avatar" src="/static/logo.png" mode="aspectFill" />
-		</view>
 
 		<!-- 表单 -->
 		<view class="form">
@@ -12,40 +8,22 @@
 				<text class="prefix">+86</text>
 				<input class="input" type="number" maxlength="11" placeholder="请输入手机号" v-model="form.phone" />
 			</view>
-
+			<VerifyCodeInput v-model="form.code" :phone="form.phone" />
 			<!-- 密码 -->
 			<view class="input-item">
-				<input class="input" type="password" maxlength="12" placeholder="请输入密码" v-model="form.password" />
+				<input class="input" type="password" maxlength="6" placeholder="请输入密码" v-model="form.password" />
+			</view>
+			<view class="input-item">
+				<input class="input" type="password" maxlength="6" placeholder="请再次输入密码" v-model="form.passwordAgain" />
 			</view>
 
-			<!-- 忘记密码 / 验证码登录 -->
-			<view class="row-link">
-				<text class="link" @click="goForgetPwd">忘记密码</text>
-				<text class="link" @click="goCodeLogin">验证码登录</text>
-			</view>
 
-			<!-- 登录按钮 -->
-			<view class="login-btn" @click="handleLogin">登录</view>
+			<view class="login-btn" @click="handleLogin">完成</view>
 
-			<!-- 注册账号 -->
-			<view class="register-link" @click="goRegister">
-				<text>注册帐号</text>
-			</view>
+
 		</view>
-		
-		<!-- 协议勾选 -->
-			<view class="agreement">
-				<view class="checkbox" :class="{ checked: agree }" @click="agree = !agree">
-					<image class="check-icon" src="/static/images/login/checked@2x.png" mode="aspectFill" v-if="agree" />
-					<image class="un-check-icon" src="/static/images/login/circle@2x.png" mode="aspectFill" v-if="!agree" />
-				</view>
-				<text class="text">
-					我已同意<text class="highlight"
-					 @click="goto('/pages/set/userPolicy')">用户协议</text> 和 
-					 <text @click="goto('/pages/set/privacy')" class="highlight">隐私条款</text>
-				</text>
-			</view>
-		
+
+
 	</view>
 </template>
 
@@ -53,76 +31,79 @@
 	import {
 		ref
 	} from 'vue'
-	import {Login, GetUserInfo } from "@/axios/index.js"
+	import {
+		UserChangePwd
+	} from "@/axios/index.js"
 	import {
 		useUserStore
 	} from '@/store/modules/user'
+	import VerifyCodeInput from '@/components/verify-code/verify-code.vue';
 	const form = ref({
 		phone: '',
-		password: ''
+		password: '',
+		code: '',
+		passwordAgain: ''
 	})
 
 	const agree = ref(true)
 	const userStore = useUserStore()
 	// 登录
 	const handleLogin = () => {
-		if (!form.value.phone) {
+
+		if (!form.value.phone || form.value.phone.length !== 11) {
 			uni.showToast({
 				title: '请输入手机号',
 				icon: 'none'
-			})
-			return
+			});
+			return;
 		}
-		if (!form.value.password) {
+		if (!form.value.code) {
 			uni.showToast({
-				title: '请输入密码',
+				title: '请输入验证码',
 				icon: 'none'
-			})
-			return
+			});
+			return;
 		}
-		if (!agree.value) {
+		if (!form.value.password || form.value.password.length < 6) {
 			uni.showToast({
-				title: '请先同意用户协议和隐私条款',
+				title: '密码至少6位',
 				icon: 'none'
-			})
-			return
+			});
+			return;
+		}
+		if (form.value.password !== form.value.passwordAgain) {
+			uni.showToast({
+				title: '两次密码输入不一致',
+				icon: 'none'
+			});
+			return;
 		}
 
-		Login({
+		UserChangePwd({
 			...form.value,
-			password: form.value.password,
-			type: 1
 		}).then(res => {
 			console.log(res)
 			if (res.code == 200) {
-				userStore.setToken(res.data.session_key)
-				
-				GetUserInfo({uid: res.data.id}).then(res => {
-					
-					userStore.setUser(res.data)
-					
+			
 					uni.switchTab({
-						url: "/pages/index/index"
+						url: "/pages/login/login"
 					})
-				}).catch()
+		
 			}
 		}).catch()
-		// 这里写你的登录接口
-	
 
-		
 	}
 
 	// 跳转
 	const goForgetPwd = () => {
 		uni.navigateTo({
-			url: '/pages/login/forgetPwd'
+			url: '/pages/login/forget-pwd'
 		})
 	}
 
 	const goCodeLogin = () => {
 		uni.navigateTo({
-			url: '/pages/login/loginCode'
+			url: '/pages/login/code-login'
 		})
 	}
 
@@ -131,7 +112,7 @@
 			url: '/pages/login/register'
 		})
 	}
-	
+
 	const goto = (url) => {
 		uni.navigateTo({
 			url
@@ -145,7 +126,7 @@
 	}
 
 	.page {
-		padding: 138rpx 32rpx 40rpx;
+		padding: 10rpx 32rpx 40rpx;
 		box-sizing: border-box;
 		position: relative;
 		height: 100vh;
@@ -260,7 +241,7 @@
 
 	.agreement {
 		position: absolute;
-		bottom:  env(safe-area-inset-bottom);
+		bottom: env(safe-area-inset-bottom);
 		left: 50%;
 		width: 100%;
 		transform: translatex(-50%);

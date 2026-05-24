@@ -16,3 +16,15 @@ export function getHomeListApi(params) {
 export function GetUserInfo(data) {
   return post('/api/user/mine',data)
 }
+
+
+// 修改用户密码
+export function UserChangePwd(data) {
+  return post('/api/user/change/password',data)
+}
+
+// 获取手机验证码
+export function GetPhoneCode(data) {
+  return post('/api/get/login/code',data)
+}
+

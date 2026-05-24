@@ -11,7 +11,6 @@
 		</view>
 		<VerifyCodeInput v-model="formData.code" phone="188888888" />
 		<view class="input-item">
-		
 			<input class="input" maxlength="11" placeholder="请输入新手机号" v-model="formData.new_phone_number" />
 		</view>
 		

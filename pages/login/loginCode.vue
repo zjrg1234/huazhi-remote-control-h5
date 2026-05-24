@@ -13,17 +13,13 @@
 				<input class="input" type="number" maxlength="11" placeholder="请输入手机号" v-model="form.phone" />
 			</view>
 
-			<!-- 密码 -->
-			<view class="input-item">
-				<input class="input" type="password" maxlength="12" placeholder="请输入密码" v-model="form.password" />
-			</view>
+			<VerifyCodeInput v-model="form.code" :phone="form.phone" />
 
-			<!-- 忘记密码 / 验证码登录 -->
-			<view class="row-link">
-				<text class="link" @click="goForgetPwd">忘记密码</text>
-				<text class="link" @click="goCodeLogin">验证码登录</text>
-			</view>
+	<!-- 忘记密码 / 验证码登录 -->
+	<view class="row-link">
 
+		<text class="link" @click="goLogin">密码登录</text>
+	</view>
 			<!-- 登录按钮 -->
 			<view class="login-btn" @click="handleLogin">登录</view>
 
@@ -54,12 +50,13 @@
 		ref
 	} from 'vue'
 	import {Login, GetUserInfo } from "@/axios/index.js"
+		import VerifyCodeInput from '@/components/verify-code/verify-code.vue';
 	import {
 		useUserStore
 	} from '@/store/modules/user'
 	const form = ref({
 		phone: '',
-		password: ''
+		code: ''
 	})
 
 	const agree = ref(true)
@@ -73,9 +70,9 @@
 			})
 			return
 		}
-		if (!form.value.password) {
+		if (!form.value.code) {
 			uni.showToast({
-				title: '请输入密码',
+				title: '请输入验证码',
 				icon: 'none'
 			})
 			return
@@ -90,22 +87,20 @@
 
 		Login({
 			...form.value,
-			password: form.value.password,
 			type: 1
 		}).then(res => {
 			console.log(res)
 			if (res.code == 200) {
-				userStore.setToken(res.data.session_key)
-				
-				GetUserInfo({uid: res.data.id}).then(res => {
-					
-					userStore.setUser(res.data)
-					
-					uni.switchTab({
-						url: "/pages/index/index"
-					})
-				}).catch()
-			}
+					userStore.setToken(res.data.session_key)
+					GetUserInfo({uid: res.data.id}).then(res => {
+						
+						userStore.setUser(res.data)
+						
+						uni.switchTab({
+							url: "/pages/index/index"
+						})
+					}).catch()
+				}
 		}).catch()
 		// 这里写你的登录接口
 	
@@ -113,16 +108,11 @@
 		
 	}
 
-	// 跳转
-	const goForgetPwd = () => {
-		uni.navigateTo({
-			url: '/pages/login/forgetPwd'
-		})
-	}
 
-	const goCodeLogin = () => {
+
+	const goLogin = () => {
 		uni.navigateTo({
-			url: '/pages/login/loginCode'
+			url: '/pages/login/login'
 		})
 	}
 
@@ -193,7 +183,7 @@
 
 	.row-link {
 		display: flex;
-		justify-content: space-between;
+		justify-content: flex-end;
 		margin-bottom: 50rpx;
 
 		.link {

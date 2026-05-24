@@ -1,7 +1,6 @@
 <template>
   <view class="input-item">
   
-   
     <!-- 输入框 -->
     <input
       class="input"
@@ -24,7 +23,7 @@
 
 <script setup>
 import { ref, watch } from 'vue';
-
+import {GetPhoneCode} from "@/axios/index.js"
 // --- Props 定义 ---
 const props = defineProps({
   modelValue: { type: [String, Number], default: '' }, // 验证码内容
@@ -41,20 +40,18 @@ const isCounting = ref(false);
 const count = ref(props.time);
 let timer = null;
 
-// 按钮文字计算
 const btnText = ref('获取验证码');
 
 watch(inputValue, (val) => {
   emit('update:modelValue', val);
 });
 
-// --- 核心逻辑：发送请求 ---
+
 const sendRequest = async () => {
-  // 1. 模拟 API 请求 (这里替换为你真实的 uni.request 或 api 函数)
-  // 假设这是一个 POST 请求，发送手机号
+
   try {
     // 模拟网络延迟
-    await new Promise((resolve) => setTimeout(resolve, 1000)); 
+    await GetPhoneCode({phone: props.phone})
     
     console.log(`验证码已发送至：${props.phone}`);
     
