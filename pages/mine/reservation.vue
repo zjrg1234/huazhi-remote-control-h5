@@ -181,17 +181,13 @@
 
 	// 按钮点击事件
 	const handleBtnClick = (item) => {
-		if (item.btnText === '开始驾驶') {
-			uni.showToast({
-				title: '开始驾驶',
-				icon: 'none'
+
+		// 申诉
+		if (item.reservation_status == 4 && item.is_reservation == 1) {
+			uni.navigateTo({
+				url: "/pages/mine/orderAppeal?order_no="+item.order_no
 			})
-		} else if (item.btnText === '申诉') {
-			uni.showToast({
-				title: '申诉功能',
-				icon: 'none'
-			})
-		}
+		}	
 	}
 
 	const payFillText = (type) => {

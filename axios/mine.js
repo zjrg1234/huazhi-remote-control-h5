@@ -64,3 +64,10 @@ export function  GetUserWalletLog(data) {
 export function  getDepositList() {
 	return post('/api/deposit/list')
 }
+
+
+// 申诉
+export function  AppealOrderNo(data) {
+	return post('/api/user/complain',data)
+}
+

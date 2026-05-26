@@ -1,5 +1,5 @@
 {
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+	"pages": [ 
 		{
 			"path": "pages/index/index",
 			"style": {
@@ -31,6 +31,13 @@
 			"path": "pages/mine/appeal",
 			"style": {
 				"navigationBarTitleText": "我的申诉",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/mine/orderAppeal",
+			"style": {
+				"navigationBarTitleText": "预约申诉",
 				"enablePullDownRefresh": false
 			}
 		},
