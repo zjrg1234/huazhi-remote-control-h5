@@ -129,7 +129,7 @@
 
 	const goRegister = () => {
 		uni.navigateTo({
-			url: '/pages/login/register'
+			url: '/pages/register/register'
 		})
 	}
 	

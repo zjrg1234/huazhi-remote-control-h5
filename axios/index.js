@@ -28,3 +28,11 @@ export function GetPhoneCode(data) {
   return post('/api/get/login/code',data)
 }
 
+
+// 注册
+export function Register(data) {
+  return post('/api/login/save',data)
+}
+
+
+

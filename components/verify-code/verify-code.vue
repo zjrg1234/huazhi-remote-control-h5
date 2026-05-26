@@ -4,10 +4,15 @@
     <!-- 输入框 -->
     <input
       class="input"
-      type="number"
+      type="id-number" 
+       v-if="inputReady"
       maxlength="6"
       :placeholder="placeholder"
+      autocomplete="off"
+      autocorrect="off"
       v-model="inputValue"
+    
+      :name="randomInputName"
     />
 
     <!-- 右侧按钮 -->
@@ -22,8 +27,20 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import {GetPhoneCode} from "@/axios/index.js"
+
+// 1. 定义延迟渲染的状态
+const inputReady = ref(false);
+const randomInputName = ref('verify_code_' + Math.random().toString(36).substring(2, 9));
+
+// 2. 页面挂载后延迟 100 毫秒再渲染输入框，破坏浏览器的填充时机
+onMounted(() => {
+  setTimeout(() => {
+    inputReady.value = true;
+  }, 100);
+});
+
 // --- Props 定义 ---
 const props = defineProps({
   modelValue: { type: [String, Number], default: '' }, // 验证码内容
@@ -32,7 +49,6 @@ const props = defineProps({
   phone: { type: String, required: true } // 需要传入手机号用于发送请求
 });
 
-// --- Emits 定义 ---
 const emit = defineEmits(['update:modelValue', 'success', 'error']);
 
 const inputValue = ref(props.modelValue);

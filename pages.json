@@ -112,6 +112,13 @@
 			}
 		},
 		{
+			"path": "pages/register/register",
+			"style": {
+				"navigationBarTitleText": "注册新账号",
+				"navigationStyle": ""
+			}
+		},
+		{
 			"path": "pages/login/loginCode",
 			"style": {
 				"navigationBarTitleText": "",
