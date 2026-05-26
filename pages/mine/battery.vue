@@ -261,7 +261,7 @@
 	.card-content {
 		position: relative;
 		z-index: 1;
-		padding: 0 0;
+		padding: 0 10rpx;
 		display: flex;
 		justify-content: space-between;
 		align-items: end;
