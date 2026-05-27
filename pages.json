@@ -130,7 +130,12 @@
 			"style": {
 				"navigationBarTitleText": "忘记密码"
 			}
-
+		},
+		{
+			"path": "pages/car/details",
+			"style": {
+				"navigationBarTitleText": ""
+			}
 		}
 	],
 	"globalStyle": {
