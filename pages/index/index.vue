@@ -47,11 +47,12 @@
               <text class="title">{{ item.title }}</text>
               <text class="tag">{{ item.tag }}</text>
             </view>
-            <view class="meta">
-              <text class="status online">● 在线{{ item.online }}</text>
+          </view>
+          <view class="meta">
+              <text class="status online"></text>
+              <text>在线{{ item.online }}</text>
               <text class="divider">|</text>
               <text class="drivers">驾驶{{ item.drivers }}</text>
-            </view>
           </view>
         </view>
       </view>
@@ -75,12 +76,15 @@
 
               <text class="tag">{{ item.tag }}</text>
             </view>
-            <view class="meta">
-              <text class="status online">● 在线{{ item.online }}</text>
+            
+          </view>
+
+          <view class="meta">
+              <text class="status online"></text>
+              <text>在线{{ item.online }}</text>
               <text class="divider">|</text>
               <text class="drivers">驾驶{{ item.drivers }}</text>
             </view>
-          </view>
         </view>
       </view>
     </view>
@@ -333,6 +337,9 @@ onReachBottom(() => {
 
     .title-tags {
       margin-bottom: 10rpx;
+      font-size: 0;
+      display: flex;
+      align-items: center;
 
       .title {
         font-family: PingFangSC, PingFang SC;
@@ -351,15 +358,27 @@ onReachBottom(() => {
         border-radius: 4rpx;
       }
     }
+  }
 
-    .meta {
+   .meta {
+    position: absolute;
+    right: 15rpx;
+    top: 15rpx;
       display: flex;
       align-items: center;
       font-size: 22rpx;
-      color: #999;
+      color: #fff;
 
+      background: rgba(0,0,0,0.5);
+      border-radius: 20rpx;
+      padding: 2rpx 15rpx;
       .online {
+        width: 8rpx;
+        height: 8rpx;
+        background: #15CB50;
         color: #4caf50; /* 绿色状态点 */
+        border-radius: 50%;
+        margin-right: 5rpx;
       }
 
       .divider {
@@ -367,7 +386,6 @@ onReachBottom(() => {
         color: #ddd;
       }
     }
-  }
 }
 
 .loading-status {
