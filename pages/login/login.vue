@@ -15,7 +15,7 @@
 
 			<!-- 密码 -->
 			<view class="input-item">
-				<input class="input" type="password" maxlength="12" placeholder="请输入密码" v-model="form.password" />
+				<input class="input" type="password" maxlength="6" placeholder="请输入密码" v-model="form.password" />
 			</view>
 
 			<!-- 忘记密码 / 验证码登录 -->
@@ -97,6 +97,7 @@
 			if (res.code == 200) {
 				userStore.setToken(res.data.session_key)
 				userStore.setAreaId(res.data.special_area)
+				userStore.setId(res.data.id)
 				
 				GetUserInfo({uid: res.data.id}).then(res => {
 					

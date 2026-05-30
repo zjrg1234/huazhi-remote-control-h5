@@ -26,6 +26,10 @@ export const useUserStore = defineStore('user', {
 			this.areaId = areaId
 			uni.setStorageSync('areaId', areaId)
 		},
+		setId(id) {
+			this.id = id
+			uni.setStorageSync('id', id)
+		},
 		// 退出登录
 		logout() {
 			this.id = ''
