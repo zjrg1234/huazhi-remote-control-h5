@@ -7,10 +7,20 @@
 
     <!-- 分类导航栏 (Sticky 吸顶 + 横向滚动) -->
     <view class="sticky-nav-wrapper">
-      <scroll-view scroll-x class="nav-scroll" :show-scrollbar="false" enable-flex>
+      <scroll-view
+        scroll-x
+        class="nav-scroll"
+        :show-scrollbar="false"
+        enable-flex
+      >
         <view class="nav-list">
-          <view v-for="(item, index) in categories" :key="index" class="nav-item"
-            :class="{ active: currentCategory === item.name }" @click="handleCategoryClick(item)">
+          <view
+            v-for="(item, index) in categories"
+            :key="index"
+            class="nav-item"
+            :class="{ active: currentCategory === item.id }"
+            @click="handleCategoryClick(item)"
+          >
             {{ item.name }}
           </view>
         </view>
@@ -19,10 +29,27 @@
 
     <!-- 瀑布流列表区域 -->
     <view class="waterfall-container">
+
+
+
+       <view v-if="leftList.length === 0 && rightList.length === 0" class="empty-state">
+        
+        <text class="empty-text">暂无相关数据</text>
+      </view>
       <!-- 左列 -->
       <view class="column col-left">
-        <view v-for="(item, index) in leftList" :key="'left-' + index" class="card-item">
-          <image :src="item.image" mode="widthFix" class="card-img" lazy-load></image>
+        <view
+          v-for="(item, index) in leftList"
+          :key="'left-' + index"
+          class="card-item"
+          @click="handleCar(item)"
+        >
+          <image
+            :src="item.image"
+            mode="widthFix"
+            class="card-img"
+            lazy-load
+          ></image>
           <view class="meta">
             <text class="status online"></text>
             <text> 在线{{ item.online }}</text>
@@ -34,28 +61,53 @@
               <text class="title">{{ item.title }}</text>
               <text class="tag">{{ item.tag }}</text>
             </view>
-
+            <view class="num">
+              <image
+                src="/static/images/common/icon_queue@2x.png"
+                mode="widthFix"
+                class="icon"
+                lazy-load
+              ></image>
+              <text class="text"> {{ item.online }}人排队</text>
+            </view>
           </view>
         </view>
       </view>
 
       <!-- 右列 -->
       <view class="column col-right">
-        <view v-for="(item, index) in rightList" :key="'right-' + index" class="card-item">
-          <image :src="item.image" mode="widthFix" class="card-img" lazy-load></image>
+        <view
+          v-for="(item, index) in rightList"
+          :key="'right-' + index"
+          class="card-item"
+          @click="handleCar(item)"
+        >
+          <image
+            :src="item.venue_image[0]"
+            mode="widthFix"
+            class="card-img"
+            lazy-load
+          ></image>
           <view class="meta">
             <text class="status online"></text>
             <text>在线{{ item.online }}</text>
             <text class="divider">|</text>
-            <text class="drivers">驾驶{{ item.drivers }}</text>
+            <text class="drivers">驾驶{{ item.driving }}</text>
           </view>
           <view class="card-info">
             <view class="title-tags">
-              <text class="title">{{ item.title }}</text>
-
-              <text class="tag">{{ item.tag }}</text>
+              <text class="title">{{ item.venue_name }}</text>
+              <text class="tag">{{ item.labels }}</text>
             </view>
-
+            <view class="num">
+              <image
+                src="/static/images/common/icon_queue@2x.png"
+                mode="widthFix"
+                class="icon"
+                lazy-load
+              ></image>
+              <text class="text">{{ item.queue }}人排队</text>
+            </view>
           </view>
         </view>
       </view>
@@ -76,7 +128,7 @@ import { throttle } from "@/utils/system.js"; // 引用封装好的节流函数
 import { GetHomeBanner, GetHomeTabTitle, GetHomeDataList } from "@/axios/index";
 // --- 数据定义 ---
 const categories = ref([]);
-const currentCategory = ref("全部");
+const currentCategory = ref("");
 
 const leftList = ref([]);
 const rightList = ref([]);
@@ -99,30 +151,24 @@ const fetchData = async (isRefresh = false) => {
 
   try {
     // 模拟网络延迟
-    await new Promise((resolve) => setTimeout(resolve, 800));
-
-    // 模拟返回数据 (实际开发替换为 uni.request)
-    const mockData = Array.from({ length: 6 }).map((_, i) => ({
-      id: page.value * 10 + i,
-      title: "RC疯狂汽车城",
-      tag: "遥控车",
-      online: 12,
-      drivers: 3,
-      // 随机高度图片模拟瀑布流效果
-      image: `https://picsum.photos/200/${300 + Math.floor(Math.random() * 150)
-        }?random=${page.value}${i}`,
-    }));
-
-    // 简单的左右分发逻辑
-    mockData.forEach((item, index) => {
-      if (index % 2 === 0) {
-        leftList.value.push(item);
-      } else {
-        rightList.value.push(item);
-      }
+    const {code,data} = await GetHomeDataList({
+      type: currentCategory.value
     });
 
-    if (mockData.length === 0) noMore.value = true;
+    if (code == 200) {
+       // 简单的左右分发逻辑
+      data.forEach((item, index) => {
+        if (index % 2 === 0) {
+          leftList.value.push(item);
+        } else {
+          rightList.value.push(item);
+        }
+      });
+    }
+
+   
+
+    if (data.length === 0) noMore.value = true;
     else page.value++;
   } catch (error) {
     console.error("获取数据失败", error);
@@ -136,8 +182,8 @@ const fetchData = async (isRefresh = false) => {
 
 // 分类点击节流 (300ms内只能点一次)
 const handleCategoryClick = throttle((item) => {
-  if (currentCategory.value === item.name) return;
-  currentCategory.value = item.name;
+  if (currentCategory.value === item.id) return;
+  currentCategory.value = item.id;
   // 切换分类时重新加载第一页
   fetchData(true);
 }, 300);
@@ -154,7 +200,7 @@ onMounted(() => {
 });
 
 onLoad(() => {
-  console.log(1);
+
   categories.value = [{ name: "全部", id: "" }];
   GetHomeBanner()
     .then((res) => {
@@ -177,6 +223,11 @@ onPullDownRefresh(() => {
 onReachBottom(() => {
   loadMore();
 });
+
+
+const handleCar = (item) => {
+  uni.navigateTo({ url: '/pages/car/details' })
+}
 </script>
 
 <style lang="scss" scoped>
@@ -274,25 +325,14 @@ onReachBottom(() => {
 
 .col-left {
   .card-item {
-    width: 360rpx;
-    height: 400rpx;
+    &:first-child {
+      height: 400rpx;
 
-    .card-img {
-      width: 100%;
-      height: 400rpx !important;
-      display: block;
-    }
-  }
-}
-
-.col-right {
-  .card-item {
-    height: 540rpx;
-
-    .card-img {
-      width: 100%;
-      height: 540rpx !important;
-      display: block;
+      .card-img {
+        width: 100%;
+        display: block;
+        height: 400rpx !important;
+      }
     }
   }
 }
@@ -307,7 +347,7 @@ onReachBottom(() => {
 
   background: #e9e9e9;
   border-radius: 8rpx;
-
+  height: 540rpx;
   .card-img {
     width: 100%;
     display: block;
@@ -343,8 +383,23 @@ onReachBottom(() => {
       }
     }
 
+    .num {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      .icon {
+        width: 20rpx;
+        height: 20rpx;
+        display: block;
+      }
+      .text {
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        font-size: 22rpx;
+        color: #ffc838;
+      }
+    }
   }
-
 
   .meta {
     position: absolute;
@@ -357,7 +412,7 @@ onReachBottom(() => {
     font-family: PingFangSC, PingFang SC;
     font-weight: 400;
     font-size: 24rpx;
-    color: #FFFFFF;
+    color: #ffffff;
     padding: 2rpx 10rpx;
 
     .online {
@@ -365,7 +420,7 @@ onReachBottom(() => {
       height: 8rpx;
       border-radius: 50%;
       margin-right: 5rpx;
-      background: #15CB50;
+      background: #15cb50;
     }
 
     .divider {
@@ -380,5 +435,25 @@ onReachBottom(() => {
   padding: 30rpx 0;
   font-size: 26rpx;
   color: #999;
+}
+
+/* 空状态样式 */
+.empty-state {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0;
+
+  .empty-img {
+    width: 300rpx; /* 根据你的实际图片大小调整 */
+    margin-bottom: 20rpx;
+  }
+
+  .empty-text {
+    font-size: 28rpx;
+    color: #999;
+  }
 }
 </style>
