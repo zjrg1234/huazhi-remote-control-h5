@@ -5,10 +5,10 @@
       <image class="banner-img" :src="imageUrl" mode="widthFix"></image>
       <view class="info-box">
         <view class="title-row">
-          <text class="main-title">RC疯狂汽车城</text>
-          <text class="tag">遥控车</text>
+          <text class="main-title">{{detailData.venue_name}}</text>
+          <text class="tag">{{detailData.labels}}</text>
         </view>
-        <text class="time-text">营业时间：00:00~24:00</text>
+        <text class="time-text">营业时间：{{detailData.start_time}}~{{detailData.end_time}}</text>
       </view>
     </view>
 
@@ -146,11 +146,47 @@
 
     <TipModal
       title="车辆预约"
-      v-model:visible="pwdVisible"
+      v-model:visible="orderVisible"
       key="2"
       @confirm="handlePwd"
     >
-      <template #content> 111 </template>
+      <template #content>
+        <view class="order-cont">
+          <view class="img">
+            <image
+              class="car-image"
+              :src="selectCar.vehicle_image"
+              mode="aspectFill"
+            />
+          </view>
+          <!-- 注意：请将 src 替换为你实际的图片路径或网络地址 -->
+
+          <!-- 3. 主要状态文本 -->
+          <text class="main-status">已成功预约 {{orderCar.vehicle_name}} 车辆</text>
+          <text class="sub-status"
+            >当前还有 {{ orderCar.people_number }} 人排队，请耐心等待</text
+          >
+
+          <!-- 4. 详情信息卡片 (灰色背景区域) -->
+          <view class="info-card">
+            <view class="info-item">
+              <text class="label">预约类型：</text>
+              <text class="value"
+                >按{{
+                  orderCar.billing_method == "0" ? "时间" : "次"
+                }}计费</text
+              >
+            </view>
+            <view class="info-item">
+              <text class="label">预约时间：</text>
+              <text class="value">{{ orderCar.time }}</text>
+            </view>
+          </view>
+
+          <!-- 5. 提示语 -->
+          <text class="tip-text">请在【我的-预约订单】中查看</text>
+        </view>
+      </template>
     </TipModal>
 
     <BillingPopup
@@ -167,7 +203,7 @@ import { onLoad } from "@dcloudio/uni-app";
 import TipModal from "@/components/tip-modal/tip-modal.vue";
 import BillingPopup from "@/components/billing-popup/billing-popup.vue";
 import { GetVenueDetail, OrderCar } from "@/axios/index";
-// --- 1. 模拟数据 ---
+
 const stats = ref({
   queue: 0,
   online: 0,
@@ -176,18 +212,31 @@ const stats = ref({
 
 const agree = ref(false);
 const pwdVisible = ref(false);
+const orderVisible = ref(false);
 const password = ref("");
 const cfmPassword = ref("");
 const billingPopupRef = ref(null);
 const imageUrl = ref("");
 const billingMethod = ref();
+const detailData = ref();
 
 const selectCar = ref({
   vehicle_id: "",
   vehicle_name: "",
   venue_id: "",
   billing_rules: "",
-  venue_name: ''
+  venue_name: "",
+  vehicle_image: ''
+});
+
+const orderCar = ref({
+  vehicle_name: "",
+  time: "",
+  payment_type: 1,
+  billing_method: 0,
+  order_no: "",
+  transmitter_id: 0,
+  people_number: 0,
 });
 // 车辆列表数据
 const carList = ref([]);
@@ -204,15 +253,16 @@ onLoad((options) => {
   })
     .then((res) => {
       const { code, data } = res;
+      detailData.value = {...data};
       stats.value.queue = data.queue;
       stats.value.online = data.online;
       stats.value.drive = data.drive;
       imageUrl.value = data.venue_image?.[0];
-      // carList.value = data.vehicle?.filter((item) => item.vehicle_state !== 0);
+
       carList.value = data.vehicle;
       billingMethod.value = data.venue_config;
       selectCar.value.venue_id = options.id;
-      selectCar.value.venue_name =  data.venue_name;
+      selectCar.value.venue_name = data.venue_name;
     })
     .catch();
 });
@@ -235,9 +285,12 @@ const handleDrive = (car) => {
     return;
   }
 
-  (selectCar.value.vehicle_id = car.id),
-    (selectCar.value.vehicle_name = car.vehicle_name),
-    billingPopupRef.value.open();
+
+    selectCar.value.vehicle_id = car.id;
+    selectCar.value.vehicle_name = car.vehicle_name;
+    selectCar.value.vehicle_image = car.vehicle_image;
+  
+  billingPopupRef.value.open();
 };
 
 const handlePwd = () => {
@@ -274,30 +327,20 @@ const onBillingConfirm = (params) => {
     billing_rules: params.selectedOpt,
     payment_type: params.unitType,
     billing_method: params.selectType == -1 ? 0 : 1,
-    app_transmitter_id: randomNumber
+    app_transmitter_id: randomNumber,
   })
-    .then(res => {
-
+    .then((res) => {
+      if (res.code === 200) {
+        orderCar.value = {
+          ...res.data,
+        };
+        orderVisible.value = true;
+      }
     })
     .catch()
     .finally(() => {
       flag.value = true;
     });
-
-    // {
-    // "code": 200,
-    // "msg": "预约成功",
-    // "data": {
-    //     "vehicle_name": "挖机",
-    //     "time": "2026-06-05 16:54:09",
-    //     "payment_type": 1,
-    //     "billing_method": 0,
-    //     "order_no": "ZKSJ20260605165409357W5FY",
-    //     "transmitter_id": 18812835,
-    //     "people_number": 0
-    // },
-    // "traceId": "6a228eb153fc3"
-}
 };
 </script>
 
@@ -566,5 +609,79 @@ const onBillingConfirm = (params) => {
   font-weight: 400;
   font-size: 28rpx;
   color: #333333;
+}
+
+.order-cont {
+  .popup-title {
+    font-size: 36rpx;
+    font-weight: bold;
+    color: #333333;
+    margin-bottom: 30rpx;
+  }
+  .img {
+    text-align: center;
+  }
+
+  /* 车辆图片 */
+  .car-image {
+    width: 160rpx;
+    height: 160rpx;
+    border-radius: 50%; /* 圆形图片 */
+    margin-bottom: 20rpx;
+    background-color: #f0f0f0; /* 占位背景色 */
+  }
+
+  /* 主状态文本 */
+  .main-status {
+    font-size: 32rpx;
+    font-weight: bold;
+    color: #333333;
+    margin-bottom: 10rpx;
+    display: block;
+  }
+
+  /* 副状态文本 */
+  .sub-status {
+    font-size: 26rpx;
+    color: #999999;
+    margin-bottom: 30rpx;
+    display: block;
+  }
+
+  /* 详情信息卡片 */
+  .info-card {
+    width: 100%;
+    background-color: #f7f8fa; /* 浅灰背景 */
+    border-radius: 12rpx;
+    padding: 20rpx;
+    box-sizing: border-box;
+    margin-bottom: 20rpx;
+  }
+
+  .info-item {
+    display: flex;
+    font-size: 26rpx;
+    margin-bottom: 10rpx;
+    line-height: 1.6;
+  }
+
+  .info-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .label {
+    color: #666666;
+  }
+
+  .value {
+    color: #333333;
+  }
+
+  /* 底部提示语 */
+  .tip-text {
+    font-size: 24rpx;
+    color: #999999;
+    margin-bottom: 40rpx;
+  }
 }
 </style>
