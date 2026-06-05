@@ -4,7 +4,7 @@
     <view class="header-section">
       <image
         class="banner-img"
-        src="https://via.placeholder.com/800x400"
+        :src="imageUrl"
         mode="widthFix"
       ></image>
       <view class="info-box">
@@ -21,7 +21,7 @@
       <view class="stat-item">
         <!-- 新增 num-box 包裹数字和单位 -->
         <view class="num-box">
-          <text class="stat-num">{{ stats.totalQueue }}</text>
+          <text class="stat-num">{{ stats.queue }}</text>
           <text class="stat-unit">人</text>
         </view>
         <!-- 原有的标签保留 -->
@@ -33,7 +33,7 @@
       <!-- 项 2 -->
       <view class="stat-item">
         <view class="num-box">
-          <text class="stat-num">{{ stats.onlineCars }}</text>
+          <text class="stat-num">{{ stats.online }}</text>
           <text class="stat-unit">辆</text>
         </view>
         <text class="stat-label">在线车辆</text>
@@ -44,7 +44,7 @@
       <!-- 项 3 -->
       <view class="stat-item">
         <view class="num-box">
-          <text class="stat-num">{{ stats.drivingCars }}</text>
+          <text class="stat-num">{{ stats.drive }}</text>
           <text class="stat-unit">辆</text>
         </view>
         <text class="stat-label">驾驶中</text>
@@ -58,15 +58,19 @@
         <!-- 状态标签 -->
         <view
           class="status-tag"
-          :class="car.status === 'idle' ? 'tag-green' : 'tag-blue'"
+          :class="car.vehicle_state === '1' ? 'tag-green' : 'tag-blue'"
         >
-          {{ car.status === "idle" ? "空闲" : "排队" + car.queueCount + "人" }}
+          {{
+            car.vehicle_state === "1"
+              ? "空闲"
+              : "排队" + car.vehicle_queue + "人"
+          }}
         </view>
 
         <!-- 左侧图片区域 -->
         <view class="img-wrapper">
-          <image class="car-img" :src="car.image" mode="aspectFill"></image>
-          <view class="lock-mask" v-if="car.status === 'queue'">
+          <image class="car-img" :src="car.vehicle_image" mode="aspectFill"></image>
+          <view class="lock-mask" v-if="car.is_password == 1">
             <uni-icons type="locked" size="30" color="#ffffff"></uni-icons>
           </view>
         </view>
@@ -79,31 +83,36 @@
 
           <view class="desc-row">
             <text class="label">车辆特点：</text>
-            <text class="value">{{ car.features }}</text>
+            <text class="value">{{ car.vehicle_introduction }}</text>
           </view>
 
           <view class="desc-row">
             <text class="label">最高时速：</text>
-            <text class="value">{{ car.speed }}</text>
+            <text class="value">{{ car.top_speed }}</text>
           </view>
 
           <view class="bottom-row">
-            <text class="battery">车辆电量：{{ car.battery }}%</text>
+            <text class="battery">车辆电量：{{ car.vehicle_battery }}</text>
             <!-- 按钮：根据状态改变样式 -->
             <button
               class="action-btn"
-              :class="{ 'btn-disabled': car.status === 'queue' }"
-              :disabled="car.status === 'queue'"
+              :class="{ 'btn-disabled': car.vehicle_state ==2 }"
+              :disabled="car.vehicle_state == 2"
               @click="handleDrive(car)"
             >
-              我要驾驶
+               预约驾驶
             </button>
           </view>
         </view>
       </view>
     </view>
 
-    <TipModal title="用户驾驶协议" v-model:visible="agree" key="1" @confirm="handleAgree">
+    <TipModal
+      title="用户驾驶协议"
+      v-model:visible="agree"
+      key="1"
+      @confirm="handleAgree"
+    >
       <template #content>
         <view class="custom-content">
           <text> 华制远控驾驶协议：</text>
@@ -116,16 +125,45 @@
       </template>
     </TipModal>
 
-
-    <TipModal title="输入密码" v-model:visible="pwdVisible" key="2" @confirm="handlePwd">
+    <TipModal
+      title="输入密码"
+      v-model:visible="pwdVisible"
+      key="2"
+      @confirm="handlePwd"
+    >
       <template #content>
         <view class="custom-input">
-			<input class="input" type="password" maxlength="6" 
-            placeholder="请输入密码" v-model="password" />
+          <input
+            class="input"
+            type="password"
+            maxlength="6"
+            placeholder="请输入密码"
+            v-model="password"
+          />
         </view>
       </template>
     </TipModal>
 
+    <TipModal
+      title="车辆预约"
+      v-model:visible="pwdVisible"
+      key="2"
+      @confirm="handlePwd"
+    >
+      <template #content>
+        <view class="custom-input">
+          <input
+            class="input"
+            type="password"
+            maxlength="6"
+            placeholder="请输入密码"
+            v-model="password"
+          />
+        </view>
+      </template>
+    </TipModal>
+
+    <BillingPopup ref="billingPopupRef" :billData="billingMethod" @confirm="onBillingConfirm" />
   </view>
 </template>
 
@@ -133,90 +171,90 @@
 import { ref, reactive } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
 import TipModal from "@/components/tip-modal/tip-modal.vue";
+import BillingPopup from "@/components/billing-popup/billing-popup.vue";
+import { GetVenueDetail, OrderCar } from "@/axios/index";
 // --- 1. 模拟数据 ---
-const stats = reactive({
-  totalQueue: 8,
-  onlineCars: 32,
-  drivingCars: 8,
+const stats = ref({
+  queue: 0,
+  online: 0,
+  drive: 0,
 });
 
 const agree = ref(false);
-const pwdVisible = ref(true);
-const password = ref('');
-
+const pwdVisible = ref(false);
+const password = ref("");
+const cfmPassword = ref("");
+const billingPopupRef = ref(null);
+const imageUrl = ref('')
+const billingMethod = ref()
 // 车辆列表数据
-const carList = ref([
-  {
-    id: 1,
-    name: "1号牧马人",
-    image: "https://via.placeholder.com/150", // 替换为真实图片URL
-    features: "黑色敞篷车，霸气甩尾",
-    speed: "30km/h",
-    battery: 90,
-    status: "idle", // idle: 空闲, queue: 排队中
-    queueCount: 0,
-  },
-  {
-    id: 2,
-    name: "1号牧马人",
-    image: "https://via.placeholder.com/150",
-    features: "黑色敞篷车，霸气甩尾",
-    speed: "30km/h",
-    battery: 90,
-    status: "queue",
-    queueCount: 1,
-  },
-  {
-    id: 3,
-    name: "1号牧马人",
-    image: "https://via.placeholder.com/150",
-    features: "黑色敞篷车，霸气甩尾",
-    speed: "30km/h",
-    battery: 90,
-    status: "idle",
-    queueCount: 0,
-  },
-]);
+const carList = ref([]);
 
 // --- 2. 页面生命周期 ---
 onLoad((options) => {
   // 这里可以根据 options.id 请求后台获取真实数据
-  console.log("页面加载，获取车辆列表...");
+
   uni.setNavigationBarTitle({
-    title: "车辆1",
+    title: uni.getStorageSync("carTitle"),
   });
+  GetVenueDetail({
+    venue_id: options.id,
+  })
+    .then((res) => {
+      const { code, data } = res;
+      stats.value.queue = data.queue;
+      stats.value.online = data.online;
+      stats.value.drive = data.drive;
+      imageUrl.value = data.venue_image?.[0]
+      // carList.value = data.vehicle?.filter((item) => item.vehicle_state !== 0);
+      carList.value = data.vehicle;
+      billingMethod.value = data.venue_config
+    })
+    .catch();
 });
 
 // --- 3. 交互逻辑 ---
 const handleDrive = (car) => {
-  if (car.status === "queue") {
+
+  // 用户协议
+  if (!uni.getStorageSync('agree')) {
+    agree.value = true;
+    return;
+  }
+  cfmPassword.value = car.password
+  if (car.is_password == 1) {
+    pwdVisible.value = true;
+    return
+  }
+  if (car.vehicle_state === "2") {
     // 理论上按钮已禁用，这里是双重保险
     uni.showToast({ title: "该车正在排队中", icon: "none" });
     return;
   }
+    billingPopupRef.value.open();
 
-  // 空闲状态点击
-  uni.showModal({
-    title: "确认驾驶",
-    content: `是否确认驾驶【${car.name}】？`,
-    success: function (res) {
-      if (res.confirm) {
-        console.log("用户点击确定，跳转驾驶页面或请求接口");
-        // 模拟操作
-        uni.showToast({ title: "连接车辆中...", icon: "loading" });
-        // uni.navigateTo({ url: '/pages/drive/index?id=' + car.id })
-      }
-    },
-  });
+};
+
+const handlePwd = () => {
+  if (password.value === cfmPassword.value) {
+    pwdVisible.value = false;
+    billingPopupRef.value.open();
+  } else {
+    uni.showToast({
+			title: '密码不正确',
+			icon: 'none'
+		});
+  }
+};
+
+const handleAgree = () => {
+  uni.setStorageSync('agree', true)
+  agree.value = false;
 };
 
 
-const handlePwd = () => {
-    pwdVisible.value = false;
-}
+const onBillingConfirm = () => {
 
-const handleAgree = () => {
-    agree.value = false
 }
 </script>
 
@@ -234,7 +272,7 @@ const handleAgree = () => {
 
   .banner-img {
     width: 100%;
-    height: 340rpx;
+    height: 340rpx !important;
     display: block;
   }
 
@@ -473,12 +511,19 @@ const handleAgree = () => {
 }
 
 .custom-input {
+  background: #f8f8f8;
+  border-radius: 16rpx;
+  .input {
+    height: 90rpx;
+    line-height: 1;
+  }
+}
+.custom-content {
 
-    background: #F8F8F8;
-    border-radius: 16rpx;
-    .input {
-        height: 90rpx;
-        line-height: 1;
-    }
+  font-family: PingFangSC, PingFang SC;
+  font-weight: 400;
+  font-size: 28rpx;
+  color: #333333;
+
 }
 </style>

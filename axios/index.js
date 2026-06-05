@@ -28,6 +28,10 @@ export function GetVenueDetail(params) {
   return post('/api/user/venue/detail', params)
 }
 
+// 预约驾驶
+export function OrderCar(params) {
+  return post('/api/user/reservation', params)
+}
 
 // 获取用户信息
 export function GetUserInfo(data) {

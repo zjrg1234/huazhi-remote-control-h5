@@ -14,7 +14,7 @@
         <!-- ✅ 内容插槽 -->
         <view class="modal-content">
           <slot name="content">
-            <text class="content-text">{{ content }}</text>
+            <view>{{ content }}</view>
           </slot>
         </view>
 
@@ -123,13 +123,6 @@ const onConfirm = () => {
   margin-bottom: 75rpx;
 }
 
-.content-text {
-  font-family: PingFangSC, PingFang SC;
-  font-weight: 400;
-  font-size: 28rpx;
-  color: #333333;
-  line-height: 1.6;
-}
 
 /* ========== 按钮组 ========== */
 .btn-group {

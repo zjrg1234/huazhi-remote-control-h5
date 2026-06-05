@@ -29,11 +29,7 @@
 
     <!-- 瀑布流列表区域 -->
     <view class="waterfall-container">
-
-
-
-       <view v-if="leftList.length === 0 && rightList.length === 0" class="empty-state">
-        
+       <view v-if="leftList.length === 0 && rightList.length === 0 && loading == false" class="empty-state"> 
         <text class="empty-text">暂无相关数据</text>
       </view>
       <!-- 左列 -->
@@ -151,13 +147,13 @@ const fetchData = async (isRefresh = false) => {
 
   try {
     // 模拟网络延迟
-    const {code,data} = await GetHomeDataList({
+    const {code,data:{venueList}} = await GetHomeDataList({
       type: currentCategory.value
     });
 
-    if (code == 200) {
+    if (code == 200 && venueList.length) {
        // 简单的左右分发逻辑
-      data.forEach((item, index) => {
+      venueList.forEach((item, index) => {
         if (index % 2 === 0) {
           leftList.value.push(item);
         } else {
@@ -165,9 +161,6 @@ const fetchData = async (isRefresh = false) => {
         }
       });
     }
-
-   
-
     if (data.length === 0) noMore.value = true;
     else page.value++;
   } catch (error) {
@@ -226,7 +219,8 @@ onReachBottom(() => {
 
 
 const handleCar = (item) => {
-  uni.navigateTo({ url: '/pages/car/details' })
+  uni.setStorageSync('carTitle', item.venue_name)
+  uni.navigateTo({ url: '/pages/car/details?id=' + item.id })
 }
 </script>
 
