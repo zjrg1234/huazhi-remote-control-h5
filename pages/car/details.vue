@@ -2,11 +2,7 @@
   <view class="page">
     <!-- 1. 顶部背景图与基础信息 -->
     <view class="header-section">
-      <image
-        class="banner-img"
-        :src="imageUrl"
-        mode="widthFix"
-      ></image>
+      <image class="banner-img" :src="imageUrl" mode="widthFix"></image>
       <view class="info-box">
         <view class="title-row">
           <text class="main-title">RC疯狂汽车城</text>
@@ -69,7 +65,11 @@
 
         <!-- 左侧图片区域 -->
         <view class="img-wrapper">
-          <image class="car-img" :src="car.vehicle_image" mode="aspectFill"></image>
+          <image
+            class="car-img"
+            :src="car.vehicle_image"
+            mode="aspectFill"
+          ></image>
           <view class="lock-mask" v-if="car.is_password == 1">
             <uni-icons type="locked" size="30" color="#ffffff"></uni-icons>
           </view>
@@ -96,11 +96,11 @@
             <!-- 按钮：根据状态改变样式 -->
             <button
               class="action-btn"
-              :class="{ 'btn-disabled': car.vehicle_state ==2 }"
+              :class="{ 'btn-disabled': car.vehicle_state == 2 }"
               :disabled="car.vehicle_state == 2"
               @click="handleDrive(car)"
             >
-               预约驾驶
+              预约驾驶
             </button>
           </view>
         </view>
@@ -150,20 +150,14 @@
       key="2"
       @confirm="handlePwd"
     >
-      <template #content>
-        <view class="custom-input">
-          <input
-            class="input"
-            type="password"
-            maxlength="6"
-            placeholder="请输入密码"
-            v-model="password"
-          />
-        </view>
-      </template>
+      <template #content> 111 </template>
     </TipModal>
 
-    <BillingPopup ref="billingPopupRef" :billData="billingMethod" @confirm="onBillingConfirm" />
+    <BillingPopup
+      ref="billingPopupRef"
+      :billData="billingMethod"
+      @confirm="onBillingConfirm"
+    />
   </view>
 </template>
 
@@ -185,8 +179,16 @@ const pwdVisible = ref(false);
 const password = ref("");
 const cfmPassword = ref("");
 const billingPopupRef = ref(null);
-const imageUrl = ref('')
-const billingMethod = ref()
+const imageUrl = ref("");
+const billingMethod = ref();
+
+const selectCar = ref({
+  vehicle_id: "",
+  vehicle_name: "",
+  venue_id: "",
+  billing_rules: "",
+  venue_name: ''
+});
 // 车辆列表数据
 const carList = ref([]);
 
@@ -205,34 +207,37 @@ onLoad((options) => {
       stats.value.queue = data.queue;
       stats.value.online = data.online;
       stats.value.drive = data.drive;
-      imageUrl.value = data.venue_image?.[0]
+      imageUrl.value = data.venue_image?.[0];
       // carList.value = data.vehicle?.filter((item) => item.vehicle_state !== 0);
       carList.value = data.vehicle;
-      billingMethod.value = data.venue_config
+      billingMethod.value = data.venue_config;
+      selectCar.value.venue_id = options.id;
+      selectCar.value.venue_name =  data.venue_name;
     })
     .catch();
 });
 
 // --- 3. 交互逻辑 ---
 const handleDrive = (car) => {
-
   // 用户协议
-  if (!uni.getStorageSync('agree')) {
+  if (!uni.getStorageSync("agree")) {
     agree.value = true;
     return;
   }
-  cfmPassword.value = car.password
+  cfmPassword.value = car.password;
   if (car.is_password == 1) {
     pwdVisible.value = true;
-    return
+    return;
   }
   if (car.vehicle_state === "2") {
     // 理论上按钮已禁用，这里是双重保险
     uni.showToast({ title: "该车正在排队中", icon: "none" });
     return;
   }
-    billingPopupRef.value.open();
 
+  (selectCar.value.vehicle_id = car.id),
+    (selectCar.value.vehicle_name = car.vehicle_name),
+    billingPopupRef.value.open();
 };
 
 const handlePwd = () => {
@@ -241,21 +246,59 @@ const handlePwd = () => {
     billingPopupRef.value.open();
   } else {
     uni.showToast({
-			title: '密码不正确',
-			icon: 'none'
-		});
+      title: "密码不正确",
+      icon: "none",
+    });
   }
 };
 
 const handleAgree = () => {
-  uni.setStorageSync('agree', true)
+  uni.setStorageSync("agree", true);
   agree.value = false;
 };
 
+const flag = ref(true);
+const onBillingConfirm = (params) => {
+  if (!flag) {
+    return;
+  }
+  flag.value = false;
+  const min = Math.pow(10, 7); // 10000000
+  const max = Math.pow(10, 8) - 1; // 99999999
+  const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+  OrderCar({
+    vehicle_id: selectCar.value.vehicle_id,
+    vehicle_name: selectCar.value.vehicle_name,
+    venue_id: selectCar.value.venue_id,
+    venue_name: selectCar.value.venue_name,
+    billing_rules: params.selectedOpt,
+    payment_type: params.unitType,
+    billing_method: params.selectType == -1 ? 0 : 1,
+    app_transmitter_id: randomNumber
+  })
+    .then(res => {
 
-const onBillingConfirm = () => {
+    })
+    .catch()
+    .finally(() => {
+      flag.value = true;
+    });
 
+    // {
+    // "code": 200,
+    // "msg": "预约成功",
+    // "data": {
+    //     "vehicle_name": "挖机",
+    //     "time": "2026-06-05 16:54:09",
+    //     "payment_type": 1,
+    //     "billing_method": 0,
+    //     "order_no": "ZKSJ20260605165409357W5FY",
+    //     "transmitter_id": 18812835,
+    //     "people_number": 0
+    // },
+    // "traceId": "6a228eb153fc3"
 }
+};
 </script>
 
 <style lang="scss" scoped>
@@ -519,11 +562,9 @@ const onBillingConfirm = () => {
   }
 }
 .custom-content {
-
   font-family: PingFangSC, PingFang SC;
   font-weight: 400;
   font-size: 28rpx;
   color: #333333;
-
 }
 </style>

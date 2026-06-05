@@ -14,23 +14,23 @@
         <view class="type-selector">
           <view
             class="type-item"
-            :class="{ active: currentUnit === 'battery' }"
-            @click="switchUnit('battery')"
+            :class="{ active: currentUnit === 1 }"
+            @click="switchUnit(1)"
           >
             <view
               class="radio-circle"
-              :class="{ checked: currentUnit === 'battery' }"
+              :class="{ checked: currentUnit === 1 }"
             ></view>
             <text>电池</text>
           </view>
           <view
             class="type-item"
-            :class="{ active: currentUnit === 'energy' }"
-            @click="switchUnit('energy')"
+            :class="{ active: currentUnit === 2 }"
+            @click="switchUnit(2)"
           >
             <view
               class="radio-circle"
-              :class="{ checked: currentUnit === 'energy' }"
+              :class="{ checked: currentUnit === 2 }"
             ></view>
             <text>能量</text>
           </view>
@@ -44,7 +44,7 @@
         <view class="grid-box">
           <view
             class="option-card"
-            :class="{ selected: selectedOption === -1 }"
+            :class="{ selected: selectedIndex == -1 }"
             @click="
               selectOption(
                 -1,
@@ -70,7 +70,7 @@
             v-for="(item, index) in billData.one_billing"
             :key="index"
             class="option-card"
-            :class="{ selected: selectedOption === index }"
+            :class="{ selected: selectedIndex === index }"
             @click="selectOption(index, item.time, item.battery)"
           >
             {{ item.time }}分钟{{ item.battery }}{{ unitText }}
@@ -79,10 +79,13 @@
       </view>
 
       <view class="card">
-        <text class="card-title">我的{{unitText}}</text>
-        <text class="battery-num" v-if="currentUnit.value === 'battery'">{{ userInfo.wallet.balance }}</text>
-        <text class="battery-num" v-if="currentUnit.value !== 'battery'">{{ userInfo.wallet.energy }}</text>
-        
+        <text class="card-title">我的{{ unitText }}</text>
+        <text class="battery-num" v-if="currentUnit.value === 1">{{
+          userInfo.wallet.balance
+        }}</text>
+        <text class="battery-num" v-if="currentUnit.value !== 1">{{
+          userInfo.wallet.energy
+        }}</text>
       </view>
 
       <!-- 底部按钮 -->
@@ -93,32 +96,31 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import {
-		useUserStore
-	} from '@/store/modules/user'
-	const userStore = useUserStore()
+import { useUserStore } from "@/store/modules/user";
+const userStore = useUserStore();
 const props = defineProps(["billData"]);
 const emit = defineEmits(["confirm"]);
 
-
 const popupRef = ref(null);
-const currentUnit = ref("energy"); // 默认选中 'energy' (能量) 或 'battery' (电池)
+const currentUnit = ref(1); // 默认选中 2 (能量) 或 1 (电池)
 
-
-	const userInfo = computed(() => {
-		return userStore.getUserInfo()
-	})
+const userInfo = computed(() => {
+  return userStore.getUserInfo();
+});
 // 当前显示的文本后缀
-const unitText = computed(() =>
-  currentUnit.value === "battery" ? "电池" : "能量"
-);
+const unitText = computed(() => (currentUnit.value === 1 ? "电池" : "能量"));
 
-// 选中的结果对象
-const selectedOption = ref(-1);
+const selectedIndex = ref(-1);
+const selectedOpt = ref({});
 
 // 打开弹窗
 const open = () => {
-  selectedOption.value = -1;
+  selectedIndex.value = -1;
+
+  selectedOpt.value = {
+    time: props.billData.time_billing.time,
+    battery: props.billData.time_billing.battery,
+  };
   popupRef.value.open();
 };
 
@@ -134,16 +136,20 @@ const switchUnit = (type) => {
 
 // 选择具体的时长卡片
 const selectOption = (id, label, cost) => {
-  selectedOption.value = id;
+  selectedIndex.value = id;
+  selectedOpt.value = {
+    time: label,
+    battery: cost,
+  };
 };
 
 // 点击确定
 const handleConfirm = () => {
   const result = {
-    unitType: currentUnit.value, // 'battery' or 'energy'
-    ...selectedOption.value,
+    unitType: currentUnit.value, // 1 or 2
+    selectType: selectedIndex.value,
+    selectedOpt: selectedOpt.value,
   };
-  console.log("用户选择:", result);
   emit("confirm", result);
   close();
 };
@@ -314,7 +320,6 @@ defineExpose({
 
 .card {
   background-color: #fff;
-
 
   margin-bottom: 20rpx;
 
