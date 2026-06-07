@@ -5,10 +5,10 @@
       <image class="banner-img" :src="imageUrl" mode="widthFix"></image>
       <view class="info-box">
         <view class="title-row">
-          <text class="main-title">{{detailData.venue_name}}</text>
-          <text class="tag">{{detailData.labels}}</text>
+          <text class="main-title">{{ detailData.venue_name }}</text>
+          <text class="tag">{{ detailData.labels }}</text>
         </view>
-        <text class="time-text">营业时间：{{detailData.start_time}}~{{detailData.end_time}}</text>
+        <text class="time-text">营业时间：{{ detailData.start_time }}~{{ detailData.end_time }}</text>
       </view>
     </view>
 
@@ -52,10 +52,7 @@
     <view class="car-list">
       <view class="car-card" v-for="car in carList" :key="car.id">
         <!-- 状态标签 -->
-        <view
-          class="status-tag"
-          :class="car.vehicle_state === '1' ? 'tag-green' : 'tag-blue'"
-        >
+        <view class="status-tag" :class="car.vehicle_state === '1' ? 'tag-green' : 'tag-blue'">
           {{
             car.vehicle_state === "1"
               ? "空闲"
@@ -65,11 +62,7 @@
 
         <!-- 左侧图片区域 -->
         <view class="img-wrapper">
-          <image
-            class="car-img"
-            :src="car.vehicle_image"
-            mode="aspectFill"
-          ></image>
+          <image class="car-img" :src="car.vehicle_image" mode="aspectFill"></image>
           <view class="lock-mask" v-if="car.is_password == 1">
             <uni-icons type="locked" size="30" color="#ffffff"></uni-icons>
           </view>
@@ -94,12 +87,8 @@
           <view class="bottom-row">
             <text class="battery">车辆电量：{{ car.vehicle_battery }}</text>
             <!-- 按钮：根据状态改变样式 -->
-            <button
-              class="action-btn"
-              :class="{ 'btn-disabled': car.vehicle_state == 2 }"
-              :disabled="car.vehicle_state == 2"
-              @click="handleDrive(car)"
-            >
+            <button class="action-btn" :class="{ 'btn-disabled': car.vehicle_state == 2 }"
+              :disabled="car.vehicle_state == 2" @click="handleDrive(car)">
               预约驾驶
             </button>
           </view>
@@ -107,75 +96,51 @@
       </view>
     </view>
 
-    <TipModal
-      title="用户驾驶协议"
-      v-model:visible="agree"
-      key="1"
-      @confirm="handleAgree"
-    >
+    <TipModal title="用户驾驶协议" v-model:visible="agree" key="1" @confirm="handleAgree">
       <template #content>
         <view class="custom-content">
-          <text> 华制远控驾驶协议：</text>
-
-          用户充值消费驾驶玩后不支持退余额， 充值的金额只能在平台消费，
-          如排队没玩到车保留到后面场地有车继续消费。
-          预约会扣费，如没排队上预约取消会自动退回账户里
-          如有疑问联系客服。禁止未成年充值使用
+          <view class="title">
+            华制远控驾驶协议：
+          </view>
+          <view class="cont">
+            用户充值消费驾驶玩后不支持退余额， 充值的金额只能在平台消费，
+            如排队没玩到车保留到后面场地有车继续消费。
+          </view>
+          <view class="cont">
+            预约会扣费，如没排队上预约取消会自动退回账户里
+            如有疑问联系客服。禁止未成年充值使用
+          </view>
         </view>
       </template>
     </TipModal>
 
-    <TipModal
-      title="输入密码"
-      v-model:visible="pwdVisible"
-      key="2"
-      @confirm="handlePwd"
-    >
+    <TipModal title="输入密码" v-model:visible="pwdVisible" key="2" @confirm="handlePwd">
       <template #content>
         <view class="custom-input">
-          <input
-            class="input"
-            type="password"
-            maxlength="6"
-            placeholder="请输入密码"
-            v-model="password"
-          />
+          <input class="input" type="password" maxlength="6" placeholder="请输入密码" v-model="password" />
         </view>
       </template>
     </TipModal>
 
-    <TipModal
-      title="车辆预约"
-      v-model:visible="orderVisible"
-      key="2"
-      @confirm="handlePwd"
-    >
+    <TipModal title="车辆预约" v-model:visible="orderVisible" key="2" @confirm="gotoUrl">
       <template #content>
         <view class="order-cont">
           <view class="img">
-            <image
-              class="car-image"
-              :src="selectCar.vehicle_image"
-              mode="aspectFill"
-            />
+            <image class="car-image" :src="selectCar.vehicle_image" mode="aspectFill" />
           </view>
           <!-- 注意：请将 src 替换为你实际的图片路径或网络地址 -->
 
           <!-- 3. 主要状态文本 -->
-          <text class="main-status">已成功预约 {{orderCar.vehicle_name}} 车辆</text>
-          <text class="sub-status"
-            >当前还有 {{ orderCar.people_number }} 人排队，请耐心等待</text
-          >
+          <text class="main-status">已成功预约 {{ orderCar.vehicle_name }} 车辆</text>
+          <text class="sub-status">当前还有 {{ orderCar.people_number }} 人排队，请耐心等待</text>
 
           <!-- 4. 详情信息卡片 (灰色背景区域) -->
           <view class="info-card">
             <view class="info-item">
               <text class="label">预约类型：</text>
-              <text class="value"
-                >按{{
-                  orderCar.billing_method == "0" ? "时间" : "次"
-                }}计费</text
-              >
+              <text class="value">按{{
+                orderCar.billing_method == "0" ? "时间" : "次"
+              }}计费</text>
             </view>
             <view class="info-item">
               <text class="label">预约时间：</text>
@@ -189,11 +154,7 @@
       </template>
     </TipModal>
 
-    <BillingPopup
-      ref="billingPopupRef"
-      :billData="billingMethod"
-      @confirm="onBillingConfirm"
-    />
+    <BillingPopup ref="billingPopupRef" :billData="billingMethod" @confirm="onBillingConfirm" />
   </view>
 </template>
 
@@ -218,7 +179,12 @@ const cfmPassword = ref("");
 const billingPopupRef = ref(null);
 const imageUrl = ref("");
 const billingMethod = ref();
-const detailData = ref();
+const detailData = ref({
+  venue_name: '',
+  labels: '',
+  start_time: '',
+  end_time: '',
+});
 
 const selectCar = ref({
   vehicle_id: "",
@@ -253,7 +219,7 @@ onLoad((options) => {
   })
     .then((res) => {
       const { code, data } = res;
-      detailData.value = {...data};
+      detailData.value = { ...data };
       stats.value.queue = data.queue;
       stats.value.online = data.online;
       stats.value.drive = data.drive;
@@ -286,10 +252,10 @@ const handleDrive = (car) => {
   }
 
 
-    selectCar.value.vehicle_id = car.id;
-    selectCar.value.vehicle_name = car.vehicle_name;
-    selectCar.value.vehicle_image = car.vehicle_image;
-  
+  selectCar.value.vehicle_id = car.id;
+  selectCar.value.vehicle_name = car.vehicle_name;
+  selectCar.value.vehicle_image = car.vehicle_image;
+
   billingPopupRef.value.open();
 };
 
@@ -342,6 +308,10 @@ const onBillingConfirm = (params) => {
       flag.value = true;
     });
 };
+
+const gotoUrl = () => {
+  uni.navigateTo({ url: '/pages/mine/reservation' })
+}
 </script>
 
 <style lang="scss" scoped>
@@ -549,6 +519,7 @@ const onBillingConfirm = (params) => {
       font-weight: 400;
       font-size: 20rpx;
       color: #555555;
+
       .label {
         width: 100rpx;
       }
@@ -599,16 +570,25 @@ const onBillingConfirm = (params) => {
 .custom-input {
   background: #f8f8f8;
   border-radius: 16rpx;
+
   .input {
     height: 90rpx;
     line-height: 1;
   }
 }
+
 .custom-content {
   font-family: PingFangSC, PingFang SC;
   font-weight: 400;
   font-size: 28rpx;
   color: #333333;
+  .title {
+    font-weight: 600;
+  }
+  .cont {
+    display: block;
+    text-align: left;
+  }
 }
 
 .order-cont {
@@ -618,6 +598,7 @@ const onBillingConfirm = (params) => {
     color: #333333;
     margin-bottom: 30rpx;
   }
+
   .img {
     text-align: center;
   }
@@ -626,9 +607,11 @@ const onBillingConfirm = (params) => {
   .car-image {
     width: 160rpx;
     height: 160rpx;
-    border-radius: 50%; /* 圆形图片 */
+    border-radius: 50%;
+    /* 圆形图片 */
     margin-bottom: 20rpx;
-    background-color: #f0f0f0; /* 占位背景色 */
+    background-color: #f0f0f0;
+    /* 占位背景色 */
   }
 
   /* 主状态文本 */
@@ -651,7 +634,8 @@ const onBillingConfirm = (params) => {
   /* 详情信息卡片 */
   .info-card {
     width: 100%;
-    background-color: #f7f8fa; /* 浅灰背景 */
+    background-color: #f7f8fa;
+    /* 浅灰背景 */
     border-radius: 12rpx;
     padding: 20rpx;
     box-sizing: border-box;

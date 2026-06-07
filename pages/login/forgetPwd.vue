@@ -163,6 +163,8 @@ page {
 		flex: 1;
 		font-size: 28rpx;
 		background: transparent;
+		height: 96rpx;
+
 	}
 }
 
