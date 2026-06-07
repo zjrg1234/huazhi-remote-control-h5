@@ -99,16 +99,17 @@
     <TipModal title="用户驾驶协议" v-model:visible="agree" key="1" @confirm="handleAgree">
       <template #content>
         <view class="custom-content">
-          <view class="title">
-            华制远控驾驶协议：
+          <view class="cont">
+            禁止未成年人充值使用。
           </view>
           <view class="cont">
-            用户充值消费驾驶玩后不支持退余额， 充值的金额只能在平台消费，
-            如排队没玩到车保留到后面场地有车继续消费。
+            用户充值消费驾驶后不支持退余额，充值的金额只能在平台消费，如果排队没玩到车，保留到后面场地有车继续消费。
           </view>
           <view class="cont">
-            预约会扣费，如没排队上预约取消会自动退回账户里
-            如有疑问联系客服。禁止未成年充值使用
+            车辆预约会扣费，如没排队上，预约取消会自动退回账户里。
+          </view>
+          <view class="cont">
+            如有疑问请联系客服。
           </view>
         </view>
       </template>
@@ -140,7 +141,7 @@
               <text class="label">预约类型：</text>
               <text class="value">按{{
                 orderCar.billing_method == "0" ? "时间" : "次"
-              }}计费</text>
+                }}计费</text>
             </view>
             <view class="info-item">
               <text class="label">预约时间：</text>
@@ -175,7 +176,6 @@ const agree = ref(false);
 const pwdVisible = ref(false);
 const orderVisible = ref(false);
 const password = ref("");
-const cfmPassword = ref("");
 const billingPopupRef = ref(null);
 const imageUrl = ref("");
 const billingMethod = ref();
@@ -204,6 +204,18 @@ const orderCar = ref({
   transmitter_id: 0,
   people_number: 0,
 });
+
+const car = ref({
+  id: "",
+  vehicle_id: "",
+  vehicle_name: "",
+  venue_id: "",
+  billing_rules: "",
+  venue_name: "",
+  vehicle_image: '',
+  password: ''
+});
+
 // 车辆列表数据
 const carList = ref([]);
 
@@ -234,34 +246,21 @@ onLoad((options) => {
 });
 
 // --- 3. 交互逻辑 ---
-const handleDrive = (car) => {
+const handleDrive = (item) => {
   // 用户协议
-  if (!uni.getStorageSync("agree")) {
-    agree.value = true;
-    return;
-  }
-  cfmPassword.value = car.password;
-  if (car.is_password == 1) {
-    pwdVisible.value = true;
-    return;
-  }
-  if (car.vehicle_state === "2") {
-    // 理论上按钮已禁用，这里是双重保险
-    uni.showToast({ title: "该车正在排队中", icon: "none" });
-    return;
-  }
+  agree.value = true;
+  car.value = { ...item }
+  return;
 
-
-  selectCar.value.vehicle_id = car.id;
-  selectCar.value.vehicle_name = car.vehicle_name;
-  selectCar.value.vehicle_image = car.vehicle_image;
-
-  billingPopupRef.value.open();
 };
 
 const handlePwd = () => {
-  if (password.value === cfmPassword.value) {
+  // 输入的密码跟返回的密码
+  if (password.value === car.value.password) {
     pwdVisible.value = false;
+    selectCar.value.vehicle_id = car.value.id;
+    selectCar.value.vehicle_name = car.value.vehicle_name;
+    selectCar.value.vehicle_image = car.value.vehicle_image;
     billingPopupRef.value.open();
   } else {
     uni.showToast({
@@ -272,8 +271,20 @@ const handlePwd = () => {
 };
 
 const handleAgree = () => {
-  uni.setStorageSync("agree", true);
   agree.value = false;
+  if (car.value.is_password == 1) {
+    pwdVisible.value = true;
+    return;
+  }
+  if (car.vehicle_state === "2") {
+    // 理论上按钮已禁用，这里是双重保险
+    uni.showToast({ title: "该车正在排队中", icon: "none" });
+    return;
+  }
+  selectCar.value.vehicle_id = car.value.id;
+  selectCar.value.vehicle_name = car.value.vehicle_name;
+  selectCar.value.vehicle_image = car.value.vehicle_image;
+  billingPopupRef.value.open();
 };
 
 const flag = ref(true);
@@ -583,9 +594,11 @@ const gotoUrl = () => {
   font-weight: 400;
   font-size: 28rpx;
   color: #333333;
+
   .title {
     font-weight: 600;
   }
+
   .cont {
     display: block;
     text-align: left;

@@ -5,6 +5,10 @@
       <image :src="imgUrl" mode="widthFix" class="banner-img" lazy-load></image>
     </view>
 
+    <!-- <view>
+      <button @click="test">测试</button>
+    </view> -->
+
     <!-- 分类导航栏 (Sticky 吸顶 + 横向滚动) -->
     <view class="sticky-nav-wrapper">
       <scroll-view
@@ -119,7 +123,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import { onReachBottom, onPullDownRefresh, onLoad } from "@dcloudio/uni-app";
+import { onLoad } from "@dcloudio/uni-app";
 import { throttle } from "@/utils/system.js"; // 引用封装好的节流函数
 import { GetHomeBanner, GetHomeTabTitle, GetHomeDataList } from "@/axios/index";
 // --- 数据定义 ---
@@ -132,6 +136,10 @@ const page = ref(1);
 const loading = ref(false);
 const noMore = ref(false);
 const imgUrl = ref("");
+
+const test = () => {
+  
+};
 
 // --- 模拟接口请求 ---
 const fetchData = async (isRefresh = false) => {
@@ -161,8 +169,7 @@ const fetchData = async (isRefresh = false) => {
         }
       });
     }
-    if (venueList.length === 0) noMore.value = true;
-    else page.value++;
+    
   } catch (error) {
     console.error("获取数据失败", error);
   } finally {
@@ -189,7 +196,6 @@ const loadMore = throttle(() => {
 // --- 生命周期与监听 ---
 onMounted(() => {
   fetchData();
-  console.log(2);
 });
 
 onLoad(() => {
@@ -208,14 +214,14 @@ onLoad(() => {
 });
 
 // 下拉刷新
-onPullDownRefresh(() => {
-  fetchData(true);
-});
+// onPullDownRefresh(() => {
+//   fetchData(true);
+// });
 
 // 触底加载
-onReachBottom(() => {
-  loadMore();
-});
+// onReachBottom(() => {
+//   loadMore();
+// });
 
 
 const handleCar = (item) => {
@@ -304,6 +310,7 @@ const handleCar = (item) => {
 .waterfall-container {
   display: flex;
   padding: 10rpx;
+  padding-top: 20rpx;
   gap: 10rpx;
   /* 列间距 */
   background-color: #fff;
