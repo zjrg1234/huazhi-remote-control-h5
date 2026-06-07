@@ -71,3 +71,14 @@ export function  AppealOrderNo(data) {
 	return post('/api/user/complain',data)
 }
 
+// 预约
+export function  GetReservationList(data) {
+	return post('/api/user/reservation/list',data)
+}
+
+export function  StartDriving(data) {
+	return post('/api/start/driving',data)
+}
+
+
+

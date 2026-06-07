@@ -310,6 +310,7 @@ const onBillingConfirm = (params) => {
 };
 
 const gotoUrl = () => {
+  orderVisible.value = false
   uni.navigateTo({ url: '/pages/mine/reservation' })
 }
 </script>

@@ -26,16 +26,31 @@
     <view class="btn-wrap">
       <button class="confirm-btn common-btn" @click="confirm">确定</button>
     </view>
+
+    <TipModal title="提示" v-model:visible="tipVisible" key="2" @confirm="handleConfirm">
+      <template #content>
+        <view>
+          <view class="text">变更专区后您所有的账户数据不会转移到新的专区（您稍后也可自行变更到当前专区）</view>
+          <view class="text">确定变更到专区{{ name }}吗?</view>
+        </view>
+      </template>
+    </TipModal>
   </view>
 </template>
 
 <script setup>
 import { onMounted, ref } from 'vue'
 import { GetSpecialList, ChangeSpecialList } from "@/axios/mine.js"
+import TipModal from "@/components/tip-modal/tip-modal.vue";
 
 import { onLoad, onUnload, onReachBottom, onShareTimeline } from "@dcloudio/uni-app"
+
+
+
 const list = ref([])
 const selected = ref(0)
+const name = ref('')
+const tipVisible = ref(false)
 import {
   useUserStore
 } from '@/store/modules/user'
@@ -77,8 +92,18 @@ const getSpecialList = async () => {
   if (queryParams.size > res.data.length) noData.value = true;
 }
 
+
 const confirm = () => {
+  if (userStore.areaId == selected.value) return
+  const obj = list.value.find(item => item.id == selected.value)
+  name.value = obj.agent_name
+  tipVisible.value = true;
+}
+
+const handleConfirm = () => {
   const obj = { special_id: selected.value }
+  const obj1 = list.value.find(item => item.id == selected.value)
+  console.log(obj1)
   ChangeSpecialList(obj).then(res => {
     if (res.code == 200) {
       userStore.setAreaId(selected.value)
@@ -87,8 +112,7 @@ const confirm = () => {
     } else {
       uni.showToast({ title: res.msg, icon: 'error' })
     }
-  }).catch()
-
+  });
 }
 </script>
 
@@ -216,5 +240,13 @@ const confirm = () => {
     font-size: 32rpx;
     color: $uni-color-1;
   }
+}
+
+.text {
+  text-align: left;
+  color: #333;
+  font-family: PingFangSC, PingFang SC;
+  font-weight: 400;
+  font-size: 32rpx;
 }
 </style>

@@ -161,7 +161,7 @@ const fetchData = async (isRefresh = false) => {
         }
       });
     }
-    if (data.length === 0) noMore.value = true;
+    if (venueList.length === 0) noMore.value = true;
     else page.value++;
   } catch (error) {
     console.error("获取数据失败", error);
