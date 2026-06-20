@@ -35,7 +35,7 @@
 				</view>
 				<view class="info-line">
 					<text class="label">预约类型：</text>
-					<text class="value">{{ payFillText(item.billing_method) }}</text>
+					<text class="value">{{ billingMethod(item.billing_method) }}</text>
 				</view>
 				<view class="info-line">
 					<text class="label">预约场地：</text>
@@ -48,13 +48,13 @@
 
 				<!-- 右侧按钮 -->
 				<view class="btn-wrap" v-if="item.reservation_status == 1 || item.reservation_status == 2">
-					<button class="btn" @click="handleBtnClick(item)">
+					<button class="btn" @click="handleAction(item)">
 						开始驾驶
 					</button>
 				</view>
 
 				<view class="btn-wrap" v-if="item.reservation_status == 4 && item.is_reservation == 1">
-					<button class="btn btn-info" @click="handleBtnClick(item)">
+					<button class="btn btn-info" @click="handleAppeal(item)">
 						申诉
 					</button>
 				</view>
@@ -79,6 +79,7 @@ import { ref } from 'vue'
 import { onLoad, onPullDownRefresh, onReachBottom } from '@dcloudio/uni-app'
 import { formatTime } from '@/utils/date.js'
 import { GetReservationList } from "@/axios/mine"
+import { billingMethod } from "@/utils/filter.js"
 
 // 状态映射：预约状态 1已预约 2待使用 3使用中 4已完成 5已取消
 const statusMap = {
@@ -190,9 +191,11 @@ const copyOrderNo = (text) => {
 		}
 	})
 }
+const handleAction = (item) => {
 
+}
 // 按钮点击事件
-const handleBtnClick = (item) => {
+const handleAppeal = (item) => {
 	// 申诉
 	if (item.reservation_status == 4 && item.is_reservation == 1) {
 		uni.navigateTo({
@@ -201,12 +204,7 @@ const handleBtnClick = (item) => {
 	}
 }
 
-const payFillText = (type) => {
-	return {
-		0: "按时间计费",
-		1: "按次计费"
-	}[type] || ""
-}
+
 </script>
 
 <style lang="scss" scoped>

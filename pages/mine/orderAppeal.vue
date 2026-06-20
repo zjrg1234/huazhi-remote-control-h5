@@ -26,7 +26,7 @@
 
             <!-- 申诉内容输入 -->
             <view class="form-item">
-                <textarea class="content-textarea" v-model="content" placeholder="请把你申诉的内容反馈给我们" />
+                <textarea class="content-textarea" v-model="content" placeholder="请把您的申诉内容反馈给我们" />
             </view>
 
             <text class="hint">提示：由于车辆或车主原因导致不能驾驶可以向平台发起申诉</text>
