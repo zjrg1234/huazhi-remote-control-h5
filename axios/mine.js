@@ -82,3 +82,9 @@ export function  StartDriving(data) {
 
 
 
+
+
+export function  ChangeHeadImg(data) {
+	return post('/api/user/change/head/shot',data)
+}
+
