@@ -122,7 +122,7 @@
 			"path": "pages/register/register",
 			"style": {
 				"navigationBarTitleText": "注册新账号",
-				"navigationStyle": ""
+				"navigationStyle": "custom"
 			}
 		},
 		{
@@ -142,6 +142,12 @@
 			"path": "pages/car/details",
 			"style": {
 				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/mine/editProfile",
+			"style": {
+				"navigationBarTitleText": "个人简介"
 			}
 		}
 	],

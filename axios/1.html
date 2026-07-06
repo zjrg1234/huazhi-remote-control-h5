@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>竖屏模拟横屏 Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+
+    /* ====== 核心：竖屏时旋转容器 ====== */
+    @media screen and (orientation: portrait) {
+      .landscape-page {
+        position: absolute;
+        width: 100vh;    /* 屏幕高度 → 旋转后的宽度 */
+        height: 100vw;   /* 屏幕宽度 → 旋转后的高度 */
+        top: 0;
+        left: 100vw;
+        transform: rotate(90deg);
+        transform-origin: 0% 0%;
+        overflow: hidden;
+      }
+    }
+
+    /* 横屏时正常布局 */
+    @media screen and (orientation: landscape) {
+      .landscape-page {
+        position: absolute;
+        width: 100vw;
+        height: 100vh;
+        top: 0;
+        left: 0;
+      }
+    }
+
+    /* ====== 以下是横屏页面的内容样式 ====== */
+    .landscape-page {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 顶部导航栏 */
+    .nav-bar {
+      height: 8%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 4%;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-bar .title {
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .nav-bar .back-btn {
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    /* 主体内容区 */
+    .main-content {
+      flex: 1;
+      display: flex;
+      padding: 3%;
+      gap: 3%;
+    }
+
+    /* 左侧视频区 */
+    .video-area {
+      flex: 2;
+      background: #000;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .video-area::after {
+      content: '▶';
+      font-size: 48px;
+      opacity: 0.8;
+    }
+
+    /* 右侧信息区 */
+    .info-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3%;
+    }
+
+    .info-card {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 16px;
+      color: #fff;
+    }
+
+    .info-card .card-title {
+      font-size: 14px;
+      opacity: 0.7;
+      margin-bottom: 8px;
+    }
+
+    .info-card .card-value {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .info-card .card-desc {
+      font-size: 12px;
+      opacity: 0.5;
+      margin-top: 4px;
+    }
+
+    /* 底部操作栏 */
+    .bottom-bar {
+      height: 10%;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .action-btn {
+      padding: 8px 24px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      color: #fff;
+      font-size: 14px;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .action-btn.primary {
+      background: #fff;
+      color: #764ba2;
+      border: none;
+      font-weight: bold;
+    }
+
+    /* 提示标签 */
+    .orientation-hint {
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      padding: 6px 16px;
+      border-radius: 16px;
+      font-size: 12px;
+      z-index: 9999;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 根容器：加上 landscape-page class 即可 -->
+  <div class="landscape-page">
+
+    <!-- 顶部导航 -->
+    <div class="nav-bar">
+      <span class="back-btn">← 返回</span>
+      <span class="title">横屏页面 Demo</span>
+      <span class="back-btn" style="opacity:0">占位</span>
+    </div>
+
+    <!-- 主体内容 -->
+    <div class="main-content">
+      <!-- 左侧：视频播放区 -->
+      <div class="video-area"></div>
+
+      <!-- 右侧：信息卡片 -->
+      <div class="info-area">
+        <div class="info-card">
+          <div class="card-title">观看人数</div>
+          <div class="card-value">12,580</div>
+          <div class="card-desc">较昨日 +8.3%</div>
+        </div>
+        <div class="info-card">
+          <div class="card-title">互动量</div>
+          <div class="card-value">3,246</div>
+          <div class="card-desc">点赞 + 评论 + 分享</div>
+        </div>
+        <div class="info-card">
+          <div class="card-title">转化率</div>
+          <div class="card-value">24.6%</div>
+          <div class="card-desc">目标：30%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部操作栏 -->
+    <div class="bottom-bar">
+      <button class="action-btn">分享</button>
+      <button class="action-btn primary">开始直播</button>
+      <button class="action-btn">设置</button>
+    </div>
+
+  </div>
+
+  <!-- 当前方向提示（开发调试用） -->
+  <div class="orientation-hint" id="hint"></div>
+
+  <script>
+    // 开发调试：显示当前方向
+    function updateHint() {
+      const isPortrait = window.innerHeight > window.innerWidth;
+      document.getElementById('hint').textContent =
+        isPortrait ? '当前：竖屏（已自动旋转为横屏）' : '当前：横屏（原生横屏）';
+    }
+    updateHint();
+    window.addEventListener('resize', updateHint);
+  </script>
+
+</body>
+</html>

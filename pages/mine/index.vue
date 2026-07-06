@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
-		<!-- #ifndef H5 -->
-		<custom-nav-bar></custom-nav-bar>
+		<!-- #ifndef MP-WEIXIN -->
+		<custom-nav-bar title="我的"></custom-nav-bar>
 		<!-- #endif -->
 
 		<view class="bg-image">
@@ -216,7 +216,9 @@ const openService = () => {
 };
 
 const gotoProfile = () => {
-
+ uni.navigateTo({
+ 	url: "/pages/mine/editProfile",
+ });
 }
 
 
@@ -314,7 +316,7 @@ const uploadFile = async (filePath) => {
 .header {
 	position: relative;
 	z-index: 1;
-	top: 48rpx;
+	top: 80rpx;
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-start;

@@ -9,7 +9,7 @@ export default defineConfig({
     proxy: {           // 为开发服务器配置自定义代理规则
        // 带选项写法：http://localhost:5173/api/posts -> http://jsonplaceholder.typicode.com/posts
       "/api": {
-        target: "https://api.zksjyk.cn", // 目标接口
+        target: "https://htzksj.zksjyk.cn", // 目标接口
         changeOrigin: true,            // 是否换源
         rewrite: (path) => path.replace(/^\/api/, ""),
       }

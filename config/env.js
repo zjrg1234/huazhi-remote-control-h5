@@ -1,13 +1,13 @@
 // 多环境域名配置
 const envConfig = {
   development: {
-    baseUrl: 'https://api.zksjyk.cn'
+    baseUrl: 'https://htzksj.zksjyk.cn'
   },
   test: {
-    baseUrl: 'https://api.zksjyk.cn'
+    baseUrl: 'https://htzksj.zksjyk.cn'
   },
   production: {
-    baseUrl: 'https://api.xxx.com'
+    baseUrl: 'https://htzksj.zksjyk.cn'
   }
 }
 
