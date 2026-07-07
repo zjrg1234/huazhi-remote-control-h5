@@ -2,7 +2,7 @@ import { get, post } from '@/utils/request'
 
 // 登录
 export function loginApi(data) {
-  return post('/api/login', data, { noLoading: true })
+  return post('/api/login', data, { loadingFlag: true })
 }
 
 // 首页列表
@@ -73,7 +73,7 @@ export function  AppealOrderNo(data) {
 
 // 预约
 export function  GetReservationList(data) {
-	return post('/api/user/reservation/list',data)
+	return post('/api/user/reservation/list',data,  { loadingFlag: true })
 }
 
 export function  StartDriving(data) {

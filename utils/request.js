@@ -18,7 +18,7 @@ const request = (options) => {
 			method = 'GET',
 			data = {},
 			header = {},
-			noLoading = false
+			loadingFlag = false
 		} = options
 
 		const token = data?.token || undefined
@@ -33,7 +33,7 @@ const request = (options) => {
 		}
 
 		// 加载弹窗
-		if (noLoading) {
+		if (loadingFlag) {
 			uni.showLoading({
 				title: '加载中...',
 				mask: true
@@ -53,7 +53,7 @@ const request = (options) => {
 				...header
 			},
 			success: (res) => {
-				if (!noLoading) uni.hideLoading()
+				if (loadingFlag) uni.hideLoading()
 				const data = res.data
 
 				if (data.code === 200) {
@@ -79,7 +79,7 @@ const request = (options) => {
 				}
 			},
 			fail: (err) => {
-				if (!noLoading) uni.hideLoading()
+				if (!loadingFlag) uni.hideLoading()
 				uni.showToast({
 					title: '网络异常，请稍后重试',
 					icon: 'none'

@@ -2,7 +2,7 @@ import { get, post } from '@/utils/request'
 
 // 登录
 export function Login(data) {
-  // return post('/api/login/loginIn', data, { noLoading: true })
+  // return post('/api/login/loginIn', data, { loadingFlag: true })
   return post('/api/login/loginIn', data)
 }
 
@@ -56,4 +56,7 @@ export function Register(data) {
 }
 
 
-
+// 获取车辆详情
+export function GetCarDetails(data) {
+  return post('/api/vehicle/detail',data)
+}
