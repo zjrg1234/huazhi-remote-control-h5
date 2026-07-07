@@ -24,7 +24,7 @@
       </view>
 
       <!-- 按时间计费 -->
-      <view class="section">
+      <view class="section" v-if="Object.hasOwn(billData, 'time_billing')">
         <view class="section-title">按时间计费</view>
         <text class="desc">按照分钟计费，不受时间限制，想玩就玩</text>
         <view class="grid-box">
@@ -44,7 +44,7 @@
       </view>
 
       <!-- 按次计费 -->
-      <view class="section">
+      <view class="section" v-if="Object.hasOwn(billData, 'one_billing')">
         <view class="section-title">按次计费</view>
         <text class="desc">按照单次时间游玩，时间到则立即结束</text>
         <view class="grid-box">

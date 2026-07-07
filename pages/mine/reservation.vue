@@ -229,9 +229,9 @@ page {
 	position: relative;
 	overflow: hidden;
 
-	&.active {
-		border: 2rpx solid #409eff;
-	}
+	// &.active {
+	// 	border: 2rpx solid #409eff;
+	// }
 
 	.corner-tag {
 		position: absolute;

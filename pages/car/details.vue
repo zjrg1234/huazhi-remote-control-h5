@@ -2,25 +2,26 @@
   <view class="page">
     <!-- 1. 顶部背景图与基础信息 -->
     <view class="header-section">
-      <image class="banner-img" :src="imageUrl" mode="widthFix"></image>
+      <image class="banner-img" :src="imageUrl" mode="aspectFill"></image>
       <view class="info-box">
         <view class="title-row">
           <text class="main-title">{{ detailData.venue_name }}</text>
           <text class="tag">{{ detailData.labels }}</text>
         </view>
-        <text class="time-text">营业时间：{{ detailData.start_time }}~{{ detailData.end_time }}</text>
+        <view class="time-text"
+          >营业时间：{{ detailData.start_time }} ~
+          {{ detailData.end_time }}</view
+        >
       </view>
     </view>
 
+    <!-- 2. 统计数据 -->
     <view class="stats-container">
-      <!-- 项 1 -->
       <view class="stat-item">
-        <!-- 新增 num-box 包裹数字和单位 -->
         <view class="num-box">
           <text class="stat-num">{{ stats.queue }}</text>
           <text class="stat-unit">人</text>
         </view>
-        <!-- 原有的标签保留 -->
         <text class="stat-label">总排队人数</text>
       </view>
 
@@ -52,17 +53,22 @@
     <view class="car-list">
       <view class="car-card" v-for="car in carList" :key="car.id">
         <!-- 状态标签 -->
-        <view class="status-tag" :class="car.vehicle_state === '1' ? 'tag-green' : 'tag-blue'">
+        <view
+          class="status-tag"
+          :class="car.vehicle_state == 1 ? 'tag-green' : 'tag-blue'"
+        >
           {{
-            car.vehicle_state === "1"
-              ? "空闲"
-              : "排队" + car.vehicle_queue + "人"
+            car.vehicle_state == 1 ? "空闲" : "排队" + car.vehicle_queue + "人"
           }}
         </view>
 
         <!-- 左侧图片区域 -->
         <view class="img-wrapper">
-          <image class="car-img" :src="car.vehicle_image" mode="aspectFill"></image>
+          <image
+            class="car-img"
+            :src="car.vehicle_image"
+            mode="aspectFill"
+          ></image>
           <view class="lock-mask" v-if="car.is_password == 1">
             <uni-icons type="locked" size="30" color="#ffffff"></uni-icons>
           </view>
@@ -71,77 +77,104 @@
         <!-- 右侧信息区域 -->
         <view class="info-wrapper">
           <view class="top-row">
-            <text class="car-name">{{ car.name }}</text>
+            <text class="car-name">{{ car.vehicle_name }}</text>
           </view>
-
           <view class="desc-row">
             <text class="label">车辆特点：</text>
             <text class="value">{{ car.vehicle_introduction }}</text>
           </view>
-
           <view class="desc-row">
             <text class="label">最高时速：</text>
-            <text class="value">{{ car.top_speed }}</text>
+            <text class="value">{{ car.top_speed || "0km/h" }}</text>
           </view>
-
           <view class="bottom-row">
             <text class="battery">车辆电量：{{ car.vehicle_battery }}</text>
-            <!-- 按钮：根据状态改变样式 -->
-            <button class="action-btn" :class="{ 'btn-disabled': car.vehicle_state == 2 }"
-              :disabled="car.vehicle_state == 2" @click="handleDrive(car)">
-              预约驾驶
+            <button
+              class="action-btn"
+              :class="{ 'btn-disabled': car.vehicle_state == 2 }"
+              :disabled="car.vehicle_state == 2"
+              @click="handleDrive(car)"
+            >
+              我要驾驶
             </button>
           </view>
         </view>
       </view>
     </view>
 
-    <TipModal title="用户驾驶协议" v-model:visible="agree" key="1" @confirm="handleAgree">
+    <TipModal
+      title="用户驾驶协议"
+      v-model:visible="agree"
+      key="1"
+      @confirm="handleAgree"
+    >
       <template #content>
         <view class="custom-content">
-          <view class="cont">
-            禁止未成年人充值使用。
-          </view>
+          <view class="cont"> 禁止未成年人充值使用。 </view>
           <view class="cont">
             用户充值消费驾驶后不支持退余额，充值的金额只能在平台消费，如果排队没玩到车，保留到后面场地有车继续消费。
           </view>
           <view class="cont">
             车辆预约会扣费，如没排队上，预约取消会自动退回账户里。
           </view>
-          <view class="cont">
-            如有疑问请联系客服。
-          </view>
+          <view class="cont"> 如有疑问请联系客服。 </view>
         </view>
       </template>
     </TipModal>
 
-    <TipModal title="输入密码" v-model:visible="pwdVisible" key="2" @confirm="handlePwd">
+    <TipModal
+      title="输入密码"
+      v-model:visible="pwdVisible"
+      key="2"
+      @confirm="handlePwd"
+    >
       <template #content>
         <view class="custom-input">
-          <input class="input" type="password" maxlength="6" placeholder="请输入密码" v-model="password" />
+          <input
+            class="input"
+            type="password"
+            maxlength="6"
+            placeholder="请输入密码"
+            v-model="password"
+          />
         </view>
       </template>
     </TipModal>
 
-    <TipModal title="车辆预约" v-model:visible="orderVisible" key="2" @confirm="gotoUrl">
+    <TipModal
+      title="车辆预约"
+      v-model:visible="orderVisible"
+      key="2"
+      @confirm="gotoUrl"
+    >
       <template #content>
         <view class="order-cont">
           <view class="img">
-            <image class="car-image" :src="selectCar.vehicle_image" mode="aspectFill" />
+            <image
+              class="car-image"
+              :src="selectCar.vehicle_image"
+              mode="aspectFill"
+            />
           </view>
           <!-- 注意：请将 src 替换为你实际的图片路径或网络地址 -->
 
           <!-- 3. 主要状态文本 -->
-          <text class="main-status">已成功预约 {{ orderCar.vehicle_name }} 车辆</text>
-          <text class="sub-status">当前还有 {{ orderCar.people_number }} 人排队，请耐心等待</text>
+          <text class="main-status"
+            >已成功预约 {{ orderCar.vehicle_name }} 车辆</text
+          >
+          <text class="sub-status"
+            >当前还有 {{ orderCar.people_number }} 人排队，请耐心等待</text
+          >
 
           <!-- 4. 详情信息卡片 (灰色背景区域) -->
           <view class="info-card">
             <view class="info-item">
               <text class="label">预约类型：</text>
-              <text class="value">按{{
-                orderCar.billing_method == "0" ? "时间" : "次"
-                }}计费</text>
+              <text class="value"
+                >按{{
+                  orderCar.billing_method == "0" ? "时间" : "次"
+                }}计费</text
+              >
             </view>
             <view class="info-item">
               <text class="label">预约时间：</text>
@@ -155,46 +188,45 @@
       </template>
     </TipModal>
 
-    <BillingPopup ref="billingPopupRef" :billData="billingMethod" @confirm="onBillingConfirm" />
+    <BillingPopup
+      ref="billingPopupRef"
+      :billData="billingMethod"
+      @confirm="onBillingConfirm"
+    />
   </view>
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
+
 import TipModal from "@/components/tip-modal/tip-modal.vue";
 import BillingPopup from "@/components/billing-popup/billing-popup.vue";
 import { GetVenueDetail, OrderCar } from "@/axios/index";
 
-const stats = ref({
-  queue: 0,
-  online: 0,
-  drive: 0,
-});
-
+const title = ref("");
+const stats = ref({ queue: 0, online: 0, drive: 0 });
 const agree = ref(false);
 const pwdVisible = ref(false);
 const orderVisible = ref(false);
 const password = ref("");
 const billingPopupRef = ref(null);
 const imageUrl = ref("");
-const billingMethod = ref();
+const billingMethod = ref({});
 const detailData = ref({
-  venue_name: '',
-  labels: '',
-  start_time: '',
-  end_time: '',
+  venue_name: "",
+  labels: "",
+  start_time: "",
+  end_time: "",
 });
-
 const selectCar = ref({
   vehicle_id: "",
   vehicle_name: "",
   venue_id: "",
   billing_rules: "",
   venue_name: "",
-  vehicle_image: ''
+  vehicle_image: "",
 });
-
 const orderCar = ref({
   vehicle_name: "",
   time: "",
@@ -204,63 +236,56 @@ const orderCar = ref({
   transmitter_id: 0,
   people_number: 0,
 });
-
-const car = ref({
-  id: "",
-  vehicle_id: "",
-  vehicle_name: "",
-  venue_id: "",
-  billing_rules: "",
-  venue_name: "",
-  vehicle_image: '',
-  password: ''
-});
-
-// 车辆列表数据
+const currentCar = ref({});
 const carList = ref([]);
 
-// --- 2. 页面生命周期 ---
+// 页面加载模拟
 onLoad((options) => {
-  // 这里可以根据 options.id 请求后台获取真实数据
-
+  // 模拟获取路由参数
+  title.value = uni.getStorageSync("carTitle") || "车辆详情";
   uni.setNavigationBarTitle({
     title: uni.getStorageSync("carTitle"),
   });
-  GetVenueDetail({
-    venue_id: options.id,
-  })
-    .then((res) => {
-      const { code, data } = res;
-      detailData.value = { ...data };
-      stats.value.queue = data.queue;
-      stats.value.online = data.online;
-      stats.value.drive = data.drive;
-      imageUrl.value = data.venue_image?.[0];
 
-      carList.value = data.vehicle;
-      billingMethod.value = data.venue_config;
-      selectCar.value.venue_id = options.id;
-      selectCar.value.venue_name = data.venue_name;
+  GetVenueDetail({ venue_id: options.id })
+    .then((res) => {
+      const { code, data, msg } = res;
+      if (code === 200) {
+        detailData.value = { ...data };
+        stats.value.queue = data.queue;
+        stats.value.online = data.online;
+        stats.value.drive = data.drive;
+        imageUrl.value = data.venue_image?.[0];
+        carList.value = data.vehicle;
+        billingMethod.value = data.venue_config;
+        selectCar.value.venue_id = options.id;
+        selectCar.value.venue_name = data.venue_name;
+        uni.setStorageSync("wssUrl", data.content_url);
+        uni.setStorageSync("wssPort", data.content_url_port);
+      } else {
+        uni.showToast({
+          title: msg,
+          icon: "none",
+        });
+      }
     })
-    .catch();
+    .catch((e) => {
+      throw e;
+    });
 });
 
-// --- 3. 交互逻辑 ---
+// 交互逻辑
 const handleDrive = (item) => {
-  // 用户协议
+  currentCar.value = { ...item };
   agree.value = true;
-  car.value = { ...item }
-  return;
-
 };
 
 const handlePwd = () => {
-  // 输入的密码跟返回的密码
-  if (password.value === car.value.password) {
+  if (password.value === currentCar.value.password) {
     pwdVisible.value = false;
-    selectCar.value.vehicle_id = car.value.id;
-    selectCar.value.vehicle_name = car.value.vehicle_name;
-    selectCar.value.vehicle_image = car.value.vehicle_image;
+    selectCar.value.vehicle_id = currentCar.value.id;
+    selectCar.value.vehicle_name = currentCar.value.vehicle_name;
+    selectCar.value.vehicle_image = currentCar.value.vehicle_image;
     billingPopupRef.value.open();
   } else {
     uni.showToast({
@@ -272,30 +297,31 @@ const handlePwd = () => {
 
 const handleAgree = () => {
   agree.value = false;
-  if (car.value.is_password == 1) {
+  if (currentCar.value.is_password == 1) {
     pwdVisible.value = true;
     return;
   }
-  if (car.vehicle_state === "2") {
-    // 理论上按钮已禁用，这里是双重保险
-    uni.showToast({ title: "该车正在排队中", icon: "none" });
+  if (currentCar.value.vehicle_state === "2") {
+    uni.showToast({
+      title: "该车正在排队中",
+      icon: "none",
+    });
     return;
   }
-  selectCar.value.vehicle_id = car.value.id;
-  selectCar.value.vehicle_name = car.value.vehicle_name;
-  selectCar.value.vehicle_image = car.value.vehicle_image;
+  selectCar.value.vehicle_id = currentCar.value.id;
+  selectCar.value.vehicle_name = currentCar.value.vehicle_name;
+  selectCar.value.vehicle_image = currentCar.value.vehicle_image;
   billingPopupRef.value.open();
 };
 
 const flag = ref(true);
 const onBillingConfirm = (params) => {
-  if (!flag) {
-    return;
-  }
+  if (!flag.value) return;
   flag.value = false;
-  const min = Math.pow(10, 7); // 10000000
-  const max = Math.pow(10, 8) - 1; // 99999999
+  const min = Math.pow(10, 7);
+  const max = Math.pow(10, 8) - 1;
   const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+
   OrderCar({
     vehicle_id: selectCar.value.vehicle_id,
     vehicle_name: selectCar.value.vehicle_name,
@@ -308,22 +334,27 @@ const onBillingConfirm = (params) => {
   })
     .then((res) => {
       if (res.code === 200) {
-        orderCar.value = {
-          ...res.data,
-        };
+        orderCar.value = { ...res.data };
         orderVisible.value = true;
       }
     })
-    .catch()
+    .catch(() => {
+      uni.showToast({
+        title: "预约失败",
+        icon: "none",
+      });
+    })
     .finally(() => {
       flag.value = true;
     });
 };
 
 const gotoUrl = () => {
-  orderVisible.value = false
-  uni.navigateTo({ url: '/pages/mine/reservation' })
-}
+  orderVisible.value = false;
+  uni.navigateTo({
+    url: "/pages/mine/reservation",
+  });
+};
 </script>
 
 <style lang="scss" scoped>
@@ -352,7 +383,9 @@ const gotoUrl = () => {
       align-items: center;
 
       .main-title {
-        font-family: PingFangSC, PingFang SC;
+        font-family:
+          PingFangSC,
+          PingFang SC;
         font-weight: 500;
         font-size: 28rpx;
         color: #1a1a1a;
@@ -360,7 +393,9 @@ const gotoUrl = () => {
       }
 
       .tag {
-        font-family: PingFangSC, PingFang SC;
+        font-family:
+          PingFangSC,
+          PingFang SC;
         font-weight: 400;
         font-size: 20rpx;
         color: #3e77ac;
@@ -371,7 +406,9 @@ const gotoUrl = () => {
     }
 
     .time-text {
-      font-family: PingFangSC, PingFang SC;
+      font-family:
+        PingFangSC,
+        PingFang SC;
       font-weight: 400;
       font-size: 20rpx;
       color: #666666;
@@ -434,7 +471,9 @@ const gotoUrl = () => {
 
 .text {
   padding: 20rpx;
-  font-family: PingFangSC, PingFang SC;
+  font-family:
+    PingFangSC,
+    PingFang SC;
   font-weight: 400;
 }
 
@@ -517,7 +556,9 @@ const gotoUrl = () => {
       align-items: center;
 
       .car-name {
-        font-family: PingFangSC, PingFang SC;
+        font-family:
+          PingFangSC,
+          PingFang SC;
         font-weight: 600;
         font-size: 28rpx;
         color: #222222;
@@ -527,7 +568,9 @@ const gotoUrl = () => {
     .desc-row {
       display: flex;
       margin-top: 10rpx;
-      font-family: PingFangSC, PingFang SC;
+      font-family:
+        PingFangSC,
+        PingFang SC;
       font-weight: 400;
       font-size: 20rpx;
       color: #555555;
@@ -548,17 +591,18 @@ const gotoUrl = () => {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 20rpx;
 
       .battery {
-        font-family: PingFangSC, PingFang SC;
+        font-family:
+          PingFangSC,
+          PingFang SC;
         font-weight: 400;
         font-size: 20rpx;
         color: #555555;
       }
 
       .action-btn {
-        background-color: #f1c40f;
+        background: #ffc838;
         /* 黄色按钮 */
         color: #333;
         font-size: 24rpx;
@@ -590,7 +634,9 @@ const gotoUrl = () => {
 }
 
 .custom-content {
-  font-family: PingFangSC, PingFang SC;
+  font-family:
+    PingFangSC,
+    PingFang SC;
   font-weight: 400;
   font-size: 28rpx;
   color: #333333;
