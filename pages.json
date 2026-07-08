@@ -149,6 +149,13 @@
 			"style": {
 				"navigationBarTitleText": "个人简介"
 			}
+		},
+		{
+			"path": "pages/drive/index",
+			"style": {
+				"navigationBarTitleText": "个人简介",
+				"pageOrientation": "landscape"
+			}
 		}
 	],
 	"globalStyle": {
@@ -156,8 +163,8 @@
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#fff",
 		"backgroundColor": "#F8F8F8",
-		"rpxCalcMaxDeviceWidth": 960,
-		"rpxCalcBaseDeviceWidth": 375,
+		"rpxCalcMaxDeviceWidth": 99999,
+		"rpxCalcBaseDeviceWidth": 750,
 		"rpxCalcIncludeWidth": 750
 	},
 	"tabBar": {

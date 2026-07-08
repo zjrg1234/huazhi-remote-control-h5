@@ -43,7 +43,7 @@
         </view>
         <view class="info-line">
           <text class="label">预约时间：</text>
-          <text class="value">{{ formatTime(item.order_time) }}</text>
+          <text class="value">{{ formatDate(item.order_time) }}</text>
         </view>
 
         <!-- 右侧按钮 -->
@@ -79,7 +79,7 @@
 <script setup>
 import { ref } from "vue";
 import { onLoad, onPullDownRefresh, onReachBottom } from "@dcloudio/uni-app";
-import { formatTime } from "@/utils/date.js";
+import { formatDate } from "@/utils/utils.js";
 import { GetReservationList } from "@/axios/mine";
 import { GetCarDetails } from "@/axios/index";
 import { billingMethod } from "@/utils/filter.js";
@@ -207,7 +207,7 @@ const handleAction = (item) => {
         localStorage.setItem("carDetails", JSON.stringify(res.data));
        
         uni.navigateTo({
-          url: `/pages/mine/drive?order_no=${item.order_no}&vehicle_id=${item.vehicle_id}`,
+          url: `/pages/drive/index?order_no=${item.order_no}&vehicle_id=${item.vehicle_id}`,
         });
         // 清理驾驶页面的缓存
         sessionStorage.clear();

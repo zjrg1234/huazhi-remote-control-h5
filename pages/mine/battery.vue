@@ -74,7 +74,7 @@
 						{{item.type == 1 ? "+" : ''}}{{ item.amount }}
 					</text>
 				</view>
-				<text class="common-text time">{{ formatTime(item.time) }}</text>
+				<text class="common-text time">{{ formatDate(item.time) }}</text>
 			</view>
 			
 			<!-- 4. 没有更多 -->
@@ -88,7 +88,7 @@
 	import { onReachBottom, onPullDownRefresh } from '@dcloudio/uni-app'
 	import NavBar from "@/components/nav-bar/nav-bar.vue"
 	import { GetUserWalletLog } from "@/axios/mine.js"
-	import { formatTime } from "@/utils/date.js"
+	import { formatDate } from "@/utils/utils.js";
 	import { getNavBarHeight } from "@/utils/system.js"
 	import {
 		useUserStore

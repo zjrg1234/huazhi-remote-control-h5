@@ -33,7 +33,7 @@
           </view>
           <view class="info-item">
             <text class="label">预约时间：</text>
-            <text class="value">{{ formatTime(item.order_time) }}</text>
+            <text class="value">{{ formatDate(item.order_time) }}</text>
           </view>
           <view class="info-item">
             <text class="label">驾驶时长：</text>
@@ -45,11 +45,11 @@
           </view>
           <view class="info-item">
             <text class="label">开始时间：</text>
-            <text class="value">{{ formatTime(item.start_time)  }}</text>
+            <text class="value">{{ formatDate(item.start_time)  }}</text>
           </view>
           <view class="info-item">
             <text class="label">结束时间：</text>
-            <text class="value">{{ formatTime(item.end_time) }}</text>
+            <text class="value">{{ formatDate(item.end_time) }}</text>
           </view>
         </view>
       </view>
@@ -62,7 +62,7 @@ import { ref } from 'vue'
 import { onLoad, onReachBottom, } from "@dcloudio/uni-app"
 import {GetDrivingRecordlList} from "@/axios/mine.js"
 import {reservationStatus, billingMethod, paymentType} from "@/utils/filter.js"
-import {formatTime, compareTimestamp} from "@/utils/date.js"
+import {formatDate, compareTimestamp} from "@/utils/utils.js"
 // ==================== 核心变量 ====================
 const list = ref([])        // 列表数据
 const page = ref(1)         // 当前页码
