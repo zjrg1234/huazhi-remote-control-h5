@@ -55,8 +55,17 @@ export function Register(data) {
   return post('/api/login/save',data)
 }
 
+export function StartDrive(data) {
+  return post('/api/user/start/driving',data)
+}
 
 // 获取车辆详情
 export function GetCarDetails(data) {
   return post('/api/vehicle/detail',data)
+}
+
+
+// 车辆上报
+export function CarReport(data) {
+  return post('/api/user/processing/alarm/create',data)
 }
