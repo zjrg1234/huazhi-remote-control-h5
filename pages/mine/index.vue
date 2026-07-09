@@ -348,7 +348,6 @@ const uploadFile = async (filePath) => {
 	height: 100rpx;
 	border-radius: 50%;
 	margin-right: 20rpx;
-	background-color: red;
 }
 
 .user-text {

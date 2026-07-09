@@ -3,7 +3,8 @@ import CryptoJS from 'crypto-js';
 
 // 定义密钥（需与后端保持一致，通常为16或32位字符串）
 // const SECRET_KEY = 'xyv8isi9on888888'; 
-const SECRET_KEY = import.meta.env.UNI_APP_SECRET_KEY
+const SECRET_KEY = 'xyv8isi9on888888' ||  import.meta.env.UNI_APP_SECRET_KEY
+console.log("SECRET_KEY",SECRET_KEY)
 // 将密钥转换为 UTF-8 编码的 WordArray 格式
 const key = CryptoJS.enc.Utf8.parse(SECRET_KEY);
 

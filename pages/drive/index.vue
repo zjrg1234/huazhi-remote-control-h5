@@ -3,19 +3,19 @@
     <div class="page-content">
       <!-- 背景区域（原 iframe 改为 video 组件） -->
       <div class="bg">
-        <video
+        <iframe
           :src="videoUrl"
           controls
           autoplay
           muted
           object-fit="fill"
           style="width:100%; height:100%"
-        ></video>
+        ></iframe>
       </div>
 
       <!-- 退出按钮 -->
       <div class="logout" @click="logout">
-        <image src="/static/images/icon_exit@2x.png" mode="aspectFit" />
+        <image src="/static/images/icon_exit@2x.png" class="image" mode="aspectFit" />
       </div>
 
       <!-- 顶部状态栏 -->
@@ -24,7 +24,7 @@
           <div class="fl">
             <span class="dot"></span>
             <div class="car">
-              <image src="/static/images/icon_car@2x.png" mode="aspectFit" />
+              <image class="image" src="/static/images/icon_car@2x.png" mode="aspectFit" />
               <span class="mini-forbidden"></span>
             </div>
           </div>
@@ -43,7 +43,7 @@
 
       <!-- 设置按钮 -->
       <div class="right-cont" @click="set">
-        <image src="/static/images/icon_set@2x.png" mode="aspectFit" />
+        <image  class="image" src="/static/images/icon_set@2x.png" mode="aspectFit" />
       </div>
 
       <!-- 声音/波纹图标 -->
@@ -115,8 +115,8 @@
 
       <!-- 时间显示 -->
       <div class="time">
-        <image src="/static/images/icon_time@2x.webp" mode="aspectFit" />
-        <!-- <TimeClock></TimeClock> -->
+        <image class="image" src="/static/images/icon_time@2x.webp" mode="aspectFit" />
+        <TimeClock></TimeClock> 
       </div>
 
       <!-- 通用弹窗 -->
@@ -154,7 +154,7 @@ import { onLoad } from '@dcloudio/uni-app'
 import ALLPopup from './components/tip.vue'
 // import SetPopup from './components/SetPopup.vue'
 // import Ripple from './components/Ripple.vue'
-// import TimeClock from './components/TimeClock.vue'
+ import TimeClock from './components/timeclock.vue'
 // import battery from './components/battery.vue'
 // import UpDown from './components/UpDown.vue'
 // import LeftRight from './components/LeftRight.vue'
@@ -272,6 +272,7 @@ const sendConDrive = () => {
   let num = Number(uni.getStorageSync('sendNum') || 0)
   let hasTriggeredTip = false
 
+  // 30S 之后若提示  5s 之后弹窗
   billingTimer = setInterval(async () => {
     if (isRequesting) return
     num++
@@ -622,22 +623,22 @@ onUnmounted(() => {
 .logout {
   position: absolute;
   z-index: 1;
-  top: 10rpx;
-  left: 20rpx;
-  image {
-    width: 30rpx;
-    height: 30rpx;
+  top: 10px;
+  left: 20px;
+  .image {
+    width: 27px;
+    height: 27px;
   }
 }
 
 .right-cont {
   position: absolute;
   z-index: 1;
-  top: 10rpx;
-  right: 20rpx;
-  image {
-    width: 30rpx;
-    height: 30rpx;
+  top: 10px;
+  right: 20px;
+  .image {
+    width: 27px;
+    height: 27px;
   }
 }
 
@@ -661,6 +662,10 @@ onUnmounted(() => {
   }
   .car {
     position: relative;
+    .image {
+      width: 20rpx;
+      height: 20rpx;
+    }
     .mini-forbidden {
       position: absolute;
       bottom: 2rpx;
@@ -693,8 +698,8 @@ onUnmounted(() => {
 
 .mini-forbidden {
   display: inline-block;
-  width: 10rpx;
-  height: 10rpx;
+  width: 8rpx;
+  height: 8rpx;
   border: 2rpx solid #ff4d4f;
   border-radius: 50%;
   position: relative;
@@ -727,8 +732,8 @@ onUnmounted(() => {
 
 .side-menu {
   position: fixed;
-  top: 50rpx;
-  right: 14rpx;
+  top: 50px;
+  right: 14px;
   z-index: 2;
   display: flex;
   flex-direction: column;
@@ -744,12 +749,12 @@ onUnmounted(() => {
   flex-direction: column;
   align-items: center;
   .img {
-    width: 24rpx;
-    height: 24rpx;
-    margin-bottom: 2rpx;
+    width: 18px;
+    height: 18px;
+    margin-bottom: 2px;
   }
   .label {
-    font-size: 18rpx;
+    font-size: 14px;
     color: #fff;
   }
 }
@@ -788,15 +793,16 @@ onUnmounted(() => {
 
 .time {
   position: absolute;
-  bottom: 10rpx;
-  left: 20rpx;
+  bottom: 10px;
+  left: 20px;
   display: flex;
   align-items: center;
   opacity: 0.8;
-  image {
-    width: 20rpx;
-    height: 20rpx;
-    margin-right: 6rpx;
+  .image {
+    display: block;
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
   }
 }
 </style>

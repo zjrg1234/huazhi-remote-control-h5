@@ -3,7 +3,7 @@
   <!-- 弹窗遮罩层与容器 -->
   <view class="popup-mask" v-if="visible" @tap.stop="handleMaskClick">
     <!-- 弹窗主体内容 -->
-    <view class="popup-container" @tap.stop>
+    <view class="popup-container" :class="{contmax: type === 'repair'}"  @tap.stop>
       
       <!-- 场景1：黑屏提示 -->
       <template v-if="type === 'tip'">
@@ -272,6 +272,9 @@ defineExpose({ setType });
   max-width: 300px;
   overflow: hidden;
 }
+.contmax {
+  max-width: 500px;
+}
 
 .tip-content {
   text-align: center;
@@ -280,10 +283,10 @@ defineExpose({ setType });
   flex-direction: column;
   align-items: center;
 
-  .time { font-size: 20rpx; color: #333; }
-  .tit { font-size: 20rpx; font-weight: bold; color: #333; margin-top: 10rpx; }
+  .time { font-size: 18px; color: #333; }
+  .tit { font-size: 18px; font-weight: bold; color: #333; margin-top: 10rpx; }
   .text { 
-    font-size: 14rpx; color: #666; text-align: left; margin-top: 10rpx; 
+    font-size: 14px; color: #666; text-align: left; margin-top: 10rpx; 
     display: flex; flex-direction: column; gap: 4rpx;
   }
   .ct { text-align: center; }
@@ -311,7 +314,6 @@ defineExpose({ setType });
 .right { background: #ffc838; }
 .mt { margin-top: 10rpx; }
 .mr { margin-right: 10rpx; }
-.repair { width: 100%; max-width: 440rpx; }
 
 .reason {
   display: flex;
@@ -320,10 +322,10 @@ defineExpose({ setType });
   padding: 10rpx 0;
 }
 .reason-item {
-  padding: 6rpx 12rpx;
+  padding: 5px 10px;
   border-radius: 20rpx;
   color: #666666;
-  font-size: 14rpx;
+  font-size: 14px;
   border: 1rpx solid #666666;
 }
 .reason-item.active {
@@ -340,25 +342,27 @@ defineExpose({ setType });
 }
 
 .ttarea {
-  width: 100%;
+ width: 480px;
   margin-top: 10rpx;
   position: relative;
   
   .custom-textarea {
-    width: 100%;
-    height: 56rpx;
+    width: 480px;
+     height: 60px;
     background: #f2f2f2;
-    padding: 16rpx;
+    padding: 15px;
     border-radius: 6rpx;
-    font-size: 20rpx;
+    font-size: 14px;
     color: #222;
     box-sizing: border-box;
+    text-align: left;
+    
   }
   .word-limit {
     position: absolute;
-    right: 16rpx;
-    bottom: 20rpx;
-    font-size: 16rpx;
+    right: 16px;
+    bottom: 2rpx;
+    font-size: 14px;
     color: #999;
   }
 }

@@ -153,8 +153,8 @@
 		{
 			"path": "pages/drive/index",
 			"style": {
-				"navigationBarTitleText": "个人简介",
-				"pageOrientation": "landscape"
+				"pageOrientation": "landscape",
+				"navigationStyle": "custom"
 			}
 		}
 	],
@@ -163,7 +163,7 @@
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#fff",
 		"backgroundColor": "#F8F8F8",
-		"rpxCalcMaxDeviceWidth": 99999,
+		"rpxCalcMaxDeviceWidth": 960,
 		"rpxCalcBaseDeviceWidth": 750,
 		"rpxCalcIncludeWidth": 750
 	},

@@ -20,6 +20,7 @@ const request = (options) => {
 			header = {},
 			loadingFlag = false
 		} = options
+	
 
 		const token = data?.token || undefined
 
@@ -39,9 +40,10 @@ const request = (options) => {
 				mask: true
 			})
 		}
-
+		const apiUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
+		
 		uni.request({
-			url: baseUrl + url,
+			url: apiUrl,
 			method,
 			data,
 			timeout: TIME_OUT,

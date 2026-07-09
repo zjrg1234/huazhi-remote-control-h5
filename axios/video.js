@@ -10,7 +10,7 @@ export function LoginTop(data) {
 
 export function DeviceDetails(data) {
   return post('https://xyvision.top/api/user/device/listAll',data ,{
-  headers: {
+  header: {
     Authorization: `Bearer ${data.token}`,
   },
 })
