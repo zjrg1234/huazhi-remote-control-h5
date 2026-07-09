@@ -131,7 +131,7 @@
       />
 
       <!-- 设置弹窗 -->
-      <!-- <SetPopup
+       <SetPopup
         v-model:show="setVisible"
         :videoDefinition="videoDefinition"
         :operFB="operFB"
@@ -143,7 +143,7 @@
         @action="handleOper"
         @operAction="handleFBDir"
         @changeValue="changeVal"
-      /> -->
+      /> 
     </div>
   </div>
 </template>
@@ -152,9 +152,9 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import ALLPopup from './components/tip.vue'
-// import SetPopup from './components/SetPopup.vue'
+import SetPopup from './components/set.vue'
 // import Ripple from './components/Ripple.vue'
- import TimeClock from './components/timeclock.vue'
+ import TimeClock from './components/timeclock1.vue'
 // import battery from './components/battery.vue'
 // import UpDown from './components/UpDown.vue'
 // import LeftRight from './components/LeftRight.vue'
