@@ -37,7 +37,7 @@
             </div>
           </div>
           <div>
-          <battery :percent="40"></battery> 
+            <battery :percent="40"></battery>
           </div>
           <div><span class="time-text">|</span></div>
           <div>
@@ -62,9 +62,7 @@
 
       <!-- 声音/波纹图标 -->
       <div class="side-menu-icon">
-        <microphone >
-        
-        </microphone> 
+        <microphone> </microphone>
         <image
           v-if="!showSound"
           src="/static/images/icon_sound_close@2x.png"
@@ -123,10 +121,9 @@
         </div>
       </div>
 
-      <!-- <LeftRight @action="handleLRDrive" :isLeft="operMode"></LeftRight>
+      <LeftRight @action="handleLRDrive" :isLeft="operMode"></LeftRight>
 
-     
-      <UpDown @action="handleFBDrive" :isLeft="!operMode"></UpDown> -->
+      <!--   <UpDown @action="handleFBDrive" :isLeft="!operMode"></UpDown> -->
 
       <!-- 时间显示 -->
       <div class="time">
@@ -172,13 +169,13 @@ import { ref, onMounted, onUnmounted, computed } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
 import ALLPopup from "./components/tip.vue";
 import SetPopup from "./components/set.vue";
- import microphone from './components/microphone.vue'
+import microphone from "./components/microphone.vue";
 import TimeClock from "./components/tclock.vue";
-import battery from './components/battery.vue'
+import battery from "./components/battery.vue";
 // import UpDown from './components/UpDown.vue'
-// import LeftRight from './components/LeftRight.vue'
+import LeftRight from "./components/left-right.vue";
 import { formatTime, mapToPer } from "@/utils/utils.js";
-import UDPSocketClient from "@/utils/udpSocket.js";
+// import UDPSocketClient from "@/utils/udpSocket.js";
 import { handleDriverSocketData } from "@/utils/socketHelper.js";
 import { encryptAES } from "@/utils/crypto.js";
 import { StartDrive } from "@/axios/index.js";

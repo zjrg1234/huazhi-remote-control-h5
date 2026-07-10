@@ -22,6 +22,19 @@ import '@/router/index'
 import { get, post } from '@/utils/request'
 
 
+// 兼容 requestAnimationFrame
+if (typeof requestAnimationFrame === 'undefined') {
+  global.requestAnimationFrame = function(callback) {
+    return setTimeout(callback, 16); // 模拟 60fps (1000ms / 60 ≈ 16ms)
+  };
+}
+
+// 兼容 cancelAnimationFrame
+if (typeof cancelAnimationFrame === 'undefined') {
+  global.cancelAnimationFrame = function(id) {
+    clearTimeout(id);
+  };
+}
 
 export function createApp() {
   const app = createSSRApp(App)
