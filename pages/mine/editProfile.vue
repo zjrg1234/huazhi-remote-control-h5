@@ -61,6 +61,7 @@
 import { ref, computed } from "vue";
 import { ChangeHeadImg, ChangeName } from "@/axios/mine.js";
 import { GetUserInfo } from "@/axios/index";
+import { baseUrl } from '@/config/env'
 
 import {
   useUserStore
@@ -118,7 +119,7 @@ const uploadImage = async (filePath) => {
 
   uni.showLoading({ title: "上传中..." });
   uni.uploadFile({
-    url: `${import.meta.env.VITE_BASE_API}/api/upload/picture`,
+    url: `${baseUrl}/api/upload/picture`,
     filePath: filePath,
     name: "imageFile[]", // 对应后端的字段名
     success: (uploadRes) => {

@@ -2,19 +2,11 @@
   <view class="page">
     <!-- 预约列表 -->
     <view class="list">
-      <view
-        class="item"
-        v-for="(item, index) in list"
-        :key="item.order_no || index"
-        :class="{ active: item.reservation_status === 4 }"
-      >
+      <view class="item" v-for="(item, index) in list" :key="item.order_no || index"
+        :class="{ active: item.reservation_status === 4 }">
         <!-- 状态角标 -->
         <view class="corner-tag" :class="item.reservation_status">
-          <image
-            class="image"
-            :src="statusMap[item.reservation_status]"
-            mode="aspectFill"
-          ></image>
+          <image class="image" :src="statusMap[item.reservation_status]" mode="aspectFill"></image>
         </view>
 
         <!-- 标题 -->
@@ -26,12 +18,8 @@
         <view class="info-line">
           <text class="label">预约编号：</text>
           <text class="value">{{ item.order_no }}</text>
-          <image
-            class="copy-icon"
-            src="/static/images/common/icon_copy@2x.png"
-            mode="aspectFill"
-            @click="copyOrderNo(item.order_no)"
-          />
+          <image class="copy-icon" src="/static/images/common/icon_copy@2x.png" mode="aspectFill"
+            @click="copyOrderNo(item.order_no)" />
         </view>
         <view class="info-line">
           <text class="label">预约类型：</text>
@@ -47,17 +35,11 @@
         </view>
 
         <!-- 右侧按钮 -->
-        <view
-          class="btn-wrap"
-          v-if="item.reservation_status == 1 || item.reservation_status == 2"
-        >
+        <view class="btn-wrap" v-if="item.reservation_status == 1 || item.reservation_status == 2">
           <button class="btn" @click="handleAction(item)">开始驾驶</button>
         </view>
 
-        <view
-          class="btn-wrap"
-          v-if="item.reservation_status == 4 && item.is_reservation == 1"
-        >
+        <view class="btn-wrap" v-if="item.reservation_status == 4 && item.is_reservation == 1">
           <button class="btn btn-info" @click="handleAppeal(item)">申诉</button>
         </view>
       </view>
@@ -203,9 +185,9 @@ const handleAction = (item) => {
   })
     .then((res) => {
       if (res.code == 200) {
-        localStorage.setItem("carInfo", JSON.stringify(item));
-        localStorage.setItem("carDetails", JSON.stringify(res.data));
-       
+        uni.setStorageSync('carInfo', JSON.stringify(item));
+        uni.setStorageSync('carDetails', JSON.stringify(res.data));
+
         uni.navigateTo({
           url: `/pages/drive/index?order_no=${item.order_no}&vehicle_id=${item.vehicle_id}`,
         });

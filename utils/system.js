@@ -3,7 +3,6 @@ console.log(SYSTEM_INFO)
 export const getStatusBarHeight = ()=> SYSTEM_INFO.statusBarHeight || 15;
 
 export const getTitleBarHeight = ()=>{
-	console.log(uni.getMenuButtonBoundingClientRect())
 	if(uni.getMenuButtonBoundingClientRect){
 		let {top,height} = uni.getMenuButtonBoundingClientRect();
 		return height + (top - getStatusBarHeight())*2		

@@ -9,7 +9,7 @@
           autoplay
           muted
           object-fit="fill"
-          style="width: 100%; height: 100%"
+          style="width:100%; height:100%"
         ></iframe>
       </div>
 
@@ -28,11 +28,7 @@
           <div class="fl">
             <span class="dot"></span>
             <div class="car">
-              <image
-                class="image"
-                src="/static/images/icon_car@2x.png"
-                mode="aspectFit"
-              />
+              <image class="image" src="/static/images/icon_car@2x.png" mode="aspectFit" />
               <span class="mini-forbidden"></span>
             </div>
           </div>
@@ -689,16 +685,15 @@ onMounted(() => {
   // 时钟
   let num = 1;
   const timer = setInterval(() => {
-    currentTime.value = formatTime(++num);
-  }, 1000);
-  // 清理时一并移除
-  onUnmounted(() => clearInterval(timer));
-});
+    currentTime.value = formatTime(++num)
+  }, 1000)
+})
 
 onUnmounted(() => {
-  clearAllTimers();
-  if (UDPSocket.value) UDPSocket.value.close();
-});
+  clearAllTimers()
+  clearInterval(timer)
+  if (ws.value) ws.value.close()
+})
 </script>
 
 <style lang="scss" scoped>
@@ -767,8 +762,8 @@ onUnmounted(() => {
   .car {
     position: relative;
     .image {
-      width: 20rpx;
-      height: 20rpx;
+      width: 12px;
+      height: 12px;
     }
     .mini-forbidden {
       position: absolute;
