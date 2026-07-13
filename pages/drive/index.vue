@@ -60,12 +60,14 @@
       <div class="side-menu-icon">
         <microphone> </microphone>
         <image
+        class="image"
           v-if="!showSound"
           src="/static/images/icon_sound_close@2x.png"
           @click="showSound = true"
           mode="aspectFit"
         />
         <image
+         class="image"
           v-if="showSound"
           src="/static/images/icon_sound_open@2x.png"
           @click="showSound = false"
@@ -106,7 +108,7 @@
               :step="1"
               activeColor="#f5c542"
               backgroundColor="#e9e9e9"
-              block-size="14"
+              block-size="6"
               @change="changeConstSpeed"
             />
             <div class="slider-label-bottom">
@@ -119,7 +121,7 @@
 
       <LeftRight @action="handleLRDrive" :isLeft="operMode"></LeftRight>
 
-      <!--   <UpDown @action="handleFBDrive" :isLeft="!operMode"></UpDown> -->
+      <UpDown @action="handleFBDrive" :isLeft="!operMode"></UpDown>
 
       <!-- 时间显示 -->
       <div class="time">
@@ -168,7 +170,7 @@ import SetPopup from "./components/set.vue";
 import microphone from "./components/microphone.vue";
 import TimeClock from "./components/tclock.vue";
 import battery from "./components/battery.vue";
-// import UpDown from './components/UpDown.vue'
+ import UpDown from './components/up-down.vue'
 import LeftRight from "./components/left-right.vue";
 import { formatTime, mapToPer } from "@/utils/utils.js";
 // import UDPSocketClient from "@/utils/udpSocket.js";
@@ -762,23 +764,23 @@ onUnmounted(() => {
   .car {
     position: relative;
     .image {
-      width: 12px;
-      height: 12px;
+      width: 15px;
+      height: 15px;
     }
     .mini-forbidden {
       position: absolute;
-      bottom: 2rpx;
-      right: -2rpx;
+      bottom: 2px;
+      right: -2px;
     }
   }
   .dot {
-    width: 6rpx;
-    height: 6rpx;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     background: #09ff77;
   }
   .time-text {
-    font-size: 20rpx;
+    font-size: 20px;
     color: #fff;
   }
 }
@@ -797,9 +799,9 @@ onUnmounted(() => {
 
 .mini-forbidden {
   display: inline-block;
-  width: 8rpx;
-  height: 8rpx;
-  border: 2rpx solid #ff4d4f;
+  width: 6px;
+  height: 6px;
+  border: 2px solid #ff4d4f;
   border-radius: 50%;
   position: relative;
   &::after {
@@ -807,8 +809,8 @@ onUnmounted(() => {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 8rpx;
-    height: 2rpx;
+    width: 6px;
+    height: 2px;
     background: #ff4d4f;
     transform: translate(-50%, -50%) rotate(45deg);
   }
@@ -816,16 +818,16 @@ onUnmounted(() => {
 
 .side-menu-icon {
   position: fixed;
-  top: 40rpx;
-  right: 60rpx;
+  top: 40px;
+  right: 60px;
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 4rpx;
+  gap: 4px;
   align-items: center;
-  image {
-    width: 30rpx;
-    height: 30rpx;
+  .image {
+    width: 28px;
+    height: 28px;
   }
 }
 
@@ -861,31 +863,30 @@ onUnmounted(() => {
 .slider {
   position: absolute;
   z-index: 1;
-  top: 200rpx;
-  right: 50rpx;
-  width: 160rpx;
+  bottom: 30px;
+  right: 60px;
+  width: 120px;
 }
 
 .slider-wrapper {
   .num {
     position: absolute;
-    top: 0;
+    top: 30px;
     transform: translateX(-50%);
     color: #fff;
-    font-size: 20rpx;
+    font-size: 14px;
     white-space: nowrap;
   }
   .slider-label {
     position: relative;
-    height: 40rpx;
+    height: 40px;
   }
   .slider-label-bottom {
     display: flex;
     justify-content: space-between;
-    margin-top: 4rpx;
     .num-text {
       color: #fff;
-      font-size: 18rpx;
+      font-size: 14px;
     }
   }
 }

@@ -94,8 +94,10 @@ const getScreenSize = () => {
 
 const backRightInit = () => {
   const { width, height } = getScreenSize();
+  console.log(width, height)
   boxX.value = width / 2 + 130;
-  boxY.value = height / 2 - 10;
+  boxY.value = height / 2 + 40;
+  console.log(boxX.value, boxY.value)
 };
 
 const backLeftInit = () => {
@@ -287,8 +289,8 @@ onBeforeUnmount(() => {
   position: fixed;
   top: 0;
   left: 0;
-  width: 90px;
-  height: 25px;
+  width: 180px;
+  height: 50px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -300,8 +302,8 @@ onBeforeUnmount(() => {
   touch-action: none;
 }
 .arrow {
-  width: 28px;
-  height: 28px;
+  width: 50px;
+  height: 50px;
   opacity: 0.8;
   transition: all 0.2s ease;
   z-index: 1;
@@ -315,8 +317,8 @@ onBeforeUnmount(() => {
   transform: scale(1.15);
 }
 .dot {
-  width: 24px;
-  height: 24px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   background-repeat: no-repeat;
   background-position: center center;
