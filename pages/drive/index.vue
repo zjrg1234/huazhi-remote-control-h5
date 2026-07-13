@@ -119,9 +119,11 @@
         </div>
       </div>
 
-      <LeftRight @action="handleLRDrive" :isLeft="operMode"></LeftRight>
+      <!-- <LeftRight @action="handleLRDrive" :isLeft="operMode"></LeftRight>
 
-      <UpDown @action="handleFBDrive" :isLeft="!operMode"></UpDown>
+      <UpDown @action="handleFBDrive" :isLeft="!operMode"></UpDown> -->
+
+      <pointOprea></pointOprea>
 
       <!-- 时间显示 -->
       <div class="time">
@@ -172,6 +174,7 @@ import TimeClock from "./components/tclock.vue";
 import battery from "./components/battery.vue";
  import UpDown from './components/up-down.vue'
 import LeftRight from "./components/left-right.vue";
+import pointOprea from "./components/1.vue";
 import { formatTime, mapToPer } from "@/utils/utils.js";
 // import UDPSocketClient from "@/utils/udpSocket.js";
 import { handleDriverSocketData } from "@/utils/socketHelper.js";

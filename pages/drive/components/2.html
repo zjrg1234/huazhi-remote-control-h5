@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Panel UI</title>
+    <style>
+        :root {
+            --bg-color: #2c3e50;
+            --panel-bg: rgba(255, 255, 255, 0.1);
+            --accent-orange: #ff9f43;
+            --accent-yellow: #feca57;
+            --text-color: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* 模拟原图的绿色模糊背景 */
+            background: linear-gradient(135deg, #1abc9c 0%, #2ecc71 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        /* 主容器 */
+        .control-panel {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 50%;
+            box-shadow: 
+                0 8px 32px 0 rgba(31, 38, 135, 0.37),
+                inset 0 0 20px rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            place-items: center;
+        }
+
+        /* 中间圆形区域 */
+        .center-circle {
+            grid-column: 2;
+            grid-row: 2;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-color);
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        /* 按钮通用样式 */
+        .btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.2s ease, filter 0.2s ease;
+            position: relative;
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        /* SVG 图标样式 */
+        .icon-svg {
+            width: 40px;
+            height: 40px;
+            fill: none;
+            stroke: var(--text-color);
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        /* 特殊颜色处理：上下箭头用橙色渐变感（通过stroke实现简单版，或填充） */
+        .up-arrow .icon-svg, 
+        .down-arrow .icon-svg {
+            stroke: var(--accent-orange);
+            stroke-width: 3;
+        }
+        
+        .left-arrow .icon-svg, 
+        .right-arrow .icon-svg {
+            stroke: var(--accent-yellow);
+            stroke-width: 3;
+        }
+
+        /* 布局定位 */
+        .up-arrow { grid-column: 2; grid-row: 1; }
+        .left-arrow { grid-column: 1; grid-row: 2; }
+        .right-arrow { grid-column: 3; grid-row: 2; }
+        .down-arrow { grid-column: 2; grid-row: 3; }
+
+        /* 装饰性文字标签 (可选) */
+        .label {
+            position: absolute;
+            font-size: 10px;
+            color: rgba(255,255,255,0.7);
+            pointer-events: none;
+        }
+        .up-arrow .label { bottom: -20px; }
+        .down-arrow .label { top: -20px; }
+        .left-arrow .label { right: -20px; }
+        .right-arrow .label { left: -20px; }
+
+    </style>
+</head>
+<body>
+
+    <div class="control-panel">
+        <!-- 上 -->
+        <button class="btn up-arrow" aria-label="Up">
+            <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M12 19V5" />
+                <path d="M5 12l7-7 7 7" />
+            </svg>
+        </button>
+
+        <!-- 左 -->
+        <button class="btn left-arrow" aria-label="Left">
+            <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M19 12H5" />
+                <path d="M12 19l-7-7 7-7" />
+            </svg>
+        </button>
+
+        <!-- 中间 -->
+        <div class="center-circle">
+            OK
+        </div>
+
+        <!-- 右 -->
+        <button class="btn right-arrow" aria-label="Right">
+            <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M5 12h14" />
+                <path d="M12 5l7 7-7 7" />
+            </svg>
+        </button>
+
+        <!-- 下 -->
+        <button class="btn down-arrow" aria-label="Down">
+            <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M12 5v14" />
+                <path d="M19 12l-7 7-7-7" />
+            </svg>
+        </button>
+    </div>
+
+</body>
+</html>
