@@ -3,23 +3,12 @@
     <div class="page-content">
       <!-- 背景区域（原 iframe 改为 video 组件） -->
       <div class="bg">
-        <iframe
-          :src="videoUrl"
-          controls
-          autoplay
-          muted
-          object-fit="fill"
-          style="width:100%; height:100%"
-        ></iframe>
+        <iframe :src="videoUrl" controls autoplay muted object-fit="fill" style="width:100%; height:100%"></iframe>
       </div>
 
       <!-- 退出按钮 -->
       <div class="logout" @click="logout">
-        <image
-          src="/static/images/icon_exit@2x.png"
-          class="image"
-          mode="aspectFit"
-        />
+        <image src="/static/images/icon_exit@2x.png" class="image" mode="aspectFit" />
       </div>
 
       <!-- 顶部状态栏 -->
@@ -49,45 +38,22 @@
 
       <!-- 设置按钮 -->
       <div class="right-cont" @click="set">
-        <image
-          class="image"
-          src="/static/images/icon_set@2x.png"
-          mode="aspectFit"
-        />
+        <image class="image" src="/static/images/icon_set@2x.png" mode="aspectFit" />
       </div>
 
       <!-- 声音/波纹图标 -->
       <div class="side-menu-icon">
         <microphone> </microphone>
-        <image
-        class="image"
-          v-if="!showSound"
-          src="/static/images/icon_sound_close@2x.png"
-          @click="showSound = true"
-          mode="aspectFit"
-        />
-        <image
-         class="image"
-          v-if="showSound"
-          src="/static/images/icon_sound_open@2x.png"
-          @click="showSound = false"
-          mode="aspectFit"
-        />
+        <image class="image" v-if="!showSound" src="/static/images/icon_sound_close@2x.png" @click="showSound = true"
+          mode="aspectFit" />
+        <image class="image" v-if="showSound" src="/static/images/icon_sound_open@2x.png" @click="showSound = false"
+          mode="aspectFit" />
       </div>
 
       <!-- 右侧菜单 -->
       <div class="side-menu">
-        <div
-          class="menu-item"
-          v-for="(item, index) in menuList"
-          :key="index"
-          @click="handleIcon(item)"
-        >
-          <image
-            class="img"
-            mode="aspectFit"
-            :src="activeKey.includes(item.key) ? item.iconSelect : item.icon"
-          />
+        <div class="menu-item" v-for="(item, index) in menuList" :key="index" @click="handleIcon(item)">
+          <image class="img" mode="aspectFit" :src="activeKey.includes(item.key) ? item.iconSelect : item.icon" />
           <span class="label">{{ item.name }}</span>
         </div>
       </div>
@@ -101,16 +67,8 @@
                 {{ constSpeed }} km/h
               </div>
             </div>
-            <slider
-              :value="constSpeed"
-              :min="1"
-              :max="100"
-              :step="1"
-              activeColor="#f5c542"
-              backgroundColor="#e9e9e9"
-              block-size="6"
-              @change="changeConstSpeed"
-            />
+            <slider :value="constSpeed" :min="1" :max="100" :step="1" activeColor="#f5c542" backgroundColor="#e9e9e9"
+              block-size="6" @change="changeConstSpeed" />
             <div class="slider-label-bottom">
               <div class="num-text num-left">0</div>
               <div class="num-text num-right">100</div>
@@ -127,39 +85,19 @@
 
       <!-- 时间显示 -->
       <div class="time">
-        <image
-          class="image"
-          src="/static/images/icon_time@2x.webp"
-          mode="aspectFit"
-        />
+        <image class="image" src="/static/images/icon_time@2x.webp" mode="aspectFit" />
         <TimeClock></TimeClock>
       </div>
 
       <!-- 通用弹窗 -->
-      <ALLPopup
-        ref="allPopup"
-        v-model:show="allPopupVisible"
-        type="tip"
-        :orderNo="orderNo"
-        :vehicleId="vehicleId"
-        :isShow="showRepairReason"
-        @action="handlePopupAction"
-      />
+      <ALLPopup ref="allPopup" v-model:show="allPopupVisible" type="tip" :orderNo="orderNo" :vehicleId="vehicleId"
+        :isShow="showRepairReason" @action="handlePopupAction" />
 
       <!-- 设置弹窗 -->
-      <SetPopup
-        v-model:show="setVisible"
-        :videoDefinition="videoDefinition"
-        :operFB="operFB"
-        :directionCenter="directionCenter"
-        :acceleratorDynamics="acceleratorDynamics"
-        :directionDynamics="directionDynamics"
-        :operDir="operDir"
-        :type="carType"
-        @action="handleOper"
-        @operAction="handleFBDir"
-        @changeValue="changeVal"
-      />
+      <SetPopup v-model:show="setVisible" :videoDefinition="videoDefinition" :operFB="operFB"
+        :directionCenter="directionCenter" :acceleratorDynamics="acceleratorDynamics"
+        :directionDynamics="directionDynamics" :operDir="operDir" :type="carType" @action="handleOper"
+        @operAction="handleFBDir" @changeValue="changeVal" />
     </div>
   </div>
 </template>
@@ -172,7 +110,7 @@ import SetPopup from "./components/set.vue";
 import microphone from "./components/microphone.vue";
 import TimeClock from "./components/tclock.vue";
 import battery from "./components/battery.vue";
- import UpDown from './components/up-down.vue'
+import UpDown from './components/up-down.vue'
 import LeftRight from "./components/left-right.vue";
 import pointOprea from "./components/1.vue";
 import { formatTime, mapToPer } from "@/utils/utils.js";
@@ -429,7 +367,7 @@ const GetDeviceInfo = (data) => {
         videoUrl.value = res.data.rows[0].hls || res.data.rows[0].url || ""; // 根据实际字段调整
       }
     })
-    .catch(() => {});
+    .catch(() => { });
 };
 
 // 初始化摄像头播放
@@ -443,7 +381,7 @@ const initTopVideo = () => {
     .then((res) => {
       if (res.code == 200) GetDeviceInfo(res.data);
     })
-    .catch(() => {});
+    .catch(() => { });
 };
 
 // 图标点击处理
@@ -523,7 +461,7 @@ const handlePopupAction = (type) => {
             uni.navigateBack();
           }, 2000);
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 };
 
@@ -574,6 +512,7 @@ const handleFBDrive = (item) => {
     if (item.value == 0) {
       type = "endType";
       chValue.value.ch2 = acceleratorCenter.value.current_value;
+      return
     } else {
       type = "downType";
       ratioValue = mapToPer(Math.abs(item.value));
@@ -651,16 +590,29 @@ onLoad((options) => {
     chValue.value.ch1 = directionCenter.value.current_value;
     chValue.value.ch2 = acceleratorCenter.value.current_value;
 
-    carHandler.value = new CarControlHandler({
-      reverseUpDownState: operFB.value != 0,
-      reverseLeftRightState: operDir.value != 0,
-      ch1: directionCenter.value.current_value,
-      ch2: acceleratorDynamics.value.current_value,
-      0: { ...directionCenter.value },
-      1: { ...carDetails.value.accelerator_center },
-      2: { ...directionDynamics.value },
-      3: { ...acceleratorDynamics.value },
-    });
+    // 四驱车
+    if (carType.value == 1) {
+      carHandler.value = new CarControlHandler({
+        reverseUpDownState: operFB.value != 0,
+        reverseLeftRightState: operDir.value != 0,
+        ch1: directionCenter.value.current_value,
+        ch2: acceleratorDynamics.value.current_value,
+        0: { ...directionCenter.value },
+        1: { ...carDetails.value.accelerator_center },
+        2: { ...directionDynamics.value },
+        3: { ...acceleratorDynamics.value },
+      });
+    } 
+     if (carType.value == 3) {
+      carHandler.value = new CarControlHandler({
+        reverseUpDownState: operFB.value != 0,
+        reverseLeftRightState: operDir.value != 0,
+       
+        
+      });
+    } 
+    // 液压挖机
+
   }
 
   // 初始化 WebSocket
@@ -729,6 +681,7 @@ onUnmounted(() => {
   z-index: 1;
   top: 10px;
   left: 20px;
+
   .image {
     width: 27px;
     height: 27px;
@@ -740,6 +693,7 @@ onUnmounted(() => {
   z-index: 1;
   top: 10px;
   right: 20px;
+
   .image {
     width: 27px;
     height: 27px;
@@ -754,34 +708,41 @@ onUnmounted(() => {
   left: 50%;
   transform: translateX(-50%);
   padding: 4rpx 16rpx;
+
   .flex {
     display: flex;
     align-items: center;
     gap: 10rpx;
   }
+
   .fl {
     display: flex;
     align-items: center;
     gap: 4rpx;
   }
+
   .car {
     position: relative;
+
     .image {
       width: 15px;
       height: 15px;
     }
+
     .mini-forbidden {
       position: absolute;
       bottom: 2px;
       right: -2px;
     }
   }
+
   .dot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
     background: #09ff77;
   }
+
   .time-text {
     font-size: 20px;
     color: #fff;
@@ -807,6 +768,7 @@ onUnmounted(() => {
   border: 2px solid #ff4d4f;
   border-radius: 50%;
   position: relative;
+
   &::after {
     content: "";
     position: absolute;
@@ -828,6 +790,7 @@ onUnmounted(() => {
   flex-direction: column;
   gap: 4px;
   align-items: center;
+
   .image {
     width: 28px;
     height: 28px;
@@ -852,11 +815,13 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
+
   .img {
     width: 18px;
     height: 18px;
     margin-bottom: 2px;
   }
+
   .label {
     font-size: 14px;
     color: #fff;
@@ -880,13 +845,16 @@ onUnmounted(() => {
     font-size: 14px;
     white-space: nowrap;
   }
+
   .slider-label {
     position: relative;
     height: 40px;
   }
+
   .slider-label-bottom {
     display: flex;
     justify-content: space-between;
+
     .num-text {
       color: #fff;
       font-size: 14px;
@@ -901,6 +869,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   opacity: 0.8;
+
   .image {
     display: block;
     width: 20px;
