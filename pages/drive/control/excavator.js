@@ -39,6 +39,33 @@ export class ExcavatorControlHandler {
     this.config[3] = obj[3];
     console.log(this.config);
   }
+  resetChValue() {
+    this.ch3 = config.ch3.close_value.current_value; // 旋转
+    this.ch4 = config.ch4.close_value.current_value; // 大臂
+    this.ch5 = config.ch5.close_value.current_value; // 小臂
+    this.ch6 = config.ch6.close_value.current_value; // 挖斗
+    this.ch7 = config.ch7.close_value.current_value; // 油泵
+  }
+  getChValue() {
+    // 1. 定义需要处理的通道数组
+    const channels = ["ch3", "ch4", "ch5", "ch6", "ch7"];
+
+    // 2. 遍历通道并限制范围
+    channels.forEach((ch) => {
+      // 获取原始配置值
+      let value = this[ch];
+      value = Math.max(1, Math.min(2000, value));
+      // 将处理后的值赋给 this 对应的通道
+      this[ch] = value;
+    });
+    return {
+      ch3: this.ch3,
+      ch4: this.ch4,
+      ch5: this.ch5,
+      ch6: this.ch6,
+      ch7: this.ch7
+    };
+  }
   /**
    * 处理双摇杆控制通道
    * @param {boolean} isUpDown - 是否为上下摇杆 (true: 上下, false: 左右)
@@ -206,18 +233,17 @@ export class ExcavatorControlHandler {
         this.ch6 = ch6Center - (ch6Center - ch6Close) * rateValue;
       }
 
-      if(right) {
-        this.ch6  = ch6Center + (ch6Open - ch6Center) * rateValue;
+      if (right) {
+        this.ch6 = ch6Center + (ch6Open - ch6Center) * rateValue;
       }
 
       if (up) {
         this.ch4 = ch4Center + (ch4Open - ch4Center) * rateValue;
       }
 
-      if(down) {
+      if (down) {
         this.ch4 = ch4Center - (ch4Center - ch4Close) * rateValue;
       }
-
     }
   }
 }

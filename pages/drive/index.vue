@@ -723,9 +723,15 @@ onUnmounted(() => {
   if (ws.value) ws.value.close();
 });
 
-const handleLeftDrive = () => {};
+// 遥杆操作
+const handleLeftDrive = (param) => {
+  carHandler.value.handleRemoteControlChannel('left',param.left, param.right, param.up, param.down)
+};
 
-const handleRightDrive = () => {};
+// 遥杆操作
+const handleRightDrive = (param) => {
+  carHandler.value.handleRemoteControlChannel('right',param.left, param.right, param.up, param.down)
+};
 </script>
 
 <style lang="scss" scoped>
