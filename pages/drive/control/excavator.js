@@ -20,6 +20,13 @@ export class ExcavatorControlHandler {
     this.reverseUpDownState = config.reverseUpDownState;
     this.reverseRotateState = config.reverseRotateState;
     this.config = config;
+
+    this.ch3 = config.ch3.close_value.current_value; // 旋转
+    this.ch4 = config.ch4.close_value.current_value; // 大臂
+    this.ch5 = config.ch5.close_value.current_value; // 小臂
+    this.ch6 = config.ch6.close_value.current_value; // 挖斗
+    this.ch7 = config.ch7.close_value.current_value; // 油泵
+    this.ch8 = config.ch8.close_value.current_value;
   } // 模拟获取配置参数的方法
 
   getConfigValue(index) {
@@ -115,13 +122,13 @@ export class ExcavatorControlHandler {
 
   /**
    *
-   * @param {boolean} type - 是否为左侧，还是右侧， 左侧true，右侧false
+   * @param {boolean} type - 是否为左侧，还是右侧， 左侧left，右侧right
    * @param {string} positionType - 是点向上箭头 还是向下箭头；如果操作设置 ^ ^  左侧左轮前进（后退） 右轮前进（后退）
    * @param {number} ratioValue 应该有速率。速率先不管
    */
-  handleUpDownControlChannel(type, positionType) {
+  handleArrowControlChannel(type, positionType) {
     // 左侧上下箭头
-    if (type) {
+    if (type == "left") {
       // true 点击向上
       const center = this.config.ch2.center_value.current_value;
       const open = this.config.ch2.open_value.current_value;
@@ -148,6 +155,69 @@ export class ExcavatorControlHandler {
     }
     if (this.ch2 > 2000) {
       this.ch2 = 2000;
+    }
+  }
+
+  // 遥杆操作
+  handleRemoteControlChannel(type, left, right, up, down) {
+    const rateValue = 1;
+
+    // 左侧遥杆
+    if (type == "left") {
+      const ch3Center = this.config.ch3.center_value.current_value;
+      const ch3Open = this.config.ch3.open_value.current_value;
+      const ch3Close = this.config.ch3.close_value.current_value;
+      const ch5Center = this.config.ch5.center_value.current_value;
+      const ch5Open = this.config.ch5.open_value.current_value;
+      const ch5Close = this.config.ch5.close_value.current_value;
+
+      // 向左旋转 或者 开启旋转反向
+      if (left || (right && this.reverseRotateState)) {
+        this.ch3 = ch3Center + (ch3Open - ch3Center) * rateValue;
+      }
+      if (right || (left && this.reverseRotateState)) {
+        this.ch3 = ch3Center - (ch3Center - ch3Close) * rateValue;
+      }
+
+      if (up) {
+        this.ch5 = ch5Center + (ch5Open - ch5Center);
+      }
+      if (down) {
+        this.ch5 = ch5Center - (ch5Center - ch5Close);
+      }
+      if (up || down) {
+        this.ch7 = this.config.ch7.open_value.current_value;
+      } else {
+        this.ch7 = this.config.ch7.close_value.current_value;
+      }
+    } else {
+      // 右侧遥控
+      const ch4Center = this.config.ch4.center_value.current_value;
+      const ch4Open = this.config.ch4.open_value.current_value;
+      const ch4Close = this.config.ch4.close_value.current_value;
+      const ch6Center = this.config.ch6.center_value.current_value;
+      const ch6Open = this.config.ch6.open_value.current_value;
+      const ch6Close = this.config.ch6.close_value.current_value;
+      const ch7Open = this.config.ch7.open_value.current_value;
+      const ch7Close = this.config.ch7.close_value.current_value;
+
+      this.ch7 = Math.max(ch7Open, ch7Close);
+      if (left) {
+        this.ch6 = ch6Center - (ch6Center - ch6Close) * rateValue;
+      }
+
+      if(right) {
+        this.ch6  = ch6Center + (ch6Open - ch6Center) * rateValue;
+      }
+
+      if (up) {
+        this.ch4 = ch4Center + (ch4Open - ch4Center) * rateValue;
+      }
+
+      if(down) {
+        this.ch4 = ch4Center - (ch4Center - ch4Close) * rateValue;
+      }
+
     }
   }
 }

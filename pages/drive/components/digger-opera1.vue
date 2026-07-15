@@ -26,7 +26,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-
+const emit = defineEmits(["action"]);
 // --- 配置参数 ---
 const IDLE_DELAY = 500; // 进入待命模式的延迟时间(ms)
 const MAX_RADIUS = 65; // 圆点滑动的最大半径(px)
@@ -97,6 +97,7 @@ const updateArrows = (dx, dy) => {
   isDownActive.value = dy > SWIPE_THRESHOLD;
   isLeftActive.value = dx < -SWIPE_THRESHOLD;
   isRightActive.value = dx > SWIPE_THRESHOLD;
+  emit('action',{up: isUpActive.value, down: isDownActive.value, left: isLeftActive.value,right:isRightActive.value})
 };
 
 const resetArrows = () => {
@@ -104,6 +105,8 @@ const resetArrows = () => {
   isDownActive.value = false;
   isLeftActive.value = false;
   isRightActive.value = false;
+  emit('action',{up: isUpActive.value, down: isDownActive.value, left: isLeftActive.value,right:isRightActive.value})
+
 };
 
 // --- 事件处理 ---
