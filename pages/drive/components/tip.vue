@@ -95,9 +95,9 @@
       <template v-if="type === 'longTimeTip'">
         <view class="tip-content">
           <text class="time">【警告】您180秒无操作！</text>
-          <text class="tit">温馨提示</text>
+          <text class="tit">三分钟未操作,请立即驾驶</text>
           <view class="text">
-            <text>您已长时间未操作，即将退出驾驶模式。</text>
+            <text>为防止您的电池被浪费，即将结束本次驾驶，欢迎您下次再来!</text>
           </view>
         </view>
         <view class="footer">
