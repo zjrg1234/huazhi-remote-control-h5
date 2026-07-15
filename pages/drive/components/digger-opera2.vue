@@ -11,13 +11,33 @@
 
     <!-- 四个方向箭头 -->
     <view class="arrow up" :class="{ active: isUpActive }">
-      <image src="/static/images/btn_up2@2x.png" mode="aspectFit"></image>
+      <image
+        class="image"
+        src="/static/images/btn_up1@2x.png"
+        mode="aspectFit"
+      ></image>
     </view>
     <view class="arrow down" :class="{ active: isDownActive }">
-      <image src="/static/images/btn_down2@2x.png" mode="aspectFit"></image>
+      <image
+        class="image"
+        src="/static/images/btn_down1@2x.png"
+        mode="aspectFit"
+      ></image>
     </view>
-    <view class="arrow left" :class="{ active: isLeftActive }">◀</view>
-    <view class="arrow right" :class="{ active: isRightActive }"></view>
+    <view class="arrow left" :class="{ active: isLeftActive }">
+      <image
+        class="image"
+        src="/static/images/btn_bucket_down@2x.png"
+        mode="aspectFit"
+      ></image>
+    </view>
+    <view class="arrow right" :class="{ active: isRightActive }">
+      <image
+        class="image"
+        src="/static/images/btn_bucket_up@2x.png"
+        mode="aspectFit"
+      ></image>
+    </view>
 
     <!-- 摇杆圆点 -->
     <view class="dot" :class="{ ready: isReadyMode }" :style="dotStyle"></view>
@@ -191,13 +211,13 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 /* 基础重置 */
 /* 注意：在uni-app中，全局样式建议写在app.vue或uni.scss中，这里仅做组件内样式 */
 
 .control-box {
   position: fixed;
-  left: 10px;
+  right: 160px;
   bottom: 100px;
   /* 原CSS中bottom未定义，默认为auto，这里保持原逻辑，通过JS控制top/left */
   width: 140px;
@@ -242,6 +262,11 @@ onMounted(() => {
   justify-content: center;
   font-size: 18px;
   color: #fff;
+
+  .image {
+    width: 25px;
+    height: 25px;
+  }
 }
 
 .arrow.active {
@@ -262,18 +287,10 @@ onMounted(() => {
 .arrow.left {
   grid-column: 1;
   grid-row: 2;
-
-  
 }
 .arrow.right {
   grid-column: 3;
   grid-row: 2;
-
- 
-   width: 40px;
-  height: 40px;
-  background: linear-gradient(to bottom right, #ff9900, #ff6600); /* 渐变填充 */
-  clip-path: polygon(0% 0%, 70% 0%, 100% 50%, 70% 100%, 0% 100%);
 }
 
 /* 摇杆圆点：居中 */

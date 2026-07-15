@@ -123,7 +123,8 @@
 
       <UpDown @action="handleFBDrive" :isLeft="!operMode"></UpDown> -->
 
-      <pointOprea></pointOprea>
+      <pointOprea1></pointOprea1>
+      <pointOprea2></pointOprea2>
 
       <!-- 时间显示 -->
       <div class="time">
@@ -174,7 +175,8 @@ import TimeClock from "./components/tclock.vue";
 import battery from "./components/battery.vue";
  import UpDown from './components/up-down.vue'
 import LeftRight from "./components/left-right.vue";
-import pointOprea from "./components/1.vue";
+import pointOprea1 from "./components/digger-opera1.vue";
+import pointOprea2 from "./components/digger-opera2.vue";
 import { formatTime, mapToPer } from "@/utils/utils.js";
 // import UDPSocketClient from "@/utils/udpSocket.js";
 import { handleDriverSocketData } from "@/utils/socketHelper.js";
