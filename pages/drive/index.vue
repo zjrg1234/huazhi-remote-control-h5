@@ -3,12 +3,23 @@
     <div class="page-content">
       <!-- 背景区域（原 iframe 改为 video 组件） -->
       <div class="bg">
-        <iframe :src="videoUrl" controls autoplay muted object-fit="fill" style="width:100%; height:100%"></iframe>
+        <iframe
+          :src="videoUrl"
+          controls
+          autoplay
+          muted
+          object-fit="fill"
+          style="width: 100%; height: 100%"
+        ></iframe>
       </div>
 
       <!-- 退出按钮 -->
       <div class="logout" @click="logout">
-        <image src="/static/images/icon_exit@2x.png" class="image" mode="aspectFit" />
+        <image
+          src="/static/images/icon_exit@2x.png"
+          class="image"
+          mode="aspectFit"
+        />
       </div>
 
       <!-- 顶部状态栏 -->
@@ -17,7 +28,11 @@
           <div class="fl">
             <span class="dot"></span>
             <div class="car">
-              <image class="image" src="/static/images/icon_car@2x.png" mode="aspectFit" />
+              <image
+                class="image"
+                src="/static/images/icon_car@2x.png"
+                mode="aspectFit"
+              />
               <span class="mini-forbidden"></span>
             </div>
           </div>
@@ -38,22 +53,45 @@
 
       <!-- 设置按钮 -->
       <div class="right-cont" @click="set">
-        <image class="image" src="/static/images/icon_set@2x.png" mode="aspectFit" />
+        <image
+          class="image"
+          src="/static/images/icon_set@2x.png"
+          mode="aspectFit"
+        />
       </div>
 
       <!-- 声音/波纹图标 -->
       <div class="side-menu-icon">
         <microphone> </microphone>
-        <image class="image" v-if="!showSound" src="/static/images/icon_sound_close@2x.png" @click="showSound = true"
-          mode="aspectFit" />
-        <image class="image" v-if="showSound" src="/static/images/icon_sound_open@2x.png" @click="showSound = false"
-          mode="aspectFit" />
+        <image
+          class="image"
+          v-if="!showSound"
+          src="/static/images/icon_sound_close@2x.png"
+          @click="showSound = true"
+          mode="aspectFit"
+        />
+        <image
+          class="image"
+          v-if="showSound"
+          src="/static/images/icon_sound_open@2x.png"
+          @click="showSound = false"
+          mode="aspectFit"
+        />
       </div>
 
       <!-- 右侧菜单 -->
       <div class="side-menu">
-        <div class="menu-item" v-for="(item, index) in menuList" :key="index" @click="handleIcon(item)">
-          <image class="img" mode="aspectFit" :src="activeKey.includes(item.key) ? item.iconSelect : item.icon" />
+        <div
+          class="menu-item"
+          v-for="(item, index) in menuList"
+          :key="index"
+          @click="handleIcon(item)"
+        >
+          <image
+            class="img"
+            mode="aspectFit"
+            :src="activeKey.includes(item.key) ? item.iconSelect : item.icon"
+          />
           <span class="label">{{ item.name }}</span>
         </div>
       </div>
@@ -67,8 +105,16 @@
                 {{ constSpeed }} km/h
               </div>
             </div>
-            <slider :value="constSpeed" :min="1" :max="100" :step="1" activeColor="#f5c542" backgroundColor="#e9e9e9"
-              block-size="6" @change="changeConstSpeed" />
+            <slider
+              :value="constSpeed"
+              :min="1"
+              :max="100"
+              :step="1"
+              activeColor="#f5c542"
+              backgroundColor="#e9e9e9"
+              block-size="6"
+              @change="changeConstSpeed"
+            />
             <div class="slider-label-bottom">
               <div class="num-text num-left">0</div>
               <div class="num-text num-right">100</div>
@@ -81,24 +127,44 @@
 
       <UpDown @action="handleFBDrive" :isLeft="!operMode"></UpDown> -->
 
-      <pointOprea1></pointOprea1>
-      <pointOprea2></pointOprea2>
+      <pointOprea1 @action="handleLeftDrive"></pointOprea1>
+      <pointOprea2 @action="handleRightDrive"></pointOprea2>
 
       <!-- 时间显示 -->
       <div class="time">
-        <image class="image" src="/static/images/icon_time@2x.webp" mode="aspectFit" />
+        <image
+          class="image"
+          src="/static/images/icon_time@2x.webp"
+          mode="aspectFit"
+        />
         <TimeClock></TimeClock>
       </div>
 
       <!-- 通用弹窗 -->
-      <ALLPopup ref="allPopup" v-model:show="allPopupVisible" type="tip" :orderNo="orderNo" :vehicleId="vehicleId"
-        :isShow="showRepairReason" @action="handlePopupAction" />
+      <ALLPopup
+        ref="allPopup"
+        v-model:show="allPopupVisible"
+        type="tip"
+        :orderNo="orderNo"
+        :vehicleId="vehicleId"
+        :isShow="showRepairReason"
+        @action="handlePopupAction"
+      />
 
       <!-- 设置弹窗 -->
-      <SetPopup v-model:show="setVisible" :videoDefinition="videoDefinition" :operFB="operFB"
-        :directionCenter="directionCenter" :acceleratorDynamics="acceleratorDynamics"
-        :directionDynamics="directionDynamics" :operDir="operDir" :type="carType" @action="handleOper"
-        @operAction="handleFBDir" @changeValue="changeVal" />
+      <SetPopup
+        v-model:show="setVisible"
+        :videoDefinition="videoDefinition"
+        :operFB="operFB"
+        :directionCenter="directionCenter"
+        :acceleratorDynamics="acceleratorDynamics"
+        :directionDynamics="directionDynamics"
+        :operDir="operDir"
+        :type="carType"
+        @action="handleOper"
+        @operAction="handleFBDir"
+        @changeValue="changeVal"
+      />
     </div>
   </div>
 </template>
@@ -111,7 +177,7 @@ import SetPopup from "./components/set.vue";
 import microphone from "./components/microphone.vue";
 import TimeClock from "./components/tclock.vue";
 import battery from "./components/battery.vue";
-import UpDown from './components/up-down.vue'
+import UpDown from "./components/up-down.vue";
 import LeftRight from "./components/left-right.vue";
 import pointOprea1 from "./components/digger-opera1.vue";
 import pointOprea2 from "./components/digger-opera2.vue";
@@ -122,6 +188,7 @@ import { encryptAES } from "@/utils/crypto.js";
 import { StartDrive } from "@/axios/index.js";
 import { LoginTop, DeviceDetails } from "@/axios/video.js";
 import { CarControlHandler } from "./control/siqu.js";
+import { ExcavatorControlHandler } from "./control/excavator.js";
 import { useInactivityAlarm } from "./control/useInactivityAlarm.js";
 import {
   ch1,
@@ -177,39 +244,40 @@ const UDPSocket = ref(null);
 const numTip = ref(0);
 
 // 菜单配置
-const menuList = ref([
-  { name: "报修", icon: repairs, key: "repairs", iconSelect: repairs, type: 1 },
-  {
-    name: "前差",
-    icon: before_diff,
-    key: "chBefore",
-    iconSelect: before_diff_selected,
-    type: 1,
-  },
-  {
-    name: "后差",
-    icon: after_diff,
-    key: "chAfter",
-    iconSelect: after_diff_selected,
-    type: 1,
-  },
-  { name: "CH4", icon: ch1, key: "ch4", iconSelect: ch_selected, type: 1 },
-  {
-    name: "高低",
-    icon: speeds,
-    key: "highLowSpeed",
-    iconSelect: speeds_selected,
-    type: 1,
-  },
-  {
-    name: "定速",
-    icon: cSpeeds,
-    key: "speed",
-    iconSelect: cSpeeds_selected,
-    type: 1,
-  },
-  { name: "", icon: light, key: "light", iconSelect: light_selected, type: 2 },
-]);
+const menuList = computed(() => {
+  if (carType.value == 1) {
+    return [
+      {
+        name: "报修",  icon: repairs, key: "repairs", iconSelect: repairs,type: 1,
+      },
+      {
+        name: "前差", icon: before_diff, key: "chBefore", iconSelect: before_diff_selected,type: 1,
+      },
+      {
+        name: "后差", icon: after_diff, key: "chAfter", iconSelect: after_diff_selected, type: 1,
+      },
+      { name: "CH4", icon: ch1, key: "ch4", iconSelect: ch_selected, type: 1 },
+      {
+        name: "高低", icon: speeds, key: "highLowSpeed", iconSelect: speeds_selected, type: 1,
+      },
+      {
+        name: "定速", icon: cSpeeds, key: "speed", iconSelect: cSpeeds_selected,type: 1,
+      },
+    ];
+  }
+
+  if (carType.value == 2) {
+    return [{
+        name: "报修",
+        icon: repairs,
+        key: "repairs",
+        iconSelect: repairs,
+        type: 1,
+      },
+      { name: "", icon: light, key: "light", iconSelect: light_selected, type: 2 },
+    ]
+  }
+});
 
 // 计费定时器
 let sendMsgTimer = null;
@@ -369,7 +437,7 @@ const GetDeviceInfo = (data) => {
         videoUrl.value = res.data.rows[0].hls || res.data.rows[0].url || ""; // 根据实际字段调整
       }
     })
-    .catch(() => { });
+    .catch(() => {});
 };
 
 // 初始化摄像头播放
@@ -383,7 +451,7 @@ const initTopVideo = () => {
     .then((res) => {
       if (res.code == 200) GetDeviceInfo(res.data);
     })
-    .catch(() => { });
+    .catch(() => {});
 };
 
 // 图标点击处理
@@ -463,7 +531,7 @@ const handlePopupAction = (type) => {
             uni.navigateBack();
           }, 2000);
       })
-      .catch(() => { });
+      .catch(() => {});
   }
 };
 
@@ -475,6 +543,8 @@ const handleFBDir = (val) => {
   const arr = val.split("_");
   if (arr[0] == 1) operFB.value = arr[1] === "true" ? 1 : 0;
   if (arr[0] == 2) operDir.value = arr[1] === "true" ? 1 : 0;
+  if (arr[0] == 3) operFB.value = arr[1] === "true" ? 1 : 0;
+  if (arr[0] == 4) operDir.value = arr[1] === "true" ? 1 : 0;
 };
 
 const changeVal = (value) => {
@@ -514,7 +584,7 @@ const handleFBDrive = (item) => {
     if (item.value == 0) {
       type = "endType";
       chValue.value.ch2 = acceleratorCenter.value.current_value;
-      return
+      return;
     } else {
       type = "downType";
       ratioValue = mapToPer(Math.abs(item.value));
@@ -604,17 +674,16 @@ onLoad((options) => {
         2: { ...directionDynamics.value },
         3: { ...acceleratorDynamics.value },
       });
-    } 
-     if (carType.value == 3) {
-      carHandler.value = new CarControlHandler({
+    }
+    // 液压挖机
+    if (carType.value == 3) {
+      carHandler.value = new ExcavatorControlHandler({
         reverseUpDownState: operFB.value != 0,
         reverseLeftRightState: operDir.value != 0,
-       
-        
+        ...carDetails.value.vehicle_config_detail
       });
-    } 
+    }
     // 液压挖机
-
   }
 
   // 初始化 WebSocket
@@ -644,15 +713,19 @@ onMounted(() => {
   // 时钟
   let num = 1;
   const timer = setInterval(() => {
-    currentTime.value = formatTime(++num)
-  }, 1000)
-})
+    currentTime.value = formatTime(++num);
+  }, 1000);
+});
 
 onUnmounted(() => {
-  clearAllTimers()
-  clearInterval(timer)
-  if (ws.value) ws.value.close()
-})
+  clearAllTimers();
+  clearInterval(timer);
+  if (ws.value) ws.value.close();
+});
+
+const handleLeftDrive = () => {};
+
+const handleRightDrive = () => {};
 </script>
 
 <style lang="scss" scoped>
