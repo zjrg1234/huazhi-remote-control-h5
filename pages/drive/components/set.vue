@@ -79,7 +79,7 @@
             </div>
           </div>
 
-          <div class="group" v-if="selectedIndex == 0 && type == '2'">
+          <div class="group" v-if="selectedIndex == 0 && (type == '2' || type == '3')">
             <div class="group-item">
               <p class="tit">视频清晰度</p>
               <div class="flex">

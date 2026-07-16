@@ -123,12 +123,12 @@
         </div>
       </div>
 
-      <!-- <LeftRight @action="handleLRDrive" :isLeft="operMode"></LeftRight>
+      <LeftRight @action="handleLRDrive" v-if="carType == 1" :isLeft="operMode"></LeftRight>
 
-      <UpDown @action="handleFBDrive" :isLeft="!operMode"></UpDown> -->
+      <UpDown @action="handleFBDrive"  v-if="carType == 1" :isLeft="!operMode"></UpDown>
 
-      <pointOprea1 @action="handleLeftDrive"></pointOprea1>
-      <pointOprea2 @action="handleRightDrive"></pointOprea2>
+      <pointOprea1 @action="handleLeftDrive" v-if="carType == 3"></pointOprea1>
+      <pointOprea2 @action="handleRightDrive" v-if="carType == 3"></pointOprea2>
 
       <!-- 时间显示 -->
       <div class="time">
@@ -277,6 +277,15 @@ const menuList = computed(() => {
       { name: "", icon: light, key: "light", iconSelect: light_selected, type: 2 },
     ]
   }
+  return  [{
+        name: "报修",
+        icon: repairs,
+        key: "repairs",
+        iconSelect: repairs,
+        type: 1,
+      },
+      { name: "", icon: light, key: "light", iconSelect: light_selected, type: 2 },
+    ]
 });
 
 // 计费定时器
@@ -645,6 +654,8 @@ onLoad((options) => {
     else carType.value = "3";
   }
 
+  carType.value = '3';
+
   // 初始化车辆配置
   if (carDetails.value) {
     operFB.value = carDetails.value.reverse_left_right || 0;
@@ -725,11 +736,17 @@ onUnmounted(() => {
 
 // 遥杆操作
 const handleLeftDrive = (param) => {
+  if ( param.left == false && param.right == false && param.up == false && param.down == false) {
+    return;
+  }
   carHandler.value.handleRemoteControlChannel('left',param.left, param.right, param.up, param.down)
 };
 
 // 遥杆操作
 const handleRightDrive = (param) => {
+  if ( param.left == false && param.right == false && param.up == false && param.down == false) {
+    return;
+  }
   carHandler.value.handleRemoteControlChannel('right',param.left, param.right, param.up, param.down)
 };
 </script>
