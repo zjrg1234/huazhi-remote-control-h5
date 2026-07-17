@@ -123,9 +123,17 @@
         </div>
       </div>
 
-      <LeftRight @action="handleLRDrive" v-if="carType == 1" :isLeft="operMode"></LeftRight>
+      <LeftRight
+        @action="handleLRDrive"
+        v-if="carType == 1"
+        :isLeft="operMode"
+      ></LeftRight>
 
-      <UpDown @action="handleFBDrive"  v-if="carType == 1" :isLeft="!operMode"></UpDown>
+      <UpDown
+        @action="handleFBDrive"
+        v-if="carType == 1"
+        :isLeft="!operMode"
+      ></UpDown>
 
       <pointOprea1 @action="handleLeftDrive" v-if="carType == 3"></pointOprea1>
       <pointOprea2 @action="handleRightDrive" v-if="carType == 3"></pointOprea2>
@@ -248,44 +256,78 @@ const menuList = computed(() => {
   if (carType.value == 1) {
     return [
       {
-        name: "报修",  icon: repairs, key: "repairs", iconSelect: repairs,type: 1,
+        name: "报修",
+        icon: repairs,
+        key: "repairs",
+        iconSelect: repairs,
+        type: 1,
       },
       {
-        name: "前差", icon: before_diff, key: "chBefore", iconSelect: before_diff_selected,type: 1,
+        name: "前差",
+        icon: before_diff,
+        key: "chBefore",
+        iconSelect: before_diff_selected,
+        type: 1,
       },
       {
-        name: "后差", icon: after_diff, key: "chAfter", iconSelect: after_diff_selected, type: 1,
+        name: "后差",
+        icon: after_diff,
+        key: "chAfter",
+        iconSelect: after_diff_selected,
+        type: 1,
       },
       { name: "CH4", icon: ch1, key: "ch4", iconSelect: ch_selected, type: 1 },
       {
-        name: "高低", icon: speeds, key: "highLowSpeed", iconSelect: speeds_selected, type: 1,
+        name: "高低",
+        icon: speeds,
+        key: "highLowSpeed",
+        iconSelect: speeds_selected,
+        type: 1,
       },
       {
-        name: "定速", icon: cSpeeds, key: "speed", iconSelect: cSpeeds_selected,type: 1,
+        name: "定速",
+        icon: cSpeeds,
+        key: "speed",
+        iconSelect: cSpeeds_selected,
+        type: 1,
       },
     ];
   }
 
   if (carType.value == 2) {
-    return [{
+    return [
+      {
         name: "报修",
         icon: repairs,
         key: "repairs",
         iconSelect: repairs,
         type: 1,
       },
-      { name: "", icon: light, key: "light", iconSelect: light_selected, type: 2 },
-    ]
+      {
+        name: "",
+        icon: light,
+        key: "light",
+        iconSelect: light_selected,
+        type: 2,
+      },
+    ];
   }
-  return  [{
-        name: "报修",
-        icon: repairs,
-        key: "repairs",
-        iconSelect: repairs,
-        type: 1,
-      },
-      { name: "", icon: light, key: "light", iconSelect: light_selected, type: 2 },
-    ]
+  return [
+    {
+      name: "报修",
+      icon: repairs,
+      key: "repairs",
+      iconSelect: repairs,
+      type: 1,
+    },
+    {
+      name: "",
+      icon: light,
+      key: "light",
+      iconSelect: light_selected,
+      type: 2,
+    },
+  ];
 });
 
 // 计费定时器
@@ -654,7 +696,7 @@ onLoad((options) => {
     else carType.value = "3";
   }
 
-  carType.value = '3';
+  carType.value = "3";
 
   // 初始化车辆配置
   if (carDetails.value) {
@@ -691,7 +733,7 @@ onLoad((options) => {
       carHandler.value = new ExcavatorControlHandler({
         reverseUpDownState: operFB.value != 0,
         reverseLeftRightState: operDir.value != 0,
-        ...carDetails.value.vehicle_config_detail
+        ...carDetails.value.vehicle_config_detail,
       });
     }
     // 液压挖机
@@ -736,18 +778,37 @@ onUnmounted(() => {
 
 // 遥杆操作
 const handleLeftDrive = (param) => {
-  if ( param.left == false && param.right == false && param.up == false && param.down == false) {
-    return;
-  }
-  carHandler.value.handleRemoteControlChannel('left',param.left, param.right, param.up, param.down)
+  handleComDrive("left", param);
 };
 
 // 遥杆操作
 const handleRightDrive = (param) => {
-  if ( param.left == false && param.right == false && param.up == false && param.down == false) {
-    return;
+  handleComDrive("right", param);
+};
+const handleComDrive = (type, param) => {
+  if (
+    param.left == false &&
+    param.right == false &&
+    param.up == false &&
+    param.down == false
+  ) {
+    carHandler.value.resetChValue();
+  } else {
+    carHandler.value.handleRemoteControlChannel(
+      type,
+      param.left,
+      param.right,
+      param.up,
+      param.down,
+    );
   }
-  carHandler.value.handleRemoteControlChannel('right',param.left, param.right, param.up, param.down)
+
+  const ch = carHandler.value.getChValue();
+  chValue.value.ch3 = ch.ch3;
+  chValue.value.ch4 = ch.ch4;
+  chValue.value.ch5 = ch.ch5;
+  chValue.value.ch6 = ch.ch6;
+  chValue.value.ch7 = ch.ch7;
 };
 </script>
 
