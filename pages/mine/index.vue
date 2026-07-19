@@ -8,7 +8,7 @@
 			<image class="image" src="/static/images/mine/bg@2x.png" mode="widthFix"></image>
 		</view>
 		<!-- 顶部用户信息区域 -->
-		<view class="header">
+		<view class="header" v-if="userInfo.username">
 			<view class="user-info">
 				<view class="avatar-image">
 					<image class="avatar" :src="userInfo.head_shot" mode="aspectFill" />
@@ -24,19 +24,32 @@
 			</view>
 		</view>
 
+		<view class="header" v-if="!userInfo.username">
+			<view class="user-info">
+				<view class="avatar-image">
+					<image class="avatar" src="/static/logo.png" mode="aspectFill" />
+				</view>
+				<view class="user-text">
+					<text class="username" @click="gotoUrl">
+						登录/注册
+					</text>
+				</view>
+			</view>
+		</view>
+
 		<!-- 我的资产卡片 -->
 		<view class="asset-card">
 			<view class="card-title">我的资产</view>
 			<view class="card-content">
 				<view class="asset-item">
-					<text class="asset-num">{{ userInfo.wallet.balance }}</text>
+					<text class="asset-num">{{ userInfo && userInfo.wallet?.balance }}</text>
 					<view class="asset-label" @click="goPage">
 						<text>我的电池</text>
 						<image class="arrow-icon" src="/static/images/common/icon_arrows@2x.png" mode="aspectFit" />
 					</view>
 				</view>
 				<view class="asset-item">
-					<text class="asset-num">{{ userInfo.wallet.energy }}</text>
+					<text class="asset-num">{{ userInfo && userInfo.wallet?.energy }}</text>
 					<text class="asset-label">我的能量</text>
 				</view>
 			</view>
@@ -289,6 +302,11 @@ const uploadFile = async (filePath) => {
 	}
 }
 
+
+
+const gotoUrl = () => {
+	
+}
 </script>
 
 <style lang="scss" scoped>

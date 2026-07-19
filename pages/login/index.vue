@@ -7,33 +7,25 @@
 
 
 		<view class="form">
-			<!-- 手机号 -->
-			<view class="input-item">
-				<text class="prefix">+86</text>
-				<input class="input" type="number" maxlength="11" placeholder="请输入手机号" v-model="form.phone" />
-			</view>
 
-			<!-- 密码 -->
-			<view class="input-item">
-				<input class="input" type="password" maxlength="6" placeholder="请输入密码" v-model="form.password" />
-			</view>
 
-			<!-- 忘记密码 / 验证码登录 -->
-			<view class="row-link">
-				<text class="link" @click="goForgetPwd">忘记密码</text>
-				<text class="link" @click="goCodeLogin">验证码登录</text>
-			</view>
 
-			<!-- 登录按钮 -->
-			<view class="login-btn" @click="handleLogin">登录</view>
 
-			<!-- 注册账号 -->
-			<view class="register-link" @click="goRegister">
-				<text>注册帐号</text>
-			</view>
+
+			<!-- #ifdef MP-WEIXIN -->
+			<!-- 必须使用原生 button 组件才能触发手机号授权 -->
+			<button class="login-btn" open-type="getPhoneNumber" @getphonenumber="handleGetPhoneNumber">
+				手机号一键登录
+			</button>
+			<!-- #endif -->
+
+
+			<view class="login-btn" @click="handleLogin(2)">手机号码登录/注册</view>
+
+
 		</view>
 
-	
+
 		<view class="agreement">
 			<view class="checkbox" :class="{ checked: agree }" @click="agree = !agree">
 				<image class="check-icon" src="/static/images/login/checked@2x.png" mode="aspectFill" v-if="agree" />
@@ -64,21 +56,8 @@ const form = ref({
 const agree = ref(true)
 const userStore = useUserStore()
 // 登录
-const handleLogin = () => {
-	if (!form.value.phone) {
-		uni.showToast({
-			title: '请输入手机号',
-			icon: 'none'
-		})
-		return
-	}
-	if (!form.value.password) {
-		uni.showToast({
-			title: '请输入密码',
-			icon: 'none'
-		})
-		return
-	}
+const handleLogin = async (type) => {
+
 	if (!agree.value) {
 		uni.showToast({
 			title: '请先同意用户协议和隐私条款',
@@ -86,31 +65,26 @@ const handleLogin = () => {
 		})
 		return
 	}
-
-	Login({
-		...form.value,
-		password: form.value.password,
-		type: 1
-	}).then(res => {
-		console.log(res)
-		if (res.code == 200) {
-			userStore.setToken(res.data.session_key)
-			userStore.setAreaId(res.data.special_area)
-			userStore.setId(res.data.id)
-
-			GetUserInfo({ uid: res.data.id }).then(res => {
-
-				userStore.setUser(res.data)
-
-				uni.switchTab({
-					url: "/pages/index/index"
-				})
-			}).catch()
-		}
-	}).catch()
-	// 这里写你的登录接口
+	console.log(type)
+	if (type == 1) {
 
 
+
+		const loginRes = await new Promise((resolve, reject) => {
+			uni.login({
+				provider: 'weixin',
+				success: res => resolve(res),
+				fail: err => reject(err)
+			});
+		});
+
+		console.log(loginRes)
+
+		if (!loginRes.code) throw new Error('获取微信登录凭证失败');
+
+	} else {
+
+	}
 
 }
 
@@ -138,6 +112,28 @@ const goto = (url) => {
 		url
 	})
 }
+
+const handleGetPhoneNumber = async (e) => {
+	// 1. 判断用户是否同意授权
+	if (e.detail.errMsg !== "getPhoneNumber:ok") {
+		uni.showToast({ title: '已取消授权', icon: 'none' });
+		return;
+	}
+
+	// 2. 获取微信登录的临时凭证 code
+	const loginRes = await new Promise((resolve, reject) => {
+		uni.login({
+			provider: 'weixin',
+			success: res => resolve(res),
+			fail: err => reject(err)
+		});
+	});
+
+	console.log(loginRes, "loginRes")
+
+
+
+}
 </script>
 
 <style lang="scss" scoped>
@@ -157,6 +153,7 @@ page {
 .avatar-wrap {
 	text-align: center;
 	margin-bottom: 60rpx;
+	margin-top: 100rpx;
 
 	.avatar {
 		width: 120rpx;
@@ -168,6 +165,8 @@ page {
 /* 表单 */
 .form {
 	width: 100%;
+	margin-top: 100rpx;
+
 }
 
 .input-item {
@@ -301,5 +300,32 @@ page {
 			color: #FFC838;
 		}
 	}
+}
+
+.login-btn {
+	/* 1. 清除原生 button 默认样式 */
+	padding: 0;
+	margin: 0;
+	border: 0;
+	line-height: normal;
+	background: transparent;
+	/* 重置默认背景 */
+
+	/* 清除 button 点击后的边框伪元素 */
+	&::after {
+		border: none;
+	}
+
+	/* 2. 应用你原本的设计样式 */
+	background: linear-gradient(90deg, #FFC838 0%, #FFC838 100%);
+	border-radius: 24rpx;
+	font-family: PingFangSC,
+	PingFang SC;
+	font-weight: 400;
+	font-size: 32rpx;
+	color: #1A1A1A;
+	text-align: center;
+	margin-bottom: 50rpx;
+	padding: 25rpx 0;
 }
 </style>

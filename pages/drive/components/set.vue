@@ -171,7 +171,6 @@
                     </div>
                   </div>
                   <slider
-                    v-model="dirMiddle"
                     :min="1"
                     :max="100"
                     :value="dirMiddle"
@@ -212,7 +211,6 @@
                     </div>
                   </div>
                   <slider
-                    v-model="dirTurn"
                     :min="1"
                     :max="100"
                     :value="dirTurn"
@@ -253,7 +251,6 @@
                     </div>
                   </div>
                   <slider
-                    v-model="throttle"
                     :min="1"
                     :max="100"
                     :value="throttle"

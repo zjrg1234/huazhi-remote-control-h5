@@ -28,7 +28,7 @@ const request = (options) => {
 		const isWhite = whiteList.some(item => url.includes(item))
 		if (!isWhite && !token) {
 			uni.reLaunch({
-				url: '/pages/login/login'
+				url: '/pages/login/index'
 			})
 			return reject('未登录')
 		}
@@ -68,7 +68,7 @@ const request = (options) => {
 					// userStore.logout()
 					const timer = setTimeout(() => {
 						uni.reLaunch({
-							url: '/pages/login/login'
+							url: '/pages/login/index'
 						})
 					}, 2000);
 					reject(data)

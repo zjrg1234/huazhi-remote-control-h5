@@ -129,8 +129,9 @@ const handleLogout = () => {
       if (res.confirm) {
         // 清除登录状态
         uni.removeStorageSync('token')
+        uni.removeStorageSync('userInfo')
         uni.showToast({ title: '已退出' })
-        uni.reLaunch({ url: '/pages/login/login' })
+        uni.reLaunch({ url: '/pages/mine/index' })
       }
     }
   })
