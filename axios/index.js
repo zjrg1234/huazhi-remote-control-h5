@@ -68,17 +68,12 @@ export function CarReport(data) {
   return post('/api/user/processing/alarm/create',data)
 }
 
-
+// 检查车辆
 export function CheckCar(data) {
   return post('/api/user/chack/start/driving',data)
 }
 
-
-export function CheckCar(data) {
-  return post('/api/user/chack/start/driving',data)
-}
-
-
+// 锁车
 export function LockCar(data) {
   return post('/api/user/lock/driving',data)
 }

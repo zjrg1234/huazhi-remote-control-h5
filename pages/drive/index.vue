@@ -365,6 +365,7 @@ const initSendLoop = () => {
   clearSendTimer();
   sendMsgTimer = setInterval(() => {
     if (UDPSocket.value) {
+      console.log(carDetails.value.app_transmitter_id)
       const val = handleDriverSocketData(
         carDetails.value.app_transmitter_id,
         chValue.value.ch1,
@@ -376,6 +377,7 @@ const initSendLoop = () => {
         chValue.value.ch7,
         chValue.value.ch8,
       );
+      console.log("发送的消息：", val)
       UDPSocket.value.send(val);
     }
   }, 40);
@@ -389,6 +391,8 @@ const initThreeSend = () => {
   sendMsgTimer = setInterval(() => {
     count++;
     if (UDPSocket.value) {
+      console.log(carDetails.value.app_transmitter_id, "===")
+
       const val = handleDriverSocketData(
         carDetails.value.app_transmitter_id,
         chValue.value.ch1,
@@ -481,25 +485,23 @@ const handlePopupAction = (type) => {
     return;
   }
   if (type == "driving") {
-    // 测试 先注释掉
-    
-    // StartDrive({
-    //   order_no: orderNo.value,
-    //   type: 1,
-    //   vehicle_id: vehicleId.value,
-    // })
-    //   .then((res) => {
-    //     allPopupVisible.value = false;
-    //     if (res.code != 200) uni.showToast({ title: res.msg, icon: "none" });
-    //     else sendConDrive();
-    //   })
-    //   .catch(() => {
-    //     allPopupVisible.value = false;
-    //   })
-    //   .finally(() => {
-    //     allPopupVisible.value = false;
-    //   });
-    // return;
+    StartDrive({
+      order_no: orderNo.value,
+      type: 1,
+      vehicle_id: vehicleId.value,
+    })
+      .then((res) => {
+        allPopupVisible.value = false;
+        if (res.code != 200) uni.showToast({ title: res.msg, icon: "none" });
+        else sendConDrive();
+      })
+      .catch(() => {
+        allPopupVisible.value = false;
+      })
+      .finally(() => {
+        allPopupVisible.value = false;
+      });
+    return;
   }
   if (type == "logout") {
     StartDrive({
@@ -510,7 +512,7 @@ const handlePopupAction = (type) => {
       .then((res) => {
         if (res.code != 2000) {
           uni.showToast({ title: res.msg, icon: "none" });
-        } 
+        }
         else {
           setTimeout(() => {
             uni.reLaunch({
@@ -518,7 +520,7 @@ const handlePopupAction = (type) => {
             })
           }, 2000);
         }
-         
+
       })
       .catch(() => { });
   }

@@ -108,8 +108,7 @@ export function handleDriverSocketData(transmitterId, chValue1, chValue2, chValu
 
     // 流水号
     const flowNumber = Math.floor(Math.random() * 256) + 1;
-    let commandArray = ["90", "67", "16", "00", "00", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "13"];
-
+    let commandArray = ["90", "67", "16", "00", "00","", "","", "","", "","", "","", "","", "","", "","", "","", "","", "","", "","","","","","","","","","","","","","","","","","13"]
     // 更新流水号
     commandArray[4] = flowNumber < 10 ? `0${flowNumber}` : `${flowNumber}`;
 
@@ -157,6 +156,15 @@ export function handleDriverSocketData(transmitterId, chValue1, chValue2, chValu
         sendData.push(...itemHexData);
     }
 
+    console.log(uint8ArrayToAscii(new Uint8Array(sendData)))
     // 返回Uint8Array（相当于Swift的Data）
-    return new Uint8Array(sendData);
+    return uint8ArrayToAscii(new Uint8Array(sendData));
+}
+
+function uint8ArrayToAscii(uint8Array) {
+  let asciiStr = '';
+  for (let i = 0; i < uint8Array.length; i++) {
+    asciiStr += String.fromCharCode(uint8Array[i]);
+  }
+  return asciiStr;
 }

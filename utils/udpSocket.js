@@ -58,6 +58,7 @@ export default class UDPSocketClient {
 
       // 监听消息（使用 TextDecoder 优化二进制转字符串性能）
       this.socket.onMessage((res) => {
+        console.log(this.isClosed , this.options , !this.options.onMessage)
         if (this.isClosed || !this.options.onMessage) return;
         const { message, remoteInfo } = res;
         console.log(res)

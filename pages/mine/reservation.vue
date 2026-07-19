@@ -39,7 +39,7 @@
           <button class="btn" @click="handleAction(item)">开始驾驶</button>
         </view>
 
-         <view class="btn-wrap" v-if="item.reservation_status == 3">
+        <view class="btn-wrap" v-if="item.reservation_status == 3">
           <button class="btn" @click="overDrive(item)">结束驾驶</button>
         </view>
 
@@ -69,7 +69,7 @@ import { formatDate } from "@/utils/utils.js";
 import { GetReservationList } from "@/axios/mine";
 import { GetCarDetails } from "@/axios/index";
 import { billingMethod } from "@/utils/filter.js";
-import { StartDrive } from "@/axios/index.js";
+import { StartDrive, CheckCar, LockCar } from "@/axios/index.js";
 
 // 状态映射：预约状态 1已预约 2待使用 3使用中 4已完成 5已取消
 const statusMap = {
@@ -182,9 +182,32 @@ const copyOrderNo = (text) => {
 };
 // 按钮点击：开始驾驶 (根据业务需求补充逻辑)
 const flag = ref(false);
-const handleAction = (item) => {
+const handleAction = async (item) => {
   if (flag.value) return;
   flag.value = true;
+
+  const { data, code } = await CheckCar({
+    vehicle_id: item.vehicle_id,
+  })
+
+  if (code == 200) {
+    if (data && data.state != 1) {
+      uni.showToast("车辆不在空闲中");
+      return;
+    }
+  }
+
+  // const { code } = await LockCar({
+  //   vehicle_id: item.vehicle_id,
+  // })
+
+  // if (code != 200) {
+  //   uni.showToast("车辆没锁成功，不能驾驶");
+  //   return;
+  // }
+  console.log("锁车成功")
+
+
   GetCarDetails({
     id: item.vehicle_id,
   })
@@ -194,11 +217,11 @@ const handleAction = (item) => {
         uni.setStorageSync('carInfo', JSON.stringify(item));
         uni.setStorageSync('carDetails', JSON.stringify(res.data));
         // 清理驾驶页面的缓存
-       
+
         uni.navigateTo({
           url: `/pages/drive/index?order_no=${item.order_no}&vehicle_id=${item.vehicle_id}`,
         });
-      
+
       } else {
         uni.showToast("联系客服，报错原因：" + res.msg);
       }
@@ -220,12 +243,12 @@ const handleAppeal = (item) => {
 
 const overDrive = (item) => {
   StartDrive({
-        order_no: item.order_no,
-        type: 3,
-        vehicle_id: item.vehicle_id,
-      }).then(res => {
-        refreshData()
-      }).catch()
+    order_no: item.order_no,
+    type: 3,
+    vehicle_id: item.vehicle_id,
+  }).then(res => {
+    refreshData()
+  }).catch()
 }
 </script>
 
