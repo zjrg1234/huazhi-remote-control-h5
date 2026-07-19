@@ -86,8 +86,9 @@ export class CarControlHandler {
         }
       } // 边界保护 (忠实保留原逻辑)
 
-      if (this.ch2 < 1) this.ch2 = 1;
-      if (this.ch2 > 2000) this.ch2 = 2000;
+
+      this.ch2 = Math.max(1, Math.min(2000, this.ch2));
+  
     } else {
       
       // ==========0,2 左右控制 (方向) ==========
@@ -120,8 +121,8 @@ export class CarControlHandler {
           );
         } // 左右控制的边界保护
 
-        if (this.ch1 < 1) this.ch1 = 1;
-        if (this.ch1 > 2000) this.ch1 = 2000;
+        this.ch1 = Math.max(1, Math.min(2000, this.ch1));
+
       }
     }
   }

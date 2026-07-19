@@ -67,3 +67,18 @@ export function GetCarDetails(data) {
 export function CarReport(data) {
   return post('/api/user/processing/alarm/create',data)
 }
+
+
+export function CheckCar(data) {
+  return post('/api/user/chack/start/driving',data)
+}
+
+
+export function CheckCar(data) {
+  return post('/api/user/chack/start/driving',data)
+}
+
+
+export function LockCar(data) {
+  return post('/api/user/lock/driving',data)
+}

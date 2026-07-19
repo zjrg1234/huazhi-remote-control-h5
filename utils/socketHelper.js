@@ -126,6 +126,7 @@ export function handleDriverSocketData(transmitterId, chValue1, chValue2, chValu
     commandArray[15] = "00";
     commandArray[16] = "00";
 
+
     // 通道数据
     const channelsArray = [
         `${chValue1}`, `${chValue2}`, `${chValue3}`, `${chValue4}`, 

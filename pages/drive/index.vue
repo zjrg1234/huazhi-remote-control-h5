@@ -120,7 +120,7 @@ import pointOprea2 from "./components/digger-opera2.vue";
 import ExLeft from "./components/ex-left.vue";
 import ExRight from "./components/ex-right.vue";
 import { formatTime, mapToPer } from "@/utils/utils.js";
-// import UDPSocketClient from "@/utils/udpSocket.js";
+import UDPSocketClient from "@/utils/udpSocket.js";
 import { handleDriverSocketData } from "@/utils/socketHelper.js";
 import { encryptAES } from "@/utils/crypto.js";
 import { StartDrive } from "@/axios/index.js";
@@ -378,7 +378,7 @@ const initSendLoop = () => {
       );
       UDPSocket.value.send(val);
     }
-  }, 3000);
+  }, 40);
 };
 
 // 3秒内快速发送数据（每40ms一次）
@@ -481,23 +481,25 @@ const handlePopupAction = (type) => {
     return;
   }
   if (type == "driving") {
-    StartDrive({
-      order_no: orderNo.value,
-      type: 1,
-      vehicle_id: vehicleId.value,
-    })
-      .then((res) => {
-        allPopupVisible.value = false;
-        if (res.code != 200) uni.showToast({ title: res.msg, icon: "none" });
-        else sendConDrive();
-      })
-      .catch(() => {
-        allPopupVisible.value = false;
-      })
-      .finally(() => {
-        allPopupVisible.value = false;
-      });
-    return;
+    // 测试 先注释掉
+    
+    // StartDrive({
+    //   order_no: orderNo.value,
+    //   type: 1,
+    //   vehicle_id: vehicleId.value,
+    // })
+    //   .then((res) => {
+    //     allPopupVisible.value = false;
+    //     if (res.code != 200) uni.showToast({ title: res.msg, icon: "none" });
+    //     else sendConDrive();
+    //   })
+    //   .catch(() => {
+    //     allPopupVisible.value = false;
+    //   })
+    //   .finally(() => {
+    //     allPopupVisible.value = false;
+    //   });
+    // return;
   }
   if (type == "logout") {
     StartDrive({
@@ -506,11 +508,17 @@ const handlePopupAction = (type) => {
       vehicle_id: vehicleId.value,
     })
       .then((res) => {
-        if (res.code != 2000) uni.showToast({ title: res.msg, icon: "none" });
-        else
+        if (res.code != 2000) {
+          uni.showToast({ title: res.msg, icon: "none" });
+        } 
+        else {
           setTimeout(() => {
-            uni.navigateBack();
+            uni.reLaunch({
+              url: '/pages/mine/reservation'  // 你的首页路径
+            })
           }, 2000);
+        }
+         
       })
       .catch(() => { });
   }
@@ -626,7 +634,6 @@ onLoad((options) => {
     else carType.value = "3";
   }
 
-  carType.value = "3";
 
   // 初始化车辆配置
   if (carDetails.value) {
@@ -672,17 +679,20 @@ onLoad((options) => {
   // 初始化 WebSocket
   const wssUrl = uni.getStorageSync("wssUrl");
   const wssPort = uni.getStorageSync("wssPort");
-  // UDPSocket.value = new UDPSocketClient({
-  //   address: wssUrl,
-  //   port: wssPort,
-  //   onMessage: (msg) => console.log("收到:", msg),
+  console.log(wssUrl, wssPort)
+  // #ifdef MP-WEIXIN
+  UDPSocket.value = new UDPSocketClient({
+    address: wssUrl,
+    port: wssPort,
+    onMessage: (msg) => console.log("收到:", msg),
 
-  //   // 3. 配置错误回调
-  //   onError: (err) => {
-  //     console.error("UDP 通信发生异常:", err);
-  //     wx.showToast({ title: "网络异常", icon: "none" });
-  //   },
-  // });
+    // 3. 配置错误回调
+    onError: (err) => {
+      console.error("UDP 通信发生异常:", err);
+      wx.showToast({ title: "网络异常", icon: "none" });
+    },
+  });
+  // #endif
 
   // 初始化发送定时器
   setTimeout(() => {

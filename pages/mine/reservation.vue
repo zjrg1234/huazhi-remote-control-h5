@@ -39,6 +39,10 @@
           <button class="btn" @click="handleAction(item)">开始驾驶</button>
         </view>
 
+         <view class="btn-wrap" v-if="item.reservation_status == 3">
+          <button class="btn" @click="overDrive(item)">结束驾驶</button>
+        </view>
+
         <view class="btn-wrap" v-if="item.reservation_status == 4 && item.is_reservation == 1">
           <button class="btn btn-info" @click="handleAppeal(item)">申诉</button>
         </view>
@@ -65,6 +69,7 @@ import { formatDate } from "@/utils/utils.js";
 import { GetReservationList } from "@/axios/mine";
 import { GetCarDetails } from "@/axios/index";
 import { billingMethod } from "@/utils/filter.js";
+import { StartDrive } from "@/axios/index.js";
 
 // 状态映射：预约状态 1已预约 2待使用 3使用中 4已完成 5已取消
 const statusMap = {
@@ -185,14 +190,15 @@ const handleAction = (item) => {
   })
     .then((res) => {
       if (res.code == 200) {
+        uni.removeStorageSync("loadingOne")
         uni.setStorageSync('carInfo', JSON.stringify(item));
         uni.setStorageSync('carDetails', JSON.stringify(res.data));
-
+        // 清理驾驶页面的缓存
+       
         uni.navigateTo({
           url: `/pages/drive/index?order_no=${item.order_no}&vehicle_id=${item.vehicle_id}`,
         });
-        // 清理驾驶页面的缓存
-        sessionStorage.clear();
+      
       } else {
         uni.showToast("联系客服，报错原因：" + res.msg);
       }
@@ -211,6 +217,16 @@ const handleAppeal = (item) => {
     });
   }
 };
+
+const overDrive = (item) => {
+  StartDrive({
+        order_no: item.order_no,
+        type: 3,
+        vehicle_id: item.vehicle_id,
+      }).then(res => {
+        refreshData()
+      }).catch()
+}
 </script>
 
 <style lang="scss" scoped>

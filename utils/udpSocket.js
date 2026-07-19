@@ -60,6 +60,7 @@ export default class UDPSocketClient {
       this.socket.onMessage((res) => {
         if (this.isClosed || !this.options.onMessage) return;
         const { message, remoteInfo } = res;
+        console.log(res)
         
         // 尝试作为文本解析，如果是纯二进制数据则直接抛出 ArrayBuffer
         try {

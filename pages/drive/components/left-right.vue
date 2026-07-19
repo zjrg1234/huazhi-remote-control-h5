@@ -1,17 +1,22 @@
 <template>
-  <!-- 1. 将 transform 绑定到响应式变量 -->
   <view 
     class="control-box" 
     ref="boxRef" 
     :style="{ transform: `translate3d(${boxX}px, ${boxY}px, 0)` }"
+    @touchstart="handleStart"
+    @touchmove.prevent="handleMove"
+    @touchend="handleEnd"
+
   >
+    <!-- #ifdef H5 
+    @mousedown="handleStart"
+    #endif -->
     <view
       class="arrow left"
       :style="{ backgroundImage: `url(${leftImage})` }"
       :class="{ active: isLeftActive }"
     ></view>
 
-    <!-- 2. 将圆点的 transform 绑定到响应式变量 -->
     <view
       class="dot"
       ref="dotRef"
@@ -23,8 +28,6 @@
           : 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease, box-shadow 0.3s ease',
         transform: `translateX(${dotX}px) scale(1)`
       }"
-      @touchstart.prevent="handleStart"
-      @mousedown.prevent="handleStart"
     ></view>
 
     <view
@@ -64,7 +67,7 @@ const isReadyMode = ref(false);
 const isLeftActive = ref(false);
 const isRightActive = ref(false);
 
-// ✅ 【核心修改】：将原本直接操作 DOM 的坐标改为响应式变量
+// ✅ 将原本直接操作 DOM 的坐标改为响应式变量
 const boxX = ref(0);
 const boxY = ref(0);
 const dotX = ref(0);
@@ -76,10 +79,6 @@ let dragOffsetY = 0;
 let dotStartOffset = 0;
 let initialBoxX = 0;
 let initialBoxY = 0;
-
-// RAF 调度控制
-let animationFrameId = null;
-let pendingMoveEvent = null;
 
 // ✅ 【核心修改】：获取屏幕尺寸兼容多端
 const getScreenSize = () => {
@@ -94,10 +93,8 @@ const getScreenSize = () => {
 
 const backRightInit = () => {
   const { width, height } = getScreenSize();
-  console.log(width, height)
   boxX.value = width / 2 + 130;
   boxY.value = height / 2 + 40;
-  console.log(boxX.value, boxY.value)
 };
 
 const backLeftInit = () => {
@@ -153,18 +150,44 @@ const resetArrows = () => {
   }
 };
 
-// 【性能核心】：在 RAF 中统一处理状态更新
-const processMove = () => {
-  if (!pendingMoveEvent || !isDragging.value) {
-    animationFrameId = requestAnimationFrame(processMove);
-    return;
+// ✅ 【核心修改】：提取坐标获取逻辑，兼容 touch 和 mouse
+const getClientPos = (e) => {
+  if (e.touches && e.touches.length > 0) {
+    return { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY };
   }
+  return { clientX: e.clientX, clientY: e.clientY };
+};
 
-  const e = pendingMoveEvent;
-  pendingMoveEvent = null;
+// --- 事件处理 ---
+const handleStart = (e) => {
+  isDragging.value = true;
+  isReadyMode.value = false;
+  clearTimeout(idleTimer);
+  resetArrows();
 
-  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  const { clientX, clientY } = getClientPos(e);
+
+  initialBoxX = boxX.value;
+  initialBoxY = boxY.value;
+
+  dragOffsetX = clientX - boxX.value;
+  dragOffsetY = clientY - boxY.value;
+
+  const dotScreenCenterX = boxX.value + BOX_WIDTH / 2 + dotX.value;
+  dotStartOffset = clientX - dotScreenCenterX;
+
+  resetIdleTimer();
+};
+
+const handleMove = (e) => {
+  if (!isDragging.value) return;
+  
+  // 阻止默认的页面滚动
+  // #ifdef H5
+  if (e.cancelable) e.preventDefault();
+  // #endif
+
+  const { clientX, clientY } = getClientPos(e);
 
   resetIdleTimer();
 
@@ -181,7 +204,6 @@ const processMove = () => {
     }
     deltaY = Math.max(-LIMIT, Math.min(LIMIT, deltaY));
 
-    // ✅ 【核心修改】：更新响应式变量，Vue 会自动更新 DOM
     boxX.value = initialBoxX + deltaX;
     boxY.value = initialBoxY + deltaY;
   } else {
@@ -198,50 +220,9 @@ const processMove = () => {
     if (deltaX < -65) deltaX = -65;
     if (deltaX > 65) deltaX = 65;
 
-    // ✅ 【核心修改】：更新响应式变量
     dotX.value = deltaX;
     updateArrows(deltaX);
   }
-
-  animationFrameId = requestAnimationFrame(processMove);
-};
-
-// --- 事件处理 ---
-const handleStart = (e) => {
-  isDragging.value = true;
-  isReadyMode.value = false;
-  clearTimeout(idleTimer);
-  resetArrows();
-
-  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-  initialBoxX = boxX.value;
-  initialBoxY = boxY.value;
-
-  dragOffsetX = clientX - boxX.value;
-  dragOffsetY = clientY - boxY.value;
-
-  const dotScreenCenterX = boxX.value + BOX_WIDTH / 2 + dotX.value;
-  dotStartOffset = clientX - dotScreenCenterX;
-
-  resetIdleTimer();
-
-  // ✅ 【核心修改】：使用 uni 兼容的事件绑定
-  window.addEventListener("mousemove", handleMove);
-  window.addEventListener("touchmove", handleMove, { passive: false });
-  window.addEventListener("mouseup", handleEnd);
-  window.addEventListener("touchend", handleEnd);
-
-  if (!animationFrameId) {
-    animationFrameId = requestAnimationFrame(processMove);
-  }
-};
-
-const handleMove = (e) => {
-  if (!isDragging.value) return;
-  if (e.cancelable) e.preventDefault();
-  pendingMoveEvent = e;
 };
 
 const handleEnd = () => {
@@ -251,21 +232,9 @@ const handleEnd = () => {
   isReadyMode.value = false;
   clearTimeout(idleTimer);
 
-  if (animationFrameId) {
-    cancelAnimationFrame(animationFrameId);
-    animationFrameId = null;
-  }
-  pendingMoveEvent = null;
-
-  // ✅ 【核心修改】：重置响应式变量
   dotX.value = 0;
   dotStartOffset = 0;
   resetArrows();
-
-  window.removeEventListener("mousemove", handleMove);
-  window.removeEventListener("touchmove", handleMove);
-  window.removeEventListener("mouseup", handleEnd);
-  window.removeEventListener("touchend", handleEnd);
 };
 
 // --- 生命周期 ---
@@ -275,16 +244,10 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   clearTimeout(idleTimer);
-  if (animationFrameId) cancelAnimationFrame(animationFrameId);
-  window.removeEventListener("mousemove", handleMove);
-  window.removeEventListener("touchmove", handleMove);
-  window.removeEventListener("mouseup", handleEnd);
-  window.removeEventListener("touchend", handleEnd);
 });
 </script>
 
 <style scoped>
-/* 样式保持不变 */
 .control-box {
   position: fixed;
   top: 0;
@@ -299,7 +262,7 @@ onBeforeUnmount(() => {
   z-index: 100;
   will-change: transform;
   user-select: none;
-  touch-action: none;
+  touch-action: none; /* 关键：禁止浏览器默认的触摸滚动行为 */
 }
 .arrow {
   width: 50px;
