@@ -40,11 +40,11 @@ export class ExcavatorControlHandler {
     console.log(this.config);
   }
   resetChValue() {
-    this.ch3 = config.ch3.close_value.current_value; // 旋转
-    this.ch4 = config.ch4.close_value.current_value; // 大臂
-    this.ch5 = config.ch5.close_value.current_value; // 小臂
-    this.ch6 = config.ch6.close_value.current_value; // 挖斗
-    this.ch7 = config.ch7.close_value.current_value; // 油泵
+    this.ch3 = this.config.ch3.close_value.current_value; // 旋转
+    this.ch4 = this.config.ch4.close_value.current_value; // 大臂
+    this.ch5 = this.config.ch5.close_value.current_value; // 小臂
+    this.ch6 = this.config.ch6.close_value.current_value; // 挖斗
+    this.ch7 = this.config.ch7.close_value.current_value; // 油泵
   }
   getChValue() {
     // 1. 定义需要处理的通道数组

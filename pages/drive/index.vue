@@ -3,23 +3,12 @@
     <div class="page-content">
       <!-- 背景区域（原 iframe 改为 video 组件） -->
       <div class="bg">
-        <iframe
-          :src="videoUrl"
-          controls
-          autoplay
-          muted
-          object-fit="fill"
-          style="width: 100%; height: 100%"
-        ></iframe>
+        <iframe :src="videoUrl" controls autoplay muted object-fit="fill" style="width: 100%; height: 100%"></iframe>
       </div>
 
       <!-- 退出按钮 -->
       <div class="logout" @click="logout">
-        <image
-          src="/static/images/icon_exit@2x.png"
-          class="image"
-          mode="aspectFit"
-        />
+        <image src="/static/images/icon_exit@2x.png" class="image" mode="aspectFit" />
       </div>
 
       <!-- 顶部状态栏 -->
@@ -28,11 +17,7 @@
           <div class="fl">
             <span class="dot"></span>
             <div class="car">
-              <image
-                class="image"
-                src="/static/images/icon_car@2x.png"
-                mode="aspectFit"
-              />
+              <image class="image" src="/static/images/icon_car@2x.png" mode="aspectFit" />
               <span class="mini-forbidden"></span>
             </div>
           </div>
@@ -53,45 +38,22 @@
 
       <!-- 设置按钮 -->
       <div class="right-cont" @click="set">
-        <image
-          class="image"
-          src="/static/images/icon_set@2x.png"
-          mode="aspectFit"
-        />
+        <image class="image" src="/static/images/icon_set@2x.png" mode="aspectFit" />
       </div>
 
       <!-- 声音/波纹图标 -->
       <div class="side-menu-icon">
         <microphone> </microphone>
-        <image
-          class="image"
-          v-if="!showSound"
-          src="/static/images/icon_sound_close@2x.png"
-          @click="showSound = true"
-          mode="aspectFit"
-        />
-        <image
-          class="image"
-          v-if="showSound"
-          src="/static/images/icon_sound_open@2x.png"
-          @click="showSound = false"
-          mode="aspectFit"
-        />
+        <image class="image" v-if="!showSound" src="/static/images/icon_sound_close@2x.png" @click="showSound = true"
+          mode="aspectFit" />
+        <image class="image" v-if="showSound" src="/static/images/icon_sound_open@2x.png" @click="showSound = false"
+          mode="aspectFit" />
       </div>
 
       <!-- 右侧菜单 -->
       <div class="side-menu">
-        <div
-          class="menu-item"
-          v-for="(item, index) in menuList"
-          :key="index"
-          @click="handleIcon(item)"
-        >
-          <image
-            class="img"
-            mode="aspectFit"
-            :src="activeKey.includes(item.key) ? item.iconSelect : item.icon"
-          />
+        <div class="menu-item" v-for="(item, index) in menuList" :key="index" @click="handleIcon(item)">
+          <image class="img" mode="aspectFit" :src="activeKey.includes(item.key) ? item.iconSelect : item.icon" />
           <span class="label">{{ item.name }}</span>
         </div>
       </div>
@@ -105,16 +67,8 @@
                 {{ constSpeed }} km/h
               </div>
             </div>
-            <slider
-              :value="constSpeed"
-              :min="1"
-              :max="100"
-              :step="1"
-              activeColor="#f5c542"
-              backgroundColor="#e9e9e9"
-              block-size="6"
-              @change="changeConstSpeed"
-            />
+            <slider :value="constSpeed" :min="1" :max="100" :step="1" activeColor="#f5c542" backgroundColor="#e9e9e9"
+              block-size="6" @change="changeConstSpeed" />
             <div class="slider-label-bottom">
               <div class="num-text num-left">0</div>
               <div class="num-text num-right">100</div>
@@ -123,56 +77,30 @@
         </div>
       </div>
 
-      <LeftRight
-        @action="handleLRDrive"
-        v-if="carType == 1"
-        :isLeft="operMode"
-      ></LeftRight>
+      <LeftRight @action="handleLRDrive" v-if="carType == 1" :isLeft="operMode"></LeftRight>
 
-      <UpDown
-        @action="handleFBDrive"
-        v-if="carType == 1"
-        :isLeft="!operMode"
-      ></UpDown>
+      <UpDown @action="handleFBDrive" v-if="carType == 1" :isLeft="!operMode"></UpDown>
 
-      <pointOprea1 @action="handleLeftDrive" v-if="carType == 3"></pointOprea1>
-      <pointOprea2 @action="handleRightDrive" v-if="carType == 3"></pointOprea2>
+      <ExLeft @action="handleLeftDrive" @action2="handleDrive" v-if="carType == 3"></ExLeft>
+      <ExRight @action="handleRightDrive" @action2="handleDrive" v-if="carType == 3"></ExRight>
+      <!-- <pointOprea1 @action="handleLeftDrive" v-if="carType == 3"></pointOprea1> -->
+      <!-- <pointOprea2 @action="handleRightDrive" v-if="carType == 3"></pointOprea2> -->
 
       <!-- 时间显示 -->
       <div class="time">
-        <image
-          class="image"
-          src="/static/images/icon_time@2x.webp"
-          mode="aspectFit"
-        />
+        <image class="image" src="/static/images/icon_time@2x.webp" mode="aspectFit" />
         <TimeClock></TimeClock>
       </div>
 
       <!-- 通用弹窗 -->
-      <ALLPopup
-        ref="allPopup"
-        v-model:show="allPopupVisible"
-        type="tip"
-        :orderNo="orderNo"
-        :vehicleId="vehicleId"
-        :isShow="showRepairReason"
-        @action="handlePopupAction"
-      />
+      <ALLPopup ref="allPopup" v-model:show="allPopupVisible" type="tip" :orderNo="orderNo" :vehicleId="vehicleId"
+        :isShow="showRepairReason" @action="handlePopupAction" />
 
       <!-- 设置弹窗 -->
-      <SetPopup
-        v-model:show="setVisible"
-        :videoDefinition="videoDefinition"
-        :operFB="operFB"
-        :directionCenter="directionCenter"
-        :acceleratorDynamics="acceleratorDynamics"
-        :directionDynamics="directionDynamics"
-        :operDir="operDir"
-        :type="carType"
-        @action="handleOper"
-        @operAction="handleFBDir"
-        @changeValue="changeVal"
-      />
+      <SetPopup v-model:show="setVisible" :videoDefinition="videoDefinition" :operFB="operFB"
+        :directionCenter="directionCenter" :acceleratorDynamics="acceleratorDynamics"
+        :directionDynamics="directionDynamics" :operDir="operDir" :type="carType" @action="handleOper"
+        @operAction="handleFBDir" @changeValue="changeVal" />
     </div>
   </div>
 </template>
@@ -189,6 +117,8 @@ import UpDown from "./components/up-down.vue";
 import LeftRight from "./components/left-right.vue";
 import pointOprea1 from "./components/digger-opera1.vue";
 import pointOprea2 from "./components/digger-opera2.vue";
+import ExLeft from "./components/ex-left.vue";
+import ExRight from "./components/ex-right.vue";
 import { formatTime, mapToPer } from "@/utils/utils.js";
 // import UDPSocketClient from "@/utils/udpSocket.js";
 import { handleDriverSocketData } from "@/utils/socketHelper.js";
@@ -488,7 +418,7 @@ const GetDeviceInfo = (data) => {
         videoUrl.value = res.data.rows[0].hls || res.data.rows[0].url || ""; // 根据实际字段调整
       }
     })
-    .catch(() => {});
+    .catch(() => { });
 };
 
 // 初始化摄像头播放
@@ -502,7 +432,7 @@ const initTopVideo = () => {
     .then((res) => {
       if (res.code == 200) GetDeviceInfo(res.data);
     })
-    .catch(() => {});
+    .catch(() => { });
 };
 
 // 图标点击处理
@@ -582,7 +512,7 @@ const handlePopupAction = (type) => {
             uni.navigateBack();
           }, 2000);
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 };
 
@@ -779,6 +709,27 @@ onUnmounted(() => {
 // 遥杆操作
 const handleLeftDrive = (param) => {
   handleComDrive("left", param);
+};
+
+const handleDrive = (param) => {
+  if (param.isLeft) {
+    carHandler.value.handleArrowControlChannel(
+      "left",
+      param.type == 'up' ? true : false,
+    );
+  } else {
+    carHandler.value.handleArrowControlChannel(
+      "right",
+      param.type == 'up' ? true : false,
+    );
+  }
+
+  const ch = carHandler.value.getChValue();
+  chValue.value.ch3 = ch.ch3;
+  chValue.value.ch4 = ch.ch4;
+  chValue.value.ch5 = ch.ch5;
+  chValue.value.ch6 = ch.ch6;
+  chValue.value.ch7 = ch.ch7;
 };
 
 // 遥杆操作
