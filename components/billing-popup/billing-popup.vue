@@ -28,17 +28,11 @@
         <view class="section-title">按时间计费</view>
         <text class="desc">按照分钟计费，不受时间限制，想玩就玩</text>
         <view class="grid-box">
-          <view class="option-card" :class="{ selected: selectedIndex == -1 }" @click="
-            selectOption(
-              -1,
-              billData.time_billing.time,
-              billData.time_billing.battery
-            )
-            ">
-            {{ billData.time_billing.time }}分钟{{
-              billData.time_billing.battery
-            }}
-            {{ unitText }}
+          <view 
+            class="option-card" 
+            :class="{ selected: selectedIndex == -1 }" 
+            @click="selectOption(-1, billData.time_billing.time, billData.time_billing.battery)">
+            {{ billData.time_billing.time }}分钟{{ billData.time_billing.battery }}{{ unitText }}
           </view>
         </view>
       </view>
@@ -48,26 +42,27 @@
         <view class="section-title">按次计费</view>
         <text class="desc">按照单次时间游玩，时间到则立即结束</text>
         <view class="grid-box">
-          <view v-for="(item, index) in billData.one_billing" :key="index" class="option-card"
-            :class="{ selected: selectedIndex === index }" @click="selectOption(index, item.time, item.battery)">
+          <view 
+            v-for="(item, index) in billData.one_billing" 
+            :key="index" 
+            class="option-card"
+            :class="{ selected: selectedIndex === index }" 
+            @click="selectOption(index, item.time, item.battery)">
             {{ item.time }}分钟{{ item.battery }}{{ unitText }}
           </view>
         </view>
       </view>
 
+      <!-- 我的余额卡片 -->
       <view class="card">
         <text class="card-title">我的{{ unitText }}</text>
-        <text class="battery-num" v-if="currentUnit === 1">{{
-          userInfo.wallet.balance
-          }}</text>
-        <text class="battery-num" v-if="currentUnit !== 1">{{
-          userInfo.wallet.energy
-          }}</text>
+        <text class="battery-num" v-if="currentUnit === 1">{{ userInfo.wallet.balance }}</text>
+        <text class="battery-num" v-if="currentUnit !== 1">{{ userInfo.wallet.energy }}</text>
       </view>
 
       <!-- 底部按钮 -->
       <button class="confirm-btn" v-if="isWallet" @click="handleConfirm">确定支付</button>
-      <button class="confirm-btn" v-if="!isWallet" @click="goRecharge">充值</button>
+      <button class="confirm-btn recharge-btn" v-else @click="goRecharge">充值</button>
     </view>
   </uni-popup>
 </template>
@@ -75,48 +70,68 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 import { useUserStore } from "@/store/modules/user";
+
 const userStore = useUserStore();
 const props = defineProps(["billData"]);
 const emit = defineEmits(["confirm"]);
 
 const popupRef = ref(null);
-const currentUnit = ref(1); // 默认选中 2 (能量) 或 1 (电池)
+const currentUnit = ref(1); // 默认选中电池
 const selectedIndex = ref(-1);
 const selectedOpt = ref({});
-const isWallet = ref(true)
+const isWallet = ref(true); // 余额是否充足
+
+// 当前显示的文本后缀
 const unitText = computed(() => (currentUnit.value === 1 ? "电池" : "能量"));
 
-
+// 纯计算属性：只负责获取用户信息，绝不修改任何状态
 const userInfo = computed(() => {
-  const val = userStore.getUserInfo();
-  // 哪个有值用哪个
-  if (val.wallet.balance > 0 && val.wallet.energy == 0) {
-    currentUnit.value = 1
-  }
-
-  if (val.wallet.balance == 0 && val.wallet.energy > 0 ) {
-    currentUnit.value = 2
-  }
   return userStore.getUserInfo();
 });
-// 当前显示的文本后缀
 
+/**
+ * 核心修复：使用 watch 统一管理 isWallet 的状态
+ * 同时监听 currentUnit 和 userInfo，任意变化都会重新计算余额是否充足
+ */
+watch(
+  [currentUnit, userInfo, selectedIndex, selectedOpt], // 增加监听 selectedIndex 和 selectedOpt
+  ([newUnit, newUser, newSelectIndex, newSelectOpt]) => {
+    if (!newUser || !newUser.wallet) return;
 
-watch(currentUnit, (val) => {
-  if ((val == 1 && Number(userInfo.value.wallet.balance) > 0) || (val == 2 && Number(userInfo.value.wallet.energy) > 0)) {
-    isWallet.value = true
-  } else {
-    isWallet.value = false;
-  }
-});
+    const balance = Number(newUser.wallet.balance) || 0;
+    const energy = Number(newUser.wallet.energy) || 0;
+    // 获取当前选中项需要消耗的数量
+    const cost = Number(newSelectOpt?.battery) || 0; 
+
+    if (newUnit === 1) {
+      // 电池模式：余额 >= 消耗量
+      isWallet.value = balance >= cost;
+    } else if (newUnit === 2) {
+      // 能量模式：余额 >= 消耗量
+      isWallet.value = energy >= cost;
+    }
+  },
+  { immediate: true, deep: true }
+);
 
 // 打开弹窗
 const open = () => {
   selectedIndex.value = -1;
   selectedOpt.value = {
-    time: props.billData.time_billing.time,
-    battery: props.billData.time_billing.battery,
+    time: props.billData.time_billing?.time,
+    battery: props.billData.time_billing?.battery,
   };
+
+  // 在打开弹窗时，安全地初始化默认选中的付费方式
+  const val = userInfo.value;
+  if (val && val.wallet) {
+    if (val.wallet.balance > 0 && val.wallet.energy == 0) {
+      currentUnit.value = 1;
+    } else if (val.wallet.balance == 0 && val.wallet.energy > 0) {
+      currentUnit.value = 2;
+    }
+  }
+
   popupRef.value.open();
 };
 
@@ -125,9 +140,22 @@ const close = () => {
   popupRef.value.close();
 };
 
-// 切换付费单位（电池/能量）
+// 切换付费单位（逻辑已交由 watch 处理，此处只需更新值）
 const switchUnit = (type) => {
   currentUnit.value = type;
+
+  // if (type == 2) {
+  //   // 按时间计费
+  //   if (Object.hasOwn(props.billData, 'time_billing')) {
+  //     if(Number(props.billData.time_billing.battery) > Number(userInfo.value.wallet.energy) ) {
+  //       isWallet.value = false;
+  //     }
+  //   }
+  // }
+
+  // if (type == 1) {
+
+  // }
 };
 
 // 选择具体的时长卡片
@@ -139,10 +167,10 @@ const selectOption = (id, label, cost) => {
   };
 };
 
-// 点击确定
+// 点击确定支付
 const handleConfirm = () => {
   const result = {
-    unitType: currentUnit.value, // 1 or 2
+    unitType: currentUnit.value,
     selectType: selectedIndex.value,
     selectedOpt: selectedOpt.value,
   };
@@ -150,9 +178,11 @@ const handleConfirm = () => {
   close();
 };
 
+// 跳转充值
 const goRecharge = () => {
-  uni.navigateTo({ url: '/pages/mine/recharge' })
-}
+  close(); // 关闭当前弹窗
+  uni.navigateTo({ url: '/pages/mine/recharge' });
+};
 
 // 暴露方法给父组件调用
 defineExpose({
@@ -236,12 +266,10 @@ defineExpose({
 
       &.checked {
         border-color: #fbbd08;
-        /* 黄色主题色 */
         background-color: #fff;
         position: relative;
       }
 
-      /* 模拟选中时的内部圆点 */
       &.checked::after {
         content: "";
         width: 16rpx;
@@ -281,15 +309,12 @@ defineExpose({
 
 .option-card {
   width: calc(33% - 10rpx);
-  /* 一行三个 */
   height: 70rpx;
   border: 1rpx solid #ffc838;
   border-radius: 12rpx;
-
   display: flex;
   justify-content: center;
   align-items: center;
-
   background-color: #fff;
   transition: all 0.2s;
   font-family: PingFangSC, PingFang SC;
@@ -303,7 +328,7 @@ defineExpose({
   }
 }
 
-/* 确定按钮 */
+/* 确定/充值按钮 */
 .confirm-btn {
   margin-top: 40rpx;
   background-color: #fbbd08;
@@ -320,26 +345,17 @@ defineExpose({
   }
 }
 
+/* 余额卡片 */
 .card {
   background-color: #fff;
-
   margin-bottom: 20rpx;
 
-  /* 卡片标题 */
   .card-title {
     font-size: 32rpx;
     font-weight: bold;
     color: #333;
     display: block;
     margin-bottom: 16rpx;
-  }
-
-  /* 卡片描述文字 */
-  .card-desc {
-    font-size: 28rpx;
-    color: #999;
-    display: block;
-    margin-bottom: 24rpx;
   }
 }
 </style>

@@ -75,11 +75,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted  } from "vue";
+import { onPageShow } from "@dcloudio/uni-app";
 import BusinessModal from "@/components/business-modal/business-modal.vue";
 import CustomModal from "@/components/common-modal/common-modal.vue";
-import { GetMine, ChangeHeadImg } from "@/axios/mine";
+import { ChangeHeadImg } from "@/axios/mine";
+import {GetUserInfo} from "@/axios/index";
 import { useUserStore } from "@/store/modules/user";
+import { onBeforeUnmount } from "vue";
 const userStore = useUserStore();
 
 const userInfo = computed(() => {
@@ -134,9 +137,18 @@ const menuList = ref([
 	},
 ]);
 
-// onMounted(() => {
-// 	GetMine()
-// })
+onPageShow(() => {
+	GetUserInfo().then((res) => {
+      userStore.setUser(res.data);
+    })
+    .catch(() => {});
+})
+ onBeforeUnmount(() => {
+	GetUserInfo().then((res) => {
+      userStore.setUser(res.data);
+    })
+    .catch(() => {});
+ })
 const goPage = () => {
 	uni.navigateTo({
 		url: "/pages/mine/battery",

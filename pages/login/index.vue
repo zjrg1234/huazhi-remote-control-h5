@@ -20,7 +20,7 @@
 			<!-- #endif -->
 
 
-			<view class="login-btn" @click="handleLogin(2)">手机号码登录/注册</view>
+			<view class="login-btn" @click="handleLogin">手机号码登录/注册</view>
 
 
 		</view>
@@ -56,36 +56,10 @@ const form = ref({
 const agree = ref(true)
 const userStore = useUserStore()
 // 登录
-const handleLogin = async (type) => {
-
-	if (!agree.value) {
-		uni.showToast({
-			title: '请先同意用户协议和隐私条款',
-			icon: 'none'
-		})
-		return
-	}
-	console.log(type)
-	if (type == 1) {
-
-
-
-		const loginRes = await new Promise((resolve, reject) => {
-			uni.login({
-				provider: 'weixin',
-				success: res => resolve(res),
-				fail: err => reject(err)
-			});
-		});
-
-		console.log(loginRes)
-
-		if (!loginRes.code) throw new Error('获取微信登录凭证失败');
-
-	} else {
-
-	}
-
+const handleLogin = () => {
+	uni.navigateTo({
+		url: '/pages/login/login'
+	})
 }
 
 // 跳转
@@ -119,7 +93,8 @@ const handleGetPhoneNumber = async (e) => {
 		uni.showToast({ title: '已取消授权', icon: 'none' });
 		return;
 	}
-
+	console.log(e.detail, '===')
+	// 有手机的
 	// 2. 获取微信登录的临时凭证 code
 	const loginRes = await new Promise((resolve, reject) => {
 		uni.login({
@@ -130,8 +105,6 @@ const handleGetPhoneNumber = async (e) => {
 	});
 
 	console.log(loginRes, "loginRes")
-
-
 
 }
 </script>

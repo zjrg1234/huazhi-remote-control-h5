@@ -6,8 +6,6 @@ export function Login(data) {
   return post('/api/login/loginIn', data)
 }
 
-
-
 //获取banner
 export function GetHomeBanner(params) {
   return post('/api/user/banner', params)
