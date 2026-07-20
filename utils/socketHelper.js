@@ -120,6 +120,7 @@ export function handleDriverSocketData(transmitterId, chValue1, chValue2, chValu
         const commandIndex = index + 5;
         commandArray[commandIndex] = transmitterIdStringArray[index];
     }
+    // 5 6 7 8 9 10 11 12
     commandArray[13] = "00";
     commandArray[14] = "27";
     commandArray[15] = "00";
@@ -156,9 +157,7 @@ export function handleDriverSocketData(transmitterId, chValue1, chValue2, chValu
         sendData.push(...itemHexData);
     }
 
-    console.log(uint8ArrayToAscii(new Uint8Array(sendData)))
-    // 返回Uint8Array（相当于Swift的Data）
-    return uint8ArrayToAscii(new Uint8Array(sendData));
+    return new Uint8Array(sendData);
 }
 
 function uint8ArrayToAscii(uint8Array) {

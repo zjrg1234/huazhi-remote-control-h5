@@ -589,9 +589,7 @@ class DriverSocketDataTools{
 
 
 
-@implementation HESbusToolModel
-
-
+ 
 
 @end
 
