@@ -360,59 +360,6 @@ const sendConDrive = () => {
   }, 30 * 1000);
 };
 
-// 初始化定时循环发送
-const initSendLoop = () => {
-  clearSendTimer();
-  sendMsgTimer = setInterval(() => {
-    if (UDPSocket.value) {
-      console.log(carDetails.value.app_transmitter_id)
-      const val = handleDriverSocketData(
-        carDetails.value.app_transmitter_id,
-        chValue.value.ch1,
-        chValue.value.ch2,
-        chValue.value.ch3,
-        chValue.value.ch4,
-        chValue.value.ch5,
-        chValue.value.ch6,
-        chValue.value.ch7,
-        chValue.value.ch8,
-      );
-      console.log("发送的消息：", val)
-      UDPSocket.value.send(val);
-    }
-  }, 40);
-};
-
-// 3秒内快速发送数据（每40ms一次）
-const initThreeSend = () => {
-  const maxCount = 75;
-  let count = 0;
-  clearSendTimer();
-  sendMsgTimer = setInterval(() => {
-    count++;
-    if (UDPSocket.value) {
-      console.log(carDetails.value.app_transmitter_id, "===")
-
-      const val = handleDriverSocketData(
-        carDetails.value.app_transmitter_id,
-        chValue.value.ch1,
-        chValue.value.ch2,
-        chValue.value.ch3,
-        chValue.value.ch4,
-        chValue.value.ch5,
-        chValue.value.ch6,
-        chValue.value.ch7,
-        chValue.value.ch8,
-      );
-      UDPSocket.value.send(val);
-    }
-    if (count >= maxCount) {
-      clearInterval(sendMsgTimer);
-      sendMsgTimer = null;
-      initSendLoop();
-    }
-  }, 40);
-};
 
 // 获取视频设备信息
 const GetDeviceInfo = (data) => {
@@ -623,9 +570,34 @@ const { resetTimer: resetInactivityTimer } = useInactivityAlarm(
 );
 
 // ------------------- 生命周期 -------------------
+// 先onload 再onMounted
 onLoad((options) => {
+  initRouteData(options);
+});
+
+onMounted(() => {
+  console.log("onMounted")
+  if (!uni.getStorageSync("sendNum")) uni.setStorageSync("sendNum", 0);
+  initTimer(); // 时钟
+  initVehicleConfig(); //获取配置 加载车辆类型
+  initSocket(); // 微信小程序 udp
+
+  initSendLoop();
+  initTopVideo();
+});
+
+const timerNum = ref();
+const initTimer = () => {
+  let num = 1;
+  timerNum.value = setInterval(() => {
+    currentTime.value = formatTime(++num);
+  }, 1000);
+};
+
+const initRouteData = (options) => {
   orderNo.value = options.order_no || "";
   vehicleId.value = options.vehicle_id || "";
+  // 预约页面那边设置的值
   const details = uni.getStorageSync("carDetails");
   if (details) {
     carDetails.value = JSON.parse(details);
@@ -634,8 +606,14 @@ onLoad((options) => {
     if (type >= 10 && type <= 19) carType.value = "1";
     else if (type >= 20 && type <= 29) carType.value = "2";
     else carType.value = "3";
+  } else {
+    console.log("carDetails 空")
   }
+};
 
+const initVehicleConfig = () => {
+  const details = carDetails.value;
+  if (!details) return;
 
   // 初始化车辆配置
   if (carDetails.value) {
@@ -675,10 +653,12 @@ onLoad((options) => {
         ...carDetails.value.vehicle_config_detail,
       });
     }
-    // 液压挖机
   }
 
-  // 初始化 WebSocket
+};
+
+const initSocket = () => {
+ // 初始化 WebSocket
   const wssUrl = uni.getStorageSync("wssUrl");
   const wssPort = uni.getStorageSync("wssPort");
   console.log(wssUrl, wssPort)
@@ -695,25 +675,37 @@ onLoad((options) => {
     },
   });
   // #endif
+}
 
-  // 初始化发送定时器
-  setTimeout(() => {
-    initThreeSend();
-    initTopVideo();
-  }, 500);
-});
+// 初始化定时循环发送
+const initSendLoop = () => {
+  clearSendTimer();
+  sendMsgTimer = setInterval(() => {
+    if (UDPSocket.value) {
+      console.log("app_transmitter_id:" , carDetails.value.app_transmitter_id)
+      const val = handleDriverSocketData(
+        carDetails.value.app_transmitter_id,
+        chValue.value.ch1,
+        chValue.value.ch2,
+        chValue.value.ch3,
+        chValue.value.ch4,
+        chValue.value.ch5,
+        chValue.value.ch6,
+        chValue.value.ch7,
+        chValue.value.ch8,
+      );
 
-onMounted(() => {
-  if (!uni.getStorageSync("sendNum")) uni.setStorageSync("sendNum", 0);
-  // 时钟
-  let num = 1;
-  const timer = setInterval(() => {
-    currentTime.value = formatTime(++num);
-  }, 1000);
-});
+      UDPSocket.value.send(val);
+    }
+  }, 40);
+};
+
+
+
 
 onUnmounted(() => {
   clearAllTimers();
+  clearInterval(timerNum.value);
   clearInterval(timer);
   if (ws.value) ws.value.close();
 });
