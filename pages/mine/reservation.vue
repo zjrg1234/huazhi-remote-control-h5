@@ -197,16 +197,15 @@ const handleAction = async (item) => {
     }
   }
 
-  // const { code } = await LockCar({
-  //   vehicle_id: item.vehicle_id,
-  // })
+  const { code } = await LockCar({
+    vehicle_id: item.vehicle_id,
+  })
 
-  // if (code != 200) {
-  //   uni.showToast("车辆没锁成功，不能驾驶");
-  //   return;
-  // }
+  if (code != 200) {
+    uni.showToast("车辆没锁成功，不能驾驶");
+    return;
+  }
   console.log("锁车成功")
-
 
   GetCarDetails({
     id: item.vehicle_id,

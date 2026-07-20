@@ -252,6 +252,14 @@ onMounted(() => {
     }
   });
   // #endif
+  // #ifdef MP-WEIXIN
+  // wx.setScreenOrientation({
+  //   orientation: isLandscape.value ? 'portrait' : 'landscape',
+  //   success: () => {backRightInit()},
+  //   fail: (err) => console.error('切换失败', err)
+  // })
+  // #endif
+
 });
 
 onBeforeUnmount(() => {
