@@ -197,11 +197,11 @@ const handleAction = async (item) => {
     }
   }
 
-  const { code } = await LockCar({
+  const res = await LockCar({
     vehicle_id: item.vehicle_id,
   })
 
-  if (code != 200) {
+  if (res.code != 200) {
     uni.showToast("车辆没锁成功，不能驾驶");
     return;
   }
@@ -241,13 +241,17 @@ const handleAppeal = (item) => {
 };
 
 const overDrive = (item) => {
-  StartDrive({
-    order_no: item.order_no,
-    type: 3,
-    vehicle_id: item.vehicle_id,
-  }).then(res => {
-    refreshData()
-  }).catch()
+    uni.navigateTo({
+          url: `/pages/drive/index?order_no=${item.order_no}&vehicle_id=${item.vehicle_id}`,
+        });
+
+  // StartDrive({
+  //   order_no: item.order_no,
+  //   type: 3,
+  //   vehicle_id: item.vehicle_id,
+  // }).then(res => {
+  //   refreshData()
+  // }).catch()
 }
 </script>
 

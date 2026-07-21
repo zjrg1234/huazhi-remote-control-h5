@@ -97,7 +97,7 @@ const menuList = ref([
 		name: "变更专区",
 		icon: "/static/images/mine/icon_change@2x.png",
 		key: "area",
-		url: "/pages/mine/changeArea",
+		url: "/pages/mine/changeArea"
 	},
 	{
 		name: "我的预约",

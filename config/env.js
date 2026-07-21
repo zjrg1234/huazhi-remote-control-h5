@@ -13,5 +13,5 @@ const envConfig = {
 
 // 自动识别当前环境
 const mode = import.meta.env.MODE
-console.log(mode)
+console.log(mode,"mode")
 export const { baseUrl } = envConfig[mode]

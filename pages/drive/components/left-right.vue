@@ -1,40 +1,21 @@
 <template>
-  <view 
-    class="control-box" 
-    ref="boxRef" 
-    :style="{ transform: `translate3d(${boxX}px, ${boxY}px, 0)` }"
-    @touchstart="handleStart"
-    @touchmove.prevent="handleMove"
-    @touchend="handleEnd"
-
-  >
+  <view class="control-box" ref="boxRef" :style="{ transform: `translate3d(${boxX}px, ${boxY}px, 0)` }"
+    @touchstart="handleStart" @touchmove.prevent="handleMove" @touchend="handleEnd">
     <!-- #ifdef H5 
     @mousedown="handleStart"
     #endif -->
-    <view
-      class="arrow left"
-      :style="{ backgroundImage: `url(${leftImage})` }"
-      :class="{ active: isLeftActive }"
-    ></view>
+    <view class="arrow left" :style="{ backgroundImage: `url(${leftImage})` }" :class="{ active: isLeftActive }"></view>
 
-    <view
-      class="dot"
-      ref="dotRef"
-      :class="{ ready: isReadyMode }"
-      :style="{
-        backgroundImage: `url(${dotImage})`,
-        transition: isDragging
-          ? 'none'
-          : 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease, box-shadow 0.3s ease',
-        transform: `translateX(${dotX}px) scale(1)`
-      }"
-    ></view>
+    <view class="dot" ref="dotRef" :class="{ ready: isReadyMode }" :style="{
+      backgroundImage: `url(${dotImage})`,
+      transition: isDragging
+        ? 'none'
+        : 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease, box-shadow 0.3s ease',
+      transform: `translateX(${dotX}px) scale(1)`
+    }"></view>
 
-    <view
-      class="arrow right"
-      :style="{ backgroundImage: `url(${rightImage})` }"
-      :class="{ active: isRightActive }"
-    ></view>
+    <view class="arrow right" :style="{ backgroundImage: `url(${rightImage})` }" :class="{ active: isRightActive }">
+    </view>
   </view>
 </template>
 
@@ -80,22 +61,61 @@ let dotStartOffset = 0;
 let initialBoxX = 0;
 let initialBoxY = 0;
 
-// ✅ 【核心修改】：获取屏幕尺寸兼容多端
 const getScreenSize = () => {
   // #ifdef H5
   return { width: window.innerWidth, height: window.innerHeight };
   // #endif
-  // #ifndef H5
-  const sysInfo = uni.getSystemInfoSync();
-  return { width: sysInfo.windowWidth, height: sysInfo.windowHeight };
+  
+  // #ifdef MP-WEIXIN
+  const info = uni.getSystemInfoSync();
+  console.log(info,"info")
+  // 强制取长边为 width（假设你的页面是横屏的）
+  return {
+    width: Math.max(info.windowWidth, info.windowHeight),
+    height: Math.min(info.windowWidth, info.windowHeight)
+  };
   // #endif
 };
 
+// ✅ 修改 backRightInit
 const backRightInit = () => {
   const { width, height } = getScreenSize();
-  boxX.value = width / 2 + 130;
+  console.log("屏幕尺寸:", width, height);
+  
+  boxX.value = width / 2 + 130 + 40;
   boxY.value = height / 2 + 40;
+  
+  console.log("最终位置:", boxX.value, boxY.value);
 };
+
+// ✅ 修改 onWindowResize 监听
+onMounted(() => {
+  backRightInit();
+
+
+  // #ifdef H5
+  window.addEventListener('resize', () => {
+    if (props.isLeft) {
+      backLeftInit();
+    } else {
+      backRightInit();
+    }
+  });
+  // #endif
+});
+
+onBeforeUnmount(() => {
+  clearTimeout(idleTimer);
+
+  // #ifdef MP-WEIXIN
+  // 页面卸载时移除监听，防止内存泄漏
+  wx.offWindowResize();
+  // #endif
+
+  // #ifdef H5
+  window.removeEventListener('resize', () => {});
+  // #endif
+});
 
 const backLeftInit = () => {
   boxX.value = 20;
@@ -181,7 +201,7 @@ const handleStart = (e) => {
 
 const handleMove = (e) => {
   if (!isDragging.value) return;
-  
+
   // 阻止默认的页面滚动
   // #ifdef H5
   if (e.cancelable) e.preventDefault();
@@ -237,39 +257,8 @@ const handleEnd = () => {
   resetArrows();
 };
 
-// --- 生命周期 ---
-onMounted(() => {
-  backRightInit();
 
-  // #ifdef MP-WEIXIN
-  // 监听屏幕尺寸变化（横竖屏切换、窗口大小改变）
-  wx.onWindowResize((res) => {
-    // 横屏或窗口大小改变时，重新初始化位置
-    if (props.isLeft) {
-      backLeftInit();
-    } else {
-      backRightInit();
-    }
-  });
-  // #endif
-  // #ifdef MP-WEIXIN
-  // wx.setScreenOrientation({
-  //   orientation: isLandscape.value ? 'portrait' : 'landscape',
-  //   success: () => {backRightInit()},
-  //   fail: (err) => console.error('切换失败', err)
-  // })
-  // #endif
 
-});
-
-onBeforeUnmount(() => {
-  clearTimeout(idleTimer);
-
-   // #ifdef MP-WEIXIN
-  // 页面卸载时移除监听，防止内存泄漏
-  wx.offWindowResize();
-  // #endif
-});
 </script>
 
 <style scoped>
@@ -287,8 +276,10 @@ onBeforeUnmount(() => {
   z-index: 100;
   will-change: transform;
   user-select: none;
-  touch-action: none; /* 关键：禁止浏览器默认的触摸滚动行为 */
+  touch-action: none;
+  /* 关键：禁止浏览器默认的触摸滚动行为 */
 }
+
 .arrow {
   width: 50px;
   height: 50px;
@@ -299,11 +290,13 @@ onBeforeUnmount(() => {
   background-position: center center;
   background-size: contain;
 }
+
 .arrow.active {
   opacity: 1;
   filter: drop-shadow(0 0 4px rgba(255, 167, 38, 0.8));
   transform: scale(1.15);
 }
+
 .dot {
   width: 50px;
   height: 50px;
@@ -316,6 +309,12 @@ onBeforeUnmount(() => {
   z-index: 2;
   will-change: transform;
 }
-.dot:active { cursor: grabbing; }
-.dot.ready { box-shadow: 0 0 7.5px rgba(255, 167, 38, 0.6); }
+
+.dot:active {
+  cursor: grabbing;
+}
+
+.dot.ready {
+  box-shadow: 0 0 7.5px rgba(255, 167, 38, 0.6);
+}
 </style>

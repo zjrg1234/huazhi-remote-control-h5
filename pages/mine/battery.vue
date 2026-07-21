@@ -158,7 +158,6 @@
 			}
 
 		} finally {
-			console.log(123)
 			loading.value = false
 			uni.stopPullDownRefresh()
 		}

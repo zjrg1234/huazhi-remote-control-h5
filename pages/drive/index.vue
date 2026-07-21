@@ -107,7 +107,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from "vue";
-import { onLoad } from "@dcloudio/uni-app";
+import { onLoad, onUnload } from "@dcloudio/uni-app";
 import ALLPopup from "./components/tip.vue";
 import SetPopup from "./components/set.vue";
 import microphone from "./components/microphone.vue";
@@ -280,7 +280,7 @@ const clearSendTimer = () => {
 };
 
 const clearAllTimers = () => {
-  clearSendTimer();
+
   if (billingTimer) {
     clearInterval(billingTimer);
     billingTimer = null;
@@ -293,15 +293,17 @@ const clearAllTimers = () => {
 
 // 结束驾驶逻辑
 const handleDriveEnd = () => {
-  clearAllTimers();
+  clearAllTimers()
   console.log("触发结束逻辑：发送中位值、停车");
 };
 
 // 发送继续驾驶请求
 const sendConDrive = () => {
-  clearAllTimers();
-  const carInfo = uni.getStorageSync("carInfo");
+
+
+  const carInfo = JSON.parse(uni.getStorageSync("carInfo"));
   if (!carInfo) return;
+
 
   let count = 0;
   if (carInfo.billing_method == 0) {
@@ -311,6 +313,7 @@ const sendConDrive = () => {
   } else {
     count = carInfo.billing_rules.time * 2;
   }
+
 
   if (count <= 0) {
     handleDriveEnd();
@@ -569,6 +572,12 @@ const { resetTimer: resetInactivityTimer } = useInactivityAlarm(
   handleInactivityAlarm,
 );
 
+onUnload(() => {
+  if (UDPSocket.value) {
+    UDPSocket.value.close()
+    UDPSocket.value = null
+  }
+})
 // ------------------- 生命周期 -------------------
 // 先onload 再onMounted
 onLoad((options) => {
@@ -658,11 +667,16 @@ const initVehicleConfig = () => {
 };
 
 const initSocket = () => {
- // 初始化 WebSocket
+  // 初始化 WebSocket
   const wssUrl = uni.getStorageSync("wssUrl");
   const wssPort = uni.getStorageSync("wssPort");
   console.log(wssUrl, wssPort)
   // #ifdef MP-WEIXIN
+
+  if (UDPSocket.value) {
+    UDPSocket.value.close()
+  }
+
   UDPSocket.value = new UDPSocketClient({
     address: wssUrl,
     port: wssPort,
@@ -682,7 +696,6 @@ const initSendLoop = () => {
   clearSendTimer();
   sendMsgTimer = setInterval(() => {
     if (UDPSocket.value) {
-      console.log("app_transmitter_id:" , carDetails.value.app_transmitter_id)
       const val = handleDriverSocketData(
         carDetails.value.app_transmitter_id,
         chValue.value.ch1,
@@ -694,10 +707,9 @@ const initSendLoop = () => {
         chValue.value.ch7,
         chValue.value.ch8,
       );
-
       UDPSocket.value.send(val);
     }
-  }, 40);
+  }, 1000);
 };
 
 

@@ -15,10 +15,9 @@
 
     <view
       class="dot"
-      :class="{ ready: isReadyMode }"
+      :class="{ ready: isReadyMode, dragging: isDragging }"
       :style="{
         backgroundImage: `url(${dotImage})`,
-        transition: isDragging ? 'none' : 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease, box-shadow 0.3s ease',
         transform: `translateY(${currentDotY}px) scale(1)`
       }"
     ></view>
@@ -118,8 +117,17 @@ const enterReadyMode = () => {
 };
 
 const updateArrows = (deltaY) => {
-  isUpActive.value = deltaY < -SWIPE_THRESHOLD;
-  isDownActive.value = deltaY > SWIPE_THRESHOLD;
+  const newIsUpActive = deltaY < -SWIPE_THRESHOLD;
+  const newIsDownActive = deltaY > SWIPE_THRESHOLD;
+
+  if (isUpActive.value !== newIsUpActive) {
+    isUpActive.value = newIsUpActive;
+  }
+  if (isDownActive.value !== newIsDownActive) {
+    isDownActive.value = newIsDownActive;
+  }
+
+
   emit("action", { fb: deltaY < 0, value: deltaY });
 };
 
@@ -250,9 +258,16 @@ const handleEnd = () => {
   position: relative;
   z-index: 2;
   will-change: transform;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              background 0.3s ease, 
+              box-shadow 0.3s ease;
 }
 
 .dot.ready {
   box-shadow: 0 0 7.5px rgba(255, 167, 38, 0.6);
+}
+.dot.dragging {
+  /* 拖动时取消过渡，让跟手更丝滑 */
+  transition: none;
 }
 </style>
