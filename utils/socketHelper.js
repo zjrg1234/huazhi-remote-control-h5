@@ -234,9 +234,11 @@ export function handleDriverSocketData(
     const h = b.toString(16).padStart(2, "0").toUpperCase();
     return  h;
   });
+
+  console.log("发送16进制：", sendVal);
   sendVal = hexArrayToArrayBuffer(sendVal)
-  console.log("发送：", sendVal);
-  // console.log(new Uint8Array(sendData))
+  console.log("发送hexArrayToArrayBuffer：", sendVal);
+
   return sendVal;
 }
 

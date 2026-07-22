@@ -335,6 +335,7 @@ const onBillingConfirm = (params) => {
     .then((res) => {
       if (res.code === 200) {
         orderCar.value = { ...res.data };
+        uni.setStorageSync('app_id', res.data.transmitter_id);
         orderVisible.value = true;
       }
     })

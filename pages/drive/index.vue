@@ -122,12 +122,13 @@ import ExRight from "./components/ex-right.vue";
 import { formatTime, mapToPer } from "@/utils/utils.js";
 import UDPSocketClient from "@/utils/udpSocket.js";
 import { handleDriverSocketData } from "@/utils/socketHelper.js";
+import { useHESbus, hexToBytes } from "@/composables/useHESbus.js";
 import { encryptAES } from "@/utils/crypto.js";
 import { StartDrive } from "@/axios/index.js";
 import { LoginTop, DeviceDetails } from "@/axios/video.js";
 import { CarControlHandler } from "./control/siqu.js";
 import { ExcavatorControlHandler } from "./control/excavator.js";
-import { useInactivityAlarm } from "./control/useInactivityAlarm.js";
+import { useInactivityAlarm } from "@/composables/useInactivityAlarm.js";
 import {
   ch1,
   speeds,
@@ -180,7 +181,7 @@ const videoDefinition = ref("1");
 const carHandler = ref(null);
 const UDPSocket = ref(null);
 const numTip = ref(0);
-
+const { handleReceive, arrayBufferToByte } = useHESbus();
 // 菜单配置
 const menuList = computed(() => {
   if (carType.value == 1) {
@@ -680,7 +681,11 @@ const initSocket = () => {
   UDPSocket.value = new UDPSocketClient({
     address: wssUrl,
     port: wssPort,
-    onMessage: (msg) => console.log("收到:", msg),
+    onMessage: (msg) => {
+      console.log(msg, "---arrayB")
+      const msgVal = handleReceive(msg);
+      console.log(msgVal, "-----")
+    },
 
     // 3. 配置错误回调
     onError: (err) => {
@@ -695,9 +700,12 @@ const initSocket = () => {
 const initSendLoop = () => {
   clearSendTimer();
   sendMsgTimer = setInterval(() => {
+
+    console.log(UDPSocket.value, "123")
     if (UDPSocket.value) {
+      const app_id = uni.getStorageSync("app_id");
       const val = handleDriverSocketData(
-        carDetails.value.app_transmitter_id,
+        app_id,
         chValue.value.ch1,
         chValue.value.ch2,
         chValue.value.ch3,
@@ -707,9 +715,10 @@ const initSendLoop = () => {
         chValue.value.ch7,
         chValue.value.ch8,
       );
+      console.log("send:", val)
       UDPSocket.value.send(val);
     }
-  }, 1000);
+  }, 40);
 };
 
 
