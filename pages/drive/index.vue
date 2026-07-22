@@ -463,13 +463,15 @@ const handlePopupAction = (type) => {
       .then((res) => {
         if (res.code != 2000) {
           uni.showToast({ title: res.msg, icon: "none" });
-        }
-        else {
+
           setTimeout(() => {
             uni.reLaunch({
               url: '/pages/mine/reservation'  // 你的首页路径
             })
           }, 2000);
+        }
+        else {
+          uni.showToast({ title: res.msg, icon: "none" });
         }
 
       })
@@ -481,6 +483,7 @@ const handleOper = (type) => {
   operMode.value = type == "mode2";
 };
 
+// 是否开启相反方向
 const handleFBDir = (val) => {
   const arr = val.split("_");
   if (arr[0] == 1) operFB.value = arr[1] === "true" ? 1 : 0;

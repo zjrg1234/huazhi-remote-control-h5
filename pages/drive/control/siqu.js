@@ -51,7 +51,7 @@ export class CarControlHandler {
     let centerValue = 0.0;
     let minValue = 0.0;
     let rateValue = 0.0;
-    console.log(positionType)
+   
     // 1,3 进退油门
     if (isUpDown === true) {
      
@@ -71,7 +71,7 @@ export class CarControlHandler {
       } else {
         const isReverse = this.reverseUpDownState;
         const delta = 500 * rateValue * ratioValue;
-        console.log(delta, rateValue, ratioValue)
+       
 
         if (positionType === MoveDirectionControlType.upType) {
           // 上推：如果开启反向，则变为向下输出
@@ -84,10 +84,7 @@ export class CarControlHandler {
             isReverse ? centerValue + delta : centerValue - delta,
           );
         }
-      } // 边界保护 (忠实保留原逻辑)
-
-
-      this.ch2 = Math.max(1, Math.min(2000, this.ch2));
+      } 
   
     } else {
       
@@ -121,7 +118,6 @@ export class CarControlHandler {
           );
         } // 左右控制的边界保护
 
-        this.ch1 = Math.max(1, Math.min(2000, this.ch1));
 
       }
     }

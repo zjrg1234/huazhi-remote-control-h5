@@ -187,16 +187,20 @@ export function handleDriverSocketData(
   commandArray[15] = "00";
   commandArray[16] = "00";
 
+  const channels = [chValue1, chValue2, chValue3, chValue4, chValue5,chValue6,chValue7,chValue8];
+
+  const clampedChannels = channels.map(v => Math.max(1, Math.min(2000, Number(v))));
+
   // 通道数据
   const channelsArray = [
-    `${chValue1}`,
-    `${chValue2}`,
-    `${chValue3}`,
-    `${chValue4}`,
-    `${chValue5}`,
-    `${chValue6}`,
-    `${chValue7}`,
-    `${chValue8}`,
+    `${clampedChannels[0]}`,
+    `${clampedChannels[1]}`,
+    `${clampedChannels[2]}`,
+    `${clampedChannels[3]}`,
+    `${clampedChannels[4]}`,
+    `${clampedChannels[5]}`,
+    `${clampedChannels[6]}`,
+    `${clampedChannels[7]}`,
     "0",
     "0",
     "0",

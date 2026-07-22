@@ -47,17 +47,7 @@ export class ExcavatorControlHandler {
     this.ch7 = this.config.ch7.close_value.current_value; // 油泵
   }
   getChValue() {
-    // 1. 定义需要处理的通道数组
-    const channels = ["ch3", "ch4", "ch5", "ch6", "ch7"];
-
-    // 2. 遍历通道并限制范围
-    channels.forEach((ch) => {
-      // 获取原始配置值
-      let value = this[ch];
-      value = Math.max(1, Math.min(2000, value));
-      // 将处理后的值赋给 this 对应的通道
-      this[ch] = value;
-    });
+   
     return {
       ch3: this.ch3,
       ch4: this.ch4,
@@ -97,12 +87,7 @@ export class ExcavatorControlHandler {
 
       this.ch1 = center + direction * offset;
     }
-    if (this.ch1 > 2000) {
-      this.ch1 = 2000;
-    }
-    if (this.ch2 > 2000) {
-      this.ch2 = 2000;
-    }
+  
   }
 
   // 遥杆操作
