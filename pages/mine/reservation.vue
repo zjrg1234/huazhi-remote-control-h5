@@ -219,6 +219,8 @@ const handleAction = async (item) => {
 
         uni.navigateTo({
           url: `/pages/drive/index?order_no=${item.order_no}&vehicle_id=${item.vehicle_id}`,
+          animationType: 'none',  // 关闭动画
+          animationDuration: 0,
         });
 
       } else {
