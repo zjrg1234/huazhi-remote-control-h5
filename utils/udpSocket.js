@@ -44,11 +44,7 @@ export default class UDPSocketClient {
       // 2. 监听消息
       this.socket.onMessage((res) => {
         if (this.isClosed || !this.options.onMessage) return;
-
         const { message, remoteInfo } = res;
-        debugger
-        console.log(this.arrayBufferToByte(message) instanceof ArrayBuffer,"message instanceof ArrayBuffer")
-        
         try {
          
           this.options.onMessage(this.arrayBufferToByte(message), remoteInfo);

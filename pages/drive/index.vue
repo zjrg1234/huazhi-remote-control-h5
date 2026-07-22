@@ -667,6 +667,10 @@ const initVehicleConfig = () => {
 
 };
 
+
+  // 使用 ref 存储定时器
+const messageTimer = ref(null);
+
 const initSocket = () => {
   // 初始化 WebSocket
   const wssUrl = uni.getStorageSync("wssUrl");
@@ -678,21 +682,42 @@ const initSocket = () => {
     UDPSocket.value.close()
   }
 
-  UDPSocket.value = new UDPSocketClient({
-    address: wssUrl,
-    port: wssPort,
-    onMessage: (msg) => {
-      console.log(msg, "---arrayB")
-      const msgVal = handleReceive(msg);
-      console.log(msgVal, "-----")
-    },
 
-    // 3. 配置错误回调
-    onError: (err) => {
-      console.error("UDP 通信发生异常:", err);
-      wx.showToast({ title: "网络异常", icon: "none" });
-    },
-  });
+
+UDPSocket.value = new UDPSocketClient({
+  address: wssUrl,
+  port: wssPort,
+  
+  onMessage: (msg) => {
+    // 收到消息，重置定时器
+    clearTimeout(messageTimer.value);
+    const msgVal = handleReceive(msg);
+    console.log(msgVal, "-----");
+    
+    // 重新启动超时检测
+    startMessageTimeout();
+  },
+  
+  onError: (err) => {
+    console.error("UDP 通信发生异常:", err);
+    wx.showToast({ title: "网络异常", icon: "none" });
+  },
+});
+
+// 启动超时检测
+function startMessageTimeout() {
+  clearTimeout(messageTimer.value);
+  messageTimer.value = setTimeout(() => {
+    console.warn("5秒内未收到消息");
+    wx.showToast({ title: "设备响应超时", icon: "none" });
+    // 可选：重发请求或断开重连
+  }, 5000);
+}
+
+// 初始启动
+startMessageTimeout();
+
+
   // #endif
 }
 
