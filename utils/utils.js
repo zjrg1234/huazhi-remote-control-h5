@@ -147,3 +147,38 @@ export const mapToPer = (value) => {
   // 3. 四舍五入取整（根据需求也可以保留小数）
   return (Math.round(percentage)/ 100).toFixed(2); 
 }
+
+
+
+// 通过电压计算电量
+export const handleBattery = (voltage, batteryType) => {
+    let batteryRate = 0.0;
+    
+    // 单节锂电池的安全工作区间
+    const cellMaxVoltage = 4.2;
+    const cellMinVoltage = 3.5;
+    const cellVoltageRange = cellMaxVoltage - cellMinVoltage; // 0.7V
+
+    // 根据电池类型分配对应的串联节数
+    let cellCount = 0.0;
+    
+    const obj = {
+      1: '1.0',
+      2: '2.0',
+      3: '3.0',
+      4: '4.0',
+      5: '5.0',
+    }
+    cellCount = obj[batteryType] || 6.0
+
+    // 计算电池类型的最高或最低电压
+    const minVoltage = cellMinVoltage * cellCount;
+    const voltageRange = cellVoltageRange * cellCount;
+
+    batteryRate = (voltage - minVoltage) / voltageRange;
+
+    // 限制在 0~1 之间
+    batteryRate = Math.max(0.0, Math.min(1.0, batteryRate));
+    batteryRate = (batteryRate * 100).toFixed(2)
+    return batteryRate;
+}
