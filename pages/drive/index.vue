@@ -518,6 +518,7 @@ const logout = () => {
   handleIcon("speed");
 };
 
+// 四驱车 前进后退
 const handleFBDrive = (item) => {
   showSpeed.value = false;
   let type = "";
@@ -539,6 +540,7 @@ const handleFBDrive = (item) => {
   chValue.value.ch2 = carHandler.value.ch2;
 };
 
+// 速度
 const changeConstSpeed = (e) => {
   constSpeed.value = e.detail.value;
   carHandler.value.handleTwoDirectionControlChannel(
@@ -548,6 +550,7 @@ const changeConstSpeed = (e) => {
   );
 };
 
+// 四驱车 左右
 const handleLRDrive = (item) => {
   let type = "endType";
   let ratioValue = 0;
@@ -759,7 +762,7 @@ onUnmounted(() => {
   if (ws.value) ws.value.close();
 });
 
-// 遥杆操作
+// 遥杆操作 挖机
 const handleLeftDrive = (param) => {
   handleComDrive("left", param);
 };
