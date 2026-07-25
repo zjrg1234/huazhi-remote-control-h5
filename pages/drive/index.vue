@@ -15,14 +15,14 @@
       <div class="status-bar-capsule">
         <div class="flex">
           <div class="fl">
-            <span class="dot"></span>
+            <span class="dot" v-if="carStatus"></span>
             <div class="car">
               <image class="image" src="/static/images/icon_car@2x.png" mode="aspectFit" />
-              <span class="mini-forbidden"></span>
+              <span class="mini-forbidden" v-if="!carStatus"></span>
             </div>
           </div>
           <div>
-            <battery :percent="40"></battery>
+            <battery :percent="batteryPer"></battery>
           </div>
           <div><span class="time-text">|</span></div>
           <div>
@@ -119,10 +119,10 @@ import pointOprea1 from "./components/digger-opera1.vue";
 import pointOprea2 from "./components/digger-opera2.vue";
 import ExLeft from "./components/ex-left.vue";
 import ExRight from "./components/ex-right.vue";
-import { formatTime, mapToPer } from "@/utils/utils.js";
+import { formatTime, mapToPer, handleBattery } from "@/utils/utils.js";
 import UDPSocketClient from "@/utils/udpSocket.js";
 import { handleDriverSocketData } from "@/utils/socketHelper.js";
-import { useHESbus, hexToBytes } from "@/composables/useHESbus.js";
+import { useHESbus } from "@/composables/useHESbus.js";
 import { encryptAES } from "@/utils/crypto.js";
 import { StartDrive } from "@/axios/index.js";
 import { LoginTop, DeviceDetails } from "@/axios/video.js";
@@ -148,6 +148,7 @@ import {
 // ------------------- 状态 -------------------
 const videoUrl = ref(""); // 视频地址
 const allPopupVisible = ref(false);
+const carStatus = ref(true)
 const currentTime = ref("");
 const showSpeed = ref(false);
 const showRepairReason = ref(false);
@@ -181,7 +182,8 @@ const videoDefinition = ref("1");
 const carHandler = ref(null);
 const UDPSocket = ref(null);
 const numTip = ref(0);
-const { handleReceive, arrayBufferToByte } = useHESbus();
+const { handleReceive , model } = useHESbus();
+const batteryPer = ref(100)
 // 菜单配置
 const menuList = computed(() => {
   if (carType.value == 1) {
@@ -465,10 +467,14 @@ const handlePopupAction = (type) => {
           uni.showToast({ title: res.msg, icon: "none" });
 
           setTimeout(() => {
+
+            UDPSocket.value.close()
+
             uni.reLaunch({
               url: '/pages/mine/reservation'  // 你的首页路径
             })
           }, 2000);
+
         }
         else {
           uni.showToast({ title: res.msg, icon: "none" });
@@ -695,11 +701,11 @@ UDPSocket.value = new UDPSocketClient({
   port: wssPort,
   
   onMessage: (msg) => {
+    carStatus.value = true;
     // 收到消息，重置定时器
     clearTimeout(messageTimer.value);
-    const msgVal = handleReceive(msg);
-    console.log(msgVal, "-----");
-    
+    handleReceive(msg);
+    batteryPer.value = handleBattery(model.volt, carDetails.value.battery);
     // 重新启动超时检测
     startMessageTimeout();
   },
@@ -715,8 +721,7 @@ function startMessageTimeout() {
   clearTimeout(messageTimer.value);
   messageTimer.value = setTimeout(() => {
     console.warn("5秒内未收到消息");
-    wx.showToast({ title: "设备响应超时", icon: "none" });
-    // 可选：重发请求或断开重连
+    carStatus.value = false;
   }, 5000);
 }
 
@@ -732,7 +737,6 @@ const initSendLoop = () => {
   clearSendTimer();
   sendMsgTimer = setInterval(() => {
 
-    console.log(UDPSocket.value, "123")
     if (UDPSocket.value) {
       const app_id = uni.getStorageSync("app_id");
       const val = handleDriverSocketData(
@@ -746,10 +750,9 @@ const initSendLoop = () => {
         chValue.value.ch7,
         chValue.value.ch8,
       );
-      console.log("send:", val)
       UDPSocket.value.send(val);
     }
-  }, 40);
+  }, 2000);
 };
 
 
@@ -873,7 +876,7 @@ const handleComDrive = (type, param) => {
   top: 10rpx;
   left: 50%;
   transform: translateX(-50%);
-  padding: 4rpx 16rpx;
+  padding: 0 15rpx;
 
   .flex {
     display: flex;
@@ -891,13 +894,14 @@ const handleComDrive = (type, param) => {
     position: relative;
 
     .image {
-      width: 15px;
-      height: 15px;
+      width: 25px;
+      height: 25px;
+      margin-top: 5px;
     }
 
     .mini-forbidden {
       position: absolute;
-      bottom: 2px;
+      bottom: 10px;
       right: -2px;
     }
   }

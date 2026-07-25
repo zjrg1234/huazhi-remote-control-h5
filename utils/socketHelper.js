@@ -239,10 +239,7 @@ export function handleDriverSocketData(
     return  h;
   });
 
-  console.log("发送16进制：", sendVal);
   sendVal = hexArrayToArrayBuffer(sendVal)
-  console.log("发送hexArrayToArrayBuffer：", sendVal);
-
   return sendVal;
 }
 

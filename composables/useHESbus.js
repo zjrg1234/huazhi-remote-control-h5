@@ -311,16 +311,14 @@ export function parsePacket(data) {
     );
     return null;
   }
-
-  // 校验和验证（假设最后2字节是校验+结束符）
-  // 实际协议需根据文档调整校验范围
-  const calcSum = calcChecksum(bytes, 0, bytes.length - 1);
-  const recvSum = bytes[bytes.length - 1];
-  if (calcSum !== recvSum) {
+  
+  // 这边写死  
+  if (bytes[0] != 90 && byte[1] != 67 && byte[2] != 22) {
     console.warn(
-      `parsePacket: 校验和不匹配，计算=${toHex(calcSum)}, 接收=${toHex(recvSum)}`,
+      `parsePacket: 校验不匹配`,
     );
-    // 根据需求决定是否继续解析
+    return;
+    
   }
 
   // 解析字段
@@ -344,7 +342,7 @@ export function parsePacket(data) {
           ),
           16,
         ) / 100
-      ).toFixed(1) + "V",
+      ).toFixed(1),
 
     gsm: parseInt(
       extractHex(bytes, HES_CONSTANTS.OFFSET_GSM, HES_CONSTANTS.GSM_LENGTH),
@@ -566,13 +564,15 @@ export function useHESbus() {
    * @param {Uint8Array|ArrayBuffer|number[]} data
    */
   function handleReceive(data) {
+    
     const result = parsePacket(data);
     if (result) {
       Object.assign(model, result);
-      addLog("接收", result.rawHex);
+
     } else {
-      addLog("错误", "数据解析失败: " + bytesToHex(data));
+      console.log("错误", "数据解析失败: " + bytesToHex(data));
     }
+  
   }
 
   /**

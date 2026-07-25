@@ -92,7 +92,6 @@ const handleLogin = () => {
 		password: form.value.password,
 		type: 1
 	}).then(res => {
-		console.log(res)
 		if (res.code == 200) {
 			userStore.setToken(res.data.session_key)
 			userStore.setAreaId(res.data.special_area)

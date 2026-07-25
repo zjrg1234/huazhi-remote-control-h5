@@ -178,7 +178,6 @@ export const handleBattery = (voltage, batteryType) => {
     batteryRate = (voltage - minVoltage) / voltageRange;
 
     // 限制在 0~1 之间
-    batteryRate = Math.max(0.0, Math.min(1.0, batteryRate));
-    batteryRate = (batteryRate * 100).toFixed(2)
+    batteryRate = (Math.max(0.0, Math.min(1.0, batteryRate))).toFixed(2) * 100;
     return batteryRate;
 }
