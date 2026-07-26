@@ -752,7 +752,7 @@ const initSendLoop = () => {
       );
       UDPSocket.value.send(val);
     }
-  }, 2000);
+  }, 40);
 };
 
 
@@ -761,8 +761,8 @@ const initSendLoop = () => {
 onUnmounted(() => {
   clearAllTimers();
   clearInterval(timerNum.value);
-  clearInterval(timer);
-  if (ws.value) ws.value.close();
+
+  if (UDPSocket.value) UDPSocket.value.close();
 });
 
 // 遥杆操作 挖机

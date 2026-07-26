@@ -104,7 +104,7 @@ export const compareTimestamp = (startTime, endTime) => {
   if (diffMs < 0) {
     diffMs = 0;
   }
-  console.log(diffMs);
+
   const date = new Date(diffMs);
   const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
   // 获取小时、分钟、秒（使用 UTC 方法避免受本地时区偏移影响）

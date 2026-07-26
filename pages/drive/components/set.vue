@@ -372,6 +372,9 @@ const valueMap = { 1: dirMiddle, 2: dirTurn, 3: throttle };
 
 function dirMiddleValFunc (num) {
 
+
+	console.log(props.directionCenter?.mini_value ?? 500,
+	 props.directionCenter?.max_value ?? 1500, num)
   const mapNum = createMapperNew(
     1,
     100,

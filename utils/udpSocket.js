@@ -64,7 +64,7 @@ export default class UDPSocketClient {
 
       // 4. 【关键修复】监听关闭事件，自动重置状态，为下一次重连做准备
       this.socket.onClose(() => {
-        console.log("[UDP] 底层 Socket 已关闭");
+        // console.log("[UDP] 底层 Socket 已关闭");
         this.isClosed = true;
         this.socket = null;
         this.sendQueue = [];
