@@ -1,33 +1,33 @@
 <template>
   <!-- 注意：uni-app 中 div 需改为 view，事件绑定使用 touch 系列 -->
-  <view 
+  <cover-view 
     class="control-box" 
     :style="{ transform: `translate3d(${currentBoxX}px, ${currentBoxY}px, 0)` }"
     @touchstart.prevent="handleStart"
     @touchmove.prevent="handleMove"
     @touchend.prevent="handleEnd"
   >
-    <view
+    <cover-view
       class="arrow up"
       :style="{ backgroundImage: `url(${upImage})` }"
       :class="{ active: isUpActive }"
-    ></view>
+    ></cover-view>
 
-    <view
+    <cover-view
       class="dot"
       :class="{ ready: isReadyMode, dragging: isDragging }"
       :style="{
         backgroundImage: `url(${dotImage})`,
         transform: `translateY(${currentDotY}px) scale(1)`
       }"
-    ></view>
+    ></cover-view>
 
-    <view
+    <cover-view
       class="arrow down"
       :style="{ backgroundImage: `url(${downImage})` }"
       :class="{ active: isDownActive }"
-    ></view>
-  </view>
+    ></cover-view>
+  </cover-view>
 </template>
 
 <script setup>

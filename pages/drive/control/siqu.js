@@ -58,13 +58,14 @@ export class CarControlHandler {
       //maxValue = this.getConfigValue(1)?.max_value;
       centerValue = this.getConfigValue(1)?.current_value;
       //minValue = this.getConfigValue(1)?.min_value ; // 计算油门力度比例
-
+      console.log("中位值：",centerValue)
       const acceleratorDynamicsValue =
         this.getConfigValue(3)?.current_value ;
       const acceleratorDynamicsMaxValue =
         this.getConfigValue(3)?.max_value ;
       rateValue = acceleratorDynamicsValue / acceleratorDynamicsMaxValue;
 
+      console.log("rateValue", rateValue,"ratioValue",ratioValue)
       if (positionType === MoveDirectionControlType.endType) {
         // 摇杆回中
         this.ch2 = Math.round(centerValue);

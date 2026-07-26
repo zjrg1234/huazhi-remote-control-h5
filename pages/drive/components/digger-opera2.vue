@@ -1,5 +1,5 @@
 <template>
-  <view
+  <cover-view
     class="control-box"
     :style="boxStyle"
     @touchstart.prevent="handleStart"
@@ -7,41 +7,41 @@
     @touchend.prevent="handleEnd"
   >
     <!-- 轨迹背景圈 -->
-    <view class="track-bg"></view>
+    <cover-view class="track-bg"></cover-view>
 
     <!-- 四个方向箭头 -->
-    <view class="arrow up" :class="{ active: isUpActive }">
-      <image
+    <cover-view class="arrow up" :class="{ active: isUpActive }">
+      <cover-image
         class="image"
         src="/static/images/btn_up1@2x.png"
         mode="aspectFit"
-      ></image>
-    </view>
-    <view class="arrow down" :class="{ active: isDownActive }">
-      <image
+      />
+    </cover-view>
+    <cover-view class="arrow down" :class="{ active: isDownActive }">
+      <cover-image
         class="image"
         src="/static/images/btn_down1@2x.png"
         mode="aspectFit"
-      ></image>
-    </view>
-    <view class="arrow left" :class="{ active: isLeftActive }">
-      <image
+      />
+    </cover-view>
+    <cover-view class="arrow left" :class="{ active: isLeftActive }">
+      <cover-image
         class="image"
         src="/static/images/btn_bucket_down@2x.png"
         mode="aspectFit"
-      ></image>
-    </view>
-    <view class="arrow right" :class="{ active: isRightActive }">
-      <image
+      />
+    </cover-view>
+    <cover-view class="arrow right" :class="{ active: isRightActive }">
+      <cover-image
         class="image"
         src="/static/images/btn_bucket_up@2x.png"
         mode="aspectFit"
-      ></image>
-    </view>
+      />
+    </cover-view>
 
     <!-- 摇杆圆点 -->
-    <view class="dot" :class="{ ready: isReadyMode }" :style="dotStyle"></view>
-  </view>
+    <cover-view class="dot" :class="{ ready: isReadyMode }" :style="dotStyle"></cover-view>
+  </cover-view>
 </template>
 
 <script setup>

@@ -1,18 +1,18 @@
 <template>
-  <view
+  <cover-view
     class="ripple-btn"
     @touchstart="handleTouchStart"
     @touchend="stopRipple"
     @touchcancel="stopRipple"
   >
-    <image
+    <cover-image
       class="image"
       src="/static/images/icon_microphone_open@2x.png"
       mode="aspectFit"
     />
 
     <!-- 动态水波纹节点 -->
-    <view
+    <cover-view
       v-for="ripple in ripples"
       :key="ripple.id"
       class="ripple-effect"
@@ -23,8 +23,8 @@
         height: ripple.size + 'px',
         opacity: ripple.opacity,
       }"
-    ></view>
-  </view>
+    ></cover-view>
+  </cover-view>
 </template>
 
 <script setup>

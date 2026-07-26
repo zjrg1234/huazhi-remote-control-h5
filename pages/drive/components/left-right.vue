@@ -1,22 +1,22 @@
 <template>
-  <view class="control-box" ref="boxRef" :style="{ transform: `translate3d(${boxX}px, ${boxY}px, 0)` }"
+  <cover-view class="control-box" ref="boxRef" :style="{ transform: `translate3d(${boxX}px, ${boxY}px, 0)` }"
     @touchstart="handleStart" @touchmove.prevent="handleMove" @touchend="handleEnd">
     <!-- #ifdef H5 
     @mousedown="handleStart"
     #endif -->
-    <view class="arrow left" :style="{ backgroundImage: `url(${leftImage})` }" :class="{ active: isLeftActive }"></view>
+    <cover-view class="arrow left" :style="{ backgroundImage: `url(${leftImage})` }" :class="{ active: isLeftActive }"></cover-view>
 
-    <view class="dot" ref="dotRef" :class="{ ready: isReadyMode }" :style="{
+    <cover-view class="dot" ref="dotRef" :class="{ ready: isReadyMode }" :style="{
       backgroundImage: `url(${dotImage})`,
       transition: isDragging
         ? 'none'
         : 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease, box-shadow 0.3s ease',
       transform: `translateX(${dotX}px) scale(1)`
-    }"></view>
+    }"></cover-view>
 
-    <view class="arrow right" :style="{ backgroundImage: `url(${rightImage})` }" :class="{ active: isRightActive }">
-    </view>
-  </view>
+    <cover-view class="arrow right" :style="{ backgroundImage: `url(${rightImage})` }" :class="{ active: isRightActive }">
+    </cover-view>
+  </cover-view>
 </template>
 
 <script setup>

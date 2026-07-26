@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>掌中世界 - 接口文档</title>
+  </head>
+  <body>
+    <div class="sidebar">
+      <iframe
+        src="https://xyvision.top:8028/?device_id=1002070&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZjFjZTVhMTA3NWJjMTFmMTkxMzM3Mzg5NGM0NzAyODUiLCJ1c2VybmFtZSI6IlVzZXJUZXN0IiwidXNlcnR5cGUiOiIxIiwibWVyY2hhbnRfY29kZSI6IkhaIiwiaWF0IjoxNzg1MDcxMDY5LCJleHAiOjE3ODUzMzAyNjl9.T8RRMcHRTAhMEC3tz5ZW_p5Ex2SMzmE6IsHYYBtDFOY"
+        frameborder="0"
+      ></iframe>
+    </div>
+
+    <script>
+      window.onload = function () {
+        const iframeView = document.querySelector("iframe");
+
+        iframeView.onload = function () {
+          iframeView.contentWindow.postMessage(
+            {
+              action: "handleOpenVideo",
+            },
+            "https://xyvision.top",
+          );
+        };
+      };
+    </script>
+  </body>
+</html>

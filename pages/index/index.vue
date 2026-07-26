@@ -368,9 +368,14 @@ const handleCar = (item) => {
       .title {
         font-family: PingFangSC, PingFang SC;
         font-weight: 600;
-        font-size: 40rpx;
+        font-size: 38rpx;
         color: #ffffff;
         text-align: center;
+         // 单行省略
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 270rpx;
       }
 
       .tag {
