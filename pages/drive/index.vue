@@ -1,118 +1,128 @@
 <template>
   <view class="landscape-page" @touchstart="onUserActivity" @touchmove="onUserActivity">
     <view class="page-content">
-      <!-- 背景区域（原 iframe 改为 video 组件） -->
 
-      <!-- #ifdef H5 -->
-      <iframe :src="videoUrl" ref="iframeView" frameborder="0" width="100%" height="300px"></iframe>
-      <!-- #endif -->
+
+
       <!-- #ifdef MP-WEIXIN -->
-      <view class="bg">
-        <web-view :src="videoUrl" ref="iframeView" @message="handleMessage"></web-view>
+
+      <view class="logout-wrapper" @click="logout">
+        <!-- 内层依然是 cover-view 保证能悬浮在 web-view 上 -->
+        <cover-view class="logout">
+          <cover-image src="/static/images/icon_exit@2x.png" class="image" mode="aspectFit" />
+        </cover-view>
       </view>
+      <web-view :src="videoUrl" ref="iframeView">
+
+        <!-- 顶部状态栏 -->
+        <cover-view class="status-bar-capsule">
+          <cover-view class="flex">
+            <cover-view class="fl">
+              <cover-text class="dot" v-if="carStatus"></cover-text>
+              <cover-view class="car">
+                <cover-image class="image" src="/static/images/icon_car@2x.png" mode="aspectFit" />
+                <cover-text class="mini-forbidden" v-if="!carStatus"></cover-text>
+              </cover-view>
+            </cover-view>
+            <cover-view>
+              <battery :percent="batteryPer"></battery>
+            </cover-view>
+            <cover-view><cover-text class="time-text">|</cover-text></cover-view>
+            <cover-view>
+              <cover-text class="time-text">{{ currentTime }}</cover-text>
+            </cover-view>
+          </cover-view>
+        </cover-view>
+
+        <!-- 剩余时间提示 -->
+        <cover-view class="tip" v-if="numTip > 0">
+          <cover-text>距离本次结束驾驶还有{{ 31 - numTip }}s</cover-text>
+        </cover-view>
+
+        <!-- 设置按钮 -->
+        <cover-view class="right-cont" @click="set">
+          <cover-image class="image" src="/static/images/icon_set@2x.png" mode="aspectFit" />
+        </cover-view>
+
+        <!-- 声音/波纹图标 -->
+        <cover-view class="side-menu-icon">
+          <microphone></microphone>
+          <cover-image class="image" v-if="!showSound" src="/static/images/icon_sound_close@2x.png"
+            @click="showSound = true" mode="aspectFit" />
+          <cover-image class="image" v-if="showSound" src="/static/images/icon_sound_open@2x.png"
+            @click="showSound = false" mode="aspectFit" />
+        </cover-view>
+
+        <!-- 右侧菜单 -->
+        <!-- 右侧菜单 -->
+        <cover-view class="side-menu">
+          <cover-view class="menu-item" v-for="(item, index) in menuList" :key="index" @click="handleIcon(item)">
+            <cover-image class="img" mode="aspectFit"
+              :src="activeKey.includes(item.key) ? item.iconSelect : item.icon" />
+            <cover-text class="label">{{ item.name }}</cover-text>
+          </cover-view>
+        </cover-view>
+
+        <!-- 定速滑块 -->
+        <cover-view class="slider" v-show="showSpeed">
+          <cover-view class="slider-left">
+            <cover-view class="slider-wrapper">
+              <cover-view class="slider-label">
+                <cover-view class="num" :style="{ left: constSpeed + '%' }">
+                  {{ constSpeed }} km/h
+                </cover-view>
+              </cover-view>
+              <slider :value="constSpeed" :min="1" :max="100" :step="1" activeColor="#f5c542" backgroundColor="#e9e9e9"
+                block-size="6" @change="changeConstSpeed" />
+              <cover-view class="slider-label-bottom">
+                <cover-view class="num-text num-left">0</cover-view>
+                <cover-view class="num-text num-right">100</cover-view>
+              </cover-view>
+            </cover-view>
+          </cover-view>
+        </cover-view>
+
+        <LeftRight @action="handleLRDrive" v-if="carType == 1" :isLeft="operMode"></LeftRight>
+
+        <UpDown @action="handleFBDrive" v-if="carType == 1" :isLeft="!operMode"></UpDown>
+
+        <ExLeft @action="handleLeftDrive" @action2="handleDrive" v-if="carType == 3"></ExLeft>
+        <ExRight @action="handleRightDrive" @action2="handleDrive" v-if="carType == 3"></ExRight>
+        <!-- <pointOprea1 @action="handleLeftDrive" v-if="carType == 3"></pointOprea1> -->
+        <!-- <pointOprea2 @action="handleRightDrive" v-if="carType == 3"></pointOprea2> -->
+
+        <!-- 时间显示 -->
+        <cover-view class="time">
+          <cover-image class="image" src="/static/images/icon_time@2x.webp" mode="aspectFit" />
+          <TimeClock></TimeClock>
+        </cover-view>
+
+        <!-- 通用弹窗 -->
+        <!-- <ALLPopup ref="allPopup" v-model:show="allPopupVisible" type="tip" :orderNo="orderNo" :vehicleId="vehicleId"
+        :isShow="showRepairReason" @action="handlePopupAction" /> -->
+
+        <!-- 设置弹窗 -->
+        <SetPopup v-model:show="setVisible" :videoDefinition="videoDefinition" :operFB="operFB"
+          :directionCenter="directionCenter" :acceleratorDynamics="acceleratorDynamics"
+          :directionDynamics="directionDynamics" :operDir="operDir" :type="carType" @action="handleOper"
+          @operAction="handleFBDir" @changeValue="changeVal" />
+
+
+      </web-view>
+
       <!-- #endif -->
       <!-- 退出按钮 -->
 
 
-      <cover-view class="logout" @click="logout">
-        <cover-image src="/static/images/icon_exit@2x.png" class="image" mode="aspectFit" />
-      </cover-view>
 
-      <!-- 顶部状态栏 -->
-      <cover-view class="status-bar-capsule">
-        <cover-view class="flex">
-          <cover-view class="fl">
-            <cover-text class="dot" v-if="carStatus"></cover-text>
-            <cover-view class="car">
-              <cover-image class="image" src="/static/images/icon_car@2x.png" mode="aspectFit" />
-              <cover-text class="mini-forbidden" v-if="!carStatus"></cover-text>
-            </cover-view>
-          </cover-view>
-          <cover-view>
-            <battery :percent="batteryPer"></battery>
-          </cover-view>
-          <cover-view><cover-text class="time-text">|</cover-text></cover-view>
-          <cover-view>
-            <cover-text class="time-text">{{ currentTime }}</cover-text>
-          </cover-view>
-        </cover-view>
-      </cover-view>
 
-      <!-- 剩余时间提示 -->
-      <cover-view class="tip" v-if="numTip > 0">
-        <cover-text>距离本次结束驾驶还有{{ 31 - numTip }}s</cover-text>
-      </cover-view>
 
-     <!-- 设置按钮 -->
-    <cover-view class="right-cont" @click="set">
-      <cover-image class="image" src="/static/images/icon_set@2x.png" mode="aspectFit" />
-    </cover-view>
-
-      <!-- 声音/波纹图标 -->
-      <cover-view class="side-menu-icon">
-        <microphone></microphone>
-        <cover-image class="image" v-if="!showSound" src="/static/images/icon_sound_close@2x.png" @click="showSound = true" mode="aspectFit" />
-        <cover-image class="image" v-if="showSound" src="/static/images/icon_sound_open@2x.png" @click="showSound = false" mode="aspectFit" />
-    </cover-view>
-
-      <!-- 右侧菜单 -->
-     <!-- 右侧菜单 -->
-    <cover-view class="side-menu">
-      <cover-view class="menu-item" v-for="(item, index) in menuList" :key="index" @click="handleIcon(item)">
-        <cover-image class="img" mode="aspectFit" :src="activeKey.includes(item.key) ? item.iconSelect : item.icon" />
-        <cover-text class="label">{{ item.name }}</cover-text>
-      </cover-view>
-    </cover-view>
-
-      <!-- 定速滑块 -->
-      <cover-image class="slider" v-show="showSpeed">
-        <cover-image class="slider-left">
-          <cover-image class="slider-wrapper">
-            <cover-image class="slider-label">
-              <cover-image class="num" :style="{ left: constSpeed + '%' }">
-                {{ constSpeed }} km/h
-              </cover-image>
-            </cover-image>
-            <slider :value="constSpeed" :min="1" :max="100" :step="1" activeColor="#f5c542" backgroundColor="#e9e9e9"
-              block-size="6" @change="changeConstSpeed" />
-            <cover-image class="slider-label-bottom">
-              <cover-image class="num-text num-left">0</cover-image>
-              <cover-image class="num-text num-right">100</cover-image>
-            </cover-image>
-          </cover-image>
-        </cover-image>
-      </cover-image>
-
-      <LeftRight @action="handleLRDrive" v-if="carType == 1" :isLeft="operMode"></LeftRight>
-
-      <UpDown @action="handleFBDrive" v-if="carType == 1" :isLeft="!operMode"></UpDown>
-
-      <ExLeft @action="handleLeftDrive" @action2="handleDrive" v-if="carType == 3"></ExLeft>
-      <ExRight @action="handleRightDrive" @action2="handleDrive" v-if="carType == 3"></ExRight>
-      <!-- <pointOprea1 @action="handleLeftDrive" v-if="carType == 3"></pointOprea1> -->
-      <!-- <pointOprea2 @action="handleRightDrive" v-if="carType == 3"></pointOprea2> -->
-
-      <!-- 时间显示 -->
-      <cover-image class="time">
-        <cover-image class="image" src="/static/images/icon_time@2x.webp" mode="aspectFit" />
-        <TimeClock></TimeClock>
-      </cover-image>
-
-      <!-- 通用弹窗 -->
-      <ALLPopup ref="allPopup" v-model:show="allPopupVisible" type="tip" :orderNo="orderNo" :vehicleId="vehicleId"
-        :isShow="showRepairReason" @action="handlePopupAction" />
-
-      <!-- 设置弹窗 -->
-      <SetPopup v-model:show="setVisible" :videoDefinition="videoDefinition" :operFB="operFB"
-        :directionCenter="directionCenter" :acceleratorDynamics="acceleratorDynamics"
-        :directionDynamics="directionDynamics" :operDir="operDir" :type="carType" @action="handleOper"
-        @operAction="handleFBDir" @changeValue="changeVal" />
     </view>
   </view>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from "vue";
+import { ref, onMounted, onUnmounted, computed, getCurrentInstance } from "vue";
 import { onLoad, onUnload } from "@dcloudio/uni-app";
 import ALLPopup from "./components/tip.vue";
 import SetPopup from "./components/set.vue";
@@ -152,6 +162,7 @@ import {
 } from "./control/img.js";
 
 // ------------------- 状态 -------------------
+const webview1 = getCurrentInstance().proxy;
 const iframeView = ref(null)
 const videoUrl = ref(""); // 视频地址
 const allPopupVisible = ref(false);
@@ -379,14 +390,7 @@ const GetDeviceInfo = (data) => {
   DeviceDetails({ ...data })
     .then((res) => {
       if (res.data?.rows?.length) {
-        // videoUrl.value = 'https://xyvision.top:8028/?device_id=' + carDetails.value.front_camera + '&token=' + data.token; // 根据实际字段调整
-        videoUrl.value = ''; // 根据实际字段调整
-        console.log(videoUrl.value, 'carDetails.value.front_camera', carDetails.value.front_camera)
-        // const timer = setTimeout(() => {
-        //   iframeView.value.contentWindow.postMessage({
-        //     action: 'handleOpenVideo'
-        //   },  "https://xyvision.top:8028")
-        // }, 1000)
+        videoUrl.value = 'https://xyvision.top:8028/?device_id=' + carDetails.value.front_camera + '&token=' + data.token + '&initAction=video_only'; // 根据实际字段调整 
       }
     })
     .catch(() => { });
@@ -539,6 +543,7 @@ const set = () => {
 };
 
 const logout = () => {
+  console.log(123)
   allPopup.value.setType("logout");
   allPopupVisible.value = true;
   showSpeed.value = false;
@@ -669,10 +674,10 @@ const initSocket = () => {
   // #ifdef MP-WEIXIN
 
   if (UDPSocket.value) {
+    console.log("关闭UDPSocket")
     UDPSocket.value.close()
+    UDPSocket.value = null;
   }
-
-
 
   UDPSocket.value = new UDPSocketClient({
     address: wssUrl,
@@ -713,6 +718,7 @@ const initSocket = () => {
 // 初始化定时循环发送
 const initSendLoop = () => {
   clearSendTimer();
+  console.log("循环发送数据")
   sendMsgTimer = setInterval(() => {
 
     if (UDPSocket.value) {
@@ -790,8 +796,6 @@ const handleLRDrive = (item) => {
 onUnmounted(() => {
   clearAllTimers();
   clearInterval(timerNum.value);
-
-  if (UDPSocket.value) UDPSocket.value.close();
 });
 
 // 遥杆操作 挖机
@@ -861,6 +865,12 @@ const handleComDrive = (type, param) => {
   background: #fff;
 }
 
+cover-view,
+cover-image {
+  visibility: visible !important;
+  z-index: 99999;
+}
+
 .page-content {
   width: 100%;
   height: 100%;
@@ -868,17 +878,61 @@ const handleComDrive = (type, param) => {
   position: relative;
 }
 
-.bg {
-  background: rgba(0, 0, 0, 0.3);
-  height: 100%;
-  position: relative;
+
+
+.logout-wrapper {
+  position: fixed;
+  z-index: 100000;
+  /* 确保比 cover-view 的层级更高 */
+  top: 10px;
+  /* 和 .logout 的 top 保持一致 */
+  left: 20px;
+  /* 和 .logout 的 left 保持一致 */
+  width: 40px;
+  /* 宽高要和按钮图片大小一致 */
+  height: 40px;
+  background: rgba(255, 0, 0, 0.5);
+  /* 调试时可以加个背景色看看位置对不对，比如 background: rgba(255,0,0,0.5); */
 }
 
 .logout {
-  position: absolute;
-  z-index: 1;
+  position: fixed;
+  z-index: 99999;
   top: 10px;
   left: 20px;
+  width: 30px;
+  height: 30px;
+  background: red;
+
+  .image {
+    width: 27px;
+    height: 27px;
+  }
+}
+
+.logout1 {
+  position: fixed;
+  z-index: 999;
+  top: 60px;
+  left: 20px;
+  width: 30px;
+  height: 30px;
+  background: red;
+
+  .image {
+    width: 27px;
+    height: 27px;
+  }
+}
+
+.logout2 {
+  position: fixed;
+  z-index: 999;
+  top: 100px;
+  left: 20px;
+  width: 30px;
+  height: 30px;
+  background: red;
 
   .image {
     width: 27px;
@@ -887,8 +941,8 @@ const handleComDrive = (type, param) => {
 }
 
 .right-cont {
-  position: absolute;
-  z-index: 1;
+  position: fixed;
+  z-index: 99999;
   top: 40px;
   right: 20px;
 
@@ -901,7 +955,8 @@ const handleComDrive = (type, param) => {
 .status-bar-capsule {
   background: rgba(0, 0, 0, 0.5);
   border-radius: 20rpx;
-  position: absolute;
+  position: fixed;
+  z-index: 99999;
   top: 10rpx;
   left: 50%;
   transform: translateX(-50%);
@@ -932,6 +987,8 @@ const handleComDrive = (type, param) => {
       position: absolute;
       bottom: 10px;
       right: -2px;
+      z-index: 999999;
+
     }
   }
 
@@ -940,18 +997,23 @@ const handleComDrive = (type, param) => {
     height: 6px;
     border-radius: 50%;
     background: #09ff77;
+    z-index: 999999;
+
   }
 
   .time-text {
     font-size: 20px;
     color: #fff;
+    z-index: 999999;
   }
 }
 
 .tip {
   background: rgba(0, 0, 0, 0.5);
   border-radius: 20rpx;
-  position: absolute;
+
+  position: fixed;
+  z-index: 99999;
   top: 50rpx;
   left: 50%;
   transform: translateX(-50%);
@@ -981,7 +1043,9 @@ const handleComDrive = (type, param) => {
 }
 
 .side-menu-icon {
+
   position: fixed;
+  z-index: 99999;
   top: 40px;
   right: 60px;
   z-index: 2;
@@ -998,6 +1062,7 @@ const handleComDrive = (type, param) => {
 
 .side-menu {
   position: fixed;
+  z-index: 99999;
   top: 80px;
   right: 14px;
   z-index: 2;
@@ -1028,8 +1093,9 @@ const handleComDrive = (type, param) => {
 }
 
 .slider {
-  position: absolute;
-  z-index: 1;
+
+  position: fixed;
+  z-index: 99999;
   bottom: 30px;
   right: 60px;
   width: 120px;
@@ -1062,7 +1128,8 @@ const handleComDrive = (type, param) => {
 }
 
 .time {
-  position: absolute;
+  position: fixed;
+  z-index: 99999;
   bottom: 10px;
   left: 20px;
   display: flex;

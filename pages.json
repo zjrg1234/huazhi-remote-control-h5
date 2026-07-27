@@ -161,8 +161,9 @@
 			"path": "pages/drive/index",
 			"style": {
 				"pageOrientation": "landscape",
-				"navigationStyle": "custom",
 				"enablePullDownRefresh": false,
+				"navigationStyle": "custom", 
+        		"navigationBarTitleText": "",
     			"disableScroll": true
 			}
 		}

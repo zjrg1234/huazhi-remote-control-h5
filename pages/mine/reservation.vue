@@ -39,7 +39,7 @@
           <button class="btn" @click="handleAction(item)">开始驾驶</button>
         </view>
 
-        <view class="btn-wrap" v-if="item.reservation_status == 3">
+        <view class="btn-wrap1" >
           <button class="btn" @click="overDrive(item)">结束驾驶</button>
         </view>
 
@@ -243,17 +243,14 @@ const handleAppeal = (item) => {
 };
 
 const overDrive = (item) => {
-    uni.navigateTo({
-          url: `/pages/drive/index?order_no=${item.order_no}&vehicle_id=${item.vehicle_id}`,
-        });
-
-  // StartDrive({
-  //   order_no: item.order_no,
-  //   type: 3,
-  //   vehicle_id: item.vehicle_id,
-  // }).then(res => {
-  //   refreshData()
-  // }).catch()
+    
+  StartDrive({
+    order_no: item.order_no,
+    type: 3,
+    vehicle_id: item.vehicle_id,
+  }).then(res => {
+    refreshData()
+  }).catch()
 }
 </script>
 
