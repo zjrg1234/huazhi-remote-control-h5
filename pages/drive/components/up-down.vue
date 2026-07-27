@@ -1,11 +1,12 @@
 <template>
-  <!-- 注意：uni-app 中 div 需改为 view，事件绑定使用 touch 系列 -->
+  <!-- 修复：所有 touch 事件添加 .stop.prevent，并增加 touchcancel 处理 -->
   <cover-view 
     class="control-box" 
     :style="{ transform: `translate3d(${currentBoxX}px, ${currentBoxY}px, 0)` }"
-    @touchstart.prevent="handleStart"
-    @touchmove.prevent="handleMove"
-    @touchend.prevent="handleEnd"
+    @touchstart.stop.prevent="handleStart"
+    @touchmove.stop.prevent="handleMove"
+    @touchend.stop.prevent="handleEnd"
+    @touchcancel.stop.prevent="handleEnd"
   >
     <cover-view
       class="arrow up"
@@ -33,7 +34,6 @@
 <script setup>
 import { ref, watch } from "vue";
 
-// 图片资源引入（需确保图片在 static 目录下或使用网络图片）
 import upImg from "@/static/images/arrow_up_big@2x.png";
 import downImg from "@/static/images/arrow_down_big@2x.png";
 import dotImg from "@/static/images/dot@2x.webp";
@@ -47,23 +47,19 @@ const props = defineProps({
   isLeft: { type: Boolean, default: true },
 });
 
-// --- 配置参数 ---
 const IDLE_DELAY = 500;
 const SWIPE_THRESHOLD = 20;
 const MAX_DOT_DRAG = 40;
 
-// --- 响应式状态 (用于驱动视图更新) ---
 const isDragging = ref(false);
 const isReadyMode = ref(false);
 const isUpActive = ref(false);
 const isDownActive = ref(false);
 
-// 核心位置状态（改为响应式，用于 :style 绑定）
 const currentBoxX = ref(0);
 const currentBoxY = ref(0);
 const currentDotY = ref(0);
 
-// --- 内部非响应式状态 ---
 let idleTimer = null;
 let dragOffsetX = 0;
 let dragOffsetY = 0;
@@ -72,7 +68,6 @@ let readyStartPointerY = 0;
 let dragBaseX = 0;
 let dragBaseY = 0;
 
-// 获取屏幕尺寸（替代 window.innerWidth/Height）
 const getScreenSize = () => {
   const sysInfo = uni.getSystemInfoSync();
   return { width: sysInfo.windowWidth, height: sysInfo.windowHeight };
@@ -101,7 +96,6 @@ watch(
   { immediate: true }
 );
 
-// --- 核心方法 ---
 const resetIdleTimer = () => {
   clearTimeout(idleTimer);
   if (!isReadyMode.value) {
@@ -112,7 +106,6 @@ const resetIdleTimer = () => {
 const enterReadyMode = () => {
   isReadyMode.value = true;
   readyStartPointerY = lastPointerY;
-  // 替代 navigator.vibrate
   uni.vibrateShort({ type: 'light' });
 };
 
@@ -126,7 +119,6 @@ const updateArrows = (deltaY) => {
   if (isDownActive.value !== newIsDownActive) {
     isDownActive.value = newIsDownActive;
   }
-
 
   emit("action", { fb: deltaY < 0, value: deltaY });
 };
@@ -142,8 +134,13 @@ const resetArrows = () => {
   }
 };
 
-// --- 事件处理 ---
+// ==================== 核心修复 ====================
+
 const handleStart = (e) => {
+  // 【修复1】显式阻止默认行为和事件冒泡
+  if (e.preventDefault) e.preventDefault();
+  if (e.stopPropagation) e.stopPropagation();
+
   isDragging.value = true;
   isReadyMode.value = false;
   clearTimeout(idleTimer);
@@ -164,6 +161,10 @@ const handleStart = (e) => {
 const handleMove = (e) => {
   if (!isDragging.value) return;
 
+  // 【修复2】必须阻止默认行为，防止页面滚动穿透（上下抖动）
+  if (e.preventDefault) e.preventDefault();
+  if (e.stopPropagation) e.stopPropagation();
+
   const touch = e.touches[0];
   const clientX = touch.clientX;
   const clientY = touch.clientY;
@@ -171,7 +172,7 @@ const handleMove = (e) => {
   resetIdleTimer();
 
   if (!isReadyMode.value) {
-    // 【模式 A：自由拖动容器】
+    // 模式 A：自由拖动容器
     let deltaX = clientX - dragOffsetX - dragBaseX;
     let deltaY = clientY - dragOffsetY - dragBaseY;
 
@@ -181,7 +182,7 @@ const handleMove = (e) => {
     currentBoxX.value = dragBaseX + deltaX;
     currentBoxY.value = dragBaseY + deltaY;
   } else {
-    // 【模式 B：待命模式 - 圆点上下弹性滑动】
+    // 模式 B：待命模式 - 圆点上下弹性滑动
     let deltaY = clientY - readyStartPointerY;
     const absDelta = Math.abs(deltaY);
 
@@ -199,7 +200,11 @@ const handleMove = (e) => {
   }
 };
 
-const handleEnd = () => {
+const handleEnd = (e) => {
+  // 【修复3】结束也阻止一下，防止部分机型 touchend 触发页面回弹
+  if (e && e.preventDefault) e.preventDefault();
+  if (e && e.stopPropagation) e.stopPropagation();
+
   if (!isDragging.value) return;
 
   isDragging.value = false;
@@ -213,13 +218,12 @@ const handleEnd = () => {
 </script>
 
 <style scoped>
-/* 样式基本保持不变，但需注意在小程序中不支持 * 选择器和部分新 CSS 语法 */
 .control-box {
   position: fixed;
   left: 0;
   bottom: 0;
   width: 50px;
-  height:180px;
+  height: 180px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -228,7 +232,8 @@ const handleEnd = () => {
   z-index: 100;
   will-change: transform;
   user-select: none;
-  touch-action: none; /* 小程序端可能不支持，可通过 catchtouchmove 阻止穿透 */
+  /* 【修复4】增加 touch-action，虽然小程序支持有限，但加上无害 */
+  touch-action: none;
 }
 
 .arrow {
@@ -266,8 +271,8 @@ const handleEnd = () => {
 .dot.ready {
   box-shadow: 0 0 7.5px rgba(255, 167, 38, 0.6);
 }
+
 .dot.dragging {
-  /* 拖动时取消过渡，让跟手更丝滑 */
   transition: none;
 }
 </style>

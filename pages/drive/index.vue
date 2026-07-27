@@ -889,7 +889,7 @@ const handleComDrive = (type, param) => {
 .right-cont {
   position: absolute;
   z-index: 1;
-  top: 10px;
+  top: 40px;
   right: 20px;
 
   .image {
@@ -998,7 +998,7 @@ const handleComDrive = (type, param) => {
 
 .side-menu {
   position: fixed;
-  top: 50px;
+  top: 80px;
   right: 14px;
   z-index: 2;
   display: flex;
