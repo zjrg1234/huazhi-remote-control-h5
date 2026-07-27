@@ -192,8 +192,8 @@ const handleMove = (e) => {
     }
 
     currentDotY.value = deltaY;
-    if (deltaY < -65) currentDotY.value = -65;
-    if (deltaY > 65) currentDotY.value = 65;
+    if (deltaY < -45) currentDotY.value = -45;
+    if (deltaY > 45) currentDotY.value = 45;
 
     updateArrows(deltaY);
   }

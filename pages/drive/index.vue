@@ -380,7 +380,7 @@ const GetDeviceInfo = (data) => {
     .then((res) => {
       if (res.data?.rows?.length) {
         // videoUrl.value = 'https://xyvision.top:8028/?device_id=' + carDetails.value.front_camera + '&token=' + data.token; // 根据实际字段调整
-        videoUrl.value = 'https://xyvision.top:8028/demo'; // 根据实际字段调整
+        videoUrl.value = ''; // 根据实际字段调整
         console.log(videoUrl.value, 'carDetails.value.front_camera', carDetails.value.front_camera)
         // const timer = setTimeout(() => {
         //   iframeView.value.contentWindow.postMessage({
@@ -546,58 +546,7 @@ const logout = () => {
   handleIcon("speed");
 };
 
-// 四驱车 前进后退
-const handleFBDrive = (item) => {
-  console.log(item)
-  showSpeed.value = false;
-  let type = "";
-  let ratioValue = 0;
-  if (item.fb == true) {
-    type = "upType";
-    ratioValue = mapToPer(Math.abs(item.value));
-  } else {
-    if (item.value == 0) {
-      type = "endType";
-      chValue.value.ch2 = acceleratorCenter.value.current_value;
-      return;
-    } else {
-      type = "downType";
-      ratioValue = mapToPer(Math.abs(item.value));
-    }
-  }
-  carHandler.value.handleTwoDirectionControlChannel(true, type, ratioValue);
-  chValue.value.ch2 = carHandler.value.ch2;
-  console.log('ch2:', chValue.value.ch2)
-};
 
-// 速度
-const changeConstSpeed = (e) => {
-  constSpeed.value = e.detail.value;
-  carHandler.value.handleTwoDirectionControlChannel(
-    true,
-    "upType",
-    constSpeed.value / 100,
-  );
-};
-
-// 四驱车 左右
-const handleLRDrive = (item) => {
-  let type = "endType";
-  let ratioValue = 0;
-  if (item.lr == true) {
-    ratioValue = mapToPer(Math.abs(item.value));
-    type = "leftType";
-  } else {
-    if (item.value == 0) {
-      chValue.value.ch1 = directionCenter.value.current_value;
-    } else {
-      ratioValue = mapToPer(Math.abs(item.value));
-      type = "rightType";
-    }
-  }
-  carHandler.value.handleTwoDirectionControlChannel(false, type, ratioValue);
-  chValue.value.ch1 = carHandler.value.ch1;
-};
 
 // 无操作报警
 const handleInactivityAlarm = () => {
@@ -784,7 +733,58 @@ const initSendLoop = () => {
   }, 40);
 };
 
+// 四驱车 前进后退
+const handleFBDrive = (item) => {
+  console.log(item)
+  showSpeed.value = false;
+  let type = "";
+  let ratioValue = 0;
+  if (item.fb == true) {
+    type = "upType";
+    ratioValue = mapToPer(Math.abs(item.value));
+  } else {
+    if (item.value == 0) {
+      type = "endType";
+      chValue.value.ch2 = acceleratorCenter.value.current_value;
+      return;
+    } else {
+      type = "downType";
+      ratioValue = mapToPer(Math.abs(item.value));
+    }
+  }
+  carHandler.value.handleTwoDirectionControlChannel(true, type, ratioValue);
+  chValue.value.ch2 = carHandler.value.ch2;
+  console.log('ch2:', chValue.value.ch2)
+};
 
+// 速度
+const changeConstSpeed = (e) => {
+  constSpeed.value = e.detail.value;
+  carHandler.value.handleTwoDirectionControlChannel(
+    true,
+    "upType",
+    constSpeed.value / 100,
+  );
+};
+
+// 四驱车 左右
+const handleLRDrive = (item) => {
+  let type = "endType";
+  let ratioValue = 0;
+  if (item.lr == true) {
+    ratioValue = mapToPer(Math.abs(item.value));
+    type = "leftType";
+  } else {
+    if (item.value == 0) {
+      chValue.value.ch1 = directionCenter.value.current_value;
+    } else {
+      ratioValue = mapToPer(Math.abs(item.value));
+      type = "rightType";
+    }
+  }
+  carHandler.value.handleTwoDirectionControlChannel(false, type, ratioValue);
+  chValue.value.ch1 = carHandler.value.ch1;
+};
 
 
 onUnmounted(() => {
