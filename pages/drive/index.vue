@@ -6,116 +6,122 @@
 
       <!-- #ifdef MP-WEIXIN -->
 
-      <view class="logout-wrapper" @click="logout">
-        <!-- 内层依然是 cover-view 保证能悬浮在 web-view 上 -->
-        <cover-view class="logout">
-          <cover-image src="/static/images/icon_exit@2x.png" class="image" mode="aspectFit" />
-        </cover-view>
-      </view>
+      <!-- <view class="logout-wrapper" @click="logout">
+         内层依然是 cover-view 保证能悬浮在 web-view 上 
+       
+      </view> -->
+
+      <cover-view class="logout" @click="logout">
+        <cover-image src="/static/images/icon_exit@2x.png" class="image" mode="aspectFit" />
+      </cover-view>
       <web-view :src="videoUrl" ref="iframeView">
 
-        <!-- 顶部状态栏 -->
-        <cover-view class="status-bar-capsule">
-          <cover-view class="flex">
-            <cover-view class="fl">
-              <cover-text class="dot" v-if="carStatus"></cover-text>
-              <cover-view class="car">
-                <cover-image class="image" src="/static/images/icon_car@2x.png" mode="aspectFit" />
-                <cover-text class="mini-forbidden" v-if="!carStatus"></cover-text>
-              </cover-view>
-            </cover-view>
-            <cover-view>
-              <battery :percent="batteryPer"></battery>
-            </cover-view>
-            <cover-view><cover-text class="time-text">|</cover-text></cover-view>
-            <cover-view>
-              <cover-text class="time-text">{{ currentTime }}</cover-text>
-            </cover-view>
-          </cover-view>
-        </cover-view>
-
-        <!-- 剩余时间提示 -->
-        <cover-view class="tip" v-if="numTip > 0">
-          <cover-text>距离本次结束驾驶还有{{ 31 - numTip }}s</cover-text>
-        </cover-view>
-
-        <!-- 设置按钮 -->
-        <cover-view class="right-cont" @click="set">
-          <cover-image class="image" src="/static/images/icon_set@2x.png" mode="aspectFit" />
-        </cover-view>
-
-        <!-- 声音/波纹图标 -->
-        <cover-view class="side-menu-icon">
-          <microphone></microphone>
-          <cover-image class="image" v-if="!showSound" src="/static/images/icon_sound_close@2x.png"
-            @click="showSound = true" mode="aspectFit" />
-          <cover-image class="image" v-if="showSound" src="/static/images/icon_sound_open@2x.png"
-            @click="showSound = false" mode="aspectFit" />
-        </cover-view>
-
-        <!-- 右侧菜单 -->
-        <!-- 右侧菜单 -->
-        <cover-view class="side-menu">
-          <cover-view class="menu-item" v-for="(item, index) in menuList" :key="index" @click="handleIcon(item)">
-            <cover-image class="img" mode="aspectFit"
-              :src="activeKey.includes(item.key) ? item.iconSelect : item.icon" />
-            <cover-text class="label">{{ item.name }}</cover-text>
-          </cover-view>
-        </cover-view>
-
-        <!-- 定速滑块 -->
-        <cover-view class="slider" v-show="showSpeed">
-          <cover-view class="slider-left">
-            <cover-view class="slider-wrapper">
-              <cover-view class="slider-label">
-                <cover-view class="num" :style="{ left: constSpeed + '%' }">
-                  {{ constSpeed }} km/h
-                </cover-view>
-              </cover-view>
-              <slider :value="constSpeed" :min="1" :max="100" :step="1" activeColor="#f5c542" backgroundColor="#e9e9e9"
-                block-size="6" @change="changeConstSpeed" />
-              <cover-view class="slider-label-bottom">
-                <cover-view class="num-text num-left">0</cover-view>
-                <cover-view class="num-text num-right">100</cover-view>
-              </cover-view>
-            </cover-view>
-          </cover-view>
-        </cover-view>
-
-        <LeftRight @action="handleLRDrive" v-if="carType == 1" :isLeft="operMode"></LeftRight>
-
-        <UpDown @action="handleFBDrive" v-if="carType == 1" :isLeft="!operMode"></UpDown>
-
-        <ExLeft @action="handleLeftDrive" @action2="handleDrive" v-if="carType == 3"></ExLeft>
-        <ExRight @action="handleRightDrive" @action2="handleDrive" v-if="carType == 3"></ExRight>
-        <!-- <pointOprea1 @action="handleLeftDrive" v-if="carType == 3"></pointOprea1> -->
-        <!-- <pointOprea2 @action="handleRightDrive" v-if="carType == 3"></pointOprea2> -->
-
-        <!-- 时间显示 -->
-        <cover-view class="time">
-          <cover-image class="image" src="/static/images/icon_time@2x.webp" mode="aspectFit" />
-          <TimeClock></TimeClock>
-        </cover-view>
-
-        <!-- 通用弹窗 -->
-        <!-- <ALLPopup ref="allPopup" v-model:show="allPopupVisible" type="tip" :orderNo="orderNo" :vehicleId="vehicleId"
-        :isShow="showRepairReason" @action="handlePopupAction" /> -->
-
-        <!-- 设置弹窗 -->
-        <SetPopup v-model:show="setVisible" :videoDefinition="videoDefinition" :operFB="operFB"
-          :directionCenter="directionCenter" :acceleratorDynamics="acceleratorDynamics"
-          :directionDynamics="directionDynamics" :operDir="operDir" :type="carType" @action="handleOper"
-          @operAction="handleFBDir" @changeValue="changeVal" />
 
 
       </web-view>
 
+
+
       <!-- #endif -->
       <!-- 退出按钮 -->
 
+      <!-- 顶部状态栏 -->
+      <cover-view class="status-bar-capsule">
+        <cover-view class="flex">
+          <cover-view class="fl">
+            <cover-text class="dot" v-if="carStatus"></cover-text>
+            <cover-view class="car">
+              <cover-image class="image" src="/static/images/icon_car@2x.png" mode="aspectFit" />
+              <cover-text class="mini-forbidden" v-if="!carStatus"></cover-text>
+            </cover-view>
+          </cover-view>
+          <cover-view>
+            <battery :percent="batteryPer"></battery>
+          </cover-view>
+          <cover-view><cover-text class="time-text">|</cover-text></cover-view>
+          <cover-view>
+            <cover-text class="time-text">{{ currentTime }}</cover-text>
+          </cover-view>
+        </cover-view>
+      </cover-view>
+
+      <!-- 剩余时间提示 -->
+      <cover-view class="tip" v-if="numTip > 0">
+        <cover-text>距离本次结束驾驶还有{{ 31 - numTip }}s</cover-text>
+      </cover-view>
+
+      <!-- 设置按钮 -->
+      <cover-view class="right-cont" @click="set">
+        <cover-image class="image" src="/static/images/icon_set@2x.png" mode="aspectFit" />
+      </cover-view>
+
+      <!-- 声音/波纹图标 -->
+      <cover-view class="side-menu-icon">
+        <microphone></microphone>
+        <cover-image class="image" v-if="!showSound" src="/static/images/icon_sound_close@2x.png"
+          @click="showSound = true" mode="aspectFit" />
+        <cover-image class="image" v-if="showSound" src="/static/images/icon_sound_open@2x.png"
+          @click="showSound = false" mode="aspectFit" />
+      </cover-view>
+
+      <!-- 右侧菜单 -->
+      <!-- 右侧菜单 -->
+      <cover-view class="side-menu">
+        <cover-view class="menu-item" v-for="(item, index) in menuList" :key="index" @click="handleIcon(item)">
+          <cover-image class="img" mode="aspectFit" :src="activeKey.includes(item.key) ? item.iconSelect : item.icon" />
+          <cover-text class="label">{{ item.name }}</cover-text>
+        </cover-view>
+      </cover-view>
+
+      <!-- 定速滑块 -->
+      <cover-view class="slider" v-show="showSpeed">
+        <cover-view class="slider-left">
+          <cover-view class="slider-wrapper">
+            <cover-view class="slider-label">
+              <cover-view class="num" :style="{ left: constSpeed + '%' }">
+                {{ constSpeed }} km/h
+              </cover-view>
+            </cover-view>
+            <slider :value="constSpeed" :min="1" :max="100" :step="1" activeColor="#f5c542" backgroundColor="#e9e9e9"
+              block-size="6" @change="changeConstSpeed" />
+            <cover-view class="slider-label-bottom">
+              <cover-view class="num-text num-left">0</cover-view>
+              <cover-view class="num-text num-right">100</cover-view>
+            </cover-view>
+          </cover-view>
+        </cover-view>
+      </cover-view>
+
+      <LeftRight @action="handleLRDrive" v-if="carType == 1" :isLeft="operMode"></LeftRight>
+
+      <UpDown @action="handleFBDrive" v-if="carType == 1" :isLeft="!operMode"></UpDown>
+
+      <ExLeft @action="handleLeftDrive" @action2="handleDrive" v-if="carType == 3"></ExLeft>
+      <ExRight @action="handleRightDrive" @action2="handleDrive" v-if="carType == 3"></ExRight>
+      <!-- <pointOprea1 @action="handleLeftDrive" v-if="carType == 3"></pointOprea1> -->
+      <!-- <pointOprea2 @action="handleRightDrive" v-if="carType == 3"></pointOprea2> -->
+
+      <!-- 时间显示 -->
+      <cover-view class="time">
+        <cover-image class="image" src="/static/images/icon_time@2x.webp" mode="aspectFit" />
+        <TimeClock></TimeClock>
+      </cover-view>
+
+      <!-- 通用弹窗 -->
+      <!-- <ALLPopup ref="allPopup" v-model:show="allPopupVisible" type="tip" :orderNo="orderNo" :vehicleId="vehicleId"
+        :isShow="showRepairReason" @action="handlePopupAction" /> -->
+
+      <!-- 设置弹窗 -->
+      <SetPopup v-model:show="setVisible" :videoDefinition="videoDefinition" :operFB="operFB"
+        :directionCenter="directionCenter" :acceleratorDynamics="acceleratorDynamics"
+        :directionDynamics="directionDynamics" :operDir="operDir" :type="carType" @action="handleOper"
+        @operAction="handleFBDir" @changeValue="changeVal" />
 
 
-
+      <cover-view class="time">
+        <cover-image class="image" src="/static/images/icon_time@2x.webp" mode="aspectFit" />
+        <TimeClock></TimeClock>
+      </cover-view>
 
     </view>
   </view>
@@ -575,6 +581,7 @@ onUnload(() => {
 })
 // ------------------- 生命周期 -------------------
 // 先onload 再onMounted
+// 前置摄像头 切换清晰度 前置 切换的前置 有喇叭， 后置摄像头只有标清
 onLoad((options) => {
   initRouteData(options);
   startListening();
@@ -722,7 +729,8 @@ const initSendLoop = () => {
   sendMsgTimer = setInterval(() => {
 
     if (UDPSocket.value) {
-      const app_id = uni.getStorageSync("app_id");
+      const app_id = carDetails.value.app_transmitter_id;
+      
       const val = handleDriverSocketData(
         app_id,
         chValue.value.ch1,
@@ -734,6 +742,7 @@ const initSendLoop = () => {
         chValue.value.ch7,
         chValue.value.ch8,
       );
+
       UDPSocket.value.send(val);
     }
   }, 40);
@@ -902,7 +911,6 @@ cover-image {
   left: 20px;
   width: 30px;
   height: 30px;
-  background: red;
 
   .image {
     width: 27px;
@@ -910,35 +918,6 @@ cover-image {
   }
 }
 
-.logout1 {
-  position: fixed;
-  z-index: 999;
-  top: 60px;
-  left: 20px;
-  width: 30px;
-  height: 30px;
-  background: red;
-
-  .image {
-    width: 27px;
-    height: 27px;
-  }
-}
-
-.logout2 {
-  position: fixed;
-  z-index: 999;
-  top: 100px;
-  left: 20px;
-  width: 30px;
-  height: 30px;
-  background: red;
-
-  .image {
-    width: 27px;
-    height: 27px;
-  }
-}
 
 .right-cont {
   position: fixed;
