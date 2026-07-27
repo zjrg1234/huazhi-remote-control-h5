@@ -104,7 +104,7 @@ export const compareTimestamp = (startTime, endTime) => {
   if (diffMs < 0) {
     diffMs = 0;
   }
-  console.log(diffMs);
+
   const date = new Date(diffMs);
   const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
   // 获取小时、分钟、秒（使用 UTC 方法避免受本地时区偏移影响）
@@ -178,7 +178,6 @@ export const handleBattery = (voltage, batteryType) => {
     batteryRate = (voltage - minVoltage) / voltageRange;
 
     // 限制在 0~1 之间
-    batteryRate = Math.max(0.0, Math.min(1.0, batteryRate)).toFixed(2)*100;
-
+    batteryRate = (Math.max(0.0, Math.min(1.0, batteryRate))).toFixed(2) * 100;
     return batteryRate;
 }

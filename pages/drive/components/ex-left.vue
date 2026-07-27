@@ -1,35 +1,35 @@
 <template>
-    <view class="control-wrapper">
-        <view class="control-box" @touchstart.prevent="handleStart" @touchmove.prevent="handleMove"
+    <cover-view class="control-wrapper">
+        <cover-view class="control-box" @touchstart.prevent="handleStart" @touchmove.prevent="handleMove"
             @touchend.prevent="handleEnd">
             <!-- 轨迹背景圈 -->
-            <view class="track-bg"></view>
+            <cover-view class="track-bg"></cover-view>
 
             <!-- 四个方向箭头 -->
-            <view class="arrow up" :class="{ active: isUpActive }">
-                <image src="/static/images/btn_up2@2x.png" mode="aspectFit"></image>
-            </view>
-            <view class="arrow down" :class="{ active: isDownActive }">
-                <image src="/static/images/btn_down2@2x.png" mode="aspectFit"></image>
-            </view>
-            <view class="arrow left" :class="{ active: isLeftActive }"></view>
-            <view class="arrow right" :class="{ active: isRightActive }"></view>
+            <cover-view class="arrow up" :class="{ active: isUpActive }">
+                <cover-image src="/static/images/btn_up2@2x.png" mode="aspectFit"/>
+            </cover-view>
+            <cover-view class="arrow down" :class="{ active: isDownActive }">
+                <cover-image src="/static/images/btn_down2@2x.png" mode="aspectFit" />
+            </cover-view>
+            <cover-view class="arrow left" :class="{ active: isLeftActive }"></cover-view>
+            <cover-view class="arrow right" :class="{ active: isRightActive }"></cover-view>
 
             <!-- 摇杆圆点 -->
-            <view class="dot" :class="{ ready: isReadyMode }" :style="dotStyle"></view>
-        </view>
+            <cover-view class="dot" :class="{ ready: isReadyMode }" :style="dotStyle"></cover-view>
+        </cover-view>
 
-        <view class="up-down-arrow">
-            <view class="arrow1 up" :class="{ active: isUpActive }">
-                <image class="image" src="/static/images/btn_up_ex@2x.png" @touchend.prevent="handleClick('up')"
-                    mode="aspectFit"></image>
-            </view>
-            <view class="arrow1 down" :class="{ active: isUpActive }">
-                <image class="image" src="/static/images/btn_down_ex@2x.png" mode="aspectFit"
-                    @touchend.prevent="handleClick('down')"></image>
-            </view>
-        </view>
-    </view>
+        <cover-view class="up-down-arrow">
+            <cover-view class="arrow1 up" :class="{ active: isUpActive }">
+                <cover-image class="image" src="/static/images/btn_up_ex@2x.png" @touchend.prevent="handleClick('up')"
+                    mode="aspectFit" />
+            </cover-view>
+            <cover-view class="arrow1 down" :class="{ active: isUpActive }">
+                <cover-image class="image" src="/static/images/btn_down_ex@2x.png" mode="aspectFit"
+                    @touchend.prevent="handleClick('down')" />
+            </cover-view>
+        </cover-view>
+    </cover-view>
 
 </template>
 

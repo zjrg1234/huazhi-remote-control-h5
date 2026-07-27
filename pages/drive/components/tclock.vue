@@ -1,5 +1,5 @@
 <template>
-  <view class="real-time-clock">{{ displayTime }}</view>
+  <cover-view class="real-time-clock">{{ displayTime }}</cover-view>
 </template>
 
 <script setup>

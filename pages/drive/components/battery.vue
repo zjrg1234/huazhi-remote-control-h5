@@ -1,10 +1,10 @@
 <template>
-  <view class="mini-battery-wrapper">
-    <view class="battery-body">
-      <view class="battery-fill" :class="statusClass" :style="{ width: safePercent + '%' }"></view>
-    </view>
-    <text class="battery-text">{{ safePercent }}%</text>
-  </view>
+  <cover-view class="mini-battery-wrapper">
+    <cover-view class="battery-body">
+      <cover-view class="battery-fill" :class="statusClass" :style="{ width: safePercent + '%' }"></cover-view>
+    </cover-view>
+    <cover-text class="battery-text">{{ safePercent }}%</cover-text>
+  </cover-view>
 </template>
 
 <script setup>

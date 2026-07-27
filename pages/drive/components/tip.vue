@@ -1,59 +1,59 @@
 <!-- MyPopup.vue -->
 <template>
   <!-- 弹窗遮罩层与容器 -->
-  <view class="popup-mask" v-if="visible" @tap.stop="handleMaskClick">
+  <cover-view class="popup-mask" v-if="visible" @tap.stop="handleMaskClick">
     <!-- 弹窗主体内容 -->
-    <view class="popup-container" :class="{contmax: type === 'repair'}"  @tap.stop>
+    <cover-view class="popup-container" :class="{contmax: type === 'repair'}"  @tap.stop>
       
       <!-- 场景1：黑屏提示 -->
       <template v-if="type === 'tip'">
-        <view class="tip-content">
-          <text class="time">倒计时{{ count }}s</text>
-          <text class="tit">是否黑屏？</text>
-          <view class="text">
-            <text>开始驾驶前如遇黑屏或者车辆故障上报不扣费，开始驾驶后开始计费。</text>
-            <text>如果一切正常，请点击“开始驾驶”</text>
-          </view>
-        </view>
-        <view class="footer">
-          <text class="btn left mr" @tap.stop="handleAction('repair')">上报故障</text>
-          <text class="btn right" @tap.stop="handleAction('driving')">开始驾驶</text>
-        </view>
+        <cover-view class="tip-content">
+          <cover-text class="time">倒计时{{ count }}s</cover-text>
+          <cover-text class="tit">是否黑屏？</cover-text>
+          <cover-view class="text">
+            <cover-text>开始驾驶前如遇黑屏或者车辆故障上报不扣费，开始驾驶后开始计费。</cover-text>
+            <cover-text>如果一切正常，请点击“开始驾驶”</cover-text>
+          </cover-view>
+        </cover-view>
+        <cover-view class="footer">
+          <cover-text class="btn left mr" @tap.stop="handleAction('repair')">上报故障</cover-text>
+          <cover-text class="btn right" @tap.stop="handleAction('driving')">开始驾驶</cover-text>
+        </cover-view>
       </template>
 
       <!-- 场景2：退出驾驶 -->
       <template v-else-if="type === 'logout'">
-        <view class="tip-content">
-          <text class="tit">退出驾驶</text>
-          <view class="text ct">
-            <text>未用完的电池将放到余额里</text>
-          </view>
-        </view>
-        <view class="footer fc">
-          <view class="flex">
-            <text class="btn left" @tap.stop="cancel">取消</text>
-            <text class="btn left" @tap.stop="handleAction('report')">上报故障</text>
-          </view>
-          <view class="flex mt">
-            <text class="btn right" @tap.stop="handleAction('logout')">退出驾驶</text>
-          </view>
-        </view>
+        <cover-view class="tip-content">
+          <cover-text class="tit">退出驾驶</cover-text>
+          <cover-view class="text ct">
+            <cover-text>未用完的电池将放到余额里</cover-text>
+          </cover-view>
+        </cover-view>
+        <cover-view class="footer fc">
+          <cover-view class="flex">
+            <cover-text class="btn left" @tap.stop="cancel">取消</cover-text>
+            <cover-text class="btn left" @tap.stop="handleAction('report')">上报故障</cover-text>
+          </cover-view>
+          <cover-view class="flex mt">
+            <cover-text class="btn right" @tap.stop="handleAction('logout')">退出驾驶</cover-text>
+          </cover-view>
+        </cover-view>
       </template>
 
       <!-- 场景3：维修 -->
       <template v-else-if="type === 'repair'">
-        <view class="tip-content repair">
-          <text class="tit">设备报修</text>
-          <view v-if="isShow" class="reason">
-            <text
+        <cover-view class="tip-content repair">
+          <cover-text class="tit">设备报修</cover-text>
+          <cover-view v-if="isShow" class="reason">
+            <cover-text
               v-for="(item, index) in list"
               :key="index"
               @tap="selectReason(index, item)"
               :class="['reason-item', { active: selectedIndex === index }]"
-            >{{ item }}</text>
-          </view>
+            >{{ item }}</cover-text>
+          </cover-view>
           <!-- 替换 Vant 的 textarea 为原生 input -->
-          <view class="ttarea">
+          <cover-view class="ttarea">
             <input
               v-model="message"
               class="custom-textarea"
@@ -61,54 +61,54 @@
               maxlength="20"
               placeholder="请输入故障原因，最多20字（选填）"
             />
-            <text class="word-limit">{{ message.length }}/20</text>
-          </view>
-          <text class="warn-tip">
+            <cover-text class="word-limit">{{ message.length }}/20</cover-text>
+          </cover-view>
+          <cover-text class="warn-tip">
             温馨提示：上报车辆故障后，车辆将冻结，你将退退出驾驶。若遇到黑屏或者画面卡顿，请重新刷新页面
-          </text>
-        </view>
-        <view class="footer">
-          <view class="flex">
-            <text class="btn left" @tap.stop="cancel">取消</text>
-            <text class="btn right" @tap.stop="report">上报</text>
-          </view>
-        </view>
+          </cover-text>
+        </cover-view>
+        <cover-view class="footer">
+          <cover-view class="flex">
+            <cover-text class="btn left" @tap.stop="cancel">取消</cover-text>
+            <cover-text class="btn right" @tap.stop="report">上报</cover-text>
+          </cover-view>
+        </cover-view>
       </template>
 
       <!-- 场景4：即将结束倒计时 -->
       <template v-if="type === 'countTip'">
-        <view class="tip-content">
-          <text class="time">倒计时{{ count }}s</text>
-          <text class="tit">您的驾驶时间即将结束</text>
-          <view class="text">
-            <text>即将结束本次驾驶，欢迎您下次再来！</text>
-          </view>
-        </view>
-        <view class="footer">
-          <view class="flex mt">
-            <text class="btn right" @tap.stop="handleAction('logout')">退出驾驶</text>
-          </view>
-        </view>
+        <cover-view class="tip-content">
+          <cover-text class="time">倒计时{{ count }}s</cover-text>
+          <cover-text class="tit">您的驾驶时间即将结束</cover-text>
+          <cover-view class="text">
+            <cover-text>即将结束本次驾驶，欢迎您下次再来！</cover-text>
+          </cover-view>
+        </cover-view>
+        <cover-view class="footer">
+          <cover-view class="flex mt">
+            <cover-text class="btn right" @tap.stop="handleAction('logout')">退出驾驶</cover-text>
+          </cover-view>
+        </cover-view>
       </template>
 
       <!-- 场景5：长时间无操作 -->
       <template v-if="type === 'longTimeTip'">
-        <view class="tip-content">
-          <text class="time">【警告】您180秒无操作！</text>
-          <text class="tit">三分钟未操作,请立即驾驶</text>
-          <view class="text">
-            <text>为防止您的电池被浪费，即将结束本次驾驶，欢迎您下次再来!</text>
-          </view>
-        </view>
-        <view class="footer">
-          <view class="flex mt">
-            <text class="btn right" @tap.stop="handleAction('logout')">退出驾驶</text>
-          </view>
-        </view>
+        <cover-view class="tip-content">
+          <cover-text class="time">【警告】您180秒无操作！</cover-text>
+          <cover-text class="tit">三分钟未操作,请立即驾驶</cover-text>
+          <cover-view class="text">
+            <cover-text>为防止您的电池被浪费，即将结束本次驾驶，欢迎您下次再来!</cover-text>
+          </cover-view>
+        </cover-view>
+        <cover-view class="footer">
+          <cover-view class="flex mt">
+            <cover-text class="btn right" @tap.stop="handleAction('logout')">退出驾驶</cover-text>
+          </cover-view>
+        </cover-view>
       </template>
 
-    </view>
-  </view>
+    </cover-view>
+  </cover-view>
 </template>
 
 <script setup>

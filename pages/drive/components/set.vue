@@ -1,14 +1,14 @@
 <template>
-  <view v-if="visible" class="custom-popup-mask">
-    <view class="custom-popup-right">
-      <div class="cont">
-        <div class="left">
+  <cover-view v-if="visible" class="custom-popup-mask">
+    <cover-view class="custom-popup-right">
+      <cover-view class="cont">
+        <cover-view class="left">
           <!-- type 1 是遥控车 -->
-          <div class="group" v-if="selectedIndex == 0 && type == '1'">
-            <div class="group-item">
-              <p class="tit">视频清晰度</p>
-              <div class="flex">
-                <span
+          <cover-view class="group" v-if="selectedIndex == 0 && type == '1'">
+            <cover-view class="group-item">
+              <cover-text class="tit">视频清晰度</cover-text>
+              <cover-view class="flex">
+                <cover-text
                   v-for="(item, index) in qualityList"
                   :key="index"
                   class="btn-quality"
@@ -16,13 +16,13 @@
                   @click="handleSelect(item.value)"
                 >
                   {{ item.label }}
-                </span>
-              </div>
-            </div>
-            <div class="group-item">
-              <p class="tit">操作设置</p>
-              <div class="flex">
-                <div
+                </cover-text>
+              </cover-view>
+            </cover-view>
+            <cover-view class="group-item">
+              <cover-text class="tit">操作设置</cover-text>
+              <cover-view class="flex">
+                <cover-view
                   v-for="(mode, index) in steeringModes"
                   :key="index"
                   class="option-card"
@@ -30,34 +30,34 @@
                   @click="handleSetSelect(mode.id)"
                 >
                   <!-- 右上角的黄色对勾 (仅当选中时显示) -->
-                  <div v-if="selectedMode === mode.id" class="check-mark">
-                    <image class="image" src="/static/images/icon_selected@2x.png" mode="widthFix"></image>
-                  </div>
+                  <cover-view v-if="selectedMode === mode.id" class="check-mark">
+                    <cover-image class="image" src="/static/images/icon_selected@2x.png" mode="widthFix"></cover-image>
+                  </cover-view>
                   <!-- 布局区域：根据配置交换左右顺序 -->
-                  <div class="content-layout" :class="{ 'reverse-layout': mode.isReverse }">
+                  <cover-view class="content-layout" :class="{ 'reverse-layout': mode.isReverse }">
                     <!-- 左侧/第一组图标 -->
-                    <div class="icon-group">
-                      <div class="icon-row vertical">
-                        <image :src="arrowUp" class="icon-img"></image>
-                        <image :src="arrowDown" class="icon-img"></image>
-                      </div>
+                    <cover-view class="icon-group">
+                      <cover-view class="icon-row vertical">
+                        <cover-image :src="arrowUp" class="icon-img"></cover-image>
+                        <cover-image :src="arrowDown" class="icon-img"></cover-image>
+                      </cover-view>
                       <span class="label">前进/后退</span>
-                    </div>
+                    </cover-view>
                     <!-- 右侧/第二组图标 -->
-                    <div class="icon-group">
-                      <div class="icon-row horizontal">
-                        <image :src="arrowLeft" class="icon-img"></image>
-                        <image :src="arrowRight" class="icon-img"></image>
-                      </div>
+                    <cover-view class="icon-group">
+                      <cover-view class="icon-row horizontal">
+                        <cover-image :src="arrowLeft" class="icon-img"></cover-image>
+                        <cover-image :src="arrowRight" class="icon-img"></cover-image>
+                      </cover-view>
                       <span class="label">左转/右转</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="group-item pr">
-              <div class="flex fj">
-                <span class="tit">方向反向操作</span>
+                    </cover-view>
+                  </cover-view>
+                </cover-view>
+              </cover-view>
+            </cover-view>
+            <cover-view class="group-item pr">
+              <cover-view class="flex fj">
+                <cover-text class="tit">方向反向操作</cover-text>
                 <switch
                   :checked="dir1Oper"
                   @change="handleOper(1, $event)"
@@ -65,9 +65,9 @@
                   style="transform:scale(0.8)"
                   class="custom-switch"
                 />
-              </div>
-              <div class="flex fj">
-                <span class="tit">进退反向操作</span>
+              </cover-view>
+              <cover-view class="flex fj">
+                <cover-text class="tit">进退反向操作</cover-text>
                 <switch
                   :checked="dir2Oper"
                   @change="handleOper(2, $event)"
@@ -75,15 +75,15 @@
                   style="transform:scale(0.8)"
                   class="custom-switch"
                 />
-              </div>
-            </div>
-          </div>
+              </cover-view>
+            </cover-view>
+          </cover-view>
 
-          <div class="group" v-if="selectedIndex == 0 && (type == '2' || type == '3')">
-            <div class="group-item">
-              <p class="tit">视频清晰度</p>
-              <div class="flex">
-                <span
+          <cover-view class="group" v-if="selectedIndex == 0 && (type == '2' || type == '3')">
+            <cover-view class="group-item">
+              <cover-text class="tit">视频清晰度</cover-text>
+              <cover-view class="flex">
+                <cover-text
                   v-for="(item, index) in qualityList"
                   :key="index"
                   class="btn-quality"
@@ -91,49 +91,49 @@
                   @click="handleSelect(item.value)"
                 >
                   {{ item.label }}
-                </span>
-              </div>
-            </div>
-            <div class="group-item">
-              <p class="tit">操作设置</p>
-              <div class="flex">
-                <div
+                </cover-text>
+              </cover-view>
+            </cover-view>
+            <cover-view class="group-item">
+              <cover-text class="tit">操作设置</cover-text>
+              <cover-view class="flex">
+                <cover-view
                   v-for="(mode, index) in steeringModes"
                   :key="index"
                   class="option-card"
                   :class="{ 'is-active': selectedMode === mode.id }"
                   @click="handleSetSelect(mode.id)"
                 >
-                  <image
+                  <cover-image
                   class="image"
                     v-if="selectedMode === mode.id && index == 0"
                     src="/static/images/icon_ev_dir1_selected@2x.png"
                     mode="widthFix"
-                  ></image>
-                  <image
+                  ></cover-image>
+                  <cover-image
                   class="image"
                     v-if="selectedMode !== mode.id && index == 0"
                     src="/static/images/icon_ev_dir1@2x.png"
                     mode="widthFix"
-                  ></image>
-                  <image
+                  ></cover-image>
+                  <cover-image
                   class="image"
                     v-if="selectedMode === mode.id && index == 1"
                     src="/static/images/icon_ev_dir2_selected@2x.png"
                     mode="widthFix"
-                  ></image>
-                  <image
+                  ></cover-image>
+                  <cover-image
                   class="image"
                     v-if="selectedMode !== mode.id && index == 1"
                     src="/static/images/icon_ev_dir2@2x.png"
                     mode="widthFix"
-                  ></image>
-                </div>
-              </div>
-            </div>
-            <div class="group-item pr">
-              <div class="flex fj">
-                <span class="tit">进退反向操作</span>
+                  ></cover-image>
+                </cover-view>
+              </cover-view>
+            </cover-view>
+            <cover-view class="group-item pr">
+              <cover-view class="flex fj">
+                <cover-text class="tit">进退反向操作</cover-text>
                 <switch
                   :checked="dir1Oper"
                   @change="handleOper(3, $event)"
@@ -141,9 +141,9 @@
                   style="transform:scale(0.8)"
                   class="custom-switch"
                 />
-              </div>
-              <div class="flex fj">
-                <span class="tit">旋转反向操作</span>
+              </cover-view>
+              <cover-view class="flex fj">
+                <cover-text class="tit">旋转反向操作</cover-text>
                 <switch
                   :checked="dir2Oper"
                   @change="handleOper(4, $event)"
@@ -151,25 +151,25 @@
                   style="transform:scale(0.8)"
                   class="custom-switch"
                 />
-              </div>
-            </div>
-          </div>
+              </cover-view>
+            </cover-view>
+          </cover-view>
 
-          <div class="group" v-if="selectedIndex == 1">
-            <div class="group-item">
-              <p class="tit">方向中位微调</p>
-              <div class="section">
+          <cover-view class="group" v-if="selectedIndex == 1">
+            <cover-view class="group-item">
+              <cover-text class="tit">方向中位微调</cover-text>
+              <cover-view class="section">
                 <!-- 减少按钮 -->
-                <div class="reduce" @click="handleReduce(1)">
-                  <image class="image" src="/static/images/icon_reduce@2x.webp" mode="widthFix"></image>
-                </div>
+                <cover-view class="reduce" @click="handleReduce(1)">
+                  <cover-image class="image" src="/static/images/icon_reduce@2x.webp" mode="widthFix"></cover-image>
+                </cover-view>
                 <!-- 滑块区域（占据主要空间） -->
-                <div class="slider-wrapper">
-                  <div class="slider-label">
-                    <div class="num" :style="{ left: dirMiddle + '%' }">
+                <cover-view class="slider-wrapper">
+                  <cover-view class="slider-label">
+                    <cover-view class="num" :style="{ left: dirMiddle + '%' }">
                       {{ dirMiddleVal }}
-                    </div>
-                  </div>
+                    </cover-view>
+                  </cover-view>
                   <slider
                     :min="1"
                     :max="100"
@@ -179,37 +179,37 @@
                     backgroundColor="#e5e5e5"
                     block-size="20"
                   />
-                  <div class="slider-label-bottom">
-                    <div class="num-text num-left nl">
+                  <cover-view class="slider-label-bottom">
+                    <cover-view class="num-text num-left nl">
                       {{ directionCenter.mini_value }}
-                    </div>
-                    <div class="num-text num-right">
+                    </cover-view>
+                    <cover-view class="num-text num-right">
                       {{ directionCenter.max_value }}
-                    </div>
-                  </div>
-                </div>
+                    </cover-view>
+                  </cover-view>
+                </cover-view>
                 <!-- 增加按钮 -->
-                <div class="add" @click="handleAdd(1)">
-                  <image class="image" src="/static/images/icon_add@2x.webp" mode="widthFix"></image>
-                </div>
+                <cover-view class="add" @click="handleAdd(1)">
+                  <cover-image class="image" src="/static/images/icon_add@2x.webp" mode="widthFix"></cover-image>
+                </cover-view>
                 <!-- 保存按钮 -->
-                <div class="btn" @click="save(1)">保存</div>
-              </div>
-            </div>
-            <div class="group-item">
-              <p class="tit">方向力度微调</p>
-              <div class="section">
+                <cover-view class="btn" @click="save(1)">保存</cover-view>
+              </cover-view>
+            </cover-view>
+            <cover-view class="group-item">
+              <cover-text class="tit">方向力度微调</cover-text>
+              <cover-view class="section">
                 <!-- 减少按钮 -->
-                <div class="reduce" @click="handleReduce(2)">
-                  <image class="image" src="/static/images/icon_reduce@2x.webp" mode="widthFix"></image>
-                </div>
+                <cover-view class="reduce" @click="handleReduce(2)">
+                  <cover-image class="image" src="/static/images/icon_reduce@2x.webp" mode="widthFix"></cover-image>
+                </cover-view>
                 <!-- 滑块区域（占据主要空间） -->
-                <div class="slider-wrapper">
-                  <div class="slider-label">
-                    <div class="num" :style="{ left: dirTurn + '%' }">
+                <cover-view class="slider-wrapper">
+                  <cover-view class="slider-label">
+                    <cover-view class="num" :style="{ left: dirTurn + '%' }">
                       {{ dirTurn }}
-                    </div>
-                  </div>
+                    </cover-view>
+                  </cover-view>
                   <slider
                     :min="1"
                     :max="100"
@@ -219,37 +219,37 @@
                     backgroundColor="#e5e5e5"
                     block-size="20"
                   />
-                  <div class="slider-label-bottom">
-                    <div class="num-text num-left">
+                  <cover-view class="slider-label-bottom">
+                    <cover-view class="num-text num-left">
                       {{ directionDynamics.mini_value }}
-                    </div>
-                    <div class="num-text num-right">
+                    </cover-view>
+                    <cover-view class="num-text num-right">
                       {{ directionDynamics.max_value }}
-                    </div>
-                  </div>
-                </div>
+                    </cover-view>
+                  </cover-view>
+                </cover-view>
                 <!-- 增加按钮 -->
-                <div class="add" @click="handleAdd(2)">
-                  <image class="image" src="/static/images/icon_add@2x.webp" mode="widthFix"></image>
-                </div>
+                <cover-view class="add" @click="handleAdd(2)">
+                  <cover-image class="image" src="/static/images/icon_add@2x.webp" mode="widthFix"></cover-image>
+                </cover-view>
                 <!-- 保存按钮 -->
-                <div class="btn" @click="save(2)">保存</div>
-              </div>
-            </div>
-            <div class="group-item">
-              <p class="tit">油门力度微调</p>
-              <div class="section">
+                <cover-view class="btn" @click="save(2)">保存</cover-view>
+              </cover-view>
+            </cover-view>
+            <cover-view class="group-item">
+              <cover-text class="tit">油门力度微调</cover-text>
+              <cover-view class="section">
                 <!-- 减少按钮 -->
-                <div class="reduce" @click="handleReduce(3)">
-                  <image class="image" src="/static/images/icon_reduce@2x.webp" mode="widthFix"></image>
-                </div>
+                <cover-view class="reduce" @click="handleReduce(3)">
+                  <cover-image class="image" src="/static/images/icon_reduce@2x.webp" mode="widthFix"></cover-image>
+                </cover-view>
                 <!-- 滑块区域（占据主要空间） -->
-                <div class="slider-wrapper">
-                  <div class="slider-label">
-                    <div class="num" :style="{ left: throttle + '%' }">
+                <cover-view class="slider-wrapper">
+                  <cover-view class="slider-label">
+                    <cover-view class="num" :style="{ left: throttle + '%' }">
                       {{ throttle }}
-                    </div>
-                  </div>
+                    </cover-view>
+                  </cover-view>
                   <slider
                     :min="1"
                     :max="100"
@@ -259,50 +259,50 @@
                     backgroundColor="#e5e5e5"
                     block-size="20"
                   />
-                  <div class="slider-label-bottom">
-                    <div class="num-text num-left">
+                  <cover-view class="slider-label-bottom">
+                    <cover-view class="num-text num-left">
                       {{ acceleratorDynamics.mini_value }}
-                    </div>
-                    <div class="num-text num-right">
+                    </cover-view>
+                    <cover-view class="num-text num-right">
                       {{ acceleratorDynamics.max_value }}
-                    </div>
-                  </div>
-                </div>
+                    </cover-view>
+                  </cover-view>
+                </cover-view>
                 <!-- 增加按钮 -->
-                <div class="add" @click="handleAdd(3)">
-                  <image class="image" src="/static/images/icon_add@2x.webp" mode="widthFix"></image>
-                </div>
+                <cover-view class="add" @click="handleAdd(3)">
+                  <cover-image class="image" src="/static/images/icon_add@2x.webp" mode="widthFix"></cover-image>
+                </cover-view>
                 <!-- 保存按钮 -->
-                <div class="btn" @click="save(3)">保存</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="right">
-          <div class="settings-bar">
-            <div class="text-area">设置</div>
-            <div class="close-btn" @click="close">
-              <image class="image" src="/static/images/icon_close@2x.webp" mode="widthFix"></image>
-            </div>
-          </div>
-          <div
+                <cover-view class="btn" @click="save(3)">保存</cover-view>
+              </cover-view>
+            </cover-view>
+          </cover-view>
+        </cover-view>
+        <cover-view class="right">
+          <cover-view class="settings-bar">
+            <cover-view class="text-area">设置</cover-view>
+            <cover-view class="close-btn" @click="close">
+              <cover-image class="image" src="/static/images/icon_close@2x.webp" mode="widthFix"></cover-image>
+            </cover-view>
+          </cover-view>
+          <cover-view
             class="setting-group"
             v-for="(item, index) in setGroup"
             :key="index"
           >
-            <div
+            <cover-view
               class="setting-item"
               :class="{ active: selectedIndex == item.key }"
               @click="handleItem(index)"
             >
               {{ item.name }}
-            </div>
-            <div class="gradient-line" v-if="selectedIndex == item.key"></div>
-          </div>
-        </div>
-      </div>
-    </view>
-  </view>
+            </cover-view>
+            <cover-view class="gradient-line" v-if="selectedIndex == item.key"></cover-view>
+          </cover-view>
+        </cover-view>
+      </cover-view>
+    </cover-view>
+  </cover-view>
 </template>
 
 <script setup>
@@ -372,6 +372,9 @@ const valueMap = { 1: dirMiddle, 2: dirTurn, 3: throttle };
 
 function dirMiddleValFunc (num) {
 
+
+	console.log(props.directionCenter?.mini_value ?? 500,
+	 props.directionCenter?.max_value ?? 1500, num)
   const mapNum = createMapperNew(
     1,
     100,
