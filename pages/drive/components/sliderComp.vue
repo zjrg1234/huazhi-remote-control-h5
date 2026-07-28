@@ -1,5 +1,5 @@
 <template>
-  <cover-view :style="{ width: '350px' }">
+  <cover-view>
     <cover-view
       class="cover-slider"
       :style="{ width: width }"
@@ -67,6 +67,7 @@ const updateSliderUI = () => {
   const maxTrackValidWidth = trackWidth.value - THUMB_SIZE;
   // 进度百分比基于有效轨道长度计算
   progressWidth.value = (maxTrackValidWidth / trackWidth.value) * percent * 100;
+  console.log(progressWidth.value)
   const maxLeft = trackWidth.value - THUMB_SIZE;
   thumbLeft.value = percent * maxLeft;
 };

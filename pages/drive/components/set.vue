@@ -81,18 +81,18 @@
               <cover-view class="flex fj">
                 <cover-view class="tit">方向反向操作</cover-view>
 
-                <switchCom
+                <SwitchComp
                   v-model="dir1Oper"
                   @change="handleOper(1, $event)"
-                ></switchCom>
+                ></SwitchComp>
               </cover-view>
               <cover-view class="flex fj">
                 <cover-view class="tit">进退反向操作</cover-view>
 
-                <switchCom
+                <SwitchComp
                   v-model="dir2Oper"
                   @change="handleOper(2, $event)"
-                ></switchCom>
+                ></SwitchComp>
               </cover-view>
             </cover-view>
           </cover-view>
@@ -156,18 +156,18 @@
               <cover-view class="flex fj">
                 <cover-view class="tit">进退反向操作</cover-view>
 
-                <switchCom
+                <SwitchComp
                   v-model="dir1Oper"
                   @change="handleOper(3, $event)"
-                ></switchCom>
+                ></SwitchComp>
               </cover-view>
               <cover-view class="flex fj">
                 <cover-view class="tit">旋转反向操作</cover-view>
 
-                <switchCom
+                <SwitchComp
                   v-model="dir2Oper"
                   @change="handleOper(4, $event)"
-                ></switchCom>
+                ></SwitchComp>
               </cover-view>
             </cover-view>
           </cover-view>
@@ -191,7 +191,7 @@
                       {{ dirMiddleVal }}
                     </cover-view>
                   </cover-view>
-                  <slider
+                  <!-- <slider
                     :min="1"
                     :max="100"
                     :value="dirMiddle"
@@ -199,12 +199,18 @@
                     activeColor="#f5c542"
                     backgroundColor="#e5e5e5"
                     block-size="20"
-                  />
+                  /> -->
+                  <SliderComp
+                    v-model="dirMiddle"
+                    :min="1"
+                    :max="100"
+                    @change="changeVal(1, $event)"
+                  ></SliderComp>
                   <cover-view class="slider-label-bottom">
-                    <cover-view class="num-text num-left nl">
+                    <cover-view class="num-text">
                       {{ directionCenter.mini_value }}
                     </cover-view>
-                    <cover-view class="num-text num-right">
+                    <cover-view class="num-text">
                       {{ directionCenter.max_value }}
                     </cover-view>
                   </cover-view>
@@ -239,20 +245,18 @@
                       {{ dirTurn }}
                     </cover-view>
                   </cover-view>
-                  <slider
+
+                  <SliderComp
+                    v-model="dirTurn"
                     :min="1"
                     :max="100"
-                    :value="dirTurn"
                     @change="changeVal(2, $event)"
-                    activeColor="#f5c542"
-                    backgroundColor="#e5e5e5"
-                    block-size="20"
-                  />
+                  ></SliderComp>
                   <cover-view class="slider-label-bottom">
-                    <cover-view class="num-text num-left">
+                    <cover-view class="num-text">
                       {{ directionDynamics.mini_value }}
                     </cover-view>
-                    <cover-view class="num-text num-right">
+                    <cover-view class="num-text">
                       {{ directionDynamics.max_value }}
                     </cover-view>
                   </cover-view>
@@ -287,15 +291,14 @@
                       {{ throttle }}
                     </cover-view>
                   </cover-view>
-                  <slider
+
+                  <SliderComp
+                    v-model="throttle"
                     :min="1"
                     :max="100"
-                    :value="throttle"
                     @change="changeVal(3, $event)"
-                    activeColor="#f5c542"
-                    backgroundColor="#e5e5e5"
-                    block-size="20"
-                  />
+                  ></SliderComp>
+
                   <cover-view class="slider-label-bottom">
                     <cover-view class="num-text num-left">
                       {{ acceleratorDynamics.mini_value }}
@@ -355,11 +358,13 @@
 
 <script setup>
 import { computed, ref, watch } from "vue";
-import switchCom from "./switchCom.vue";
+import SwitchComp from "./switchComp.vue";
+import SliderComp from "./sliderComp.vue";
 import arrowUp from "@/static/images/arrow_up@2x.png";
 import arrowDown from "@/static/images/arrow_down@2x.png";
 import arrowLeft from "@/static/images/arrow_left@2x.png";
 import arrowRight from "@/static/images/arrow_right@2x.png";
+
 const dirMiddle = ref(1);
 const dirTurn = ref(1);
 const throttle = ref(1);
@@ -528,14 +533,14 @@ const handleSetSelect = (id) => {
   emit("action", id);
 };
 
-const changeVal = (flag, e) => {
+const changeVal = (flag, val) => {
   if (flag == 1) {
-    dirMiddleValFunc(e.detail.value);
-    dirMiddle.value = e.detail.value;
+    dirMiddleValFunc(val);
+    dirMiddle.value = val;
   } else if (flag == 2) {
-    dirTurn.value = e.detail.value;
+    dirTurn.value = val;
   } else {
-    throttle.value = e.detail.value;
+    throttle.value = val;
   }
 
   console.log({
@@ -907,9 +912,15 @@ function createMapperNew(inMin, inMax, outMin, outMax, value) {
   flex-direction: column;
   gap: 8px;
   height: 80px;
+ overflow: visible;
+  .slider-label {
+    position: relative;
+    height: 20px;
+    overflow: visible;
+  }
   .num {
     position: absolute;
-    top: 10px;
+    top: 5px;
     transform: translateX(-50%);
     /* 关键：让标签的中心点对齐 left 值，实现完美居中 */
     color: #fff;
@@ -919,11 +930,8 @@ function createMapperNew(inMin, inMax, outMin, outMax, value) {
     pointer-events: none;
     text-align: left;
     /* 防止标签拦截鼠标的拖拽事件 */
-  }
 
-  .slider-label {
-    position: relative;
-    height: 30px;
+    overflow: visible;
   }
 
   .slider-label-bottom {
@@ -936,15 +944,8 @@ function createMapperNew(inMin, inMax, outMin, outMax, value) {
       font-size: 12px;
     }
 
-    .num-left {
-      margin-left: -2px;
-    }
     .nl {
       margin-left: -8px;
-    }
-
-    .num-right {
-      margin-right: -8px;
     }
   }
 }
@@ -965,6 +966,7 @@ function createMapperNew(inMin, inMax, outMin, outMax, value) {
   color: #1a1a1a;
   padding: 4px 8px;
   background: #ffc838;
+  margin-left: 5px;
 }
 
 .reduce .image,

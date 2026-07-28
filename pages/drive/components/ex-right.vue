@@ -215,7 +215,7 @@ const handleClick = (val) => {
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr;
     place-items: center;
-    z-index: 100;
+    z-index: 9999;
     user-select: none;
     touch-action: none;
 }

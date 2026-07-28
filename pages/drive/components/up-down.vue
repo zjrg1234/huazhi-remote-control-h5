@@ -229,7 +229,7 @@ const handleEnd = (e) => {
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-  z-index: 100;
+  z-index: 9999;
   will-change: transform;
   user-select: none;
   /* 【修复4】增加 touch-action，虽然小程序支持有限，但加上无害 */

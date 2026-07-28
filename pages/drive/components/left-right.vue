@@ -273,7 +273,7 @@ const handleEnd = () => {
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-  z-index: 100;
+  z-index: 9999;
   will-change: transform;
   user-select: none;
   touch-action: none;
