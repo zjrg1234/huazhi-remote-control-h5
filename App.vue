@@ -14,4 +14,7 @@
 
 <style>
 	/*每个页面公共css */
+wx-cover-view, wx-cover-image {
+  visibility: visible !important;
+}
 </style>

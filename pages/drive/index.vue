@@ -1,8 +1,8 @@
 <template>
-  <view class="landscape-page" @touchstart="onUserActivity" @touchmove="onUserActivity">
+  <view class="landscape-page">
     <view class="page-content">
 
-
+<!-- @touchstart="onUserActivity" @touchmove="onUserActivity" -->
 
       <!-- #ifdef MP-WEIXIN -->
 
@@ -14,9 +14,7 @@
       <cover-view class="logout" @click="logout">
         <cover-image src="/static/images/icon_exit@2x.png" class="image" mode="aspectFit" />
       </cover-view>
-      <web-view :src="videoUrl" ref="iframeView">
-
-      </web-view>
+      <web-view :src="videoUrl" ref="iframeView"></web-view>
 
 
       <!-- #endif -->
@@ -26,10 +24,10 @@
       <cover-view class="status-bar-capsule">
         <cover-view class="flex">
           <cover-view class="fl">
-            <cover-text class="dot" :class="{'dot-red': !carStatus }" v-if="carStatus"></cover-text>
+            <cover-text class="dot" :class="{'dot-red': !carStatus }" v-show="carStatus"></cover-text>
             <cover-view class="car">
               <cover-image class="image" src="/static/images/icon_car@2x.png" mode="aspectFit" />
-              <cover-text class="mini-forbidden" v-if="!carStatus"></cover-text>
+              <cover-text class="mini-forbidden" v-show="!carStatus"></cover-text>
             </cover-view>
           </cover-view>
           <cover-view>
@@ -43,7 +41,7 @@
       </cover-view>
 
       <!-- 剩余时间提示 -->
-      <cover-view class="tip" v-if="numTip > 0">
+      <cover-view class="tip" v-show="numTip > 0">
         <cover-text>距离本次结束驾驶还有{{ 31 - numTip }}s</cover-text>
       </cover-view>
 
@@ -55,9 +53,9 @@
       <!-- 声音/波纹图标 -->
       <cover-view class="side-menu-icon">
         <microphone></microphone>
-        <cover-image class="image" v-if="!showSound" src="/static/images/icon_sound_close@2x.png"
+        <cover-image class="image" v-show="!showSound" src="/static/images/icon_sound_close@2x.png"
           @click="showSound = true" mode="aspectFit" />
-        <cover-image class="image" v-if="showSound" src="/static/images/icon_sound_open@2x.png"
+        <cover-image class="image" v-show="showSound" src="/static/images/icon_sound_open@2x.png"
           @click="showSound = false" mode="aspectFit" />
       </cover-view>
 
@@ -89,12 +87,11 @@
         </cover-view>
       </cover-view>
 
-      <LeftRight @action="handleLRDrive" v-if="carType == 1" :isLeft="operMode"></LeftRight>
+      <LeftRight @action="handleLRDrive" v-show="carType == 1" :isLeft="operMode"></LeftRight>
+      <UpDown @action="handleFBDrive" v-show="carType == 1" :isLeft="!operMode"></UpDown>
 
-      <UpDown @action="handleFBDrive" v-if="carType == 1" :isLeft="!operMode"></UpDown>
-
-      <ExLeft @action="handleLeftDrive" @action2="handleDrive" v-if="carType == 3"></ExLeft>
-      <ExRight @action="handleRightDrive" @action2="handleDrive" v-if="carType == 3"></ExRight>
+      <ExLeft @action="handleLeftDrive" @action2="handleDrive" v-show="carType == 3"></ExLeft>
+      <ExRight @action="handleRightDrive" @action2="handleDrive" v-show="carType == 3"></ExRight>
       <!-- <pointOprea1 @action="handleLeftDrive" v-if="carType == 3"></pointOprea1> -->
       <!-- <pointOprea2 @action="handleRightDrive" v-if="carType == 3"></pointOprea2> -->
 
@@ -927,13 +924,13 @@ cover-image {
 
 .status-bar-capsule {
   background: rgba(0, 0, 0, 0.5);
-  border-radius: 20rpx;
+  border-radius: 20px;
   position: fixed;
   z-index: 9999;
-  top: 10rpx;
+  top: 10px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 3rpx 15rpx;
+  padding: 3px 15px;
 
   .flex {
     display: flex;
@@ -981,7 +978,7 @@ cover-image {
     font-size: 14px;
     color: #fff;
     margin-left: 5px;
-    
+    width: 40px;
   }
   .split-vertical {
     width: 1px;
@@ -1051,11 +1048,11 @@ cover-image {
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 8rpx;
+  gap: 8px;
   background: rgba(20, 20, 20, 0.75);
-  backdrop-filter: blur(20rpx);
-  border-radius: 40rpx;
-  padding: 10rpx 4rpx;
+  backdrop-filter: blur(20px);
+  border-radius: 40px;
+  padding: 10px 4px;
 }
 
 .menu-item {
@@ -1126,4 +1123,21 @@ cover-image {
     margin-right: 5px;
   }
 }
+
+.left-right-wrapper, .up-down-wrapper {
+  position: fixed;
+  z-index: 9999;
+}
+</style>
+
+
+<style>
+cover-view,
+cover-image {
+  visibility: visible !important;
+  z-index: 99999;
+}
+
+
+
 </style>

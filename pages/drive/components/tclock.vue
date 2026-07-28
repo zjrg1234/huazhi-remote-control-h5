@@ -48,7 +48,7 @@ onUnmounted(() => {
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 /* 可根据需要添加默认样式 */
 .real-time-clock {
   font-family: PingFangSC, PingFang SC;

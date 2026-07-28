@@ -1,15 +1,17 @@
 <template>
   <cover-view class="mini-battery-wrapper">
+    <!-- 电池主体 -->
     <cover-view class="battery-body">
-      <!-- 电量填充条 -->
+      <!-- 电量填充条：加上圆角防止溢出 -->
       <cover-view
         class="battery-fill"
         :class="statusClass"
         :style="{ width: safePercent + '%' }"
       ></cover-view>
-      <!-- 电池右侧凸起端头（单独提高层级，防止被遮挡） -->
-      <cover-view class="battery-tip"></cover-view>
     </cover-view>
+    <!-- 电池右侧凸起端头：移出 battery-body，利用 flex 自然排列 -->
+    <cover-view class="battery-tip"></cover-view>
+    
     <!-- 电量文字百分比 -->
     <cover-view class="battery-text">{{ safePercent }}%</cover-view>
   </cover-view>
@@ -101,56 +103,42 @@ onHide(() => {
   position: relative;
   width: 25px;
   height: 12px;
-  border: 1px solid #ffffff;
-  border-radius: 2px;
-  box-sizing: content-box;
+  border: 1px solid #fff;
 
-  overflow: visible;
+  border-radius: 2px;
+  box-sizing: border-box; /* 改为 border-box 更稳定 */
+  overflow: hidden; /* 确保内部绿色条不会溢出边框 */
 }
 
 .battery-fill {
-  width: 100%;
   height: 100%;
-  border-radius: 1px;
+  border-radius: 1px; /* 加上圆角，防止真机上直角溢出 */
   background-color: #4caf50;
-  transition: width 0.4s ease, background-color 0.4s ease, opacity 0.4s ease;
+  transition: width 0.4s ease, background-color 0.4s ease;
+  border: 1px solid #fff;
 }
 
 .battery-fill.medium {
   background-color: #ff9800;
 }
 
-
 .battery-fill.low {
   background-color: #f44336;
-  animation: batteryBlink 1s infinite alternate;
 }
 
-
-@keyframes batteryBlink {
-  from { opacity: 1; }
-  to { opacity: 0.35; }
-}
-
-
+/* 凸起端头：不再使用绝对定位，直接作为一个独立的 cover-view */
 .battery-tip {
-  position: absolute;
-  top: 50%;
-  right: -3px;
-  transform: translateY(-50%);
   width: 2px;
   height: 6px;
   background-color: #ffffff;
   border-radius: 0 2px 2px 0;
-  z-index: 1;
 }
-
 
 .battery-text {
   font-size: 14px;
   min-width: 20px;
   color: #ffffff;
-  line-height: 1;
-  margin-left:5px;
+  margin-left: 5px;
+  margin-top: 2px;
 }
 </style>

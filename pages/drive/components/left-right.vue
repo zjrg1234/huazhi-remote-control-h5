@@ -1,30 +1,42 @@
 <template>
-  <cover-view class="control-box" ref="boxRef" :style="{ transform: `translate3d(${boxX}px, ${boxY}px, 0)` }"
-    @touchstart="handleStart" @touchmove.prevent="handleMove" @touchend="handleEnd">
-    <!-- #ifdef H5 
+  <cover-view
+    class="control-box"
+    ref="boxRef"
+    :style="{ transform: `translate3d(${boxX}px, ${boxY}px, 0)` }"
+    @touchstart="handleStart"
+    @touchmove.stop="handleMove"
+    @touchend="handleEnd"
     @mousedown="handleStart"
-    #endif -->
-    <cover-view class="arrow left" :style="{ backgroundImage: `url(${leftImage})` }" :class="{ active: isLeftActive }"></cover-view>
+  >
+    <cover-image
+      class="arrow left"
+      src="/static/images/arrow_left_big@2x.png"
+      :class="{ active: isLeftActive }"
+    ></cover-image>
 
-    <cover-view class="dot" ref="dotRef" :class="{ ready: isReadyMode }" :style="{
-      backgroundImage: `url(${dotImage})`,
-      transition: isDragging
-        ? 'none'
-        : 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease, box-shadow 0.3s ease',
-      transform: `translateX(${dotX}px) scale(1)`
-    }"></cover-view>
+    <cover-image
+      class="dot"
+      ref="dotRef"
+      :class="{ ready: isReadyMode }"
+      src="/static/images/dot@2x.png"
+      :style="{
+        transition: isDragging
+          ? 'none'
+          : 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease, box-shadow 0.3s ease',
+        transform: `translateX(${dotX}px) scale(1)`
+      }"
+    ></cover-image>
 
-    <cover-view class="arrow right" :style="{ backgroundImage: `url(${rightImage})` }" :class="{ active: isRightActive }">
-    </cover-view>
+    <cover-image
+      class="arrow right"
+      src="/static/images/arrow_right_big@2x.png"
+      :class="{ active: isRightActive }"
+    ></cover-image>
   </cover-view>
 </template>
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from "vue";
-
-import leftImg from "@/static/images/arrow_left_big@2x.png";
-import rightImg from "@/static/images/arrow_right_big@2x.png";
-import dotImg from "@/static/images/dot@2x.png";
 
 const emit = defineEmits(["action"]);
 
@@ -32,28 +44,23 @@ const props = defineProps({
   isLeft: { type: Boolean, default: false },
 });
 
-const leftImage = ref(leftImg);
-const rightImage = ref(rightImg);
-const dotImage = ref(dotImg);
-
 // --- 配置参数 ---
 const IDLE_DELAY = 500;
 const SWIPE_THRESHOLD = 20;
 const MAX_DOT_DRAG = 40;
 const BOX_WIDTH = 90;
 
-// --- 响应式状态 (用于触发 UI 变化和 绑定 style) ---
+// --- 响应式状态 ---
 const isDragging = ref(false);
 const isReadyMode = ref(false);
 const isLeftActive = ref(false);
 const isRightActive = ref(false);
 
-// ✅ 将原本直接操作 DOM 的坐标改为响应式变量
 const boxX = ref(0);
 const boxY = ref(0);
 const dotX = ref(0);
 
-// --- 内部非响应式状态 (用于高频计算，避免 Vue 响应式开销) ---
+// --- 内部非响应式状态 ---
 let idleTimer = null;
 let dragOffsetX = 0;
 let dragOffsetY = 0;
@@ -61,37 +68,58 @@ let dotStartOffset = 0;
 let initialBoxX = 0;
 let initialBoxY = 0;
 
+// 工具函数：获取屏幕尺寸（横屏适配）
 const getScreenSize = () => {
   // #ifdef H5
   return { width: window.innerWidth, height: window.innerHeight };
   // #endif
-  
+
   // #ifdef MP-WEIXIN
   const info = uni.getSystemInfoSync();
-  console.log(info,"info")
-  // 强制取长边为 width（假设你的页面是横屏的）
+  // 强制取长边为 width（适配横屏）
   return {
     width: Math.max(info.windowWidth, info.windowHeight),
-    height: Math.min(info.windowWidth, info.windowHeight)
+    height: Math.min(info.windowWidth, info.windowHeight),
   };
   // #endif
 };
 
-// ✅ 修改 backRightInit
-const backRightInit = () => {
+// 工具函数：限制组件位置在屏幕内
+const clampPosition = (x, y) => {
   const { width, height } = getScreenSize();
-  console.log("屏幕尺寸:", width, height);
-  
-  boxX.value = width / 2 + 130 + 40;
-  boxY.value = height / 2 + 40;
-  
-  console.log("最终位置:", boxX.value, boxY.value);
+  return {
+    x: Math.max(0, Math.min(x, width - 180)),   // 180 是组件宽度
+    y: Math.max(0, Math.min(y, height - 50)),   // 50 是组件高度
+  };
 };
 
-// ✅ 修改 onWindowResize 监听
-onMounted(() => {
-  backRightInit();
+// 右侧初始化
+const backRightInit = () => {
+  const { width, height } = getScreenSize();
+  let x = width / 2 + 130 + 40;
+  let y = height / 2 + 40;
+  const clamped = clampPosition(x, y);
+  boxX.value = clamped.x;
+  boxY.value = clamped.y;
+};
 
+// 左侧初始化
+const backLeftInit = () => {
+  const { width, height } = getScreenSize();
+  let x = 20;
+  let y = 190;
+  const clamped = clampPosition(x, y);
+  boxX.value = clamped.x;
+  boxY.value = clamped.y;
+};
+
+// 生命周期：初始化位置
+onMounted(() => {
+  if (props.isLeft) {
+    backLeftInit();
+  } else {
+    backRightInit();
+  }
 
   // #ifdef H5
   window.addEventListener('resize', () => {
@@ -108,7 +136,6 @@ onBeforeUnmount(() => {
   clearTimeout(idleTimer);
 
   // #ifdef MP-WEIXIN
-  // 页面卸载时移除监听，防止内存泄漏
   wx.offWindowResize();
   // #endif
 
@@ -117,11 +144,7 @@ onBeforeUnmount(() => {
   // #endif
 });
 
-const backLeftInit = () => {
-  boxX.value = 20;
-  boxY.value = 190;
-};
-
+// 监听 isLeft 变化（移除 immediate，避免与 onMounted 重复初始化）
 watch(
   () => props.isLeft,
   (val) => {
@@ -131,7 +154,7 @@ watch(
       backRightInit();
     }
   },
-  { immediate: true, deep: true }
+  { deep: true }
 );
 
 // --- 核心方法 ---
@@ -144,7 +167,7 @@ const resetIdleTimer = () => {
 
 const enterReadyMode = () => {
   isReadyMode.value = true;
-  // 震动 API 兼容
+  // 震动反馈
   // #ifdef H5
   if (navigator.vibrate) navigator.vibrate(50);
   // #endif
@@ -163,6 +186,7 @@ const resetArrows = () => {
   isLeftActive.value = false;
   isRightActive.value = false;
   emit("action", { lr: false, value: 0 });
+  // 位置复位
   if (props.isLeft) {
     backLeftInit();
   } else {
@@ -170,12 +194,18 @@ const resetArrows = () => {
   }
 };
 
-// ✅ 【核心修改】：提取坐标获取逻辑，兼容 touch 和 mouse
+// 获取触摸/鼠标坐标（统一使用 pageX/pageY，避免固定定位偏移）
 const getClientPos = (e) => {
   if (e.touches && e.touches.length > 0) {
-    return { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY };
+    return {
+      clientX: e.touches[0].pageX || e.touches[0].clientX,
+      clientY: e.touches[0].pageY || e.touches[0].clientY,
+    };
   }
-  return { clientX: e.clientX, clientY: e.clientY };
+  return {
+    clientX: e.pageX || e.clientX,
+    clientY: e.pageY || e.clientY,
+  };
 };
 
 // --- 事件处理 ---
@@ -202,7 +232,8 @@ const handleStart = (e) => {
 const handleMove = (e) => {
   if (!isDragging.value) return;
 
-  // 阻止默认的页面滚动
+  // 小程序端由于使用了 @touchmove.stop，已自动阻止冒泡，此处无需额外操作
+  // 但为了 H5 的兼容，仍调用 preventDefault（如果可取消）
   // #ifdef H5
   if (e.cancelable) e.preventDefault();
   // #endif
@@ -212,7 +243,7 @@ const handleMove = (e) => {
   resetIdleTimer();
 
   if (!isReadyMode.value) {
-    // 【模式 A：自由拖动容器】
+    // 自由拖动容器
     let deltaX = clientX - dragOffsetX - initialBoxX;
     let deltaY = clientY - dragOffsetY - initialBoxY;
 
@@ -227,9 +258,10 @@ const handleMove = (e) => {
     boxX.value = initialBoxX + deltaX;
     boxY.value = initialBoxY + deltaY;
   } else {
-    // 【模式 B：待命模式 - 圆点左右弹性滑动】
+    // 待命模式：圆点左右弹性滑动
     let deltaX = clientX - (boxX.value + BOX_WIDTH / 2) - dotStartOffset;
     const absDelta = Math.abs(deltaX);
+    console.log(absDelta,"absDelta", MAX_DOT_DRAG)
 
     if (absDelta > MAX_DOT_DRAG) {
       const excess = absDelta - MAX_DOT_DRAG;
@@ -237,9 +269,10 @@ const handleMove = (e) => {
       deltaX = sign * (MAX_DOT_DRAG + excess * 0.2);
     }
 
+    console.log(deltaX,"deltaX")
+
     if (deltaX < -65) deltaX = -65;
     if (deltaX > 65) deltaX = 65;
-
     dotX.value = deltaX;
     updateArrows(deltaX);
   }
@@ -256,9 +289,6 @@ const handleEnd = () => {
   dotStartOffset = 0;
   resetArrows();
 };
-
-
-
 </script>
 
 <style scoped>
@@ -276,8 +306,7 @@ const handleEnd = () => {
   z-index: 9999;
   will-change: transform;
   user-select: none;
-  touch-action: none;
-  /* 关键：禁止浏览器默认的触摸滚动行为 */
+  touch-action: none; /* H5 下禁止默认触摸行为 */
 }
 
 .arrow {

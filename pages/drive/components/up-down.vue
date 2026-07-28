@@ -8,26 +8,26 @@
     @touchend.stop.prevent="handleEnd"
     @touchcancel.stop.prevent="handleEnd"
   >
-    <cover-view
+    <cover-image
       class="arrow up"
-      :style="{ backgroundImage: `url(${upImage})` }"
+      src="/static/images/arrow_up_big@2x.png"
       :class="{ active: isUpActive }"
-    ></cover-view>
+    ></cover-image>
 
-    <cover-view
+    <cover-image
       class="dot"
+      src="/static/images/dot@2x.png"
       :class="{ ready: isReadyMode, dragging: isDragging }"
       :style="{
-        backgroundImage: `url(${dotImage})`,
         transform: `translateY(${currentDotY}px) scale(1)`
       }"
-    ></cover-view>
+    ></cover-image>
 
-    <cover-view
+    <cover-image
       class="arrow down"
-      :style="{ backgroundImage: `url(${downImage})` }"
+      src="/static/images/arrow_down_big@2x.png"
       :class="{ active: isDownActive }"
-    ></cover-view>
+    ></cover-image>
   </cover-view>
 </template>
 
@@ -237,6 +237,7 @@ const handleEnd = (e) => {
 }
 
 .arrow {
+  display: block;
   width: 50px;
   height: 50px;
   opacity: 0.8;
