@@ -27,7 +27,7 @@
             <cover-view class="dot" :class="{ ready: isReadyMode }" :style="dotStyle"></cover-view>
         </cover-view>
 
-        <cover-view class="up-down-arrow" v-if="!mode">
+        <cover-view class="up-down-arrow" v-show="!mode">
             <cover-view class="arrow1 up" :class="{ active: isUpActive }">
                 <cover-image class="cover-image" src="/static/cover-images/btn_up_ex@2x.png"
                     @touchend.prevent="handleClick('up')" mode="aspectFit"></cover-image>

@@ -1,7 +1,7 @@
 <!-- MyPopup.vue -->
 <template>
   <!-- 弹窗遮罩层与容器 -->
-  <cover-view class="popup-mask" v-if="visible" @tap.stop="handleMaskClick">
+  <cover-view class="popup-mask" v-show="visible" @tap.stop="handleMaskClick">
     <!-- 弹窗主体内容 -->
     <cover-view class="popup-container" :class="{contmax: type === 'repair'}"  @tap.stop>
       

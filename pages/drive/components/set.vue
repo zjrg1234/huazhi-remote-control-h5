@@ -1,5 +1,5 @@
 <template>
-  <cover-view v-if="visible" class="custom-popup-mask">
+  <cover-view v-show="visible" class="custom-popup-mask">
     <cover-view class="custom-popup-right">
       <cover-view class="cont">
         <cover-view class="left">

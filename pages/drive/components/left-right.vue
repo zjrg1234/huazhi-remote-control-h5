@@ -345,5 +345,7 @@ const handleEnd = () => {
 
 .dot.ready {
   box-shadow: 0 0 7.5px rgba(255, 167, 38, 0.6);
+  /* background-color: rgba(255, 167, 38, 0.3); */
+  border: 2rpx solid rgba(255, 167, 38, 0.8);
 }
 </style>
