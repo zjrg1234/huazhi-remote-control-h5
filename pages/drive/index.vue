@@ -103,7 +103,7 @@
 
       <!-- 时间显示 -->
       <cover-view class="time">
-        <cover-image class="image" src="/static/images/icon_time@2x.webp" mode="aspectFit" />
+        <cover-image class="image" src="/static/images/icon_time@2x.png"  />
         <TimeClock></TimeClock>
       </cover-view>
 
@@ -118,10 +118,6 @@
         @operAction="handleFBDir" @changeValue="changeVal" />
 
 
-      <cover-view class="time">
-        <cover-image class="image" src="/static/images/icon_time@2x.webp" mode="aspectFit" />
-        <TimeClock></TimeClock>
-      </cover-view>
 
     </view>
   </view>
