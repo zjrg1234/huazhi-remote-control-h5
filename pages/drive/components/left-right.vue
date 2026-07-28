@@ -24,7 +24,7 @@ import { ref, onMounted, onBeforeUnmount, watch } from "vue";
 
 import leftImg from "@/static/images/arrow_left_big@2x.png";
 import rightImg from "@/static/images/arrow_right_big@2x.png";
-import dotImg from "@/static/images/dot@2x.webp";
+import dotImg from "@/static/images/dot@2x.png";
 
 const emit = defineEmits(["action"]);
 

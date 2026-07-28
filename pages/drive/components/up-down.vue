@@ -36,7 +36,7 @@ import { ref, watch } from "vue";
 
 import upImg from "@/static/images/arrow_up_big@2x.png";
 import downImg from "@/static/images/arrow_down_big@2x.png";
-import dotImg from "@/static/images/dot@2x.webp";
+import dotImg from "@/static/images/dot@2x.png";
 
 const upImage = ref(upImg);
 const downImage = ref(downImg);

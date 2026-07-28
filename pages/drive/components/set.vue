@@ -161,7 +161,7 @@
               <cover-view class="section">
                 <!-- 减少按钮 -->
                 <cover-view class="reduce" @click="handleReduce(1)">
-                  <cover-image class="image" src="/static/images/icon_reduce@2x.webp" mode="widthFix"></cover-image>
+                  <cover-image class="image" src="/static/images/icon_reduce@2x.png" mode="widthFix"></cover-image>
                 </cover-view>
                 <!-- 滑块区域（占据主要空间） -->
                 <cover-view class="slider-wrapper">
@@ -190,7 +190,7 @@
                 </cover-view>
                 <!-- 增加按钮 -->
                 <cover-view class="add" @click="handleAdd(1)">
-                  <cover-image class="image" src="/static/images/icon_add@2x.webp" mode="widthFix"></cover-image>
+                  <cover-image class="image" src="/static/images/icon_add@2x.png" mode="widthFix"></cover-image>
                 </cover-view>
                 <!-- 保存按钮 -->
                 <cover-view class="btn" @click="save(1)">保存</cover-view>
@@ -201,7 +201,7 @@
               <cover-view class="section">
                 <!-- 减少按钮 -->
                 <cover-view class="reduce" @click="handleReduce(2)">
-                  <cover-image class="image" src="/static/images/icon_reduce@2x.webp" mode="widthFix"></cover-image>
+                  <cover-image class="image" src="/static/images/icon_reduce@2x.png" mode="widthFix"></cover-image>
                 </cover-view>
                 <!-- 滑块区域（占据主要空间） -->
                 <cover-view class="slider-wrapper">
@@ -230,7 +230,7 @@
                 </cover-view>
                 <!-- 增加按钮 -->
                 <cover-view class="add" @click="handleAdd(2)">
-                  <cover-image class="image" src="/static/images/icon_add@2x.webp" mode="widthFix"></cover-image>
+                  <cover-image class="image" src="/static/images/icon_add@2x.png" mode="widthFix"></cover-image>
                 </cover-view>
                 <!-- 保存按钮 -->
                 <cover-view class="btn" @click="save(2)">保存</cover-view>
@@ -241,7 +241,7 @@
               <cover-view class="section">
                 <!-- 减少按钮 -->
                 <cover-view class="reduce" @click="handleReduce(3)">
-                  <cover-image class="image" src="/static/images/icon_reduce@2x.webp" mode="widthFix"></cover-image>
+                  <cover-image class="image" src="/static/images/icon_reduce@2x.png" mode="widthFix"></cover-image>
                 </cover-view>
                 <!-- 滑块区域（占据主要空间） -->
                 <cover-view class="slider-wrapper">
@@ -270,7 +270,7 @@
                 </cover-view>
                 <!-- 增加按钮 -->
                 <cover-view class="add" @click="handleAdd(3)">
-                  <cover-image class="image" src="/static/images/icon_add@2x.webp" mode="widthFix"></cover-image>
+                  <cover-image class="image" src="/static/images/icon_add@2x.png" mode="widthFix"></cover-image>
                 </cover-view>
                 <!-- 保存按钮 -->
                 <cover-view class="btn" @click="save(3)">保存</cover-view>
@@ -308,10 +308,10 @@
 <script setup>
 import { computed, ref, watch } from "vue";
 
-import arrowUp from "@/static/images/arrow_up@2x.webp";
-import arrowDown from "@/static/images/arrow_down@2x.webp";
-import arrowLeft from "@/static/images/arrow_left@2x.webp";
-import arrowRight from "@/static/images/arrow_right@2x.webp";
+import arrowUp from "@/static/images/arrow_up@2x.png";
+import arrowDown from "@/static/images/arrow_down@2x.png";
+import arrowLeft from "@/static/images/arrow_left@2x.png";
+import arrowRight from "@/static/images/arrow_right@2x.png";
 const dirMiddle = ref(1);
 const dirTurn = ref(1);
 const throttle = ref(1);
@@ -567,7 +567,7 @@ function createMapperNew(inMin, inMax, outMin, outMax, value) {
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.6);
-  z-index: 999;
+  z-index: 10000;
   display: flex;
   justify-content: flex-end;
 }

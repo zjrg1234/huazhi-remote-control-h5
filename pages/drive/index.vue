@@ -914,7 +914,7 @@ cover-image {
 
 .right-cont {
   position: fixed;
-  z-index: 99999;
+  z-index: 9999;
   top: 40px;
   right: 20px;
 
@@ -928,7 +928,7 @@ cover-image {
   background: rgba(0, 0, 0, 0.5);
   border-radius: 20rpx;
   position: fixed;
-  z-index: 99999;
+  z-index: 9999;
   top: 10rpx;
   left: 50%;
   transform: translateX(-50%);

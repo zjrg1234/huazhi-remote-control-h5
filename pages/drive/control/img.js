@@ -13,10 +13,10 @@ import before_diff_selected from "@/static/images/icon_before_selected@2x.png";
 import light from "@/static/images/icon_lights@2x.png";
 import light_selected from "@/static/images/icon_lights_selected@2x.png";
 
-import arrowUp from "@/static/images/arrow_up@2x.webp";
-import arrowDown from "@/static/images/arrow_down@2x.webp";
-import arrowLeft from "@/static/images/arrow_left@2x.webp";
-import arrowRight from "@/static/images/arrow_right@2x.webp";
+import arrowUp from "@/static/images/arrow_up@2x.png";
+import arrowDown from "@/static/images/arrow_down@2x.png";
+import arrowLeft from "@/static/images/arrow_left@2x.png";
+import arrowRight from "@/static/images/arrow_right@2x.png";
 
 export {
   ch as ch1,
