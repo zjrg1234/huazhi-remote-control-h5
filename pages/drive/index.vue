@@ -26,7 +26,7 @@
       <cover-view class="status-bar-capsule">
         <cover-view class="flex">
           <cover-view class="fl">
-            <cover-text class="dot" v-if="carStatus"></cover-text>
+            <cover-text class="dot" :class="{'dot-red': !carStatus }" v-if="carStatus"></cover-text>
             <cover-view class="car">
               <cover-image class="image" src="/static/images/icon_car@2x.png" mode="aspectFit" />
               <cover-text class="mini-forbidden" v-if="!carStatus"></cover-text>
@@ -35,9 +35,9 @@
           <cover-view>
             <battery :percent="batteryPer"></battery>
           </cover-view>
-          <cover-view><cover-text class="time-text">|</cover-text></cover-view>
-          <cover-view>
-            <cover-text class="time-text">{{ currentTime }}</cover-text>
+          <cover-view class="split-vertical"></cover-view>
+          <cover-view class="time-text">
+            {{ currentTime }}
           </cover-view>
         </cover-view>
       </cover-view>
@@ -165,7 +165,7 @@ const webview1 = getCurrentInstance().proxy;
 const iframeView = ref(null)
 const videoUrl = ref(""); // 视频地址
 const allPopupVisible = ref(false);
-const carStatus = ref(true)
+const carStatus = ref(false)
 const currentTime = ref("");
 const showSpeed = ref(false);
 const showRepairReason = ref(false);
@@ -956,8 +956,8 @@ cover-image {
 
     .mini-forbidden {
       position: absolute;
-      bottom: 10px;
-      right: -2px;
+      bottom: 5px;
+      right: 0px;
     }
   }
 
@@ -968,26 +968,40 @@ cover-image {
     background: #09ff77;
     margin-right: 5px;
   }
+  .dot-red {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #ff4d4f;
+    margin-right: 5px;
+  }
 
   .time-text {
-    font-size: 20px;
+    font-size: 14px;
     color: #fff;
-
+    margin-left: 5px;
+    
+  }
+  .split-vertical {
+    width: 1px;
+    height: 12px;
+    margin-left: 5px;
+    background: rgba(255, 255, 255, 0.9);
   }
 }
 
 .tip {
   background: rgba(0, 0, 0, 0.5);
-  border-radius: 20rpx;
+  border-radius: 20px;
 
   position: fixed;
   z-index: 99999;
-  top: 50rpx;
+  top: 50px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 4rpx 16rpx;
+  padding: 4px 16px;
   color: #ccc;
-  font-size: 22rpx;
+  font-size: 22px;
 }
 
 .mini-forbidden {
