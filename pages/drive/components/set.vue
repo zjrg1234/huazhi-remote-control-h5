@@ -30,24 +30,46 @@
                   @click="handleSetSelect(mode.id)"
                 >
                   <!-- 右上角的黄色对勾 (仅当选中时显示) -->
-                  <cover-view v-if="selectedMode === mode.id" class="check-mark">
-                    <cover-image class="image" src="/static/images/icon_selected@2x.png" mode="widthFix"></cover-image>
+                  <cover-view
+                    v-if="selectedMode === mode.id"
+                    class="check-mark"
+                  >
+                    <cover-image
+                      class="image"
+                      src="/static/images/icon_selected@2x.png"
+                      mode="widthFix"
+                    ></cover-image>
                   </cover-view>
                   <!-- 布局区域：根据配置交换左右顺序 -->
-                  <cover-view class="content-layout" :class="{ 'reverse-layout': mode.isReverse }">
+                  <cover-view
+                    class="content-layout"
+                    :class="{ 'reverse-layout': mode.isReverse }"
+                  >
                     <!-- 左侧/第一组图标 -->
                     <cover-view class="icon-group">
                       <cover-view class="icon-row vertical">
-                        <cover-image :src="arrowUp" class="icon-img"></cover-image>
-                        <cover-image :src="arrowDown" class="icon-img"></cover-image>
+                        <cover-image
+                          :src="arrowUp"
+                          class="icon-img"
+                        ></cover-image>
+                        <cover-image
+                          :src="arrowDown"
+                          class="icon-img"
+                        ></cover-image>
                       </cover-view>
                       <cover-view class="label">前进/后退</cover-view>
                     </cover-view>
                     <!-- 右侧/第二组图标 -->
                     <cover-view class="icon-group">
                       <cover-view class="icon-row horizontal">
-                        <cover-image :src="arrowLeft" class="icon-img"></cover-image>
-                        <cover-image :src="arrowRight" class="icon-img"></cover-image>
+                        <cover-image
+                          :src="arrowLeft"
+                          class="icon-img"
+                        ></cover-image>
+                        <cover-image
+                          :src="arrowRight"
+                          class="icon-img"
+                        ></cover-image>
                       </cover-view>
                       <cover-view class="label">左转/右转</cover-view>
                     </cover-view>
@@ -58,28 +80,27 @@
             <cover-view class="group-item pr">
               <cover-view class="flex fj">
                 <cover-view class="tit">方向反向操作</cover-view>
-                <!-- <switch
-                  :checked="dir1Oper"
+
+                <switchCom
+                  v-model="dir1Oper"
                   @change="handleOper(1, $event)"
-                  color="#f5c542"
-                  style="transform:scale(0.8)"
-                  class="custom-switch"
-                /> -->
+                ></switchCom>
               </cover-view>
               <cover-view class="flex fj">
                 <cover-view class="tit">进退反向操作</cover-view>
-                <!-- <switch
-                  :checked="dir2Oper"
+
+                <switchCom
+                  v-model="dir2Oper"
                   @change="handleOper(2, $event)"
-                  color="#f5c542"
-                  style="transform:scale(0.8)"
-                  class="custom-switch"
-                /> -->
+                ></switchCom>
               </cover-view>
             </cover-view>
           </cover-view>
 
-          <cover-view class="group" v-if="selectedIndex == 0 && (type == '2' || type == '3')">
+          <cover-view
+            class="group"
+            v-if="selectedIndex == 0 && (type == '2' || type == '3')"
+          >
             <cover-view class="group-item">
               <cover-view class="tit">视频清晰度</cover-view>
               <cover-view class="flex">
@@ -105,25 +126,25 @@
                   @click="handleSetSelect(mode.id)"
                 >
                   <cover-image
-                  class="image"
+                    class="image"
                     v-if="selectedMode === mode.id && index == 0"
                     src="/static/images/icon_ev_dir1_selected@2x.png"
                     mode="widthFix"
                   ></cover-image>
                   <cover-image
-                  class="image"
+                    class="image"
                     v-if="selectedMode !== mode.id && index == 0"
                     src="/static/images/icon_ev_dir1@2x.png"
                     mode="widthFix"
                   ></cover-image>
                   <cover-image
-                  class="image"
+                    class="image"
                     v-if="selectedMode === mode.id && index == 1"
                     src="/static/images/icon_ev_dir2_selected@2x.png"
                     mode="widthFix"
                   ></cover-image>
                   <cover-image
-                  class="image"
+                    class="image"
                     v-if="selectedMode !== mode.id && index == 1"
                     src="/static/images/icon_ev_dir2@2x.png"
                     mode="widthFix"
@@ -134,23 +155,19 @@
             <cover-view class="group-item pr">
               <cover-view class="flex fj">
                 <cover-view class="tit">进退反向操作</cover-view>
-                <!-- <switch
-                  :checked="dir1Oper"
+
+                <switchCom
+                  v-model="dir1Oper"
                   @change="handleOper(3, $event)"
-                  color="#f5c542"
-                  style="transform:scale(0.8)"
-                  class="custom-switch"
-                /> -->
+                ></switchCom>
               </cover-view>
               <cover-view class="flex fj">
                 <cover-view class="tit">旋转反向操作</cover-view>
-                <!-- <switch
-                  :checked="dir2Oper"
+
+                <switchCom
+                  v-model="dir2Oper"
                   @change="handleOper(4, $event)"
-                  color="#f5c542"
-                  style="transform:scale(0.8)"
-                  class="custom-switch"
-                /> -->
+                ></switchCom>
               </cover-view>
             </cover-view>
           </cover-view>
@@ -161,7 +178,11 @@
               <cover-view class="section">
                 <!-- 减少按钮 -->
                 <cover-view class="reduce" @click="handleReduce(1)">
-                  <cover-image class="image" src="/static/images/icon_reduce@2x.png" mode="widthFix"></cover-image>
+                  <cover-image
+                    class="image"
+                    src="/static/images/icon_reduce@2x.png"
+                    mode="widthFix"
+                  ></cover-image>
                 </cover-view>
                 <!-- 滑块区域（占据主要空间） -->
                 <cover-view class="slider-wrapper">
@@ -190,7 +211,11 @@
                 </cover-view>
                 <!-- 增加按钮 -->
                 <cover-view class="add" @click="handleAdd(1)">
-                  <cover-image class="image" src="/static/images/icon_add@2x.png" mode="widthFix"></cover-image>
+                  <cover-image
+                    class="image"
+                    src="/static/images/icon_add@2x.png"
+                    mode="widthFix"
+                  ></cover-image>
                 </cover-view>
                 <!-- 保存按钮 -->
                 <cover-view class="btn" @click="save(1)">保存</cover-view>
@@ -201,7 +226,11 @@
               <cover-view class="section">
                 <!-- 减少按钮 -->
                 <cover-view class="reduce" @click="handleReduce(2)">
-                  <cover-image class="image" src="/static/images/icon_reduce@2x.png" mode="widthFix"></cover-image>
+                  <cover-image
+                    class="image"
+                    src="/static/images/icon_reduce@2x.png"
+                    mode="widthFix"
+                  ></cover-image>
                 </cover-view>
                 <!-- 滑块区域（占据主要空间） -->
                 <cover-view class="slider-wrapper">
@@ -214,7 +243,7 @@
                     :min="1"
                     :max="100"
                     :value="dirTurn"
-                    @change="changeVal(2,$event)"
+                    @change="changeVal(2, $event)"
                     activeColor="#f5c542"
                     backgroundColor="#e5e5e5"
                     block-size="20"
@@ -230,7 +259,11 @@
                 </cover-view>
                 <!-- 增加按钮 -->
                 <cover-view class="add" @click="handleAdd(2)">
-                  <cover-image class="image" src="/static/images/icon_add@2x.png" mode="widthFix"></cover-image>
+                  <cover-image
+                    class="image"
+                    src="/static/images/icon_add@2x.png"
+                    mode="widthFix"
+                  ></cover-image>
                 </cover-view>
                 <!-- 保存按钮 -->
                 <cover-view class="btn" @click="save(2)">保存</cover-view>
@@ -241,7 +274,11 @@
               <cover-view class="section">
                 <!-- 减少按钮 -->
                 <cover-view class="reduce" @click="handleReduce(3)">
-                  <cover-image class="image" src="/static/images/icon_reduce@2x.png" mode="widthFix"></cover-image>
+                  <cover-image
+                    class="image"
+                    src="/static/images/icon_reduce@2x.png"
+                    mode="widthFix"
+                  ></cover-image>
                 </cover-view>
                 <!-- 滑块区域（占据主要空间） -->
                 <cover-view class="slider-wrapper">
@@ -254,7 +291,7 @@
                     :min="1"
                     :max="100"
                     :value="throttle"
-                    @change="changeVal(3,$event)"
+                    @change="changeVal(3, $event)"
                     activeColor="#f5c542"
                     backgroundColor="#e5e5e5"
                     block-size="20"
@@ -270,7 +307,11 @@
                 </cover-view>
                 <!-- 增加按钮 -->
                 <cover-view class="add" @click="handleAdd(3)">
-                  <cover-image class="image" src="/static/images/icon_add@2x.png" mode="widthFix"></cover-image>
+                  <cover-image
+                    class="image"
+                    src="/static/images/icon_add@2x.png"
+                    mode="widthFix"
+                  ></cover-image>
                 </cover-view>
                 <!-- 保存按钮 -->
                 <cover-view class="btn" @click="save(3)">保存</cover-view>
@@ -282,7 +323,11 @@
           <cover-view class="settings-bar">
             <cover-view class="text-area">设置</cover-view>
             <cover-view class="close-btn" @click="close">
-              <cover-image class="image" src="/static/images/icon_close@2x.png" mode="widthFix"></cover-image>
+              <cover-image
+                class="image"
+                src="/static/images/icon_close@2x.png"
+                mode="widthFix"
+              ></cover-image>
             </cover-view>
           </cover-view>
           <cover-view
@@ -297,7 +342,10 @@
             >
               {{ item.name }}
             </cover-view>
-            <cover-view class="gradient-line" v-if="selectedIndex == item.key"></cover-view>
+            <cover-view
+              class="gradient-line"
+              v-if="selectedIndex == item.key"
+            ></cover-view>
           </cover-view>
         </cover-view>
       </cover-view>
@@ -307,7 +355,7 @@
 
 <script setup>
 import { computed, ref, watch } from "vue";
-
+import switchCom from "./switchCom.vue";
 import arrowUp from "@/static/images/arrow_up@2x.png";
 import arrowDown from "@/static/images/arrow_down@2x.png";
 import arrowLeft from "@/static/images/arrow_left@2x.png";
@@ -335,16 +383,16 @@ const props = defineProps({
     default: () => ({ mini_value: 1, max_value: 100, current_value: 0 }),
   },
 });
-const dirMiddleVal = ref(0)
+const dirMiddleVal = ref(0);
 
 watch(
   () => props.directionCenter,
   (val) => {
     const mapNum = createReverseMapper(1, 100, val.mini_value, val.max_value);
     dirMiddle.value = mapNum(val.current_value);
-    dirMiddleValFunc(dirMiddle.value)
+    dirMiddleValFunc(dirMiddle.value);
   },
-  { immediate: true, deep: true }
+  { immediate: true, deep: true },
 );
 
 watch(
@@ -353,7 +401,7 @@ watch(
     const mapNum = createReverseMapper(1, 100, val.mini_value, val.max_value);
     dirTurn.value = mapNum(val.current_value);
   },
-  { immediate: true, deep: true }
+  { immediate: true, deep: true },
 );
 
 watch(
@@ -362,19 +410,19 @@ watch(
     const mapNum = createReverseMapper(1, 100, val.mini_value, val.max_value);
     throttle.value = mapNum(val.current_value);
   },
-  { immediate: true, deep: true }
+  { immediate: true, deep: true },
 );
 
 const dir1Oper = ref(false);
 const dir2Oper = ref(false);
 const valueMap = { 1: dirMiddle, 2: dirTurn, 3: throttle };
 
-
-function dirMiddleValFunc (num) {
-
-
-	console.log(props.directionCenter?.mini_value ?? 500,
-	 props.directionCenter?.max_value ?? 1500, num)
+function dirMiddleValFunc(num) {
+  console.log(
+    props.directionCenter?.mini_value ?? 500,
+    props.directionCenter?.max_value ?? 1500,
+    num,
+  );
   const mapNum = createMapperNew(
     1,
     100,
@@ -382,9 +430,9 @@ function dirMiddleValFunc (num) {
     props.directionCenter?.max_value ?? 1500,
     num,
   );
-  console.log(mapNum)
+  console.log(mapNum);
   dirMiddleVal.value = mapNum.toFixed(0);
-};
+}
 
 const qualityList = ref([]);
 const currentQuality = ref("1");
@@ -400,11 +448,11 @@ watch(
     ];
     const targetValues = newVal.split(",");
     qualityList.value = qualityListMap.filter((item) =>
-      targetValues.includes(item.value)
+      targetValues.includes(item.value),
     );
     currentQuality.value = targetValues[0];
   },
-  { immediate: true, deep: true }
+  { immediate: true, deep: true },
 );
 
 watch(
@@ -412,7 +460,7 @@ watch(
   (newVal) => {
     dir1Oper.value = newVal == 0 ? false : true;
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -420,7 +468,7 @@ watch(
   (newVal) => {
     dir2Oper.value = newVal == 0 ? false : true;
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const emit = defineEmits([
@@ -441,7 +489,7 @@ const setGroup = ref([
 ]);
 const selectedIndex = ref(0);
 const close = () => {
-  const obj = JSON.parse(uni.getStorageSync('carDetails'));
+  const obj = JSON.parse(uni.getStorageSync("carDetails"));
 
   const val = {
     1: obj.direction_center.current_value,
@@ -480,23 +528,21 @@ const handleSetSelect = (id) => {
   emit("action", id);
 };
 
-
 const changeVal = (flag, e) => {
-  
-   if (flag == 1) {
-    dirMiddleValFunc(e.detail.value)
-    dirMiddle.value = e.detail.value
-   } else if(flag == 2) {
-      dirTurn.value = e.detail.value
-   } else {
-    throttle.value =  e.detail.value
-   }
+  if (flag == 1) {
+    dirMiddleValFunc(e.detail.value);
+    dirMiddle.value = e.detail.value;
+  } else if (flag == 2) {
+    dirTurn.value = e.detail.value;
+  } else {
+    throttle.value = e.detail.value;
+  }
 
-   console.log({
+  console.log({
     1: dirMiddleVal.value,
     2: dirTurn.value,
     3: throttle.value,
-  })
+  });
   emit("changeValue", {
     1: dirMiddleVal.value,
     2: dirTurn.value,
@@ -517,10 +563,10 @@ const handleValueChange = (type, step) => {
 
   // 第一个滑块
   if (type == 1) {
-    dirMiddleValFunc(target.value)
-    dirMiddle.value = target.value
+    dirMiddleValFunc(target.value);
+    dirMiddle.value = target.value;
   }
- 
+
   emit("changeValue", {
     1: dirMiddleVal.value,
     2: dirTurn.value,
@@ -549,12 +595,14 @@ const save = (type) => {
 function createMapperNew(inMin, inMax, outMin, outMax, value) {
   // 1. 防止除以 0 导致 NaN 或 Infinity
   if (inMax === inMin) return outMin;
-  
+
   // 2. 将输入值限制在 inMin 和 inMax 之间
   const clampedValue = Math.max(inMin, Math.min(inMax, value));
-  
+
   // 3. 执行线性映射计算
-  return outMin + ((clampedValue - inMin) * (outMax - outMin)) / (inMax - inMin);
+  return (
+    outMin + ((clampedValue - inMin) * (outMax - outMin)) / (inMax - inMin)
+  );
 }
 </script>
 
@@ -585,8 +633,12 @@ function createMapperNew(inMin, inMax, outMin, outMax, value) {
 }
 
 @keyframes slideIn {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 .cont {
@@ -626,7 +678,9 @@ function createMapperNew(inMin, inMax, outMin, outMax, value) {
     .text-area {
       flex: 1;
       text-align: center;
-      font-family: PingFangSC, PingFang SC;
+      font-family:
+        PingFangSC,
+        PingFang SC;
       font-weight: 500;
       font-size: 14px;
       letter-spacing: 4px;
@@ -651,7 +705,9 @@ function createMapperNew(inMin, inMax, outMin, outMax, value) {
     padding-bottom: 4px;
 
     .setting-item {
-      font-family: PingFangSC, PingFang SC;
+      font-family:
+        PingFangSC,
+        PingFang SC;
       font-weight: 500;
       font-size: 14px;
       color: rgba(255, 255, 255, 0.8);
@@ -695,7 +751,9 @@ function createMapperNew(inMin, inMax, outMin, outMax, value) {
     margin-bottom: 4px;
 
     .tit {
-      font-family: PingFangSC, PingFang SC;
+      font-family:
+        PingFangSC,
+        PingFang SC;
       font-weight: 400;
       font-size: 16px;
       color: #ffffff;
@@ -727,6 +785,7 @@ function createMapperNew(inMin, inMax, outMin, outMax, value) {
     cursor: pointer;
     transition: all 0.3s ease;
     outline: none;
+    margin-right: 5px;
   }
 
   .btn-quality.active {
@@ -763,9 +822,9 @@ function createMapperNew(inMin, inMax, outMin, outMax, value) {
     position: absolute;
     top: -0.5px;
     right: -0.5px;
-    width: 20px; 
-    height: 20px; 
-    
+    width: 20px;
+    height: 20px;
+
     display: flex;
     align-items: flex-start;
     justify-content: flex-end;
@@ -774,8 +833,8 @@ function createMapperNew(inMin, inMax, outMin, outMax, value) {
 
   .check-mark img {
     position: absolute;
-    top: 0; 
-    right: 0; 
+    top: 0;
+    right: 0;
     width: 16px;
     height: 16px;
     transform: rotate(0deg);
@@ -849,48 +908,46 @@ function createMapperNew(inMin, inMax, outMin, outMax, value) {
   gap: 8px;
   height: 80px;
   .num {
-  position: absolute;
-  top: 10px;
-  transform: translateX(-50%);
-  /* 关键：让标签的中心点对齐 left 值，实现完美居中 */
-  color: #fff;
-  font-size: 12px;
-  white-space: nowrap;
-  /* 防止数字换行 */
-  pointer-events: none;
-  text-align: left;
-  /* 防止标签拦截鼠标的拖拽事件 */
-}
-
-.slider-label {
-  position: relative;
-  height: 30px;
-}
-
-.slider-label-bottom {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 4px;
-
-  .num-text {
+    position: absolute;
+    top: 10px;
+    transform: translateX(-50%);
+    /* 关键：让标签的中心点对齐 left 值，实现完美居中 */
     color: #fff;
     font-size: 12px;
+    white-space: nowrap;
+    /* 防止数字换行 */
+    pointer-events: none;
+    text-align: left;
+    /* 防止标签拦截鼠标的拖拽事件 */
   }
 
-  .num-left {
-    margin-left: -2px;
-  }
-  .nl {
-    margin-left: -8px;
+  .slider-label {
+    position: relative;
+    height: 30px;
   }
 
-  .num-right {
-    margin-right: -8px;
+  .slider-label-bottom {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+
+    .num-text {
+      color: #fff;
+      font-size: 12px;
+    }
+
+    .num-left {
+      margin-left: -2px;
+    }
+    .nl {
+      margin-left: -8px;
+    }
+
+    .num-right {
+      margin-right: -8px;
+    }
   }
 }
-}
-
-
 
 .reduce,
 .add,
@@ -900,7 +957,9 @@ function createMapperNew(inMin, inMax, outMin, outMax, value) {
 
 .btn {
   border-radius: 4px;
-  font-family: PingFangSC, PingFang SC;
+  font-family:
+    PingFangSC,
+    PingFang SC;
   font-weight: 400;
   font-size: 12px;
   color: #1a1a1a;
@@ -928,5 +987,5 @@ function createMapperNew(inMin, inMax, outMin, outMax, value) {
 .custom-sider-img {
   width: 10px;
   height: 10px;
-}  
+}
 </style>

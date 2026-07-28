@@ -513,6 +513,7 @@ const handleOper = (type) => {
 // 是否开启相反方向
 const handleFBDir = (val) => {
   const arr = val.split("_");
+
   if (arr[0] == 1) operFB.value = arr[1] === "true" ? 1 : 0;
   if (arr[0] == 2) operDir.value = arr[1] === "true" ? 1 : 0;
   if (arr[0] == 3) operFB.value = arr[1] === "true" ? 1 : 0;
