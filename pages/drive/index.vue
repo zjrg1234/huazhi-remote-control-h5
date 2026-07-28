@@ -16,10 +16,7 @@
       </cover-view>
       <web-view :src="videoUrl" ref="iframeView">
 
-
-
       </web-view>
-
 
 
       <!-- #endif -->
@@ -935,18 +932,17 @@ cover-image {
   top: 10rpx;
   left: 50%;
   transform: translateX(-50%);
-  padding: 0 15rpx;
+  padding: 3rpx 15rpx;
 
   .flex {
     display: flex;
     align-items: center;
-    gap: 10rpx;
   }
 
   .fl {
     display: flex;
     align-items: center;
-    gap: 4rpx;
+    margin-right: 10px;
   }
 
   .car {
@@ -955,15 +951,13 @@ cover-image {
     .image {
       width: 25px;
       height: 25px;
-      margin-top: 5px;
+
     }
 
     .mini-forbidden {
       position: absolute;
       bottom: 10px;
       right: -2px;
-      z-index: 999999;
-
     }
   }
 
@@ -972,14 +966,13 @@ cover-image {
     height: 6px;
     border-radius: 50%;
     background: #09ff77;
-    z-index: 999999;
-
+    margin-right: 5px;
   }
 
   .time-text {
     font-size: 20px;
     color: #fff;
-    z-index: 999999;
+
   }
 }
 

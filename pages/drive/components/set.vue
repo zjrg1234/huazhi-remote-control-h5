@@ -6,9 +6,9 @@
           <!-- type 1 是遥控车 -->
           <cover-view class="group" v-if="selectedIndex == 0 && type == '1'">
             <cover-view class="group-item">
-              <cover-text class="tit">视频清晰度</cover-text>
+              <cover-view class="tit">视频清晰度</cover-view>
               <cover-view class="flex">
-                <cover-text
+                <cover-view
                   v-for="(item, index) in qualityList"
                   :key="index"
                   class="btn-quality"
@@ -16,11 +16,11 @@
                   @click="handleSelect(item.value)"
                 >
                   {{ item.label }}
-                </cover-text>
+                </cover-view>
               </cover-view>
             </cover-view>
             <cover-view class="group-item">
-              <cover-text class="tit">操作设置</cover-text>
+              <cover-view class="tit">操作设置</cover-view>
               <cover-view class="flex">
                 <cover-view
                   v-for="(mode, index) in steeringModes"
@@ -41,7 +41,7 @@
                         <cover-image :src="arrowUp" class="icon-img"></cover-image>
                         <cover-image :src="arrowDown" class="icon-img"></cover-image>
                       </cover-view>
-                      <span class="label">前进/后退</span>
+                      <cover-view class="label">前进/后退</cover-view>
                     </cover-view>
                     <!-- 右侧/第二组图标 -->
                     <cover-view class="icon-group">
@@ -49,7 +49,7 @@
                         <cover-image :src="arrowLeft" class="icon-img"></cover-image>
                         <cover-image :src="arrowRight" class="icon-img"></cover-image>
                       </cover-view>
-                      <span class="label">左转/右转</span>
+                      <cover-view class="label">左转/右转</cover-view>
                     </cover-view>
                   </cover-view>
                 </cover-view>
@@ -57,33 +57,33 @@
             </cover-view>
             <cover-view class="group-item pr">
               <cover-view class="flex fj">
-                <cover-text class="tit">方向反向操作</cover-text>
-                <switch
+                <cover-view class="tit">方向反向操作</cover-view>
+                <!-- <switch
                   :checked="dir1Oper"
                   @change="handleOper(1, $event)"
                   color="#f5c542"
                   style="transform:scale(0.8)"
                   class="custom-switch"
-                />
+                /> -->
               </cover-view>
               <cover-view class="flex fj">
-                <cover-text class="tit">进退反向操作</cover-text>
-                <switch
+                <cover-view class="tit">进退反向操作</cover-view>
+                <!-- <switch
                   :checked="dir2Oper"
                   @change="handleOper(2, $event)"
                   color="#f5c542"
                   style="transform:scale(0.8)"
                   class="custom-switch"
-                />
+                /> -->
               </cover-view>
             </cover-view>
           </cover-view>
 
           <cover-view class="group" v-if="selectedIndex == 0 && (type == '2' || type == '3')">
             <cover-view class="group-item">
-              <cover-text class="tit">视频清晰度</cover-text>
+              <cover-view class="tit">视频清晰度</cover-view>
               <cover-view class="flex">
-                <cover-text
+                <cover-view
                   v-for="(item, index) in qualityList"
                   :key="index"
                   class="btn-quality"
@@ -91,11 +91,11 @@
                   @click="handleSelect(item.value)"
                 >
                   {{ item.label }}
-                </cover-text>
+                </cover-view>
               </cover-view>
             </cover-view>
             <cover-view class="group-item">
-              <cover-text class="tit">操作设置</cover-text>
+              <cover-view class="tit">操作设置</cover-view>
               <cover-view class="flex">
                 <cover-view
                   v-for="(mode, index) in steeringModes"
@@ -133,31 +133,31 @@
             </cover-view>
             <cover-view class="group-item pr">
               <cover-view class="flex fj">
-                <cover-text class="tit">进退反向操作</cover-text>
-                <switch
+                <cover-view class="tit">进退反向操作</cover-view>
+                <!-- <switch
                   :checked="dir1Oper"
                   @change="handleOper(3, $event)"
                   color="#f5c542"
                   style="transform:scale(0.8)"
                   class="custom-switch"
-                />
+                /> -->
               </cover-view>
               <cover-view class="flex fj">
-                <cover-text class="tit">旋转反向操作</cover-text>
-                <switch
+                <cover-view class="tit">旋转反向操作</cover-view>
+                <!-- <switch
                   :checked="dir2Oper"
                   @change="handleOper(4, $event)"
                   color="#f5c542"
                   style="transform:scale(0.8)"
                   class="custom-switch"
-                />
+                /> -->
               </cover-view>
             </cover-view>
           </cover-view>
 
           <cover-view class="group" v-if="selectedIndex == 1">
             <cover-view class="group-item">
-              <cover-text class="tit">方向中位微调</cover-text>
+              <cover-view class="tit">方向中位微调</cover-view>
               <cover-view class="section">
                 <!-- 减少按钮 -->
                 <cover-view class="reduce" @click="handleReduce(1)">
@@ -197,7 +197,7 @@
               </cover-view>
             </cover-view>
             <cover-view class="group-item">
-              <cover-text class="tit">方向力度微调</cover-text>
+              <cover-view class="tit">方向力度微调</cover-view>
               <cover-view class="section">
                 <!-- 减少按钮 -->
                 <cover-view class="reduce" @click="handleReduce(2)">
@@ -237,7 +237,7 @@
               </cover-view>
             </cover-view>
             <cover-view class="group-item">
-              <cover-text class="tit">油门力度微调</cover-text>
+              <cover-view class="tit">油门力度微调</cover-view>
               <cover-view class="section">
                 <!-- 减少按钮 -->
                 <cover-view class="reduce" @click="handleReduce(3)">
@@ -282,7 +282,7 @@
           <cover-view class="settings-bar">
             <cover-view class="text-area">设置</cover-view>
             <cover-view class="close-btn" @click="close">
-              <cover-image class="image" src="/static/images/icon_close@2x.webp" mode="widthFix"></cover-image>
+              <cover-image class="image" src="/static/images/icon_close@2x.png" mode="widthFix"></cover-image>
             </cover-view>
           </cover-view>
           <cover-view
@@ -455,7 +455,7 @@ const close = () => {
     val[2] = dirTurn.value;
   }
   if (saveFlag.value[3]) {
-    val[2] = throttle.value;
+    val[3] = throttle.value;
   }
   emit("changeValue", val);
   visible.value = false;
