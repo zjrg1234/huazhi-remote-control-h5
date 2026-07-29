@@ -14,17 +14,16 @@
       :class="{ active: isUpActive }"
     ></cover-image>
 
-    <cover-view :class="{ ready: isReadyMode }" >
-
+  
     <cover-image
       class="dot"
       src="/static/images/dot@2x.png"
-      :class="{ dragging: isDragging }"
+      :class="{ dragging: isDragging , ready: isReadyMode }"
       :style="{
         transform: `translateY(${currentDotY}px) scale(1)`
       }"
     ></cover-image>
-    </cover-view>
+
 
     <cover-image
       class="arrow down"
@@ -289,7 +288,7 @@ const handleEnd = (e) => {
               box-shadow 0.3s ease;
 }
 
-.ready {
+.dot.ready {
   box-shadow: 0 0 7.5px rgba(255, 167, 38, 0.6);
   border: 1px solid rgba(255, 167, 38, 0.8);
   border-radius: 50%;

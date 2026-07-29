@@ -4,14 +4,14 @@
     <cover-image class="arrow left" src="/static/images/arrow_left_big@2x.png"
       :class="{ active: isLeftActive }"></cover-image>
 
-    <cover-view :class="{ ready: isReadyMode }" >
-      <cover-image class="dot" ref="dotRef"  src="/static/images/dot@2x.png" :style="{
+  
+      <cover-image class="dot" ref="dotRef"  :class="{ ready: isReadyMode }" src="/static/images/dot@2x.png" :style="{
         transition: isDragging
           ? 'none'
           : 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease, box-shadow 0.3s ease',
         transform: `translateX(${dotX}px) scale(1)`
       }"></cover-image>
-    </cover-view>
+
 
 
     <cover-image class="arrow right" src="/static/images/arrow_right_big@2x.png"
@@ -329,7 +329,7 @@ const handleEnd = () => {
   cursor: grabbing;
 }
 
-.ready {
+.dot.ready {
   box-shadow: 0 0 7.5px rgba(255, 167, 38, 0.6);
   /* background-color: rgba(255, 167, 38, 0.3); */
   border: 1px solid rgba(255, 167, 38, 0.8);

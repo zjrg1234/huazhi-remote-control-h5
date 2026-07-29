@@ -1,10 +1,11 @@
 <template>
   <cover-view v-if="visible" class="custom-popup-mask">
+    233
     <cover-view class="custom-popup-right">
       <cover-view class="cont">
         <cover-view class="left">
           <!-- type 1 是遥控车 -->
-          <cover-view class="group" v-show="selectedIndex == 0 && type == '1'">
+          <cover-view class="group" v-if="selectedIndex == 0 && type == '1'">
             <cover-view class="group-item">
               <cover-view class="tit">视频清晰度</cover-view>
               <cover-view class="flex">
@@ -358,7 +359,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, onMounted } from "vue";
 import SwitchComp from "./switchComp.vue";
 import SliderComp from "./sliderComp.vue";
 import arrowUp from "@/static/images/arrow_up@2x.png";
@@ -418,6 +419,10 @@ watch(
   },
   { immediate: true, deep: true },
 );
+
+onMounted(()=> {
+
+});
 
 const dir1Oper = ref(false);
 const dir2Oper = ref(false);
@@ -493,6 +498,7 @@ const setGroup = ref([
   { name: "通用设置", key: 0 },
   { name: "车辆微调", key: 1 },
 ]);
+
 const selectedIndex = ref(0);
 const close = () => {
   const obj = JSON.parse(uni.getStorageSync("carDetails"));
@@ -620,15 +626,67 @@ function createMapperNew(inMin, inMax, outMin, outMax, value) {
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.6);
+  z-index: 199999;
   display: flex;
   justify-content: flex-end;
+  width: 500px;
+  height: 100%;
+}
 
-  .custom-popup-right {
-    width: 80%;
-    max-width: 500px;
-    height: 100%;
-    background-color: #fff;
-    animation: slideIn 0.3s ease-out;
+cover-view,
+cover-image {
+  visibility: visible !important;
+  z-index: 199999;
+}
+/* 弹窗主体 */
+/* 弹窗主体 */
+.custom-popup-right {
+  width: 80%;
+  max-width: 500px;
+  width: 500px;
+  height: 100%;
+  background-color: #fff;
+  animation: slideIn 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+  z-index: 199999;
+
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.cont {
+  display: flex;
+  display: flex;
+  width: 100%;
+}
+
+.left {
+  width: 80%;
+  /* 可以添加背景色或内边距方便查看效果 */
+  background-color: #f0f0f0;
+
+  box-sizing: border-box;
+
+  border-right: 1px solid #777272;
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: 0rpx 0rpx 0rpx 0rpx rgba(255, 255, 255, 0.3);
+}
+
+.right {
+  width: 20%;
+  height: 100vh;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.8);
+  padding-top: 40px;
+  .settings-bar {
     display: flex;
     flex-direction: column;
   }
