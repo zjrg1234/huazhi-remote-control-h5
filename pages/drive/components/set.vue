@@ -669,7 +669,7 @@ function createMapperNew(inMin, inMax, outMin, outMax, value) {
   height: 100vh;
   box-sizing: border-box;
   background: rgba(0, 0, 0, 0.8);
-
+  padding-top: 40px;
   .settings-bar {
     display: flex;
     align-items: center;
@@ -812,6 +812,7 @@ function createMapperNew(inMin, inMax, outMin, outMax, value) {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-right: 10px;
   }
 
   .option-card:hover {

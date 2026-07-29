@@ -98,6 +98,7 @@ const backRightInit = () => {
   const { width, height } = getScreenSize();
   let x = width / 2 + 130 + 40;
   let y = height / 2 + 40;
+   // 不调用 clampPosition 直接赋值，测试一下。
   const clamped = clampPosition(x, y);
   boxX.value = clamped.x;
   boxY.value = clamped.y;
@@ -105,7 +106,7 @@ const backRightInit = () => {
 
 // 左侧初始化
 const backLeftInit = () => {
-  const { width, height } = getScreenSize();
+  // const { width, height } = getScreenSize();
   let x = 20;
   let y = 190;
   const clamped = clampPosition(x, y);
