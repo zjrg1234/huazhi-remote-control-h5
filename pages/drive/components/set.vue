@@ -1,10 +1,10 @@
 <template>
-  <cover-view v-show="visible" class="custom-popup-mask">
+  <cover-view v-if="visible" class="custom-popup-mask">
     <cover-view class="custom-popup-right">
       <cover-view class="cont">
         <cover-view class="left">
           <!-- type 1 是遥控车 -->
-          <cover-view class="group" v-if="selectedIndex == 0 && type == '1'">
+          <cover-view class="group" v-show="selectedIndex == 0 && type == '1'">
             <cover-view class="group-item">
               <cover-view class="tit">视频清晰度</cover-view>
               <cover-view class="flex">
@@ -30,6 +30,7 @@
                   @click="handleSetSelect(mode.id)"
                 >
                   <!-- 右上角的黄色对勾 (仅当选中时显示) -->
+                   {{ selectedMode }} {{ mode.id }}
                   <cover-view
                     v-if="selectedMode === mode.id"
                     class="check-mark"
@@ -99,7 +100,7 @@
 
           <cover-view
             class="group"
-            v-if="selectedIndex == 0 && (type == '2' || type == '3')"
+            v-show="selectedIndex == 0 && (type == '2' || type == '3')"
           >
             <cover-view class="group-item">
               <cover-view class="tit">视频清晰度</cover-view>
@@ -127,25 +128,25 @@
                 >
                   <cover-image
                     class="image"
-                    v-if="selectedMode === mode.id && index == 0"
+                    v-show="selectedMode === mode.id && index == 0"
                     src="/static/images/icon_ev_dir1_selected@2x.png"
                     mode="widthFix"
                   ></cover-image>
                   <cover-image
                     class="image"
-                    v-if="selectedMode !== mode.id && index == 0"
+                    v-show="selectedMode !== mode.id && index == 0"
                     src="/static/images/icon_ev_dir1@2x.png"
                     mode="widthFix"
                   ></cover-image>
                   <cover-image
                     class="image"
-                    v-if="selectedMode === mode.id && index == 1"
+                    v-show="selectedMode === mode.id && index == 1"
                     src="/static/images/icon_ev_dir2_selected@2x.png"
                     mode="widthFix"
                   ></cover-image>
                   <cover-image
                     class="image"
-                    v-if="selectedMode !== mode.id && index == 1"
+                    v-show="selectedMode !== mode.id && index == 1"
                     src="/static/images/icon_ev_dir2@2x.png"
                     mode="widthFix"
                   ></cover-image>
@@ -172,7 +173,7 @@
             </cover-view>
           </cover-view>
 
-          <cover-view class="group" v-if="selectedIndex == 1">
+          <cover-view class="group" v-show="selectedIndex == 1">
             <cover-view class="group-item">
               <cover-view class="tit">方向中位微调</cover-view>
               <cover-view class="section">
@@ -347,7 +348,7 @@
             </cover-view>
             <cover-view
               class="gradient-line"
-              v-if="selectedIndex == item.key"
+              v-show="selectedIndex == item.key"
             ></cover-view>
           </cover-view>
         </cover-view>

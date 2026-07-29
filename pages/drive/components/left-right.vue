@@ -1,37 +1,21 @@
 <template>
-  <cover-view
-    class="control-box"
-    ref="boxRef"
-    :style="{ transform: `translate3d(${boxX}px, ${boxY}px, 0)` }"
-    @touchstart="handleStart"
-    @touchmove.stop="handleMove"
-    @touchend="handleEnd"
-    @mousedown="handleStart"
-  >
-    <cover-image
-      class="arrow left"
-      src="/static/images/arrow_left_big@2x.png"
-      :class="{ active: isLeftActive }"
-    ></cover-image>
+  <cover-view class="control-box" ref="boxRef" :style="{ transform: `translate3d(${boxX}px, ${boxY}px, 0)` }"
+    @touchstart="handleStart" @touchmove.stop="handleMove" @touchend="handleEnd" @mousedown="handleStart">
+    <cover-image class="arrow left" src="/static/images/arrow_left_big@2x.png"
+      :class="{ active: isLeftActive }"></cover-image>
 
-    <cover-image
-      class="dot"
-      ref="dotRef"
-      :class="{ ready: isReadyMode }"
-      src="/static/images/dot@2x.png"
-      :style="{
+    <cover-view :class="{ ready: isReadyMode }" >
+      <cover-image class="dot" ref="dotRef"  src="/static/images/dot@2x.png" :style="{
         transition: isDragging
           ? 'none'
           : 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease, box-shadow 0.3s ease',
         transform: `translateX(${dotX}px) scale(1)`
-      }"
-    ></cover-image>
+      }"></cover-image>
+    </cover-view>
 
-    <cover-image
-      class="arrow right"
-      src="/static/images/arrow_right_big@2x.png"
-      :class="{ active: isRightActive }"
-    ></cover-image>
+
+    <cover-image class="arrow right" src="/static/images/arrow_right_big@2x.png"
+      :class="{ active: isRightActive }"></cover-image>
   </cover-view>
 </template>
 
@@ -98,7 +82,7 @@ const backRightInit = () => {
   const { width, height } = getScreenSize();
   let x = width / 2 + 130 + 40;
   let y = height / 2 + 40;
-   // 不调用 clampPosition 直接赋值，测试一下。
+  // 不调用 clampPosition 直接赋值，测试一下。
   const clamped = clampPosition(x, y);
   boxX.value = clamped.x;
   boxY.value = clamped.y;
@@ -141,7 +125,7 @@ onBeforeUnmount(() => {
   // #endif
 
   // #ifdef H5
-  window.removeEventListener('resize', () => {});
+  window.removeEventListener('resize', () => { });
   // #endif
 });
 
@@ -262,7 +246,7 @@ const handleMove = (e) => {
     // 待命模式：圆点左右弹性滑动
     let deltaX = clientX - (boxX.value + BOX_WIDTH / 2) - dotStartOffset;
     const absDelta = Math.abs(deltaX);
-    console.log(absDelta,"absDelta", MAX_DOT_DRAG)
+    console.log(absDelta, "absDelta", MAX_DOT_DRAG)
 
     if (absDelta > MAX_DOT_DRAG) {
       const excess = absDelta - MAX_DOT_DRAG;
@@ -270,7 +254,7 @@ const handleMove = (e) => {
       deltaX = sign * (MAX_DOT_DRAG + excess * 0.2);
     }
 
-    console.log(deltaX,"deltaX")
+    console.log(deltaX, "deltaX")
 
     if (deltaX < -65) deltaX = -65;
     if (deltaX > 65) deltaX = 65;
@@ -307,7 +291,8 @@ const handleEnd = () => {
   z-index: 9999;
   will-change: transform;
   user-select: none;
-  touch-action: none; /* H5 下禁止默认触摸行为 */
+  touch-action: none;
+  /* H5 下禁止默认触摸行为 */
 }
 
 .arrow {
@@ -328,8 +313,8 @@ const handleEnd = () => {
 }
 
 .dot {
-  width: 50px;
-  height: 50px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background-repeat: no-repeat;
   background-position: center center;
@@ -344,9 +329,11 @@ const handleEnd = () => {
   cursor: grabbing;
 }
 
-.dot.ready {
+.ready {
   box-shadow: 0 0 7.5px rgba(255, 167, 38, 0.6);
   /* background-color: rgba(255, 167, 38, 0.3); */
-  border: 2rpx solid rgba(255, 167, 38, 0.8);
+  border: 1px solid rgba(255, 167, 38, 0.8);
+  border-radius: 50%;
+
 }
 </style>

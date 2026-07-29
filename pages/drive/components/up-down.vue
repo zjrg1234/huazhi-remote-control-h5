@@ -14,14 +14,17 @@
       :class="{ active: isUpActive }"
     ></cover-image>
 
+    <cover-view :class="{ ready: isReadyMode }" >
+
     <cover-image
       class="dot"
       src="/static/images/dot@2x.png"
-      :class="{ ready: isReadyMode, dragging: isDragging }"
+      :class="{ dragging: isDragging }"
       :style="{
         transform: `translateY(${currentDotY}px) scale(1)`
       }"
     ></cover-image>
+    </cover-view>
 
     <cover-image
       class="arrow down"
@@ -135,6 +138,19 @@ const resetArrows = () => {
 };
 
 // ==================== 核心修复 ====================
+// 获取触摸/鼠标坐标（统一使用 pageX/pageY，避免固定定位偏移）
+const getClientPos = (e) => {
+  if (e.touches && e.touches.length > 0) {
+    return {
+      clientX: e.touches[0].pageX || e.touches[0].clientX,
+      clientY: e.touches[0].pageY || e.touches[0].clientY,
+    };
+  }
+  return {
+    clientX: e.pageX || e.clientX,
+    clientY: e.pageY || e.clientY,
+  };
+};
 
 const handleStart = (e) => {
   // 【修复1】显式阻止默认行为和事件冒泡
@@ -147,8 +163,9 @@ const handleStart = (e) => {
   resetArrows();
 
   const touch = e.touches[0];
-  const clientX = touch.clientX;
-  const clientY = touch.clientY;
+  const {clientX, clientY} = getClientPos(e)
+  // const clientX = touch.clientX;
+  // const clientY = touch.clientY;
 
   dragBaseX = currentBoxX.value;
   dragBaseY = currentBoxY.value;
@@ -165,9 +182,11 @@ const handleMove = (e) => {
   if (e.preventDefault) e.preventDefault();
   if (e.stopPropagation) e.stopPropagation();
 
-  const touch = e.touches[0];
-  const clientX = touch.clientX;
-  const clientY = touch.clientY;
+  const {clientX, clientY} = getClientPos(e)
+  
+  // const touch = e.touches[0];
+  // const clientX = touch.clientX;
+  // const clientY = touch.clientY;
   lastPointerY = clientY;
   resetIdleTimer();
 
@@ -193,6 +212,7 @@ const handleMove = (e) => {
     }
 
     currentDotY.value = deltaY;
+    console.log("deltaY:",deltaY)
     if (deltaY < -45) currentDotY.value = -45;
     if (deltaY > 45) currentDotY.value = 45;
 
@@ -255,8 +275,8 @@ const handleEnd = (e) => {
 }
 
 .dot {
-  width: 50px;
-  height: 50px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background-repeat: no-repeat;
   background-position: center center;
@@ -269,8 +289,10 @@ const handleEnd = (e) => {
               box-shadow 0.3s ease;
 }
 
-.dot.ready {
+.ready {
   box-shadow: 0 0 7.5px rgba(255, 167, 38, 0.6);
+  border: 1px solid rgba(255, 167, 38, 0.8);
+  border-radius: 50%;
 }
 
 .dot.dragging {

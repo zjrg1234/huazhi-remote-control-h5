@@ -24,10 +24,10 @@
       <cover-view class="status-bar-capsule">
         <cover-view class="flex">
           <cover-view class="fl">
-            <cover-text class="dot" :class="{'dot-red': !carStatus }" v-show="carStatus"></cover-text>
+            <cover-view class="dot" :class="{'dot-red': !carStatus }" v-show="carStatus"></cover-view>
             <cover-view class="car">
               <cover-image class="image" src="/static/images/icon_car@2x.png" mode="aspectFit" />
-              <cover-text class="mini-forbidden" v-show="!carStatus"></cover-text>
+              <cover-view class="mini-forbidden" v-show="!carStatus"></cover-view>
             </cover-view>
           </cover-view>
           <cover-view>
@@ -42,7 +42,7 @@
 
       <!-- 剩余时间提示 -->
       <cover-view class="tip" v-show="numTip > 0">
-        <cover-text>距离本次结束驾驶还有{{ 31 - numTip }}s</cover-text>
+        <cover-view>距离本次结束驾驶还有{{ 31 - numTip }}s</cover-view>
       </cover-view>
 
       <!-- 设置按钮 -->
@@ -64,7 +64,7 @@
       <cover-view class="side-menu">
         <cover-view class="menu-item" v-for="(item, index) in menuList" :key="index" @click="handleIcon(item)">
           <cover-image class="img" mode="aspectFit" :src="activeKey.includes(item.key) ? item.iconSelect : item.icon" />
-          <cover-text class="label">{{ item.name }}</cover-text>
+          <cover-view class="label">{{ item.name }}</cover-view>
         </cover-view>
       </cover-view>
 
@@ -533,6 +533,7 @@ const changeVal = (value) => {
 };
 
 const set = () => {
+  console.log(setVisible.value)
   setVisible.value = true;
   showSpeed.value = false;
   handleFBDrive({ fb: false, value: 0 });
