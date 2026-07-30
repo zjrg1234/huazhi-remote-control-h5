@@ -1386,7 +1386,7 @@ const close = () => {
   changeVal(val)
   setVisible.value = false;
 };
-
+// 滑动slider
 const setChangeVal = (flag, value) => {
 
   const val = value.detail.value
