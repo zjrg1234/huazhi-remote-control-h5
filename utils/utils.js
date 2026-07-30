@@ -181,3 +181,28 @@ export const handleBattery = (voltage, batteryType) => {
     batteryRate = (Math.max(0.0, Math.min(1.0, batteryRate))).toFixed(2) * 100;
     return batteryRate;
 }
+
+
+
+export const createReverseMapper = (inMin, inMax, outMin, outMax) => {
+  return (value) => {
+    const clampedValue = Math.max(outMin, Math.min(outMax, value));
+    const result =
+      inMin + ((clampedValue - outMin) * (inMax - inMin)) / (outMax - outMin);
+    return parseFloat(result.toFixed(1));
+  };
+}
+
+
+export const createMapperNew = (inMin, inMax, outMin, outMax, value) => {
+  // 1. 防止除以 0 导致 NaN 或 Infinity
+  if (inMax === inMin) return outMin;
+
+  // 2. 将输入值限制在 inMin 和 inMax 之间
+  const clampedValue = Math.max(inMin, Math.min(inMax, value));
+
+  // 3. 执行线性映射计算
+  return (
+    outMin + ((clampedValue - inMin) * (outMax - outMin)) / (inMax - inMin)
+  );
+}
