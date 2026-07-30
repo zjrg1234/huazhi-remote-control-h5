@@ -111,259 +111,247 @@
 
       <cover-view v-show="setVisible" :style="{ display: setVisible ? 'block' : 'none' }" class="custom-popup-mask">
         <!-- <cover-view class="fe"> -->
-          <cover-view class="custom-popup-right">
-            <cover-view class="cont">
-              <cover-view class="left">
-                <!-- type 1 是遥控车 -->
-                <cover-view class="group" v-show="selectedIndex == 0 && carType == '1'">
-                  <cover-view class="group-item">
-                    <cover-view class="tit">视频清晰度</cover-view>
-                    <cover-view class="flex">
-                      <cover-view v-for="(item, index) in qualityList" :key="index" class="btn-quality"
-                        :class="{ active: currentQuality === item.value }" @click="handleSelect(item.value)">
-                        {{ item.label }}
-                      </cover-view>
-                    </cover-view>
-                  </cover-view>
-                  <cover-view class="group-item">
-                    <cover-view class="tit">操作设置</cover-view>
-                    <cover-view class="flex">
-                      <cover-view v-for="(mode, index) in steeringModes" :key="index" class="option-card"
-                        :class="{ 'is-active': selectedMode === mode.id }" @click="handleSetSelect(mode.id)">
-                        <!-- 右上角的黄色对勾 (仅当选中时显示) -->
-
-                        <cover-view v-show="selectedMode === mode.id" class="check-mark"
-                          :style="{ display: selectedMode === mode.id ? 'block' : 'none' }">
-                          <cover-image class="image" src="/static/images/icon_selected@2x.png"
-                            mode="widthFix"></cover-image>
-                        </cover-view>
-                        <!-- 布局区域：根据配置交换左右顺序 -->
-                        <cover-view class="content-layout" :class="{ 'reverse-layout': mode.isReverse }">
-                          <!-- 左侧/第一组图标 -->
-                          <cover-view class="icon-group">
-                            <cover-view class="icon-row vertical">
-                              <cover-image src="/static/images/arrow_up@2x.png" class="icon-img"></cover-image>
-                              <cover-image src="/static/images/arrow_down@2x.png" class="icon-img"></cover-image>
-                            </cover-view>
-                            <cover-view class="label">前进/后退</cover-view>
-                          </cover-view>
-                          <!-- 右侧/第二组图标 -->
-                          <cover-view class="icon-group">
-                            <cover-view class="icon-row horizontal">
-                              <cover-image src="/static/images/arrow_left@2x.png" class="icon-img"></cover-image>
-                              <cover-image src="/static/images/arrow_right@2x.png" class="icon-img"></cover-image>
-                            </cover-view>
-                            <cover-view class="label">左转/右转</cover-view>
-                          </cover-view>
-                        </cover-view>
-                      </cover-view>
-                    </cover-view>
-                  </cover-view>
-                  <cover-view class="group-item pr">
-                    <cover-view class="flex fj">
-                      <cover-view class="tit">方向反向操作</cover-view>
-
-                      <switch :checked="operFB" color="#f5c542" style="transform:scale(0.8)" class="custom-switch"
-                        @change="setHandleOper(1, $event)"></switch>
-
-
-                    </cover-view>
-                    <cover-view class="flex fj">
-                      <cover-view class="tit">进退反向操作</cover-view>
-
-                      <!-- <SwitchComp
-                      v-model="dir2Oper"
-                      @change="setHandleOper(2, $event)"
-                    ></SwitchComp> -->
+        <cover-view class="custom-popup-right">
+          <cover-view class="cont">
+            <cover-view class="left">
+              <!-- type 1 是遥控车 -->
+              <cover-view class="group" v-show="selectedIndex == 0 && carType == '1'">
+                <cover-view class="group-item">
+                  <cover-view class="tit">视频清晰度</cover-view>
+                  <cover-view class="flex">
+                    <cover-view v-for="(item, index) in qualityList" :key="index" class="btn-quality"
+                      :class="{ active: currentQuality === item.value }" @click="handleSelect(item.value)">
+                      {{ item.label }}
                     </cover-view>
                   </cover-view>
                 </cover-view>
+                <cover-view class="group-item">
+                  <cover-view class="tit">操作设置</cover-view>
+                  <cover-view class="flex">
+                    <cover-view v-for="(mode, index) in steeringModes" :key="index" class="option-card"
+                      :class="{ 'is-active': selectedMode === mode.id }" @click="handleSetSelect(mode.id)">
+                      <!-- 右上角的黄色对勾 (仅当选中时显示) -->
 
-                <cover-view class="group" v-show="selectedIndex == 0 && (carType == '2' || carType == '3')">
-                  <cover-view class="group-item">
-                    <cover-view class="tit">视频清晰度</cover-view>
-                    <cover-view class="flex">
-                      <cover-view v-for="(item, index) in qualityList" :key="index" class="btn-quality"
-                        :class="{ active: currentQuality === item.value }" @click="handleSelect(item.value)">
-                        {{ item.label }}
-                      </cover-view>
-                    </cover-view>
-                  </cover-view>
-                  <cover-view class="group-item">
-                    <cover-view class="tit">操作设置</cover-view>
-                    <cover-view class="flex">
-                      <cover-view v-for="(mode, index) in steeringModes" :key="index" class="option-card"
-                        :class="{ 'is-active': selectedMode === mode.id }" @click="handleSetSelect(mode.id)">
-                        <cover-image class="image" v-show="selectedMode === mode.id && index == 0"
-                          src="/static/images/icon_ev_dir1_selected@2x.png" mode="widthFix"></cover-image>
-                        <cover-image class="image" v-show="selectedMode !== mode.id && index == 0"
-                          src="/static/images/icon_ev_dir1@2x.png" mode="widthFix"></cover-image>
-                        <cover-image class="image" v-show="selectedMode === mode.id && index == 1"
-                          src="/static/images/icon_ev_dir2_selected@2x.png" mode="widthFix"></cover-image>
-                        <cover-image class="image" v-show="selectedMode !== mode.id && index == 1"
-                          src="/static/images/icon_ev_dir2@2x.png" mode="widthFix"></cover-image>
-                      </cover-view>
-                    </cover-view>
-                  </cover-view>
-                  <cover-view class="group-item pr">
-                    <cover-view class="flex fj">
-                      <cover-view class="tit">进退反向操作</cover-view>
-
-                      <!-- <SwitchComp
-                      v-model="dir1Oper"
-                      @change="setHandleOper(1, $event)"
-                    ></SwitchComp> -->
-                    </cover-view>
-                    <cover-view class="flex fj">
-                      <cover-view class="tit">旋转反向操作</cover-view>
-
-                      <!-- <SwitchComp
-                      v-model="dir2Oper"
-                      @change="setHandleOper(2, $event)"
-                    ></SwitchComp> -->
-                    </cover-view>
-                  </cover-view>
-                </cover-view>
-
-                <cover-view class="group" v-show="selectedIndex == 1">
-                  <cover-view class="group-item">
-                    <cover-view class="tit">方向中位微调</cover-view>
-                    <cover-view class="section">
-                      <!-- 减少按钮 -->
-                      <cover-view class="reduce" @click="handleReduce(1)">
-                        <cover-image class="image" src="/static/images/icon_reduce@2x.png"
+                      <cover-view v-show="selectedMode === mode.id" class="check-mark"
+                        :style="{ display: selectedMode === mode.id ? 'block' : 'none' }">
+                        <cover-image class="image" src="/static/images/icon_selected@2x.png"
                           mode="widthFix"></cover-image>
                       </cover-view>
-                      <!-- 滑块区域（占据主要空间） -->
-                      <cover-view class="slider-wrapper">
-                        <cover-view class="slider-label">
-                          <cover-view class="num" :style="{ left: dirMiddle + '%' }">
-                            {{ dirMiddleVal }}
+                      <!-- 布局区域：根据配置交换左右顺序 -->
+                      <cover-view class="content-layout" :class="{ 'reverse-layout': mode.isReverse }">
+                        <!-- 左侧/第一组图标 -->
+                        <cover-view class="icon-group">
+                          <cover-view class="icon-row vertical">
+                            <cover-image src="/static/images/arrow_up@2x.png" class="icon-img"></cover-image>
+                            <cover-image src="/static/images/arrow_down@2x.png" class="icon-img"></cover-image>
                           </cover-view>
+                          <cover-view class="label">前进/后退</cover-view>
                         </cover-view>
-                        <slider :min="1" :max="100" :value="dirMiddle" @change="setChangeVal(1, $event)"
-                          activeColor="#f5c542" backgroundColor="#e5e5e5" block-size="20" />
-                        <!-- <SliderComp
+                        <!-- 右侧/第二组图标 -->
+                        <cover-view class="icon-group">
+                          <cover-view class="icon-row horizontal">
+                            <cover-image src="/static/images/arrow_left@2x.png" class="icon-img"></cover-image>
+                            <cover-image src="/static/images/arrow_right@2x.png" class="icon-img"></cover-image>
+                          </cover-view>
+                          <cover-view class="label">左转/右转</cover-view>
+                        </cover-view>
+                      </cover-view>
+                    </cover-view>
+                  </cover-view>
+                </cover-view>
+                <cover-view class="group-item pr">
+                  <cover-view class="flex fj">
+                    <cover-view class="tit">方向反向操作</cover-view>
+
+                    <SwitchComp v-model="operFB" @change="setHandleOper(1, $event)"></SwitchComp>
+
+
+                  </cover-view>
+                  <cover-view class="flex fj">
+                    <cover-view class="tit">进退反向操作</cover-view>
+
+                    <SwitchComp v-model="operDir" @change="setHandleOper(2, $event)"></SwitchComp>
+                  </cover-view>
+                </cover-view>
+              </cover-view>
+
+              <cover-view class="group" v-show="selectedIndex == 0 && (carType == '2' || carType == '3')">
+                <cover-view class="group-item">
+                  <cover-view class="tit">视频清晰度</cover-view>
+                  <cover-view class="flex">
+                    <cover-view v-for="(item, index) in qualityList" :key="index" class="btn-quality"
+                      :class="{ active: currentQuality === item.value }" @click="handleSelect(item.value)">
+                      {{ item.label }}
+                    </cover-view>
+                  </cover-view>
+                </cover-view>
+                <cover-view class="group-item">
+                  <cover-view class="tit">操作设置</cover-view>
+                  <cover-view class="flex">
+                    <cover-view v-for="(mode, index) in steeringModes" :key="index" class="option-card"
+                      :class="{ 'is-active': selectedMode === mode.id }" @click="handleSetSelect(mode.id)">
+                      <cover-image class="image" v-show="selectedMode === mode.id && index == 0"
+                        src="/static/images/icon_ev_dir1_selected@2x.png" mode="widthFix"></cover-image>
+                      <cover-image class="image" v-show="selectedMode !== mode.id && index == 0"
+                        src="/static/images/icon_ev_dir1@2x.png" mode="widthFix"></cover-image>
+                      <cover-image class="image" v-show="selectedMode === mode.id && index == 1"
+                        src="/static/images/icon_ev_dir2_selected@2x.png" mode="widthFix"></cover-image>
+                      <cover-image class="image" v-show="selectedMode !== mode.id && index == 1"
+                        src="/static/images/icon_ev_dir2@2x.png" mode="widthFix"></cover-image>
+                    </cover-view>
+                  </cover-view>
+                </cover-view>
+                <cover-view class="group-item pr">
+                  <cover-view class="flex fj">
+                    <cover-view class="tit">进退反向操作</cover-view>
+
+                    <SwitchComp v-model="operFB" @change="setHandleOper(1, $event)"></SwitchComp>
+
+                  </cover-view>
+                  <cover-view class="flex fj">
+                    <cover-view class="tit">旋转反向操作</cover-view>
+                    <SwitchComp v-model="operDir" @change="setHandleOper(2, $event)"></SwitchComp>
+
+                  </cover-view>
+                </cover-view>
+              </cover-view>
+
+              <cover-view class="group" v-show="selectedIndex == 1">
+                <cover-view class="group-item">
+                  <cover-view class="tit">方向中位微调</cover-view>
+                  <cover-view class="section">
+                    <!-- 减少按钮 -->
+                    <cover-view class="reduce" @click="handleReduce(1)">
+                      <cover-image class="image" src="/static/images/icon_reduce@2x.png" mode="widthFix"></cover-image>
+                    </cover-view>
+                    <!-- 滑块区域（占据主要空间） -->
+                    <cover-view class="slider-wrapper">
+                      <cover-view class="slider-label">
+                        <cover-view class="num" :style="{ left: dirMiddle + '%' }">
+                          {{ dirMiddleVal }}
+                        </cover-view>
+                      </cover-view>
+                      <!-- <slider :min="1" :max="100" :value="dirMiddle" @change="setChangeVal(1, $event)"
+                        activeColor="#f5c542" backgroundColor="#e5e5e5" block-size="20" /> -->
+                      <SliderComp
                         v-model="dirMiddle"
                         :min="1"
                         :max="100"
                         @change="setChangeVal(1, $event)"
-                      ></SliderComp> -->
-                        <cover-view class="slider-label-bottom">
-                          <cover-view class="num-text">
-                            {{ directionCenter.mini_value }}
-                          </cover-view>
-                          <cover-view class="num-text">
-                            {{ directionCenter.max_value }}
-                          </cover-view>
+                      ></SliderComp>
+                      <cover-view class="slider-label-bottom">
+                        <cover-view class="num-text">
+                          {{ directionCenter.mini_value }}
+                        </cover-view>
+                        <cover-view class="num-text">
+                          {{ directionCenter.max_value }}
                         </cover-view>
                       </cover-view>
-                      <!-- 增加按钮 -->
-                      <cover-view class="add" @click="handleAdd(1)">
-                        <cover-image class="image" src="/static/images/icon_add@2x.png" mode="widthFix"></cover-image>
-                      </cover-view>
-                      <!-- 保存按钮 -->
-                      <cover-view class="btn" @click="save(1)">保存</cover-view>
                     </cover-view>
+                    <!-- 增加按钮 -->
+                    <cover-view class="add" @click="handleAdd(1)">
+                      <cover-image class="image" src="/static/images/icon_add@2x.png" mode="widthFix"></cover-image>
+                    </cover-view>
+                    <!-- 保存按钮 -->
+                    <cover-view class="btn" @click="save(1)">保存</cover-view>
                   </cover-view>
-                  <cover-view class="group-item">
-                    <cover-view class="tit">方向力度微调</cover-view>
-                    <cover-view class="section">
-                      <!-- 减少按钮 -->
-                      <cover-view class="reduce" @click="handleReduce(2)">
-                        <cover-image class="image" src="/static/images/icon_reduce@2x.png"
-                          mode="widthFix"></cover-image>
-                      </cover-view>
-                      <!-- 滑块区域（占据主要空间） -->
-                      <cover-view class="slider-wrapper">
-                        <cover-view class="slider-label">
-                          <cover-view class="num" :style="{ left: dirTurn + '%' }">
-                            {{ dirTurn }}
-                          </cover-view>
+                </cover-view>
+                <cover-view class="group-item">
+                  <cover-view class="tit">方向力度微调</cover-view>
+                  <cover-view class="section">
+                    <!-- 减少按钮 -->
+                    <cover-view class="reduce" @click="handleReduce(2)">
+                      <cover-image class="image" src="/static/images/icon_reduce@2x.png" mode="widthFix"></cover-image>
+                    </cover-view>
+                    <!-- 滑块区域（占据主要空间） -->
+                    <cover-view class="slider-wrapper">
+                      <cover-view class="slider-label">
+                        <cover-view class="num" :style="{ left: dirTurn + '%' }">
+                          {{ dirTurn }}
                         </cover-view>
+                      </cover-view>
 
-                        <!-- <SliderComp
+                     <SliderComp
                         v-model="dirTurn"
                         :min="1"
                         :max="100"
                         @change="setChangeVal(2, $event)"
-                      ></SliderComp> -->
-                        <cover-view class="slider-label-bottom">
-                          <cover-view class="num-text">
-                            {{ directionDynamics.mini_value }}
-                          </cover-view>
-                          <cover-view class="num-text">
-                            {{ directionDynamics.max_value }}
-                          </cover-view>
+                      ></SliderComp> 
+                      <cover-view class="slider-label-bottom">
+                        <cover-view class="num-text">
+                          {{ directionDynamics.mini_value }}
+                        </cover-view>
+                        <cover-view class="num-text">
+                          {{ directionDynamics.max_value }}
                         </cover-view>
                       </cover-view>
-                      <!-- 增加按钮 -->
-                      <cover-view class="add" @click="handleAdd(2)">
-                        <cover-image class="image" src="/static/images/icon_add@2x.png" mode="widthFix"></cover-image>
-                      </cover-view>
-                      <!-- 保存按钮 -->
-                      <cover-view class="btn" @click="save(2)">保存</cover-view>
                     </cover-view>
+                    <!-- 增加按钮 -->
+                    <cover-view class="add" @click="handleAdd(2)">
+                      <cover-image class="image" src="/static/images/icon_add@2x.png" mode="widthFix"></cover-image>
+                    </cover-view>
+                    <!-- 保存按钮 -->
+                    <cover-view class="btn" @click="save(2)">保存</cover-view>
                   </cover-view>
-                  <cover-view class="group-item">
-                    <cover-view class="tit">油门力度微调</cover-view>
-                    <cover-view class="section">
-                      <!-- 减少按钮 -->
-                      <cover-view class="reduce" @click="handleReduce(3)">
-                        <cover-image class="image" src="/static/images/icon_reduce@2x.png"
-                          mode="widthFix"></cover-image>
-                      </cover-view>
-                      <!-- 滑块区域（占据主要空间） -->
-                      <cover-view class="slider-wrapper">
-                        <cover-view class="slider-label">
-                          <cover-view class="num" :style="{ left: throttle + '%' }">
-                            {{ throttle }}
-                          </cover-view>
+                </cover-view>
+                <cover-view class="group-item">
+                  <cover-view class="tit">油门力度微调</cover-view>
+                  <cover-view class="section">
+                    <!-- 减少按钮 -->
+                    <cover-view class="reduce" @click="handleReduce(3)">
+                      <cover-image class="image" src="/static/images/icon_reduce@2x.png" mode="widthFix"></cover-image>
+                    </cover-view>
+                    <!-- 滑块区域（占据主要空间） -->
+                    <cover-view class="slider-wrapper">
+                      <cover-view class="slider-label">
+                        <cover-view class="num" :style="{ left: throttle + '%' }">
+                          {{ throttle }}
                         </cover-view>
+                      </cover-view>
 
-                        <!-- <SliderComp
+                      <SliderComp
                         v-model="throttle"
                         :min="1"
                         :max="100"
                         @change="setChangeVal(3, $event)"
-                      ></SliderComp> -->
+                      ></SliderComp> 
 
-                        <cover-view class="slider-label-bottom">
-                          <cover-view class="num-text num-left">
-                            {{ acceleratorDynamics.mini_value }}
-                          </cover-view>
-                          <cover-view class="num-text num-right">
-                            {{ acceleratorDynamics.max_value }}
-                          </cover-view>
+                      <cover-view class="slider-label-bottom">
+                        <cover-view class="num-text num-left">
+                          {{ acceleratorDynamics.mini_value }}
+                        </cover-view>
+                        <cover-view class="num-text num-right">
+                          {{ acceleratorDynamics.max_value }}
                         </cover-view>
                       </cover-view>
-                      <!-- 增加按钮 -->
-                      <cover-view class="add" @click="handleAdd(3)">
-                        <cover-image class="image" src="/static/images/icon_add@2x.png" mode="widthFix"></cover-image>
-                      </cover-view>
-                      <!-- 保存按钮 -->
-                      <cover-view class="btn" @click="save(3)">保存</cover-view>
                     </cover-view>
+                    <!-- 增加按钮 -->
+                    <cover-view class="add" @click="handleAdd(3)">
+                      <cover-image class="image" src="/static/images/icon_add@2x.png" mode="widthFix"></cover-image>
+                    </cover-view>
+                    <!-- 保存按钮 -->
+                    <cover-view class="btn" @click="save(3)">保存</cover-view>
                   </cover-view>
-                </cover-view>
-              </cover-view>
-              <cover-view class="right">
-                <cover-view class="settings-bar">
-                  <cover-view class="text-area">设置</cover-view>
-                  <cover-view class="close-btn" @click="close">
-                    <cover-image class="image" src="/static/images/icon_close@2x.png" mode="widthFix"></cover-image>
-                  </cover-view>
-                </cover-view>
-                <cover-view class="setting-group" v-for="(item, index) in setGroup" :key="index">
-                  <cover-view class="setting-item" :class="{ active: selectedIndex == item.key }"
-                    @click="handleItem(index)">
-                    {{ item.name }}
-                  </cover-view>
-                  <cover-view class="gradient-line" v-show="selectedIndex == item.key"></cover-view>
                 </cover-view>
               </cover-view>
             </cover-view>
+            <cover-view class="right">
+              <cover-view class="settings-bar">
+                <cover-view class="text-area">设置</cover-view>
+                <cover-view class="close-btn" @click="close">
+                  <cover-image class="image" src="/static/images/icon_close@2x.png" mode="widthFix"></cover-image>
+                </cover-view>
+              </cover-view>
+              <cover-view class="setting-group" v-for="(item, index) in setGroup" :key="index">
+                <cover-view class="setting-item" :class="{ active: selectedIndex == item.key }"
+                  @click="handleItem(index)">
+                  {{ item.name }}
+                </cover-view>
+                <cover-view class="gradient-line" v-show="selectedIndex == item.key"></cover-view>
+              </cover-view>
+            </cover-view>
           </cover-view>
+        </cover-view>
         <!-- </cover-view> -->
 
       </cover-view>
@@ -379,6 +367,8 @@ import { onLoad, onUnload } from "@dcloudio/uni-app";
 import microphone from "./components/microphone.vue";
 import TimeClock from "./components/tclock.vue";
 import battery from "./components/battery.vue";
+import SwitchComp from "./components/switchComp.vue";
+import SliderComp from "./components/sliderComp.vue";
 import UpDown from "./components/up-down.vue";
 import LeftRight from "./components/left-right.vue";
 // import pointOprea1 from "./components/digger-opera1.vue";
@@ -755,18 +745,6 @@ const handleOper = (type) => {
   operMode.value = type == "mode2";
 };
 
-// 是否开启相反方向
-const handleFBDir = (val) => {
-  const arr = val.split("_");
-
-  if (arr[0] == 1) operFB.value = arr[1] === "true" ? true : false;
-  if (arr[0] == 2) operDir.value = arr[1] === "true" ? true : false;
-  if (arr[0] == 3) operFB.value = arr[1] === "true" ? true : false;
-  if (arr[0] == 4) operDir.value = arr[1] === "true" ? true : false;
-
-  // 四驱车 液压挖机
-  carHandler.value.setReverseStatus(operFB.value, operDir.value);
-};
 
 const changeVal = (value) => {
   directionCenter.value.current_value = value[1];
@@ -1150,9 +1128,10 @@ const setQualityList = () => {
 
 // 正反 旋转，上下操作
 const setHandleOper = (type, val) => {
+  console.log(type, val)
 
-  if (type == 1) operFB.value = val.detail.value;
-  if (type == 2) operDir.value = val.detail.value;
+  if (type == 1) operFB.value = val;
+  if (type == 2) operDir.value = val;
   // 四驱车 液压挖机
   carHandler.value.setReverseStatus(operFB.value, operDir.value);
 };
@@ -1582,13 +1561,13 @@ const setChangeVal = (flag, value) => {
         font-family:
           PingFangSC,
           PingFang SC;
-        font-weight: 500;
-        font-size: 14px;
+        font-size: 15px;
         color: rgba(255, 255, 255, 0.8);
-        line-height: 1;
         text-align: center;
         font-style: normal;
-        padding: 10px 0;
+        font-weight: 500;
+        height: 30px;
+        line-height: 30px;
       }
 
       .active {
@@ -1664,8 +1643,8 @@ const setChangeVal = (flag, value) => {
       transition: all 0.3s ease;
       outline: none;
       margin-right: 5px;
-			height: 15px;
-			line-height: 15px;
+      height: 15px;
+      line-height: 15px;
     }
 
     .btn-quality.active {
