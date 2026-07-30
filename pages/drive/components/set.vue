@@ -1,5 +1,6 @@
 <template>
-  <cover-view v-if="visible" class="custom-popup-mask">
+  <cover-view v-show="visible" :style="{ display: visible ? 'block' : 'none' }" class="custom-popup-mask">
+
     <cover-view class="custom-popup-right">
       <cover-view class="cont">
         <cover-view class="left">
@@ -232,6 +233,8 @@
         </cover-view>
       </cover-view>
     </cover-view>
+
+
   </cover-view>
 </template>
 
@@ -497,10 +500,14 @@ function createMapperNew(inMin, inMax, outMin, outMax, value) {
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.6);
   z-index: 199999;
-  display: flex;
-  justify-content: flex-end;
+
   width: 500px;
   height: 100%;
+}
+
+.fe {
+  display: flex;
+  justify-content: flex-end;
 }
 
 cover-view,
@@ -520,6 +527,8 @@ cover-image {
   display: flex;
   flex-direction: column;
 }
+
+
 
 @keyframes slideIn {
   from {
@@ -976,33 +985,34 @@ cover-image {
 
 
 
-  .reduce,
-  .add,
-  .btn {
-    flex-shrink: 0;
-  }
+    .reduce,
+    .add,
+    .btn {
+      flex-shrink: 0;
+    }
 
-  .btn {
-    border-radius: 4px;
-    font-family: PingFangSC, PingFang SC;
-    font-weight: 400;
-    font-size: 12px;
-    color: #1a1a1a;
-    padding: 4px 8px;
-    background: #ffc838;
-  }
+    .btn {
+      border-radius: 4px;
+      font-family: PingFangSC, PingFang SC;
+      font-weight: 400;
+      font-size: 12px;
+      color: #1a1a1a;
+      padding: 4px 8px;
+      background: #ffc838;
+    }
 
-  .reduce .image,
-  .add .image {
-    width: 24px;
-    height: 24px;
-    display: block;
-  }
+    .reduce .image,
+    .add .image {
+      width: 24px;
+      height: 24px;
+      display: block;
+    }
 
-  :deep(uni-slider) {
-    margin: 0;
+    :deep(uni-slider) {
+      margin: 0;
+    }
   }
-  }}
+}
 </style>
 
 <style>
