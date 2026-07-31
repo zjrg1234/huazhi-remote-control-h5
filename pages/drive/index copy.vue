@@ -3,11 +3,7 @@
     <view class="page-content">
       <!-- @touchstart="onUserActivity" @touchmove="onUserActivity" -->
       <cover-view class="logout" @click="logout">
-        <cover-image
-          src="/static/images/icon_exit@2x.png"
-          class="image"
-          mode="aspectFit"
-        />
+        <cover-image src="/static/images/icon_exit@2x.png" class="image" mode="aspectFit" />
       </cover-view>
       <!-- #ifdef MP-WEIXIN -->
 
@@ -15,6 +11,7 @@
          内层依然是 cover-view 保证能悬浮在 web-view 上 
        
       </view> -->
+
 
       <web-view :src="videoUrl" ref="iframeView"></web-view>
 
@@ -25,21 +22,10 @@
       <cover-view class="status-bar-capsule">
         <cover-view class="flex">
           <cover-view class="fl">
-            <cover-view
-              class="dot"
-              :class="{ 'dot-red': !carStatus }"
-              v-show="carStatus"
-            ></cover-view>
+            <cover-view class="dot" :class="{ 'dot-red': !carStatus }" v-show="carStatus"></cover-view>
             <cover-view class="car">
-              <cover-image
-                class="image"
-                src="/static/images/icon_car@2x.png"
-                mode="aspectFit"
-              />
-              <cover-view
-                class="mini-forbidden"
-                v-show="!carStatus"
-              ></cover-view>
+              <cover-image class="image" src="/static/images/icon_car@2x.png" mode="aspectFit" />
+              <cover-view class="mini-forbidden" v-show="!carStatus"></cover-view>
             </cover-view>
           </cover-view>
           <cover-view>
@@ -59,46 +45,23 @@
 
       <!-- 设置按钮 -->
       <cover-view class="right-cont" @click="set">
-        <cover-image
-          class="image"
-          src="/static/images/icon_set@2x.png"
-          mode="aspectFit"
-        />
+        <cover-image class="image" src="/static/images/icon_set@2x.png" mode="aspectFit" />
       </cover-view>
 
       <!-- 声音/波纹图标 -->
       <cover-view class="side-menu-icon">
         <microphone></microphone>
-        <cover-image
-          class="image"
-          v-show="!showSound"
-          src="/static/images/icon_sound_close@2x.png"
-          @click="showSound = true"
-          mode="aspectFit"
-        />
-        <cover-image
-          class="image"
-          v-show="showSound"
-          src="/static/images/icon_sound_open@2x.png"
-          @click="showSound = false"
-          mode="aspectFit"
-        />
+        <cover-image class="image" v-show="!showSound" src="/static/images/icon_sound_close@2x.png"
+          @click="showSound = true" mode="aspectFit" />
+        <cover-image class="image" v-show="showSound" src="/static/images/icon_sound_open@2x.png"
+          @click="showSound = false" mode="aspectFit" />
       </cover-view>
 
       <!-- 右侧菜单 -->
       <!-- 右侧菜单 -->
       <cover-view class="side-menu">
-        <cover-view
-          class="menu-item"
-          v-for="(item, index) in menuList"
-          :key="index"
-          @click="handleIcon(item)"
-        >
-          <cover-image
-            class="img"
-            mode="aspectFit"
-            :src="activeKey.includes(item.key) ? item.iconSelect : item.icon"
-          />
+        <cover-view class="menu-item" v-for="(item, index) in menuList" :key="index" @click="handleIcon(item)">
+          <cover-image class="img" mode="aspectFit" :src="activeKey.includes(item.key) ? item.iconSelect : item.icon" />
           <cover-view class="label">{{ item.name }}</cover-view>
         </cover-view>
       </cover-view>
@@ -112,16 +75,8 @@
                 {{ constSpeed }} km/h
               </cover-view>
             </cover-view>
-            <slider
-              :value="constSpeed"
-              :min="1"
-              :max="100"
-              :step="1"
-              activeColor="#f5c542"
-              backgroundColor="#e9e9e9"
-              block-size="6"
-              @change="changeConstSpeed"
-            />
+            <slider :value="constSpeed" :min="1" :max="100" :step="1" activeColor="#f5c542" backgroundColor="#e9e9e9"
+              block-size="6" @change="changeConstSpeed" />
             <cover-view class="slider-label-bottom">
               <cover-view class="num-text num-left">0</cover-view>
               <cover-view class="num-text num-right">100</cover-view>
@@ -130,27 +85,11 @@
         </cover-view>
       </cover-view>
 
-      <LeftRight
-        @action="handleLRDrive"
-        v-show="carType == 1"
-        :isLeft="operMode"
-      ></LeftRight>
-      <UpDown
-        @action="handleFBDrive"
-        v-show="carType == 1"
-        :isLeft="!operMode"
-      ></UpDown>
+      <LeftRight @action="handleLRDrive" v-show="carType == 1" :isLeft="operMode"></LeftRight>
+      <UpDown @action="handleFBDrive" v-show="carType == 1" :isLeft="!operMode"></UpDown>
 
-      <ExLeft
-        @action="handleLeftDrive"
-        @action2="handleDrive"
-        v-show="carType == 3"
-      ></ExLeft>
-      <ExRight
-        @action="handleRightDrive"
-        @action2="handleDrive"
-        v-show="carType == 3"
-      ></ExRight>
+      <ExLeft @action="handleLeftDrive" @action2="handleDrive" v-show="carType == 3"></ExLeft>
+      <ExRight @action="handleRightDrive" @action2="handleDrive" v-show="carType == 3"></ExRight>
       <!-- <pointOprea1 @action="handleLeftDrive" v-if="carType == 3"></pointOprea1> -->
       <!-- <pointOprea2 @action="handleRightDrive" v-if="carType == 3"></pointOprea2> -->
 
@@ -170,30 +109,18 @@
         :directionDynamics="directionDynamics" :operDir="operDir" :type="carType" @action="handleOper"
         @operAction="handleFBDir" @changeValue="changeVal" /> -->
 
-      <cover-view
-        v-show="setVisible"
-        :style="{ display: setVisible ? 'block' : 'none' }"
-        class="custom-popup-mask"
-      >
+      <cover-view v-show="setVisible" :style="{ display: setVisible ? 'block' : 'none' }" class="custom-popup-mask">
         <!-- <cover-view class="fe"> -->
         <cover-view class="custom-popup-right">
           <cover-view class="cont">
             <cover-view class="left">
               <!-- type 1 是遥控车 -->
-              <cover-view
-                class="group"
-                v-show="selectedIndex == 0 && carType == '1'"
-              >
+              <cover-view class="group" v-show="selectedIndex == 0 && carType == '1'">
                 <cover-view class="group-item">
                   <cover-view class="tit">视频清晰度</cover-view>
                   <cover-view class="flex">
-                    <cover-view
-                      v-for="(item, index) in qualityList"
-                      :key="index"
-                      class="btn-quality"
-                      :class="{ active: currentQuality === item.value }"
-                      @click="handleSelect(item.value)"
-                    >
+                    <cover-view v-for="(item, index) in qualityList" :key="index" class="btn-quality"
+                      :class="{ active: currentQuality === item.value }" @click="handleSelect(item.value)">
                       {{ item.label }}
                     </cover-view>
                   </cover-view>
@@ -201,58 +128,30 @@
                 <cover-view class="group-item">
                   <cover-view class="tit">操作设置</cover-view>
                   <cover-view class="flex">
-                    <cover-view
-                      v-for="(mode, index) in steeringModes"
-                      :key="index"
-                      class="option-card"
-                      :class="{ 'is-active': selectedMode === mode.id }"
-                      @click="handleSetSelect(mode.id)"
-                    >
+                    <cover-view v-for="(mode, index) in steeringModes" :key="index" class="option-card"
+                      :class="{ 'is-active': selectedMode === mode.id }" @click="handleSetSelect(mode.id)">
                       <!-- 右上角的黄色对勾 (仅当选中时显示) -->
 
-                      <cover-view
-                        v-show="selectedMode === mode.id"
-                        class="check-mark"
-                        :style="{
-                          display: selectedMode === mode.id ? 'block' : 'none',
-                        }"
-                      >
-                        <cover-image
-                          class="image"
-                          src="/static/images/icon_selected@2x.png"
-                          mode="widthFix"
-                        ></cover-image>
+                      <cover-view v-show="selectedMode === mode.id" class="check-mark"
+                        :style="{ display: selectedMode === mode.id ? 'block' : 'none' }">
+                        <cover-image class="image" src="/static/images/icon_selected@2x.png"
+                          mode="widthFix"></cover-image>
                       </cover-view>
                       <!-- 布局区域：根据配置交换左右顺序 -->
-                      <cover-view
-                        class="content-layout"
-                        :class="{ 'reverse-layout': mode.isReverse }"
-                      >
+                      <cover-view class="content-layout" :class="{ 'reverse-layout': mode.isReverse }">
                         <!-- 左侧/第一组图标 -->
                         <cover-view class="icon-group">
                           <cover-view class="icon-row vertical">
-                            <cover-image
-                              src="/static/images/arrow_up@2x.png"
-                              class="icon-img"
-                            ></cover-image>
-                            <cover-image
-                              src="/static/images/arrow_down@2x.png"
-                              class="icon-img"
-                            ></cover-image>
+                            <cover-image src="/static/images/arrow_up@2x.png" class="icon-img"></cover-image>
+                            <cover-image src="/static/images/arrow_down@2x.png" class="icon-img"></cover-image>
                           </cover-view>
                           <cover-view class="label">前进/后退</cover-view>
                         </cover-view>
                         <!-- 右侧/第二组图标 -->
                         <cover-view class="icon-group">
                           <cover-view class="icon-row horizontal">
-                            <cover-image
-                              src="/static/images/arrow_left@2x.png"
-                              class="icon-img"
-                            ></cover-image>
-                            <cover-image
-                              src="/static/images/arrow_right@2x.png"
-                              class="icon-img"
-                            ></cover-image>
+                            <cover-image src="/static/images/arrow_left@2x.png" class="icon-img"></cover-image>
+                            <cover-image src="/static/images/arrow_right@2x.png" class="icon-img"></cover-image>
                           </cover-view>
                           <cover-view class="label">左转/右转</cover-view>
                         </cover-view>
@@ -264,38 +163,24 @@
                   <cover-view class="flex fj">
                     <cover-view class="tit">方向反向操作</cover-view>
 
-                    <SwitchComp
-                      v-model="operFB"
-                      @change="setHandleOper(1, $event)"
-                    ></SwitchComp>
+                    <SwitchComp v-model="operFB" @change="setHandleOper(1, $event)"></SwitchComp>
+
+
                   </cover-view>
                   <cover-view class="flex fj">
                     <cover-view class="tit">进退反向操作</cover-view>
 
-                    <SwitchComp
-                      v-model="operDir"
-                      @change="setHandleOper(2, $event)"
-                    ></SwitchComp>
+                    <SwitchComp v-model="operDir" @change="setHandleOper(2, $event)"></SwitchComp>
                   </cover-view>
                 </cover-view>
               </cover-view>
 
-              <cover-view
-                class="group"
-                v-show="
-                  selectedIndex == 0 && (carType == '2' || carType == '3')
-                "
-              >
+              <cover-view class="group" v-show="selectedIndex == 0 && (carType == '2' || carType == '3')">
                 <cover-view class="group-item">
                   <cover-view class="tit">视频清晰度</cover-view>
                   <cover-view class="flex">
-                    <cover-view
-                      v-for="(item, index) in qualityList"
-                      :key="index"
-                      class="btn-quality"
-                      :class="{ active: currentQuality === item.value }"
-                      @click="handleSelect(item.value)"
-                    >
+                    <cover-view v-for="(item, index) in qualityList" :key="index" class="btn-quality"
+                      :class="{ active: currentQuality === item.value }" @click="handleSelect(item.value)">
                       {{ item.label }}
                     </cover-view>
                   </cover-view>
@@ -303,37 +188,16 @@
                 <cover-view class="group-item">
                   <cover-view class="tit">操作设置</cover-view>
                   <cover-view class="flex">
-                    <cover-view
-                      v-for="(mode, index) in steeringModes"
-                      :key="index"
-                      class="option-card"
-                      :class="{ 'is-active': selectedMode === mode.id }"
-                      @click="handleSetSelect(mode.id)"
-                    >
-                      <cover-image
-                        class="image"
-                        v-show="selectedMode === mode.id && index == 0"
-                        src="/static/images/icon_ev_dir1_selected@2x.png"
-                        mode="widthFix"
-                      ></cover-image>
-                      <cover-image
-                        class="image"
-                        v-show="selectedMode !== mode.id && index == 0"
-                        src="/static/images/icon_ev_dir1@2x.png"
-                        mode="widthFix"
-                      ></cover-image>
-                      <cover-image
-                        class="image"
-                        v-show="selectedMode === mode.id && index == 1"
-                        src="/static/images/icon_ev_dir2_selected@2x.png"
-                        mode="widthFix"
-                      ></cover-image>
-                      <cover-image
-                        class="image"
-                        v-show="selectedMode !== mode.id && index == 1"
-                        src="/static/images/icon_ev_dir2@2x.png"
-                        mode="widthFix"
-                      ></cover-image>
+                    <cover-view v-for="(mode, index) in steeringModes" :key="index" class="option-card"
+                      :class="{ 'is-active': selectedMode === mode.id }" @click="handleSetSelect(mode.id)">
+                      <cover-image class="image" v-show="selectedMode === mode.id && index == 0"
+                        src="/static/images/icon_ev_dir1_selected@2x.png" mode="widthFix"></cover-image>
+                      <cover-image class="image" v-show="selectedMode !== mode.id && index == 0"
+                        src="/static/images/icon_ev_dir1@2x.png" mode="widthFix"></cover-image>
+                      <cover-image class="image" v-show="selectedMode === mode.id && index == 1"
+                        src="/static/images/icon_ev_dir2_selected@2x.png" mode="widthFix"></cover-image>
+                      <cover-image class="image" v-show="selectedMode !== mode.id && index == 1"
+                        src="/static/images/icon_ev_dir2@2x.png" mode="widthFix"></cover-image>
                     </cover-view>
                   </cover-view>
                 </cover-view>
@@ -341,17 +205,13 @@
                   <cover-view class="flex fj">
                     <cover-view class="tit">进退反向操作</cover-view>
 
-                    <SwitchComp
-                      v-model="operFB"
-                      @change="setHandleOper(1, $event)"
-                    ></SwitchComp>
+                    <SwitchComp v-model="operFB" @change="setHandleOper(1, $event)"></SwitchComp>
+
                   </cover-view>
                   <cover-view class="flex fj">
                     <cover-view class="tit">旋转反向操作</cover-view>
-                    <SwitchComp
-                      v-model="operDir"
-                      @change="setHandleOper(2, $event)"
-                    ></SwitchComp>
+                    <SwitchComp v-model="operDir" @change="setHandleOper(2, $event)"></SwitchComp>
+
                   </cover-view>
                 </cover-view>
               </cover-view>
@@ -362,19 +222,12 @@
                   <cover-view class="section">
                     <!-- 减少按钮 -->
                     <cover-view class="reduce" @click="handleReduce(1)">
-                      <cover-image
-                        class="image"
-                        src="/static/images/icon_reduce@2x.png"
-                        mode="widthFix"
-                      ></cover-image>
+                      <cover-image class="image" src="/static/images/icon_reduce@2x.png" mode="widthFix"></cover-image>
                     </cover-view>
                     <!-- 滑块区域（占据主要空间） -->
                     <cover-view class="slider-wrapper">
                       <cover-view class="slider-label">
-                        <cover-view
-                          class="num"
-                          :style="{ left: dirMiddle + '%' }"
-                        >
+                        <cover-view class="num" :style="{ left: dirMiddle + '%' }">
                           {{ dirMiddleVal }}
                         </cover-view>
                       </cover-view>
@@ -397,11 +250,7 @@
                     </cover-view>
                     <!-- 增加按钮 -->
                     <cover-view class="add" @click="handleAdd(1)">
-                      <cover-image
-                        class="image"
-                        src="/static/images/icon_add@2x.png"
-                        mode="widthFix"
-                      ></cover-image>
+                      <cover-image class="image" src="/static/images/icon_add@2x.png" mode="widthFix"></cover-image>
                     </cover-view>
                     <!-- 保存按钮 -->
                     <cover-view class="btn" @click="save(1)">保存</cover-view>
@@ -412,29 +261,22 @@
                   <cover-view class="section">
                     <!-- 减少按钮 -->
                     <cover-view class="reduce" @click="handleReduce(2)">
-                      <cover-image
-                        class="image"
-                        src="/static/images/icon_reduce@2x.png"
-                        mode="widthFix"
-                      ></cover-image>
+                      <cover-image class="image" src="/static/images/icon_reduce@2x.png" mode="widthFix"></cover-image>
                     </cover-view>
                     <!-- 滑块区域（占据主要空间） -->
                     <cover-view class="slider-wrapper">
                       <cover-view class="slider-label">
-                        <cover-view
-                          class="num"
-                          :style="{ left: dirTurn + '%' }"
-                        >
+                        <cover-view class="num" :style="{ left: dirTurn + '%' }">
                           {{ dirTurn }}
                         </cover-view>
                       </cover-view>
 
-                      <SliderComp
+                     <SliderComp
                         v-model="dirTurn"
                         :min="1"
                         :max="100"
                         @change="setChangeVal(2, $event)"
-                      ></SliderComp>
+                      ></SliderComp> 
                       <cover-view class="slider-label-bottom">
                         <cover-view class="num-text">
                           {{ directionDynamics.mini_value }}
@@ -446,11 +288,7 @@
                     </cover-view>
                     <!-- 增加按钮 -->
                     <cover-view class="add" @click="handleAdd(2)">
-                      <cover-image
-                        class="image"
-                        src="/static/images/icon_add@2x.png"
-                        mode="widthFix"
-                      ></cover-image>
+                      <cover-image class="image" src="/static/images/icon_add@2x.png" mode="widthFix"></cover-image>
                     </cover-view>
                     <!-- 保存按钮 -->
                     <cover-view class="btn" @click="save(2)">保存</cover-view>
@@ -461,19 +299,12 @@
                   <cover-view class="section">
                     <!-- 减少按钮 -->
                     <cover-view class="reduce" @click="handleReduce(3)">
-                      <cover-image
-                        class="image"
-                        src="/static/images/icon_reduce@2x.png"
-                        mode="widthFix"
-                      ></cover-image>
+                      <cover-image class="image" src="/static/images/icon_reduce@2x.png" mode="widthFix"></cover-image>
                     </cover-view>
                     <!-- 滑块区域（占据主要空间） -->
                     <cover-view class="slider-wrapper">
                       <cover-view class="slider-label">
-                        <cover-view
-                          class="num"
-                          :style="{ left: throttle + '%' }"
-                        >
+                        <cover-view class="num" :style="{ left: throttle + '%' }">
                           {{ throttle }}
                         </cover-view>
                       </cover-view>
@@ -483,7 +314,7 @@
                         :min="1"
                         :max="100"
                         @change="setChangeVal(3, $event)"
-                      ></SliderComp>
+                      ></SliderComp> 
 
                       <cover-view class="slider-label-bottom">
                         <cover-view class="num-text num-left">
@@ -496,11 +327,7 @@
                     </cover-view>
                     <!-- 增加按钮 -->
                     <cover-view class="add" @click="handleAdd(3)">
-                      <cover-image
-                        class="image"
-                        src="/static/images/icon_add@2x.png"
-                        mode="widthFix"
-                      ></cover-image>
+                      <cover-image class="image" src="/static/images/icon_add@2x.png" mode="widthFix"></cover-image>
                     </cover-view>
                     <!-- 保存按钮 -->
                     <cover-view class="btn" @click="save(3)">保存</cover-view>
@@ -512,195 +339,21 @@
               <cover-view class="settings-bar">
                 <cover-view class="text-area">设置</cover-view>
                 <cover-view class="close-btn" @click="close">
-                  <cover-image
-                    class="image"
-                    src="/static/images/icon_close@2x.png"
-                    mode="widthFix"
-                  ></cover-image>
+                  <cover-image class="image" src="/static/images/icon_close@2x.png" mode="widthFix"></cover-image>
                 </cover-view>
               </cover-view>
-              <cover-view
-                class="setting-group"
-                v-for="(item, index) in setGroup"
-                :key="index"
-              >
-                <cover-view
-                  class="setting-item"
-                  :class="{ active: selectedIndex == item.key }"
-                  @click="handleItem(index)"
-                >
+              <cover-view class="setting-group" v-for="(item, index) in setGroup" :key="index">
+                <cover-view class="setting-item" :class="{ active: selectedIndex == item.key }"
+                  @click="handleItem(index)">
                   {{ item.name }}
                 </cover-view>
-                <cover-view
-                  class="gradient-line"
-                  v-show="selectedIndex == item.key"
-                ></cover-view>
+                <cover-view class="gradient-line" v-show="selectedIndex == item.key"></cover-view>
               </cover-view>
             </cover-view>
           </cover-view>
         </cover-view>
         <!-- </cover-view> -->
-      </cover-view>
 
-      <cover-view
-        class="tip-popup-mask"
-        v-show="allPopupVisible"
-        :style="{ display: allPopupVisible ? 'block' : 'none' }"
-        @tap.stop="handleMaskClick"
-      >
-        <cover-view class="fcenter">
-          <!-- 弹窗主体内容 -->
-          <cover-view
-            class="popup-container"
-            :class="{ contmax: type === 'repair' }"
-            @tap.stop
-          >
-            <!-- 场景1：黑屏提示 -->
-            <cover-view v-show="type === 'tip'">
-              <cover-view class="tip-content">
-                <cover-view class="time">倒计时{{ count }}s</cover-view>
-                <cover-view class="tit">是否黑屏？</cover-view>
-                <cover-view class="text">
-                  <cover-view
-                    >开始驾驶前如遇黑屏或者车辆故障上报不扣费，开始驾驶后开始计费。</cover-view
-                  >
-                  <cover-view>如果一切正常，请点击“开始驾驶”</cover-view>
-                </cover-view>
-              </cover-view>
-              <cover-view class="footer">
-                <cover-view
-                  class="btn left mr"
-                  @tap.stop="handleAction('repair')"
-                  >上报故障</cover-view
-                >
-                <cover-view
-                  class="btn right"
-                  @tap.stop="handleAction('driving')"
-                  >开始驾驶</cover-view
-                >
-              </cover-view>
-            </cover-view>
-
-            <!-- 场景2：退出驾驶 -->
-            <cover-view v-show="type === 'logout'">
-              <cover-view class="tip-content">
-                <cover-view class="tit">退出驾驶</cover-view>
-                <cover-view class="text ct">
-                  <cover-view>未用完的电池将放到余额里</cover-view>
-                </cover-view>
-              </cover-view>
-              <cover-view class="footer fc">
-                <cover-view class="flex">
-                  <cover-view class="btn left" @tap.stop="cancel">
-                    取消
-                  </cover-view>
-                  <cover-view
-                    class="btn left ml"
-                    @tap.stop="handlePopupAction('report')"
-                  >
-                    上报故障
-                  </cover-view>
-                </cover-view>
-                <cover-view class="flex mt">
-                  <cover-view
-                    class="btn right"
-                    @tap.stop="handlePopupAction('logout')"
-                  >
-                    退出驾驶
-                  </cover-view>
-                </cover-view>
-              </cover-view>
-            </cover-view>
-
-            <!-- 场景3：维修以及上报故障 -->
-            <cover-view v-show="type === 'repair'">
-              <cover-view class="tip-content repair">
-                <cover-view class="tit">设备报修</cover-view>
-                <cover-view v-if="showRepairReason" class="reason">
-                  <cover-view
-                    v-for="(item, index) in list"
-                    :key="index"
-                    @tap="selectReason(index, item)"
-                    :class="[
-                      'reason-item',
-                      { active: selectedReasonIndex === index },
-                    ]"
-                    >{{ item }}</cover-view
-                  >
-                </cover-view>
-                <!-- 替换 Vant 的 textarea 为原生 input -->
-                <cover-view class="ttarea">
-                  <input
-                    v-model="message"
-                    class="custom-textarea"
-                    type="text"
-                    maxlength="20"
-                    placeholder="请输入故障原因，最多20字（选填）"
-                  />
-                  <cover-view class="word-limit"
-                    >{{ message.length }}/20</cover-view
-                  >
-                </cover-view>
-                <cover-view class="warn-tip">
-                  温馨提示：上报车辆故障后，车辆将冻结，你将退退出驾驶。若遇到黑屏或者画面卡顿，请重新刷新页面
-                </cover-view>
-              </cover-view>
-              <cover-view class="footer">
-                <cover-view class="flex">
-                  <cover-view class="btn left" @tap.stop="cancel"
-                    >取消</cover-view
-                  >
-                  <cover-view class="btn right ml" @tap.stop="report"
-                    >上报</cover-view
-                  >
-                </cover-view>
-              </cover-view>
-            </cover-view>
-
-            <!-- 场景4：即将结束倒计时 -->
-            <cover-view v-show="type === 'countTip'">
-              <cover-view class="tip-content">
-                <cover-view class="time">倒计时{{ count }}s</cover-view>
-                <cover-view class="tit">您的驾驶时间即将结束</cover-view>
-                <cover-view class="text">
-                  <cover-view>即将结束本次驾驶，欢迎您下次再来！</cover-view>
-                </cover-view>
-              </cover-view>
-              <cover-view class="footer">
-                <cover-view class="flex mt">
-                  <cover-view
-                    class="btn right"
-                    @tap.stop="handlePopupAction('logout')"
-                    >退出驾驶</cover-view
-                  >
-                </cover-view>
-              </cover-view>
-            </cover-view>
-
-            <cover-view v-if="type === 'longTimeTip'">
-              <!-- 场景5：长时间无操作 -->
-
-              <cover-view class="tip-content">
-                <cover-view class="time">【警告】您180秒无操作！</cover-view>
-                <cover-view class="tit">三分钟未操作,请立即驾驶</cover-view>
-                <cover-view class="text">
-                  <cover-view
-                    >为防止您的电池被浪费，即将结束本次驾驶，欢迎您下次再来!</cover-view
-                  >
-                </cover-view>
-              </cover-view>
-              <cover-view class="footer">
-                <cover-view class="flex mt">
-                  <cover-view
-                    class="btn right"
-                    @tap.stop="handleAction('logout')"
-                    >退出驾驶</cover-view
-                  >
-                </cover-view>
-              </cover-view>
-            </cover-view>
-          </cover-view>
-        </cover-view>
       </cover-view>
     </view>
   </view>
@@ -722,13 +375,7 @@ import LeftRight from "./components/left-right.vue";
 // import pointOprea2 from "./components/digger-opera2.vue";
 import ExLeft from "./components/ex-left.vue";
 import ExRight from "./components/ex-right.vue";
-import {
-  formatTime,
-  mapToPer,
-  handleBattery,
-  createReverseMapper,
-  createMapperNew,
-} from "@/utils/utils.js";
+import { formatTime, mapToPer, handleBattery, createReverseMapper, createMapperNew } from "@/utils/utils.js";
 import UDPSocketClient from "@/utils/udpSocket.js";
 import { handleDriverSocketData } from "@/utils/socketHelper.js";
 import { useHESbus } from "@/composables/useHESbus.js";
@@ -984,7 +631,11 @@ const GetDeviceInfo = (data) => {
           "&initAction=video_only"; // 根据实际字段调整
       }
     })
-    .catch(() => {});
+    .catch(() => { });
+};
+
+const handleMessage = (e) => {
+  console.log("收到消息:", e.detail.data);
 };
 
 // 初始化摄像头播放
@@ -998,15 +649,14 @@ const initTopVideo = () => {
     .then((res) => {
       if (res.code == 200) GetDeviceInfo(res.data);
     })
-    .catch(() => {});
+    .catch(() => { });
 };
 
 // 图标点击处理
 const handleIcon = (item) => {
   if (item.key === "repairs") {
     allPopupVisible.value = true;
-    type.value = "repair";
-    showRepairReason.value = true;
+    allPopup.value.setType("repair", true);
     return;
   }
 
@@ -1036,15 +686,18 @@ const handleIcon = (item) => {
 };
 
 // 弹窗动作处理
-const handlePopupAction = (val) => {
-  // 维修显示 各种原因   上报故障不显示原因
-  if (val == "repair" || val == "report") {
-    type.value = "repair";
-    allPopupVisible.value = true;
-    showRepairReason.value = val == "repair" ? true : false;
+const handlePopupAction = (type) => {
+  if (type == "report") {
+    allPopupVisible.value = false;
+    showRepairReason.value = false;
     return;
   }
-  if (val == "driving") {
+  if (type == "repair") {
+    allPopupVisible.value = true;
+    showRepairReason.value = true;
+    return;
+  }
+  if (type == "driving") {
     StartDrive({
       order_no: orderNo.value,
       type: 1,
@@ -1063,7 +716,7 @@ const handlePopupAction = (val) => {
       });
     return;
   }
-  if (val == "logout") {
+  if (type == "logout") {
     StartDrive({
       order_no: orderNo.value,
       type: 3,
@@ -1084,13 +737,14 @@ const handlePopupAction = (val) => {
           uni.showToast({ title: res.msg, icon: "none" });
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 };
 
 const handleOper = (type) => {
   operMode.value = type == "mode2";
 };
+
 
 const changeVal = (value) => {
   directionCenter.value.current_value = value[1];
@@ -1110,19 +764,16 @@ const set = () => {
   handleFBDrive({ fb: false, value: 0 });
   handleIcon("speed");
 
-  const mapNum = createReverseMapper(
-    1,
-    100,
-    directionCenter.value.mini_value,
-    directionCenter.value.max_value,
-  );
+  const mapNum = createReverseMapper(1, 100, directionCenter.value.mini_value, directionCenter.value.max_value);
   dirMiddle.value = mapNum(directionCenter.value.current_value);
   dirMiddleValFunc(dirMiddle.value);
+
 };
 
 const logout = () => {
+  console.log(123);
+  allPopup.value.setType("logout");
   allPopupVisible.value = true;
-  type.value = "logout";
   showSpeed.value = false;
   handleFBDrive({ fb: false, value: 0 });
   handleIcon("speed");
@@ -1165,34 +816,7 @@ onMounted(() => {
 
   initSendLoop();
   initTopVideo();
-  clearCountdown();
-  // 注意：uni-app 不支持 sessionStorage，需改用 uni.getStorageSync
-  if (uni.getStorageSync("loadingOne") !== "1") {
-    allPopupVisible.value = true;
-    countdownTimer = setInterval(() => {
-      count.value -= 1;
-      if (count.value == 0) {
-        count.value = 0;
-        clearInterval(countdownTimer);
-        countdownTimer = null;
-        allPopupVisible.value = false;
-        // 自动调开始驾驶的接口
-        handlePopupAction("driving");
-        uni.setStorageSync("loadingOne", "1");
-      }
-    }, 1000);
-  } else {
-    allPopupVisible.value = false;
-  }
-  text.value = "车辆翻车";
 });
-
-const clearCountdown = () => {
-  if (countdownTimer) {
-    clearInterval(countdownTimer);
-    countdownTimer = null;
-  }
-};
 
 const timerNum = ref();
 const initTimer = () => {
@@ -1214,6 +838,8 @@ const initRouteData = (options) => {
     if (type >= 10 && type <= 19) carType.value = "1";
     else if (type >= 20 && type <= 29) carType.value = "2";
     else carType.value = "3";
+
+
   } else {
     console.log("carDetails 空");
   }
@@ -1242,7 +868,7 @@ const initVehicleConfig = () => {
     chValue.value.ch2 = acceleratorCenter.value.current_value;
 
     // 走设置清晰度 以及 转换switch 数值
-    setQualityList();
+    setQualityList()
 
     // 四驱车
     if (carType.value == 1) {
@@ -1265,6 +891,9 @@ const initVehicleConfig = () => {
         ...carDetails.value.vehicle_config_detail,
       });
     }
+
+
+
   }
 };
 
@@ -1458,7 +1087,9 @@ const handleComDrive = (type, param) => {
   chValue.value.ch7 = ch.ch7;
 };
 
-//  set
+
+
+//  set 
 const qualityList = ref([]);
 const currentQuality = ref("1");
 
@@ -1468,7 +1099,7 @@ const throttle = ref(1);
 const dirMiddleVal = ref(0);
 
 const dirMiddleValFunc = (num) => {
-  console.log(num);
+  console.log(num)
   const mapNum = createMapperNew(
     1,
     100,
@@ -1478,7 +1109,7 @@ const dirMiddleValFunc = (num) => {
   );
 
   dirMiddleVal.value = mapNum.toFixed(0);
-};
+}
 
 const setQualityList = () => {
   const qualityListMap = [
@@ -1492,11 +1123,12 @@ const setQualityList = () => {
     targetValues.includes(item.value),
   );
   currentQuality.value = targetValues[0];
-};
+
+}
 
 // 正反 旋转，上下操作
 const setHandleOper = (type, val) => {
-  console.log(type, val);
+  console.log(type, val)
 
   if (type == 1) operFB.value = val;
   if (type == 2) operDir.value = val;
@@ -1518,8 +1150,9 @@ const steeringModes = [
 // 点击切换左右操作
 const handleSetSelect = (id) => {
   selectedMode.value = id;
-  operMode.value = selectedMode.value == "mode2";
+  operMode.value = selectedMode.value == 'mode2';
 };
+
 
 const setGroup = ref([
   { name: "通用设置", key: 0 },
@@ -1552,12 +1185,13 @@ const close = () => {
   if (saveFlag.value[3]) {
     val[3] = throttle.value;
   }
-  changeVal(val);
+  changeVal(val)
   setVisible.value = false;
 };
 // 滑动slider
 const setChangeVal = (flag, value) => {
-  const val = value.detail.value;
+
+  const val = value.detail.value
   if (flag == 1) {
     dirMiddleValFunc(val);
     dirMiddle.value = val;
@@ -1566,82 +1200,8 @@ const setChangeVal = (flag, value) => {
   } else {
     throttle.value = val;
   }
-};
+}
 
-// --------------------------tip -----------------------
-
-// 点击遮罩层处理（原配置为 false，即不关闭）
-const handleMaskClick = () => {
-  // 如果需要点击遮罩关闭，可在此处设置 visible.value = false;
-};
-
-const type = ref("tip");
-
-const count = ref(15);
-const message = ref("");
-const text = ref();
-let countdownTimer = null;
-
-const list = ref([
-  "车辆翻车",
-  "画面卡顿",
-  "无视频信号",
-  "车辆无法控制",
-  "画面黑屏",
-  "电量低",
-  "其他",
-]);
-const selectedReasonIndex = ref(0);
-
-const selectReason = (index, item) => {
-  selectedReasonIndex.value = index;
-  text.value = item;
-};
-
-const cancel = () => {
-  allPopupVisible.value = false;
-  selectedReasonIndex.value = 0;
-};
-
-const report = () => {
-
-  let msg = "";
-  if (!showRepairReason.value) {
-    if (!message.value) {
-      uni.showToast({ title: "请输入内容", icon: "none" });
-      return;
-    } else {
-      msg = message.value;
-    }
-  } else {
-    if (text.value == "其他") {
-      if (!message.value) {
-        uni.showToast({ title: "请输入内容", icon: "none" });
-        return;
-      } else {
-        msg = message.value;
-      }
-    } else {
-      msg = text.value;
-    }
-  }
-
-  // 调用 API 上报 2s 退出回去
-  CarReport({ order_no: orderNo.value, id: vehicleId.value, text: msg }).then(
-    (res) => {
-      if (res.code == 200) {
-        const timer = setTimeout(() => {
-          UDPSocket.value.close();
-          clearTimeout(timer);
-          uni.reLaunch({
-            url: "/pages/mine/reservation", // 你的首页路径
-          });
-        }, 2000);
-      } else {
-      }
-    },
-  );
-};
 </script>
 
 <style lang="scss" scoped>
@@ -1654,12 +1214,16 @@ const report = () => {
   background: #fff;
 }
 
+
+
 .page-content {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
   position: relative;
 }
+
+
 
 .logout {
   position: fixed;
@@ -1907,6 +1471,7 @@ const report = () => {
   .fe {
     display: flex;
     justify-content: flex-end;
+
   }
 
   .custom-popup-right {
@@ -2016,15 +1581,19 @@ const report = () => {
         /* 线条长度 */
 
         /* 关键代码：创建线性渐变 */
-        background: linear-gradient(
-          to right,
-          /* 方向：从左到右 */ transparent,
-          /* 起点：完全透明 */ rgba(245, 197, 66, 0.8) 20%,
-          /* 20%处开始显色 */ #f5c542 50%,
-          /* 中间：颜色最深 (#f5c542 是取样的金黄色) */ rgba(245, 197, 66, 0.8)
-            80%,
-          /* 80%处开始变淡 */ transparent /* 终点：完全透明 */
-        );
+        background: linear-gradient(to right,
+            /* 方向：从左到右 */
+            transparent,
+            /* 起点：完全透明 */
+            rgba(245, 197, 66, 0.8) 20%,
+            /* 20%处开始显色 */
+            #f5c542 50%,
+            /* 中间：颜色最深 (#f5c542 是取样的金黄色) */
+            rgba(245, 197, 66, 0.8) 80%,
+            /* 80%处开始变淡 */
+            transparent
+            /* 终点：完全透明 */
+          );
 
         margin: 0 auto;
         /* 居中显示 */
@@ -2266,159 +1835,6 @@ const report = () => {
 
   :deep(uni-slider) {
     margin: 0;
-  }
-}
-
-.tip-popup-mask {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-
-  z-index: 99999;
-
-  .fcenter {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-  }
-
-  .popup-container {
-    background-color: #fff;
-    border-radius: 6px;
-    width: 80%;
-    max-width: 300px;
-    overflow: hidden;
-  }
-  .contmax {
-    max-width: 500px;
-  }
-
-  .tip-content {
-    text-align: center;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    .time {
-      font-size: 18px;
-      color: #333;
-    }
-    .tit {
-      font-size: 18px;
-      font-weight: bold;
-      color: #333;
-      margin-top: 10px;
-    }
-    .text {
-      font-size: 14px;
-      color: #666;
-      text-align: left;
-      margin-top: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .ct {
-      text-align: center;
-    }
-  }
-
-  .footer {
-    display: flex;
-    padding: 0 20px 20px;
-    justify-content: space-between;
-  }
-  .fc {
-    flex-direction: column;
-  }
-  .flex {
-    display: flex;
-    width: 100%;
-    gap: 10px;
-  }
-
-  .btn {
-    display: block;
-    flex: 1;
-    text-align: center;
-    border-radius: 4px;
-    font-weight: 400;
-    font-size: 18px;
-    color: #222222;
-    padding: 10px 0;
-  }
-  .left {
-    background: #f0f0f0;
-  }
-  .right {
-    background: #ffc838;
-  }
-  .mt {
-    margin-top: 10px;
-  }
-  .mr {
-    margin-right: 10px;
-  }
-  .ml {
-    margin-left: 10px;
-  }
-
-  .reason {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 10px 0;
-  }
-  .reason-item {
-    padding: 5px 10px;
-    border-radius: 20px;
-    color: #666666;
-    font-size: 14px;
-    border: 1px solid #666666;
-    margin-right: 5px;
-    margin-top: 5px;
-  }
-  .reason-item.active {
-    border: 1px solid #ffc838;
-    background-color: #ffc838;
-    color: #1a1a1a;
-  }
-
-  .warn-tip {
-    font-size: 12px;
-    color: #999999;
-    padding-top: 10px;
-    text-align: left;
-  }
-
-  .ttarea {
-    width: 480px;
-    margin-top: 10px;
-    position: relative;
-
-    .custom-textarea {
-      width: 480px;
-      height: 60px;
-      background: #f2f2f2;
-      padding: 15px;
-      border-radius: 6px;
-      font-size: 14px;
-      color: #222;
-      box-sizing: border-box;
-      text-align: left;
-    }
-    .word-limit {
-      position: absolute;
-      right: 16px;
-      bottom: 2px;
-      font-size: 14px;
-      color: #999;
-    }
   }
 }
 </style>

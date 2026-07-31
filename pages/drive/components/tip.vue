@@ -3,21 +3,30 @@
   <!-- 弹窗遮罩层与容器 -->
   <cover-view class="popup-mask" v-show="visible" @tap.stop="handleMaskClick">
     <!-- 弹窗主体内容 -->
-    <cover-view class="popup-container" :class="{contmax: type === 'repair'}"  @tap.stop>
-      
+    <cover-view
+      class="popup-container"
+      :class="{ contmax: type === 'repair' }"
+      @tap.stop
+    >
       <!-- 场景1：黑屏提示 -->
       <template v-if="type === 'tip'">
         <cover-view class="tip-content">
           <cover-text class="time">倒计时{{ count }}s</cover-text>
           <cover-text class="tit">是否黑屏？</cover-text>
           <cover-view class="text">
-            <cover-text>开始驾驶前如遇黑屏或者车辆故障上报不扣费，开始驾驶后开始计费。</cover-text>
+            <cover-text
+              >开始驾驶前如遇黑屏或者车辆故障上报不扣费，开始驾驶后开始计费。</cover-text
+            >
             <cover-text>如果一切正常，请点击“开始驾驶”</cover-text>
           </cover-view>
         </cover-view>
         <cover-view class="footer">
-          <cover-text class="btn left mr" @tap.stop="handleAction('repair')">上报故障</cover-text>
-          <cover-text class="btn right" @tap.stop="handleAction('driving')">开始驾驶</cover-text>
+          <cover-text class="btn left mr" @tap.stop="handleAction('repair')"
+            >上报故障</cover-text
+          >
+          <cover-text class="btn right" @tap.stop="handleAction('driving')"
+            >开始驾驶</cover-text
+          >
         </cover-view>
       </template>
 
@@ -32,10 +41,14 @@
         <cover-view class="footer fc">
           <cover-view class="flex">
             <cover-text class="btn left" @tap.stop="cancel">取消</cover-text>
-            <cover-text class="btn left" @tap.stop="handleAction('report')">上报故障</cover-text>
+            <cover-text class="btn left" @tap.stop="handleAction('report')"
+              >上报故障</cover-text
+            >
           </cover-view>
           <cover-view class="flex mt">
-            <cover-text class="btn right" @tap.stop="handleAction('logout')">退出驾驶</cover-text>
+            <cover-text class="btn right" @tap.stop="handleAction('logout')"
+              >退出驾驶</cover-text
+            >
           </cover-view>
         </cover-view>
       </template>
@@ -50,7 +63,8 @@
               :key="index"
               @tap="selectReason(index, item)"
               :class="['reason-item', { active: selectedIndex === index }]"
-            >{{ item }}</cover-text>
+              >{{ item }}</cover-text
+            >
           </cover-view>
           <!-- 替换 Vant 的 textarea 为原生 input -->
           <cover-view class="ttarea">
@@ -86,7 +100,9 @@
         </cover-view>
         <cover-view class="footer">
           <cover-view class="flex mt">
-            <cover-text class="btn right" @tap.stop="handleAction('logout')">退出驾驶</cover-text>
+            <cover-text class="btn right" @tap.stop="handleAction('logout')"
+              >退出驾驶</cover-text
+            >
           </cover-view>
         </cover-view>
       </template>
@@ -97,16 +113,19 @@
           <cover-text class="time">【警告】您180秒无操作！</cover-text>
           <cover-text class="tit">三分钟未操作,请立即驾驶</cover-text>
           <cover-view class="text">
-            <cover-text>为防止您的电池被浪费，即将结束本次驾驶，欢迎您下次再来!</cover-text>
+            <cover-text
+              >为防止您的电池被浪费，即将结束本次驾驶，欢迎您下次再来!</cover-text
+            >
           </cover-view>
         </cover-view>
         <cover-view class="footer">
           <cover-view class="flex mt">
-            <cover-text class="btn right" @tap.stop="handleAction('logout')">退出驾驶</cover-text>
+            <cover-text class="btn right" @tap.stop="handleAction('logout')"
+              >退出驾驶</cover-text
+            >
           </cover-view>
         </cover-view>
       </template>
-
     </cover-view>
   </cover-view>
 </template>
@@ -129,7 +148,13 @@ const text = ref();
 let countdownTimer = null;
 
 const list = ref([
-  "车辆翻车", "画面卡顿", "无视频信号", "车辆无法控制", "画面黑屏", "电量低", "其他",
+  "车辆翻车",
+  "画面卡顿",
+  "无视频信号",
+  "车辆无法控制",
+  "画面黑屏",
+  "电量低",
+  "其他",
 ]);
 const selectedIndex = ref(0);
 
@@ -141,7 +166,7 @@ const selectReason = (index, item) => {
 onMounted(() => {
   clearCountdown();
   // 注意：uni-app 不支持 sessionStorage，需改用 uni.getStorageSync
-  if (uni.getStorageSync('loadingOne') !== "1") {
+  if (uni.getStorageSync("loadingOne") !== "1") {
     visible.value = true;
     countdownTimer = setInterval(() => {
       count.value -= 1;
@@ -151,7 +176,7 @@ onMounted(() => {
         countdownTimer = null;
         visible.value = false;
         handleAction("driving");
-        uni.setStorageSync('loadingOne', "1");
+        uni.setStorageSync("loadingOne", "1");
       }
     }, 1000);
   } else {
@@ -262,108 +287,136 @@ defineExpose({ setType });
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 100000;
-}
+  z-index: 99999;
 
-.popup-container {
-  background-color: #fff;
-  border-radius: 6px;
-  width: 80%;
-  max-width: 300px;
-  overflow: hidden;
-}
-.contmax {
-  max-width: 500px;
-}
-
-.tip-content {
-  text-align: center;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  .time { font-size: 18px; color: #333; }
-  .tit { font-size: 18px; font-weight: bold; color: #333; margin-top: 10rpx; }
-  .text { 
-    font-size: 14px; color: #666; text-align: left; margin-top: 10rpx; 
-    display: flex; flex-direction: column; gap: 4rpx;
+  .popup-container {
+    background-color: #fff;
+    border-radius: 6px;
+    width: 80%;
+    max-width: 300px;
+    overflow: hidden;
   }
-  .ct { text-align: center; }
-}
+  .contmax {
+    max-width: 500px;
+  }
 
-.footer {
-  display: flex;
-  padding: 0 20px 20px;
-  justify-content: space-between;
-}
-.fc { flex-direction: column; }
-.flex { display: flex; width: 100%; gap: 10rpx; }
+  .tip-content {
+    text-align: center;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-.btn {
-  display: block;
-  flex: 1;
-  text-align: center;
-  border-radius: 4rpx;
-  font-weight: 400;
-  font-size: 18rpx;
-  color: #222222;
-  padding: 10rpx 0;
-}
-.left { background: #f0f0f0; }
-.right { background: #ffc838; }
-.mt { margin-top: 10rpx; }
-.mr { margin-right: 10rpx; }
+    .time {
+      font-size: 18px;
+      color: #333;
+    }
+    .tit {
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+      margin-top: 10rpx;
+    }
+    .text {
+      font-size: 14px;
+      color: #666;
+      text-align: left;
+      margin-top: 10rpx;
+      display: flex;
+      flex-direction: column;
+      gap: 4rpx;
+    }
+    .ct {
+      text-align: center;
+    }
+  }
 
-.reason {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10rpx;
-  padding: 10rpx 0;
-}
-.reason-item {
-  padding: 5px 10px;
-  border-radius: 20rpx;
-  color: #666666;
-  font-size: 14px;
-  border: 1rpx solid #666666;
-}
-.reason-item.active {
-  border: 1rpx solid #ffc838;
-  background-color: #ffc838;
-  color: #1a1a1a;
-}
+  .footer {
+    display: flex;
+    padding: 0 20px 20px;
+    justify-content: space-between;
+  }
+  .fc {
+    flex-direction: column;
+  }
+  .flex {
+    display: flex;
+    width: 100%;
+    gap: 10rpx;
+  }
 
-.warn-tip {
-  font-size: 12rpx;
-  color: #999999;
-  padding-top: 10rpx;
-  text-align: left;
-}
+  .btn {
+    display: block;
+    flex: 1;
+    text-align: center;
+    border-radius: 4rpx;
+    font-weight: 400;
+    font-size: 18rpx;
+    color: #222222;
+    padding: 10rpx 0;
+  }
+  .left {
+    background: #f0f0f0;
+  }
+  .right {
+    background: #ffc838;
+  }
+  .mt {
+    margin-top: 10rpx;
+  }
+  .mr {
+    margin-right: 10rpx;
+  }
 
-.ttarea {
- width: 480px;
-  margin-top: 10rpx;
-  position: relative;
-  
-  .custom-textarea {
-    width: 480px;
-     height: 60px;
-    background: #f2f2f2;
-    padding: 15px;
-    border-radius: 6rpx;
+  .reason {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10rpx;
+    padding: 10rpx 0;
+  }
+  .reason-item {
+    padding: 5px 10px;
+    border-radius: 20rpx;
+    color: #666666;
     font-size: 14px;
-    color: #222;
-    box-sizing: border-box;
+    border: 1rpx solid #666666;
+  }
+  .reason-item.active {
+    border: 1rpx solid #ffc838;
+    background-color: #ffc838;
+    color: #1a1a1a;
+  }
+
+  .warn-tip {
+    font-size: 12rpx;
+    color: #999999;
+    padding-top: 10rpx;
     text-align: left;
-    
   }
-  .word-limit {
-    position: absolute;
-    right: 16px;
-    bottom: 2rpx;
-    font-size: 14px;
-    color: #999;
+
+  .ttarea {
+    width: 480px;
+    margin-top: 10rpx;
+    position: relative;
+
+    .custom-textarea {
+      width: 480px;
+      height: 60px;
+      background: #f2f2f2;
+      padding: 15px;
+      border-radius: 6rpx;
+      font-size: 14px;
+      color: #222;
+      box-sizing: border-box;
+      text-align: left;
+    }
+    .word-limit {
+      position: absolute;
+      right: 16px;
+      bottom: 2rpx;
+      font-size: 14px;
+      color: #999;
+    }
   }
 }
 </style>
