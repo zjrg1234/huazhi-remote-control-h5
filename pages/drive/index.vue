@@ -155,7 +155,7 @@
       <!-- <pointOprea2 @action="handleRightDrive" v-if="carType == 3"></pointOprea2> -->
 
       <!-- 时间显示 -->
-      <cover-view class="time">
+      <cover-view class="time-clock">
         <cover-image class="image" src="/static/images/icon_time@2x.png" />
         <TimeClock></TimeClock>
       </cover-view>
@@ -1156,6 +1156,7 @@ onLoad((options) => {
   startListening();
 });
 
+const count = ref(15)
 onMounted(() => {
   console.log("onMounted");
   if (!uni.getStorageSync("sendNum")) uni.setStorageSync("sendNum", 0);
@@ -1576,8 +1577,6 @@ const handleMaskClick = () => {
 };
 
 const type = ref("tip");
-
-const count = ref(15);
 const message = ref("");
 const text = ref();
 let countdownTimer = null;
@@ -1871,7 +1870,7 @@ const report = () => {
   }
 }
 
-.time {
+.time-clock {
   position: fixed;
   z-index: 99999;
   bottom: 10px;
@@ -1879,6 +1878,7 @@ const report = () => {
   display: flex;
   align-items: center;
   opacity: 0.8;
+  
 
   .image {
     display: block;
