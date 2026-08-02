@@ -33,7 +33,7 @@
 			</view>
 		</view>
 
-	
+
 		<view class="agreement">
 			<view class="checkbox" :class="{ checked: agree }" @click="agree = !agree">
 				<image class="check-icon" src="/static/images/login/checked@2x.png" mode="aspectFill" v-if="agree" />
@@ -105,6 +105,11 @@ const handleLogin = () => {
 					url: "/pages/index/index"
 				})
 			}).catch()
+		} else {
+			uni.showToast({
+				title: res.msg,
+				icon: "none",
+			});
 		}
 	}).catch()
 	// 这里写你的登录接口

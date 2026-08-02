@@ -1,5 +1,5 @@
 /**
- * 微信小程序 UDP 通信最优封装类 (修复重连版)
+ * 微信小程序 UDP 通信最优封装类 (修复手动销毁后自动重连的 Bug)
  */
 export default class UDPSocketClient {
   constructor(options = {}) {
@@ -17,6 +17,7 @@ export default class UDPSocketClient {
 
     // 状态标记
     this.isClosed = false;
+    this.destroyed = false; // 【新增】永久销毁标志
 
     this.init();
   }
@@ -26,6 +27,12 @@ export default class UDPSocketClient {
   }
 
   init() {
+    // 【修复】如果已被手动销毁，禁止重新初始化
+    if (this.destroyed) {
+      console.warn("[UDP] 已被销毁，无法重新初始化");
+      return;
+    }
+
     // 1. 初始化前强制清理残留的旧实例（防止重复创建）
     if (this.socket) {
       this.close();
@@ -46,10 +53,8 @@ export default class UDPSocketClient {
         if (this.isClosed || !this.options.onMessage) return;
         const { message, remoteInfo } = res;
         try {
-         
           this.options.onMessage(this.arrayBufferToByte(message), remoteInfo);
         } catch (e) {
-
           this.options.onMessage(this.arrayBufferToByte(message), remoteInfo);
         }
       });
@@ -62,7 +67,7 @@ export default class UDPSocketClient {
         }
       });
 
-      // 4. 【关键修复】监听关闭事件，自动重置状态，为下一次重连做准备
+      // 4. 监听关闭事件（被动关闭，不设置 destroyed）
       this.socket.onClose(() => {
         // console.log("[UDP] 底层 Socket 已关闭");
         this.isClosed = true;
@@ -79,11 +84,16 @@ export default class UDPSocketClient {
   }
 
   send(message) {
+    // 【修复】如果已被手动销毁，直接丢弃消息，不重连
+    if (this.destroyed) {
+      console.warn("[UDP] Socket 已被手动销毁，无法发送");
+      return;
+    }
+
     if (this.isClosed || !this.socket) {
       console.warn("[UDP] Socket 已关闭，尝试自动重连...");
-      // 如果处于关闭状态，尝试重新初始化
       this.init();
-      if (this.isClosed || !this.socket) return; // 如果重连依然失败，则丢弃
+      if (this.isClosed || !this.socket) return; // 若重连失败则丢弃
     }
 
     this.sendQueue.push({
@@ -121,9 +131,14 @@ export default class UDPSocketClient {
     }
   }
 
+  /**
+   * 手动销毁 Socket，彻底禁止重连
+   */
   close() {
     if (this.isClosed || !this.socket) return;
 
+    // 【新增】标记为永久销毁
+    this.destroyed = true;
     this.isClosed = true;
 
     this.sendQueue = [];
@@ -142,37 +157,27 @@ export default class UDPSocketClient {
     this.socket.close();
     this.socket = null;
 
-    console.log("[UDP] Socket 已安全销毁");
+    console.log("[UDP] Socket 已安全销毁（永久禁用重连）");
   }
 
   arrayBufferToByte(buffer) {
-    // 1. 用 Uint8Array 视图来读取 ArrayBuffer 的数据
     const uint8Array = new Uint8Array(buffer);
-
-    // 2. 遍历每个字节，转成16进制字符串
     const hexArray = [];
     for (let i = 0; i < uint8Array.length; i++) {
-      // toString(16) 转16进制，padStart(2, '0') 补齐两位（比如 'A' 变成 '0A'）
       hexArray.push(uint8Array[i].toString(16).padStart(2, "0"));
     }
     let hexStr = "";
-
     hexArray.forEach((item) => {
       hexStr += item;
     });
-
     const clean = hexStr.replace(/\s/g, "");
     if (clean.length % 2 !== 0) {
       throw new Error("hexToBytes: 16进制字符串长度必须是偶数");
     }
-
     const bytes = new Uint8Array(clean.length / 2);
     for (let i = 0; i < bytes.length; i++) {
       bytes[i] = parseInt(clean.substring(i * 2, i * 2 + 2), 16);
     }
-
     return bytes;
   }
-
-
 }

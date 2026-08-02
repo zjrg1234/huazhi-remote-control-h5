@@ -48,6 +48,14 @@
 
 <script setup>
 import { ref } from "vue";
+
+import { WechatLogin, GetUserInfo } from "@/axios/index.js"
+import {
+	useUserStore
+} from '@/store/modules/user'
+
+const userStore = useUserStore()
+
 const agree = ref(true);
 
 // 登录
@@ -79,8 +87,32 @@ const handleGetPhoneNumber = async (e) => {
       fail: (err) => reject(err),
     });
   });
-
   console.log(loginRes, "loginRes");
+  const res = await WechatLogin({
+    phone_code: e.detail.code,
+    login_code: loginRes.code,
+  })
+	console.log(res);
+  if (res.code == 200) {
+			userStore.setToken(res.data.session_key)
+			userStore.setAreaId(res.data.special_area)
+			userStore.setId(res.data.id)
+
+			GetUserInfo({ uid: res.data.id }).then(res => {
+
+				userStore.setUser(res.data)
+
+				uni.switchTab({
+					url: "/pages/index/index"
+				})
+			}).catch()
+		} else {
+			uni.showToast({
+				title: res.msg,
+				icon: "none",
+			});
+		}
+ 
 };
 </script>
 
