@@ -173,6 +173,9 @@ import {
   AlipayDeposit,
   WechatDeposit,
 } from "@/axios/recharge.js";
+import {
+  WechatPay,
+} from "@/axios/index.js";
 
 import { getNavBarHeight } from "@/utils/system.js";
 
@@ -305,7 +308,25 @@ const handleSubmit = async () => {
       window.location.href = rawPayUrl;
     }, 3000);
   } else {
-    res = await WechatDeposit(obj);
+    res = await WechatPay(obj);
+    if (res.code == 200) {
+      wx.requestPayment({
+      timeStamp: res.data.timeStamp,
+      nonceStr: res.data.nonceStr,
+      package: res.data.package, // 格式为: 'prepay_id=***'
+      signType: res.data.signType, // 通常为 'RSA'
+      paySign: res.data.paySign,
+      success: (res) => {
+        // 支付成功
+        uni.showToast("支付成功")
+        
+      },
+      fail: (err) => {
+        // 支付失败或取消
+      }});
+    } else {
+      uni.showToast(res.msg)
+    }
   }
 
   console.log(res);

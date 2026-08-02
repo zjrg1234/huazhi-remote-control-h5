@@ -82,12 +82,6 @@ export function WechatLogin(data) {
   return post("api/wechat/applet/login", data);
 }
 
-export function wechatLogin(data) {
+export function WechatPay(data) {
   return post("api/user/wechat/jsapi/deposit", data);
 }
-
-//小程序支付
-// request:
-// uid //用户id
-// amount //金额
-// activity_id //如果是充值优惠过来的 传下对应的活动id

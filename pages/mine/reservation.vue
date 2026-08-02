@@ -206,12 +206,13 @@ const handleAction = async (item) => {
     return;
   }
   console.log("锁车成功")
-
+  
   GetCarDetails({
     id: item.vehicle_id,
   })
     .then((res) => {
       if (res.code == 200) {
+        uni.setStorageSync('app_id', item.app_transmitter_id)
         uni.removeStorageSync("loadingOne")
         uni.setStorageSync('carInfo', JSON.stringify(item));
         uni.setStorageSync('carDetails', JSON.stringify(res.data));

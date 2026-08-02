@@ -1138,10 +1138,10 @@ const initSocket = () => {
 const initSendLoop = () => {
   clearSendTimer();
   console.log("循环发送数据");
-  console.log("发射机ID", carDetails.value.app_transmitter_id)
+  console.log("发射机ID", uni.getStorageSync('app_id'))
   sendMsgTimer = setInterval(() => {
     if (UDPSocket.value) {
-      const app_id = carDetails.value.app_transmitter_id;
+      const app_id = uni.getStorageSync('app_id');
 
       const val = handleDriverSocketData(
         app_id,
