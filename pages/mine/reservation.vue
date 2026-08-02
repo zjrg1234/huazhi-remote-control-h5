@@ -33,6 +33,9 @@
           <text class="label">预约时间：</text>
           <text class="value">{{ formatDate(item.order_time) }}</text>
         </view>
+        <view class="info-line" v-if="item.reservation_status == 4 && item.is_reservation == 1">
+          <text class="label">如果不能驾驶可以向平台发起</text>    
+        </view>
 
         <!-- 右侧按钮 -->
         <view class="btn-wrap" v-if="item.reservation_status == 1 || item.reservation_status == 2">
@@ -42,7 +45,7 @@
         <view class="btn-wrap1" >
           <button class="btn" @click="overDrive(item)">结束驾驶</button>
         </view>
-
+        
         <view class="btn-wrap" v-if="item.reservation_status == 4 && item.is_reservation == 1">
           <button class="btn btn-info" @click="handleAppeal(item)">申诉</button>
         </view>
@@ -344,10 +347,8 @@ page {
   .btn-wrap {
     position: absolute;
     right: 20rpx;
-    top: 60%;
-    transform: translateY(-50%);
     min-width: 140rpx;
-
+    bottom: 10px;
     .btn {
       text-align: center;
       background: #ffc838;
@@ -365,6 +366,9 @@ page {
       border: 1rpx solid #ffc838;
       background: none;
     }
+  }
+  .bmt {
+    bottom: 100rpx;
   }
 }
 
