@@ -1,42 +1,63 @@
 <template>
-    <cover-view class="control-wrapper">
-        <cover-view class="control-box" @touchstart.prevent="handleStart" @touchmove.prevent="handleMove"
-            @touchend.prevent="handleEnd">
-            <!-- 轨迹背景圈 -->
-            <cover-view class="track-bg"></cover-view>
+  <cover-view class="control-wrapper">
+    <cover-view
+      class="control-box"
+      @touchstart.prevent="handleStart"
+      @touchmove.prevent="handleMove"
+      @touchend.prevent="handleEnd"
+    >
+      <!-- 轨迹背景圈 -->
+      <cover-view class="track-bg"></cover-view>
 
-            <!-- 四个方向箭头 -->
-            <cover-view class="arrow up" :class="{ active: isUpActive }">
-                <cover-image src="/static/images/btn_up2@2x.png" mode="aspectFit"/>
-            </cover-view>
-            <cover-view class="arrow down" :class="{ active: isDownActive }">
-                <cover-image src="/static/images/btn_down2@2x.png" mode="aspectFit" />
-            </cover-view>
-            <cover-view class="arrow left" :class="{ active: isLeftActive }"></cover-view>
-            <cover-view class="arrow right" :class="{ active: isRightActive }"></cover-view>
+      <!-- 四个方向箭头 -->
+      <cover-view class="arrow up" :class="{ active: isUpActive }">
+        <cover-image src="/static/images/btn_up2@2x.png" mode="aspectFit" />
+      </cover-view>
+      <cover-view class="arrow down" :class="{ active: isDownActive }">
+        <cover-image src="/static/images/btn_down2@2x.png" mode="aspectFit" />
+      </cover-view>
+      <cover-view
+        class="arrow left"
+        :class="{ active: isLeftActive }"
+      ></cover-view>
+      <cover-view
+        class="arrow right"
+        :class="{ active: isRightActive }"
+      ></cover-view>
 
-            <!-- 摇杆圆点 -->
-            <cover-view class="dot" :class="{ ready: isReadyMode }" :style="dotStyle"></cover-view>
-        </cover-view>
-
-        <cover-view class="up-down-arrow">
-            <cover-view class="arrow1 up" :class="{ active: isUpActive }">
-                <cover-image class="image" src="/static/images/btn_up_ex@2x.png" @touchend.prevent="handleClick('up')"
-                    mode="aspectFit" />
-            </cover-view>
-            <cover-view class="arrow1 down" :class="{ active: isUpActive }">
-                <cover-image class="image" src="/static/images/btn_down_ex@2x.png" mode="aspectFit"
-                    @touchend.prevent="handleClick('down')" />
-            </cover-view>
-        </cover-view>
+      <!-- 摇杆圆点 -->
+      <cover-view
+        class="dot"
+        :class="{ ready: isReadyMode }"
+        :style="dotStyle"
+      ></cover-view>
     </cover-view>
 
+    <cover-view class="up-down-arrow">
+      <cover-view class="arrow1 up" :class="{ active: isUpActive }">
+        <cover-image
+          class="image"
+          src="/static/images/btn_up_ex@2x.png"
+          @touchend.prevent="handleClick('up')"
+          mode="aspectFit"
+        />
+      </cover-view>
+      <cover-view class="arrow1 down" :class="{ active: isUpActive }">
+        <cover-image
+          class="image"
+          src="/static/images/btn_down_ex@2x.png"
+          mode="aspectFit"
+          @touchend.prevent="handleClick('down')"
+        />
+      </cover-view>
+    </cover-view>
+  </cover-view>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
 
-const emit = defineEmits(["action","action2"]);
+const emit = defineEmits(["action", "action2"]);
 
 // --- 配置参数 ---
 const IDLE_DELAY = 500; // 进入待命模式的延迟时间(ms)
@@ -64,259 +85,264 @@ let readyBaseY = 0;
 
 // --- 计算属性 (仅绑定圆点样式) ---
 const dotStyle = computed(() => ({
-    transform: `translate3d(${currentDotX.value}px, ${currentDotY.value}px, 0) scale(1)`,
-    transition: isDragging.value
-        ? "none"
-        : "transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease",
+  transform: `translate3d(${currentDotX.value}px, ${currentDotY.value}px, 0) scale(1)`,
+  transition: isDragging.value
+    ? "none"
+    : "transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease",
 }));
 
 // --- 核心方法 ---
 const resetIdleTimer = () => {
-    clearTimeout(idleTimer);
-    if (!isReadyMode.value) {
-        idleTimer = setTimeout(enterReadyMode, IDLE_DELAY);
-    }
+  clearTimeout(idleTimer);
+  if (!isReadyMode.value) {
+    idleTimer = setTimeout(enterReadyMode, IDLE_DELAY);
+  }
+};
+
+// 获取触摸/鼠标坐标（统一使用 pageX/pageY，避免固定定位偏移）
+const getClientPos = (e) => {
+  if (e.touches && e.touches.length > 0) {
+    return {
+      clientX: e.touches[0].pageX || e.touches[0].clientX,
+      clientY: e.touches[0].pageY || e.touches[0].clientY,
+    };
+  }
+  return {
+    clientX: e.pageX || e.clientX,
+    clientY: e.pageY || e.clientY,
+  };
 };
 
 const enterReadyMode = () => {
-    isReadyMode.value = true;
-    readyBaseX = lastPointerX;
-    readyBaseY = lastPointerY;
-    // 震动反馈
-    uni.vibrateShort({ type: "light" });
+  isReadyMode.value = true;
+  readyBaseX = lastPointerX;
+  readyBaseY = lastPointerY;
+  // 震动反馈
+  uni.vibrateShort({ type: "light" });
 };
 
 const updateArrows = (dx, dy) => {
-    isUpActive.value = dy < -SWIPE_THRESHOLD;
-    isDownActive.value = dy > SWIPE_THRESHOLD;
-    isLeftActive.value = dx < -SWIPE_THRESHOLD;
-    isRightActive.value = dx > SWIPE_THRESHOLD;
-    emit("action", {
-        up: isUpActive.value,
-        down: isDownActive.value,
-        left: isLeftActive.value,
-        right: isRightActive.value,
-    });
+  isUpActive.value = dy < -SWIPE_THRESHOLD;
+  isDownActive.value = dy > SWIPE_THRESHOLD;
+  isLeftActive.value = dx < -SWIPE_THRESHOLD;
+  isRightActive.value = dx > SWIPE_THRESHOLD;
+  emit("action", {
+    up: isUpActive.value,
+    down: isDownActive.value,
+    left: isLeftActive.value,
+    right: isRightActive.value,
+  });
 };
 
 const resetArrows = () => {
-    isUpActive.value = false;
-    isDownActive.value = false;
-    isLeftActive.value = false;
-    isRightActive.value = false;
-    emit("action", {
-        up: false,
-        down: false,
-        left: false,
-        right: false,
-    });
+  isUpActive.value = false;
+  isDownActive.value = false;
+  isLeftActive.value = false;
+  isRightActive.value = false;
+  emit("action", {
+    up: false,
+    down: false,
+    left: false,
+    right: false,
+  });
 };
 
 // --- 事件处理 ---
 const handleStart = (e) => {
-    isDragging.value = true;
-    isReadyMode.value = false;
-    clearTimeout(idleTimer);
-    resetArrows();
+  isDragging.value = true;
+  isReadyMode.value = false;
+  clearTimeout(idleTimer);
+  resetArrows();
 
-    const touch = e.touches[0];
-    lastPointerX = touch.clientX;
-    lastPointerY = touch.clientY;
+  const { clientX, clientY } = getClientPos(e);
 
-    // 【关键修复】：在按下时立刻记录基准点，防止移动时产生巨大偏移
-    readyBaseX = lastPointerX;
-    readyBaseY = lastPointerY;
+  lastPointerX = clientX;
+  lastPointerY = clientY;
 
-    resetIdleTimer();
-    //   clearTimeout(idleTimer);
-    //   resetArrows();
+  // 【关键修复】：在按下时立刻记录基准点，防止移动时产生巨大偏移
+  readyBaseX = clientX;
+  readyBaseY = clientY;
 
-    //   const touch = e.touches[0];
-    //   lastPointerX = touch.clientX;
-    //   lastPointerY = touch.clientY;
-    //   resetIdleTimer();
+  resetIdleTimer();
+
 };
 
 const handleMove = (e) => {
-    if (!isDragging.value) return;
+  if (!isDragging.value) return;
 
-    const touch = e.touches[0];
-    const clientX = touch.clientX;
-    const clientY = touch.clientY;
+  const { clientX, clientY } = getClientPos(e);
 
-    lastPointerX = clientX;
-    lastPointerY = clientY;
-    resetIdleTimer();
+  lastPointerX = clientX;
+  lastPointerY = clientY;
+  resetIdleTimer();
 
-    // 直接进入圆点滑动逻辑
-    let dx = clientX - readyBaseX;
-    let dy = clientY - readyBaseY;
+  // 直接进入圆点滑动逻辑
+  let dx = clientX - readyBaseX;
+  let dy = clientY - readyBaseY;
 
-    // 计算距离并限制在圆内
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    if (distance > MAX_RADIUS) {
-        const angle = Math.atan2(dy, dx);
-        dx = Math.cos(angle) * MAX_RADIUS;
-        dy = Math.sin(angle) * MAX_RADIUS;
-    }
+  // 计算距离并限制在圆内
+  const distance = Math.sqrt(dx * dx + dy * dy);
+  if (distance > MAX_RADIUS) {
+    const angle = Math.atan2(dy, dx);
+    dx = Math.cos(angle) * MAX_RADIUS;
+    dy = Math.sin(angle) * MAX_RADIUS;
+  }
 
-    currentDotX.value = dx;
-    currentDotY.value = dy;
-    updateArrows(dx, dy);
+  currentDotX.value = dx;
+  currentDotY.value = dy;
+  updateArrows(dx, dy);
 };
 
 const handleEnd = () => {
-    if (!isDragging.value) return;
+  if (!isDragging.value) return;
 
-    isDragging.value = false;
-    isReadyMode.value = false;
-    clearTimeout(idleTimer);
+  isDragging.value = false;
+  isReadyMode.value = false;
+  clearTimeout(idleTimer);
 
-    // 圆点回弹复位
-    currentDotX.value = 0;
-    currentDotY.value = 0;
-    resetArrows();
+  // 圆点回弹复位
+  currentDotX.value = 0;
+  currentDotY.value = 0;
+  resetArrows();
 };
 
 const handleClick = (val) => {
-      emit("action2", {
-        type: val,
-        isLeft: true
-    });
-}
-
-
+  emit("action2", {
+    type: val,
+    isLeft: true,
+  });
+};
 </script>
 
 <style lang="scss" scoped>
 .control-wrapper {
-    width: 100%;
-    position: fixed;
-    z-index:9999;
+  width: 100%;
+  position: fixed;
+  z-index: 9999;
 }
 
 .up-down-arrow {
-    position: relative;
+  position: relative;
 
-    width: 40px;
-    top: -310px;
-    left: 250px;
-    text-align: center;
+  width: 40px;
+  top: -310px;
+  left: 250px;
+  text-align: center;
 
-    .arrow1 {
-        width: 36px;
-        height: 36px;
+  .arrow1 {
+    width: 36px;
+    height: 36px;
 
-        .image {
-            display: block;
-            width: 36px;
-            height: 36px;
-        }
+    .image {
+      display: block;
+      width: 36px;
+      height: 36px;
     }
+  }
 
-    .down {
-        margin-top: 20px;
-    }
+  .down {
+    margin-top: 20px;
+  }
 }
 
 .control-box {
-    /* 改为相对定位，跟随父元素布局，不再固定全屏拖拽 */
-    position: relative;
-    width: 140px;
-    height: 140px;
-    top: -200px;
-    left: 80px;
+  /* 改为相对定位，跟随父元素布局，不再固定全屏拖拽 */
+  position: relative;
+  width: 140px;
+  height: 140px;
+  top: -200px;
+  left: 80px;
 
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
-    place-items: center;
-    z-index: 100;
-    user-select: none;
-    touch-action: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  place-items: center;
+  z-index: 100;
+  user-select: none;
+  touch-action: none;
 }
 
 /* 轨迹背景圈 */
 .track-bg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 130px;
-    height: 130px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px dashed rgba(255, 255, 255, 0.2);
-    pointer-events: none;
-    z-index: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* 箭头通用样式 */
 .arrow {
-    width: 25px;
-    height: 25px;
-    opacity: 1;
-    transition: all 0.2s ease;
-    z-index: 1;
-    pointer-events: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    color: #fff;
+  width: 25px;
+  height: 25px;
+  opacity: 1;
+  transition: all 0.2s ease;
+  z-index: 1;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #fff;
 }
 
 .arrow.active {
-    opacity: 1;
-    filter: drop-shadow(0 0 4px rgba(255, 167, 38, 0.8));
-    transform: scale(1.2);
+  opacity: 1;
+  filter: drop-shadow(0 0 4px rgba(255, 167, 38, 0.8));
+  transform: scale(1.2);
 }
 
 /* 箭头位置分配 */
 .arrow.up {
-    grid-column: 2;
-    grid-row: 1;
+  grid-column: 2;
+  grid-row: 1;
 }
 
 .arrow.down {
-    grid-column: 2;
-    grid-row: 3;
+  grid-column: 2;
+  grid-row: 3;
 }
 
 .arrow.left {
-    grid-column: 1;
-    grid-row: 2;
-    width: 0;
-    height: 0;
-    border-top: 12.5px solid transparent;
-    border-bottom: 12.5px solid transparent;
-    border-right: 21.65px solid #ffcc66;
+  grid-column: 1;
+  grid-row: 2;
+  width: 0;
+  height: 0;
+  border-top: 12.5px solid transparent;
+  border-bottom: 12.5px solid transparent;
+  border-right: 21.65px solid #ffcc66;
 }
 
 .arrow.right {
-    grid-column: 3;
-    grid-row: 2;
-    width: 0;
-    height: 0;
-    border-top: 12.5px solid transparent;
-    border-bottom: 12.5px solid transparent;
-    border-left: 21.65px solid #ffcc66;
+  grid-column: 3;
+  grid-row: 2;
+  width: 0;
+  height: 0;
+  border-top: 12.5px solid transparent;
+  border-bottom: 12.5px solid transparent;
+  border-left: 21.65px solid #ffcc66;
 }
 
 /* 摇杆圆点：居中 */
 .dot {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    position: relative;
-    z-index: 2;
-    will-change: transform;
-    grid-column: 2;
-    grid-row: 2;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  position: relative;
+  z-index: 2;
+  will-change: transform;
+  grid-column: 2;
+  grid-row: 2;
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .dot.ready {
-    box-shadow: 0 0 10px rgba(255, 167, 38, 0.8);
+  box-shadow: 0 0 10px rgba(255, 167, 38, 0.8);
 }
 </style>
