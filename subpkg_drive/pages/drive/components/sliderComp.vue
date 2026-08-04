@@ -17,7 +17,7 @@
 
       <cover-image
         class="slider-thumb"
-        src="/static/images/icon_sider@2x.png"
+        src="./static/icon_sider@2x.png"
         mode="aspectFit"
         :style="{ transform: `translateX(${thumbLeft}px)` }"
       />

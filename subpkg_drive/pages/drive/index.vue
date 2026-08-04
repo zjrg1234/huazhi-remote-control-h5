@@ -8,7 +8,7 @@
       <!-- @touchstart="onUserActivity" @touchmove="onUserActivity" -->
       <cover-view class="logout" @click="logout">
         <cover-image
-          src="/static/images/icon_exit@2x.png"
+          src="./static/icon_exit@2x.png"
           class="image"
           mode="aspectFit"
         />
@@ -37,7 +37,7 @@
             <cover-view class="car">
               <cover-image
                 class="image"
-                src="/static/images/icon_car@2x.png"
+                src="./static/icon_car@2x.png"
                 mode="aspectFit"
               />
               <cover-view
@@ -65,7 +65,7 @@
       <cover-view class="right-cont" @click="set">
         <cover-image
           class="image"
-          src="/static/images/icon_set@2x.png"
+          src="./static/icon_set@2x.png"
           mode="aspectFit"
         />
       </cover-view>
@@ -76,14 +76,14 @@
         <cover-image
           class="image"
           v-show="!showSound"
-          src="/static/images/icon_sound_close@2x.png"
+          src="./static/icon_sound_close@2x.png"
           @click="showSound = true"
           mode="aspectFit"
         />
         <cover-image
           class="image"
           v-show="showSound"
-          src="/static/images/icon_sound_open@2x.png"
+          src="./static/icon_sound_open@2x.png"
           @click="showSound = false"
           mode="aspectFit"
         />
@@ -160,7 +160,7 @@
 
       <!-- 时间显示 -->
       <cover-view class="time-clock">
-        <cover-image class="image" src="/static/images/icon_time@2x.png" />
+        <cover-image class="image" src="./static/icon_time@2x.png" />
         <TimeClock></TimeClock>
       </cover-view>
 
@@ -223,7 +223,7 @@
                       >
                         <cover-image
                           class="image"
-                          src="/static/images/icon_selected@2x.png"
+                          src="./static/icon_selected@2x.png"
                           mode="widthFix"
                         ></cover-image>
                       </cover-view>
@@ -236,11 +236,11 @@
                         <cover-view class="icon-group">
                           <cover-view class="icon-row vertical">
                             <cover-image
-                              src="/static/images/arrow_up@2x.png"
+                              src="./static/arrow_up@2x.png"
                               class="icon-img"
                             ></cover-image>
                             <cover-image
-                              src="/static/images/arrow_down@2x.png"
+                              src="./static/arrow_down@2x.png"
                               class="icon-img"
                             ></cover-image>
                           </cover-view>
@@ -250,11 +250,11 @@
                         <cover-view class="icon-group">
                           <cover-view class="icon-row horizontal">
                             <cover-image
-                              src="/static/images/arrow_left@2x.png"
+                              src="./static/arrow_left@2x.png"
                               class="icon-img"
                             ></cover-image>
                             <cover-image
-                              src="/static/images/arrow_right@2x.png"
+                              src="./static/arrow_right@2x.png"
                               class="icon-img"
                             ></cover-image>
                           </cover-view>
@@ -317,25 +317,25 @@
                       <cover-image
                         class="image"
                         v-show="selectedMode === mode.id && index == 0"
-                        src="/static/images/icon_ev_dir1_selected@2x.png"
+                        src="./static/icon_ev_dir1_selected@2x.png"
                         mode="widthFix"
                       ></cover-image>
                       <cover-image
                         class="image"
                         v-show="selectedMode !== mode.id && index == 0"
-                        src="/static/images/icon_ev_dir1@2x.png"
+                        src="./static/icon_ev_dir1@2x.png"
                         mode="widthFix"
                       ></cover-image>
                       <cover-image
                         class="image"
                         v-show="selectedMode === mode.id && index == 1"
-                        src="/static/images/icon_ev_dir2_selected@2x.png"
+                        src="./static/icon_ev_dir2_selected@2x.png"
                         mode="widthFix"
                       ></cover-image>
                       <cover-image
                         class="image"
                         v-show="selectedMode !== mode.id && index == 1"
-                        src="/static/images/icon_ev_dir2@2x.png"
+                        src="./static/icon_ev_dir2@2x.png"
                         mode="widthFix"
                       ></cover-image>
                     </cover-view>
@@ -368,7 +368,7 @@
                     <cover-view class="reduce" @click="handleReduce(1)">
                       <cover-image
                         class="image"
-                        src="/static/images/icon_reduce@2x.png"
+                        src="./static/icon_reduce@2x.png"
                         mode="widthFix"
                       ></cover-image>
                     </cover-view>
@@ -404,7 +404,7 @@
                     <cover-view class="add" @click="handleAdd(1)">
                       <cover-image
                         class="image"
-                        src="/static/images/icon_add@2x.png"
+                        src="./static/icon_add@2x.png"
                         mode="widthFix"
                       ></cover-image>
                     </cover-view>
@@ -419,7 +419,7 @@
                     <cover-view class="reduce" @click="handleReduce(2)">
                       <cover-image
                         class="image"
-                        src="/static/images/icon_reduce@2x.png"
+                        src="./static/icon_reduce@2x.png"
                         mode="widthFix"
                       ></cover-image>
                     </cover-view>
@@ -453,7 +453,7 @@
                     <cover-view class="add" @click="handleAdd(2)">
                       <cover-image
                         class="image"
-                        src="/static/images/icon_add@2x.png"
+                        src="./static/icon_add@2x.png"
                         mode="widthFix"
                       ></cover-image>
                     </cover-view>
@@ -468,7 +468,7 @@
                     <cover-view class="reduce" @click="handleReduce(3)">
                       <cover-image
                         class="image"
-                        src="/static/images/icon_reduce@2x.png"
+                        src="./static/icon_reduce@2x.png"
                         mode="widthFix"
                       ></cover-image>
                     </cover-view>
@@ -503,7 +503,7 @@
                     <cover-view class="add" @click="handleAdd(3)">
                       <cover-image
                         class="image"
-                        src="/static/images/icon_add@2x.png"
+                        src="./static/icon_add@2x.png"
                         mode="widthFix"
                       ></cover-image>
                     </cover-view>
@@ -519,7 +519,7 @@
                 <cover-view class="close-btn" @click="close">
                   <cover-image
                     class="image"
-                    src="/static/images/icon_close@2x.png"
+                    src="./static/icon_close@2x.png"
                     mode="widthFix"
                   ></cover-image>
                 </cover-view>

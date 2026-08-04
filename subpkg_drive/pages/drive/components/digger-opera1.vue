@@ -11,10 +11,10 @@
 
     <!-- 四个方向箭头 -->
     <cover-view class="arrow up" :class="{ active: isUpActive }">
-      <cover-image src="/static/images/btn_up2@2x.png" mode="aspectFit"/>
+      <cover-image src="./static/btn_up2@2x.png" mode="aspectFit"/>
     </cover-view>
     <cover-view class="arrow down" :class="{ active: isDownActive }">
-      <cover-image src="/static/images/btn_down2@2x.png" mode="aspectFit"/>
+      <cover-image src="./static/btn_down2@2x.png" mode="aspectFit"/>
     </cover-view>
     <cover-view class="arrow left" :class="{ active: isLeftActive }"></cover-view>
     <cover-view class="arrow right" :class="{ active: isRightActive }"></cover-view>

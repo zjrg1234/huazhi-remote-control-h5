@@ -10,14 +10,14 @@
   >
     <cover-image
       class="arrow up"
-      src="/static/images/arrow_up_big@2x.png"
+      src="./static/arrow_up_big@2x.png"
       :class="{ active: isUpActive }"
     ></cover-image>
 
   
     <cover-image
       class="dot"
-      src="/static/images/dot@2x.png"
+      src="./static/dot@2x.png"
       :class="{ dragging: isDragging , ready: isReadyMode }"
       :style="{
         transform: `translateY(${currentDotY}px) scale(1)`
@@ -27,7 +27,7 @@
 
     <cover-image
       class="arrow down"
-      src="/static/images/arrow_down_big@2x.png"
+      src="./static/arrow_down_big@2x.png"
       :class="{ active: isDownActive }"
     ></cover-image>
   </cover-view>
@@ -36,9 +36,9 @@
 <script setup>
 import { ref, watch } from "vue";
 
-import upImg from "@/static/images/arrow_up_big@2x.png";
-import downImg from "@/static/images/arrow_down_big@2x.png";
-import dotImg from "@/static/images/dot@2x.png";
+import upImg from "@./static/arrow_up_big@2x.png";
+import downImg from "@./static/arrow_down_big@2x.png";
+import dotImg from "@./static/dot@2x.png";
 
 const upImage = ref(upImg);
 const downImage = ref(downImg);

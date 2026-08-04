@@ -13,28 +13,28 @@
     <cover-view class="arrow up" :class="{ active: isUpActive }">
       <cover-image
         class="image"
-        src="/static/images/btn_up1@2x.png"
+        src="./static/btn_up1@2x.png"
         mode="aspectFit"
       />
     </cover-view>
     <cover-view class="arrow down" :class="{ active: isDownActive }">
       <cover-image
         class="image"
-        src="/static/images/btn_down1@2x.png"
+        src="./static/btn_down1@2x.png"
         mode="aspectFit"
       />
     </cover-view>
     <cover-view class="arrow left" :class="{ active: isLeftActive }">
       <cover-image
         class="image"
-        src="/static/images/btn_bucket_down@2x.png"
+        src="./static/btn_bucket_down@2x.png"
         mode="aspectFit"
       />
     </cover-view>
     <cover-view class="arrow right" :class="{ active: isRightActive }">
       <cover-image
         class="image"
-        src="/static/images/btn_bucket_up@2x.png"
+        src="./static/btn_bucket_up@2x.png"
         mode="aspectFit"
       />
     </cover-view>

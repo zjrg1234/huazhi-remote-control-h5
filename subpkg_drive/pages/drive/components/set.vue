@@ -22,7 +22,7 @@
                   :class="{ 'is-active': selectedMode === mode.id }" @click="handleSetSelect(mode.id)">
                   <!-- 右上角的黄色对勾 (仅当选中时显示) -->
                   <cover-view v-if="selectedMode === mode.id" class="check-mark">
-                    <cover-image class="image" src="/static/images/icon_selected@2x.png" mode="widthFix"></cover-image>
+                    <cover-image class="image" src="./static/icon_selected@2x.png" mode="widthFix"></cover-image>
                   </cover-view>
                   <!-- 布局区域：根据配置交换左右顺序 -->
                   <cover-view class="content-layout" :class="{ 'reverse-layout': mode.isReverse }">
@@ -81,13 +81,13 @@
                 <cover-view v-for="(mode, index) in steeringModes" :key="index" class="option-card"
                   :class="{ 'is-active': selectedMode === mode.id }" @click="handleSetSelect(mode.id)">
                   <cover-image class="image" v-if="selectedMode === mode.id && index == 0"
-                    src="/static/images/icon_ev_dir1_selected@2x.png" mode="widthFix"></cover-image>
+                    src="./static/icon_ev_dir1_selected@2x.png" mode="widthFix"></cover-image>
                   <cover-image class="image" v-if="selectedMode !== mode.id && index == 0"
-                    src="/static/images/icon_ev_dir1@2x.png" mode="widthFix"></cover-image>
+                    src="./static/icon_ev_dir1@2x.png" mode="widthFix"></cover-image>
                   <cover-image class="image" v-if="selectedMode === mode.id && index == 1"
-                    src="/static/images/icon_ev_dir2_selected@2x.png" mode="widthFix"></cover-image>
+                    src="./static/icon_ev_dir2_selected@2x.png" mode="widthFix"></cover-image>
                   <cover-image class="image" v-if="selectedMode !== mode.id && index == 1"
-                    src="/static/images/icon_ev_dir2@2x.png" mode="widthFix"></cover-image>
+                    src="./static/icon_ev_dir2@2x.png" mode="widthFix"></cover-image>
                 </cover-view>
               </cover-view>
             </cover-view>
@@ -121,7 +121,7 @@
               <cover-view class="section">
                 <!-- 减少按钮 -->
                 <cover-view class="reduce" @click="handleReduce(1)">
-                  <cover-image class="image" src="/static/images/icon_reduce@2x.png" mode="widthFix"></cover-image>
+                  <cover-image class="image" src="./static/icon_reduce@2x.png" mode="widthFix"></cover-image>
                 </cover-view>
                 <!-- 滑块区域（占据主要空间） -->
                 <cover-view class="slider-wrapper">
@@ -143,7 +143,7 @@
                 </cover-view>
                 <!-- 增加按钮 -->
                 <cover-view class="add" @click="handleAdd(1)">
-                  <cover-image class="image" src="/static/images/icon_add@2x.png" mode="widthFix"></cover-image>
+                  <cover-image class="image" src="./static/icon_add@2x.png" mode="widthFix"></cover-image>
                 </cover-view>
                 <!-- 保存按钮 -->
                 <cover-view class="btn" @click="save(1)">保存</cover-view>
@@ -154,7 +154,7 @@
               <cover-view class="section">
                 <!-- 减少按钮 -->
                 <cover-view class="reduce" @click="handleReduce(2)">
-                  <cover-image class="image" src="/static/images/icon_reduce@2x.png" mode="widthFix"></cover-image>
+                  <cover-image class="image" src="./static/icon_reduce@2x.png" mode="widthFix"></cover-image>
                 </cover-view>
                 <!-- 滑块区域（占据主要空间） -->
                 <cover-view class="slider-wrapper">
@@ -176,7 +176,7 @@
                 </cover-view>
                 <!-- 增加按钮 -->
                 <cover-view class="add" @click="handleAdd(2)">
-                  <cover-image class="image" src="/static/images/icon_add@2x.png" mode="widthFix"></cover-image>
+                  <cover-image class="image" src="./static/icon_add@2x.png" mode="widthFix"></cover-image>
                 </cover-view>
                 <!-- 保存按钮 -->
                 <cover-view class="btn" @click="save(2)">保存</cover-view>
@@ -187,7 +187,7 @@
               <cover-view class="section">
                 <!-- 减少按钮 -->
                 <cover-view class="reduce" @click="handleReduce(3)">
-                  <cover-image class="image" src="/static/images/icon_reduce@2x.png" mode="widthFix"></cover-image>
+                  <cover-image class="image" src="./static/icon_reduce@2x.png" mode="widthFix"></cover-image>
                 </cover-view>
                 <!-- 滑块区域（占据主要空间） -->
                 <cover-view class="slider-wrapper">
@@ -209,7 +209,7 @@
                 </cover-view>
                 <!-- 增加按钮 -->
                 <cover-view class="add" @click="handleAdd(3)">
-                  <cover-image class="image" src="/static/images/icon_add@2x.png" mode="widthFix"></cover-image>
+                  <cover-image class="image" src="./static/icon_add@2x.png" mode="widthFix"></cover-image>
                 </cover-view>
                 <!-- 保存按钮 -->
                 <cover-view class="btn" @click="save(3)">保存</cover-view>
@@ -221,7 +221,7 @@
           <cover-view class="settings-bar">
             <cover-view class="text-area">设置</cover-view>
             <cover-view class="close-btn" @click="close">
-              <cover-image class="image" src="/static/images/icon_close@2x.png" mode="widthFix"></cover-image>
+              <cover-image class="image" src="./static/icon_close@2x.png" mode="widthFix"></cover-image>
             </cover-view>
           </cover-view>
           <cover-view class="setting-group" v-for="(item, index) in setGroup" :key="index">
@@ -241,10 +241,10 @@
 <script setup>
 import { computed, ref, watch } from "vue";
 
-import arrowUp from "@/static/images/arrow_up@2x.png";
-import arrowDown from "@/static/images/arrow_down@2x.png";
-import arrowLeft from "@/static/images/arrow_left@2x.png";
-import arrowRight from "@/static/images/arrow_right@2x.png";
+import arrowUp from "@./static/arrow_up@2x.png";
+import arrowDown from "@./static/arrow_down@2x.png";
+import arrowLeft from "@./static/arrow_left@2x.png";
+import arrowRight from "@./static/arrow_right@2x.png";
 const dirMiddle = ref(1);
 const dirTurn = ref(1);
 const throttle = ref(1);
