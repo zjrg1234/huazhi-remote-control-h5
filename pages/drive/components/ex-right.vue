@@ -266,7 +266,7 @@ const handleClick = (val) => {
   position: fixed;
   right: 230px;
   bottom: 78px;
-
+ z-index: 9999;
   .arrow1 {
     width: 36px;
     height: 36px;

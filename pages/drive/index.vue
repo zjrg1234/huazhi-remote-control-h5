@@ -1288,6 +1288,9 @@ const initRouteData = (options) => {
   } else {
     console.log("carDetails 空");
   }
+
+  carType.value = "3";
+
 };
 
 const initVehicleConfig = () => {
@@ -1702,7 +1705,7 @@ const report = (text) => {
   height: 100vh;
   overflow: hidden;
   position: relative;
-  background: red;
+  background: rgba(0, 0, 0, 0.6);
 }
 
 .page-content {
