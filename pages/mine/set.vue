@@ -71,11 +71,11 @@ onMounted(() => {
 
 // 事件处理函数
 const handleModifyPassword = () => {
-  uni.navigateTo({ url: '/pages/user/modifyPwd' })
+  uni.navigateTo({ url: '/subpkg_user/pages/user/modifyPwd' })
 }
 
 const handleModifyPhone = () => {
-  uni.navigateTo({ url: '/pages/user/modifyPhone' })
+  uni.navigateTo({ url: '/subpkg_user/pages/user/modifyPhone' })
 }
 
 const handleOpenPrivacy = () => {
