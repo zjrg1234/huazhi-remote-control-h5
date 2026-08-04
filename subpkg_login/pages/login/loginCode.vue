@@ -118,7 +118,7 @@
 
 	const goRegister = () => {
 		uni.navigateTo({
-			url: '/subpkg_login/pages/login/register'
+			url: '/subpkg_register/pages/register/index'
 		})
 	}
 	

@@ -87,13 +87,7 @@
         "navigationStyle": "custom"
       }
     },
-    {
-      "path": "pages/register/register",
-      "style": {
-        "navigationBarTitleText": "注册新账号",
-        "navigationStyle": "custom"
-      }
-    },
+
     {
       "path": "pages/mine/editProfile",
       "style": {
@@ -185,6 +179,18 @@
           "path": "pages/login/forgetPwd",
           "style": {
             "navigationBarTitleText": "忘记密码"
+          }
+        }
+      ]
+    },
+    {
+      "root": "subpkg_register",
+      "pages": [
+        {
+          "path": "pages/register/index",
+          "style": {
+            "navigationBarTitleText": "注册新账号",
+            "navigationStyle": "custom"
           }
         }
       ]

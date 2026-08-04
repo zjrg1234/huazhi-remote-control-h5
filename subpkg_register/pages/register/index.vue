@@ -1,50 +1,23 @@
 <template>
 	<view class="page">
 
-		<view class="avatar-wrap">
-			<image class="avatar" src="/static/logo.png" mode="aspectFill" />
-		</view>
-
-
+		<!-- 表单 -->
 		<view class="form">
 			<!-- 手机号 -->
 			<view class="input-item">
 				<text class="prefix">+86</text>
 				<input class="input" type="number" maxlength="11" placeholder="请输入手机号" v-model="form.phone" />
 			</view>
-
+			<VerifyCodeInput v-model="form.code" :phone="form.phone" />
 			<!-- 密码 -->
 			<view class="input-item">
 				<input class="input" type="password" maxlength="6" placeholder="请输入密码" v-model="form.password" />
 			</view>
-
-			<!-- 忘记密码 / 验证码登录 -->
-			<view class="row-link">
-				<text class="link" @click="goForgetPwd">忘记密码</text>
-				<text class="link" @click="goCodeLogin">验证码登录</text>
+			<view class="input-item">
+				<input class="input" type="password" maxlength="6" placeholder="请再次输入密码" v-model="form.passwordAgain" />
 			</view>
-
-			<!-- 登录按钮 -->
-			<view class="login-btn" @click="handleLogin">登录</view>
-
-			<!-- 注册账号 -->
-			<view class="register-link" @click="goRegister">
-				<text>注册帐号</text>
-			</view>
+			<view class="login-btn" @click="handleLogin">完成</view>
 		</view>
-
-
-		<view class="agreement">
-			<view class="checkbox" :class="{ checked: agree }" @click="agree = !agree">
-				<image class="check-icon" src="/static/images/login/checked@2x.png" mode="aspectFill" v-if="agree" />
-				<image class="un-check-icon" src="/static/images/login/circle@2x.png" mode="aspectFill" v-if="!agree" />
-			</view>
-			<text class="text">
-				我已同意<text class="highlight" @click="goto('/subpkg_set/pages/set/userPolicy')">用户协议</text> 和
-				<text @click="goto('/subpkg_set/pages/set/privacy')" class="highlight">隐私条款</text>
-			</text>
-		</view>
-
 	</view>
 </template>
 
@@ -52,88 +25,96 @@
 import {
 	ref
 } from 'vue'
-import { Login, GetUserInfo } from "@/axios/index.js"
+import {
+	Register
+} from "@/axios/index.js"
 import {
 	useUserStore
 } from '@/store/modules/user'
+import VerifyCodeInput from '@/components/verify-code/verify-code.vue';
 const form = ref({
-	phone: '13062567585',
-	password: '123456'
+	phone: '',
+	password: '',
+	code: '',
+	passwordAgain: ''
 })
 
 const agree = ref(true)
 const userStore = useUserStore()
 // 登录
 const handleLogin = () => {
-	if (!form.value.phone) {
+
+	if (!form.value.phone || form.value.phone.length !== 11) {
 		uni.showToast({
 			title: '请输入手机号',
 			icon: 'none'
-		})
-		return
+		});
+		return;
 	}
-	if (!form.value.password) {
+	if (!form.value.code) {
 		uni.showToast({
-			title: '请输入密码',
+			title: '请输入验证码',
 			icon: 'none'
-		})
-		return
+		});
+		return;
 	}
-	if (!agree.value) {
+	if (!form.value.password || form.value.password.length < 6) {
 		uni.showToast({
-			title: '请先同意用户协议和隐私条款',
+			title: '密码至少6位',
 			icon: 'none'
-		})
-		return
+		});
+		return;
+	}
+	if (form.value.password !== form.value.passwordAgain) {
+		uni.showToast({
+			title: '两次密码输入不一致',
+			icon: 'none'
+		});
+		return;
 	}
 
-	Login({
+	Register({
 		...form.value,
-		password: form.value.password,
-		type: 1
+		type: 1,
+		noteVerify: form.value.code
 	}).then(res => {
+		console.log(res)
 		if (res.code == 200) {
-			userStore.setToken(res.data.session_key)
-			userStore.setAreaId(res.data.special_area)
-			userStore.setId(res.data.id)
 
-			GetUserInfo({ uid: res.data.id }).then(res => {
-
-				userStore.setUser(res.data)
-
-				uni.switchTab({
-					url: "/pages/index/index"
-				})
-			}).catch()
-		} else {
 			uni.showToast({
-				title: res.msg,
-				icon: "none",
-			});
+				title: '注册成功',
+				icon: 'success',
+				duration: 1500  // 显示1.5秒
+			})
+
+			// 2. 延迟跳回首页（等提示看完）
+			setTimeout(() => {
+				// 关闭当前所有页面，回到首页（推荐）
+				uni.reLaunch({
+					url: '/pages/index/index'  // 你的首页路径
+				})
+			}, 1500)
 		}
 	}).catch()
-	// 这里写你的登录接口
-
-
 
 }
 
 // 跳转
 const goForgetPwd = () => {
 	uni.navigateTo({
-		url: '/subpkg_login/pages/login/forgetPwd'
+		url: '/subpkg_login/pages/login/forget-pwd'
 	})
 }
 
 const goCodeLogin = () => {
 	uni.navigateTo({
-		url: '/subpkg_login/pages/login/loginCode'
+		url: '/subpkg_login/pages/login/code-login'
 	})
 }
 
 const goRegister = () => {
 	uni.navigateTo({
-		url: '/subpkg_login/pages/register/register'
+		url: '/subpkg_register/pages/register/index'
 	})
 }
 
@@ -150,7 +131,7 @@ page {
 }
 
 .page {
-	padding: 138rpx 32rpx 40rpx;
+	padding: 10rpx 32rpx 40rpx;
 	box-sizing: border-box;
 	position: relative;
 	height: 100vh;
@@ -191,8 +172,6 @@ page {
 
 	.input {
 		flex: 1;
-		height: 96rpx;
-
 		font-size: 28rpx;
 		background: transparent;
 	}

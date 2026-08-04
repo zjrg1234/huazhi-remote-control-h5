@@ -26,7 +26,7 @@ import {
 	ref
 } from 'vue'
 import {
-	Register
+	UserChangePwd
 } from "@/axios/index.js"
 import {
 	useUserStore
@@ -73,27 +73,16 @@ const handleLogin = () => {
 		return;
 	}
 
-	Register({
+	UserChangePwd({
 		...form.value,
-		type: 1,
-		noteVerify: form.value.code
 	}).then(res => {
 		console.log(res)
 		if (res.code == 200) {
 
-			uni.showToast({
-				title: '注册成功',
-				icon: 'success',
-				duration: 1500  // 显示1.5秒
+			uni.switchTab({
+				url: "/subpkg_login/pages/login/login"
 			})
 
-			// 2. 延迟跳回首页（等提示看完）
-			setTimeout(() => {
-				// 关闭当前所有页面，回到首页（推荐）
-				uni.reLaunch({
-					url: '/pages/index/index'  // 你的首页路径
-				})
-			}, 1500)
 		}
 	}).catch()
 
@@ -114,7 +103,7 @@ const goCodeLogin = () => {
 
 const goRegister = () => {
 	uni.navigateTo({
-		url: '/subpkg_login/pages/login/register'
+		url: '/subpkg_register/pages/register/index'
 	})
 }
 
@@ -174,6 +163,8 @@ page {
 		flex: 1;
 		font-size: 28rpx;
 		background: transparent;
+		height: 96rpx;
+
 	}
 }
 
