@@ -5,7 +5,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 
-// import {formatDate } from "@/utils/utils"
 // 定义 props，允许父组件传入自定义格式，默认为 YYYY-MM-DD HH:mm:ss
 const props = defineProps({
   format: {

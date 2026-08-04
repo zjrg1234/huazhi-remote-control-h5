@@ -172,7 +172,7 @@ import {
   GetFirstDepositList,
   AlipayDeposit,
   WechatDeposit,
-} from "@/axios/recharge.js";
+} from "../axios/recharge.js";
 import {
   WechatPay,
 } from "@/axios/index.js";

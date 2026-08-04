@@ -88,7 +88,7 @@
 	import { onReachBottom, onPullDownRefresh } from '@dcloudio/uni-app'
 	import NavBar from "@/components/nav-bar/nav-bar.vue"
 	import { GetUserWalletLog } from "@/axios/mine.js"
-	import { formatDate } from "@/utils/utils.js";
+	import { formatDate } from "../utils/utils.js";
 	import { getNavBarHeight } from "@/utils/system.js"
 	import {
 		useUserStore

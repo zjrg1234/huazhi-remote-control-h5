@@ -68,7 +68,7 @@
 <script setup>
 import { ref } from "vue";
 import { onLoad, onPullDownRefresh, onReachBottom } from "@dcloudio/uni-app";
-import { formatDate } from "@/utils/utils.js";
+import { formatDate } from "../utils/utils.js";
 import { GetReservationList } from "@/axios/mine";
 import { GetCarDetails } from "@/axios/index";
 import { billingMethod } from "@/utils/filter.js";

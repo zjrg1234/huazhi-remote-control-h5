@@ -749,7 +749,7 @@ import {
   handleBattery,
   createReverseMapper,
   createMapperNew,
-} from "@/utils/utils.js";
+} from "./utils/utils.js";
 import UDPSocketClient from "./utils/udpSocket.js";
 import { handleDriverSocketData } from "./utils/socketHelper.js";
 import { encryptAES } from "./utils/crypto.js";

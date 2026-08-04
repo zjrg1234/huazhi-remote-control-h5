@@ -43,7 +43,7 @@
 <script setup>
 import { ref } from "vue";
 import { onLoad, onPullDownRefresh } from "@dcloudio/uni-app";
-import { formatDate } from "@/utils/utils.js";
+import { formatDate } from "../utils/utils.js";
 import { GetAppealList } from "@/axios/mine.js";
 // 模拟数据
 const list = ref([]);

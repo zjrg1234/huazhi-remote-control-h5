@@ -61,8 +61,8 @@
 import { ref } from 'vue'
 import { onLoad, onReachBottom, } from "@dcloudio/uni-app"
 import {GetDrivingRecordlList} from "@/axios/mine.js"
-import {reservationStatus, billingMethod, paymentType} from "@/utils/filter.js"
-import {formatDate, compareTimestamp} from "@/utils/utils.js"
+import {reservationStatus, billingMethod, paymentType} from "../utils/filter.js"
+import {formatDate, compareTimestamp} from "../utils/utils.js"
 // ==================== 核心变量 ====================
 const list = ref([])        // 列表数据
 const page = ref(1)         // 当前页码
