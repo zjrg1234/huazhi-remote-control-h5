@@ -556,10 +556,12 @@
         maxlength="20"
         placeholder="请输入故障原因，最多20字（选填）"
       />
+        <!-- :style="{ display: allPopupVisible ? 'block' : 'none' }" -->
       <cover-view
         class="tip-popup-mask"
         v-show="allPopupVisible"
-        :style="{ display: allPopupVisible ? 'block' : 'none' }"
+      
+        :style="{ display:  'none' }"
         @tap.stop="handleMaskClick"
       >
         <cover-view class="fcenter">
@@ -1289,8 +1291,6 @@ const initRouteData = (options) => {
     console.log("carDetails 空");
   }
 
-  carType.value = "3";
-
 };
 
 const initVehicleConfig = () => {
@@ -1489,6 +1489,7 @@ const handleDrive = (param) => {
       param.type == "up" ? true : false,
     );
   } else {
+    // 挖机右
     carHandler.value.handleArrowControlChannel(
       "right",
       param.type == "up" ? true : false,

@@ -6,45 +6,47 @@
       @touchmove.prevent="handleMove"
       @touchend.prevent="handleEnd"
     >
-      <!-- 轨迹背景圈 -->
-      <cover-view class="track-bg"></cover-view>
+      <cover-view class="cont">
+        <!-- 轨迹背景圈 -->
+        <cover-view class="track-bg"></cover-view>
 
-      <!-- 四个方向箭头 -->
-      <cover-view class="arrow up" :class="{ active: isUpActive }">
-        <cover-image
-          class="cover-image"
-          src="/static/cover-images/btn_up1@2x.png"
-          mode="aspectFit"
-        ></cover-image>
-      </cover-view>
-      <cover-view class="arrow down" :class="{ active: isDownActive }">
-        <cover-image
-          class="cover-image"
-          src="/static/cover-images/btn_down1@2x.png"
-          mode="aspectFit"
-        ></cover-image>
-      </cover-view>
-      <cover-view class="arrow left" :class="{ active: isLeftActive }">
-        <cover-image
-          class="cover-image"
-          src="/static/cover-images/btn_bucket_down@2x.png"
-          mode="aspectFit"
-        ></cover-image>
-      </cover-view>
-      <cover-view class="arrow right" :class="{ active: isRightActive }">
-        <cover-image
-          class="cover-image"
-          src="/static/cover-images/btn_bucket_up@2x.png"
-          mode="aspectFit"
-        ></cover-image>
-      </cover-view>
+        <!-- 四个方向箭头 -->
+        <cover-view class="arrow up" :class="{ active: isUpActive }">
+          <cover-image
+            class="cover-image"
+            src="/static/cover-images/btn_up1@2x.png"
+        
+          ></cover-image>
+        </cover-view>
+        <cover-view class="arrow down" :class="{ active: isDownActive }">
+          <cover-image
+            class="cover-image"
+            src="/static/cover-images/btn_down1@2x.png"
+  
+          ></cover-image>
+        </cover-view>
+        <cover-view class="arrow left" :class="{ active: isLeftActive }">
+          <cover-image
+            class="cover-image"
+            src="/static/cover-images/btn_bucket_down@2x.png"
+         
+          ></cover-image>
+        </cover-view>
+        <cover-view class="arrow right" :class="{ active: isRightActive }">
+          <cover-image
+            class="cover-image"
+            src="/static/cover-images/btn_bucket_up@2x.png"
+      
+          ></cover-image>
+        </cover-view>
 
-      <!-- 摇杆圆点 -->
-      <cover-view
-        class="dot"
-        :class="{ ready: isReadyMode }"
-        :style="dotStyle"
-      ></cover-view>
+        <!-- 摇杆圆点 -->
+        <cover-view
+          class="dot"
+          :class="{ ready: isReadyMode }"
+          :style="dotStyle"
+        ></cover-view>
+      </cover-view>
     </cover-view>
 
     <cover-view class="up-down-arrow" v-show="!mode">
@@ -120,8 +122,15 @@ let readyBaseX = 0;
 let readyBaseY = 0;
 
 // --- 计算属性 (仅绑定圆点样式) ---
+// const dotStyle = computed(() => ({
+//   transform: `translate3d(${currentDotX.value}px, ${currentDotY.value}px, 0) scale(1)`,
+//   transition: isDragging.value
+//     ? "none"
+//     : "transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease",
+// }));
+
 const dotStyle = computed(() => ({
-  transform: `translate3d(${currentDotX.value}px, ${currentDotY.value}px, 0) scale(1)`,
+  transform: `translate(calc(-50% + ${currentDotX.value}px), calc(-50% + ${currentDotY.value}px))`,
   transition: isDragging.value
     ? "none"
     : "transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease",
@@ -246,32 +255,32 @@ const handleClick = (val) => {
 </script>
 
 <style lang="scss" scoped>
+
+
 .control-box {
-  /* 固定在屏幕右下角，不再需要 JS 控制位置 */
   position: fixed;
   right: 55px;
-  bottom: 60px;
-  width: 140px;
-  height: 140px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
-  place-items: center;
+  bottom: 40px;
+  width: 175px;
+  height: 175px;
   z-index: 9999;
   user-select: none;
   touch-action: none;
+
 }
 
 .up-down-arrow {
   position: fixed;
   right: 230px;
   bottom: 78px;
- z-index: 9999;
+  z-index: 9999;
+  text-align: center;
+
   .arrow1 {
     width: 36px;
     height: 36px;
 
-    .cover-image {
+    .image {
       display: block;
       width: 36px;
       height: 36px;
@@ -283,89 +292,126 @@ const handleClick = (val) => {
   }
 }
 
+.cont {
+  position: relative;
+  width: 176px;
+  height: 176px;
+
+  /* 轨迹背景圈 */
+  .track-bg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* 箭头通用 */
+  .arrow {
+    width: 26px;
+    height: 26px;
+    opacity: 0.7;
+    transition: all 0.2s ease;
+    z-index: 1;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+
+    .image {
+      display: block;
+      width: 26px;
+      height: 26px;
+    }
+
+    &.active {
+      opacity: 1;
+      filter: drop-shadow(0 0 4px rgba(255, 167, 38, 0.8));
+      transform: scale(1.2);
+    }
+  }
+
+  /* 箭头位置 */
+  .arrow.up {
+    position: absolute;
+    left: 75px;
+    top: 25px;
+  }
+
+  .arrow.down {
+    position: absolute;
+    left: 75px;
+    bottom: 25px;
+  }
+
+  .arrow.left {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 25px;
+    width: 0;
+    height: 0;
+    border-top: 12.5px solid transparent;
+    border-bottom: 12.5px solid transparent;
+    border-right: 21.65px solid #ffcc66;
+    background: none;
+
+    &.active {
+      border-right-color: #ffa726;
+      filter: drop-shadow(0 0 6px rgba(255, 167, 38, 0.9));
+      transform: translateY(-50%) scale(1.2);
+    }
+  }
+
+  .arrow.right {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 25px;
+    width: 0;
+    height: 0;
+    border-top: 12.5px solid transparent;
+    border-bottom: 12.5px solid transparent;
+    border-left: 21.65px solid #ffcc66;
+    background: none;
+
+    &.active {
+      border-left-color: #ffa726;
+      filter: drop-shadow(0 0 6px rgba(255, 167, 38, 0.9));
+      transform: translateY(-50%) scale(1.2);
+    }
+  }
+
+  /* 摇杆圆点 — 居中 */
+  .dot {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+
+    z-index: 2;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+
+    &.ready {
+      box-shadow: 0 0 12px rgba(255, 167, 38, 0.8);
+    }
+  }
+}
+
+
 .flex {
   display: flex;
   justify-content: space-between;
   width: 100px;
   bottom: 110px;
-}
-
-/* 轨迹背景圈 */
-.track-bg {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 130px;
-  height: 130px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px dashed rgba(255, 255, 255, 0.2);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* 箭头通用样式 */
-.arrow {
-  width: 25px;
-  height: 25px;
-  opacity: 1;
-  transition: all 0.2s ease;
-  z-index: 1;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  color: #fff;
-
-  .cover-image {
-    width: 25px;
-    height: 25px;
-  }
-}
-
-.arrow.active {
-  opacity: 1;
-  filter: drop-shadow(0 0 4px rgba(255, 167, 38, 0.8));
-  transform: scale(1.2);
-}
-
-/* 箭头位置分配 */
-.arrow.up {
-  grid-column: 2;
-  grid-row: 1;
-}
-
-.arrow.down {
-  grid-column: 2;
-  grid-row: 3;
-}
-
-.arrow.left {
-  grid-column: 1;
-  grid-row: 2;
-}
-
-.arrow.right {
-  grid-column: 3;
-  grid-row: 2;
-}
-
-/* 摇杆圆点：居中 */
-.dot {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  position: relative;
-  z-index: 2;
-  will-change: transform;
-  grid-column: 2;
-  grid-row: 2;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.dot.ready {
-  box-shadow: 0 0 10px rgba(255, 167, 38, 0.8);
 }
 </style>
