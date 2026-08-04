@@ -739,6 +739,10 @@ import LeftRight from "./components/left-right.vue";
 // import pointOprea2 from "./components/digger-opera2.vue";
 import ExLeft from "./components/ex-left.vue";
 import ExRight from "./components/ex-right.vue";
+
+import { StartDrive } from "@/axios/index.js";
+import { LoginTop, DeviceDetails } from "./axios/video.js";
+
 import {
   formatTime,
   mapToPer,
@@ -746,15 +750,14 @@ import {
   createReverseMapper,
   createMapperNew,
 } from "@/utils/utils.js";
-import UDPSocketClient from "@/utils/udpSocket.js";
-import { handleDriverSocketData } from "@/utils/socketHelper.js";
-import { useHESbus } from "@/composables/useHESbus.js";
-import { encryptAES } from "@/utils/crypto.js";
-import { StartDrive } from "@/axios/index.js";
-import { LoginTop, DeviceDetails } from "@/axios/video.js";
+import UDPSocketClient from "./utils/udpSocket.js";
+import { handleDriverSocketData } from "./utils/socketHelper.js";
+import { encryptAES } from "./utils/crypto.js";
+
 import { CarControlHandler } from "./control/siqu.js";
 import { ExcavatorControlHandler } from "./control/excavator.js";
-import { useInactivityAlarm } from "@/composables/useInactivityAlarm.js";
+import { useHESbus } from "./composables/useHESbus.js";
+import { useInactivityAlarm } from "./composables/useInactivityAlarm.js";
 import {
   ch1,
   speeds,
@@ -769,7 +772,7 @@ import {
   before_diff_selected,
   light,
   light_selected,
-} from "./control/img.js";
+} from "./utils/img.js";
 import { reactive } from "vue";
 
 // ------------------- 状态 -------------------
