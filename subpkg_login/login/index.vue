@@ -61,7 +61,7 @@ const agree = ref(true);
 // 登录
 const handleLogin = () => {
   uni.navigateTo({
-    url: "/pages/login/login",
+    url: "/subpkg_login/pages/login/login",
   });
 };
 

@@ -102,19 +102,19 @@ const handleLogin = () => {
 // 跳转
 const goForgetPwd = () => {
 	uni.navigateTo({
-		url: '/pages/login/forget-pwd'
+		url: '/subpkg_login/pages/login/forget-pwd'
 	})
 }
 
 const goCodeLogin = () => {
 	uni.navigateTo({
-		url: '/pages/login/code-login'
+		url: '/subpkg_login/pages/login/code-login'
 	})
 }
 
 const goRegister = () => {
 	uni.navigateTo({
-		url: '/pages/login/register'
+		url: '/subpkg_login/pages/login/register'
 	})
 }
 

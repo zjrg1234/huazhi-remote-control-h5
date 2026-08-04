@@ -112,13 +112,13 @@
 
 	const goLogin = () => {
 		uni.navigateTo({
-			url: '/pages/login/login'
+			url: '/subpkg_login/pages/login/login'
 		})
 	}
 
 	const goRegister = () => {
 		uni.navigateTo({
-			url: '/pages/login/register'
+			url: '/subpkg_login/pages/login/register'
 		})
 	}
 	

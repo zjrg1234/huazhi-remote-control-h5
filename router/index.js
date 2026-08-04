@@ -36,7 +36,7 @@ uni.addInterceptor('switchTab', {
     const userStore = getUserStore()
     const pagePath = e.url.split('?')[0]
     if (needLoginPages.includes(pagePath) && !userStore.token) {
-      uni.reLaunch({ url: '/pages/login/login' })
+      uni.reLaunch({ url: '/subpkg_login/pages/login/login' })
       return false
     }
   }

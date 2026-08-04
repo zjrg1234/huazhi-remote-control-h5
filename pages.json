@@ -73,7 +73,6 @@
         "navigationBarTitleText": "修改手机号"
       }
     },
-
     {
       "path": "pages/mine/battery",
       "style": {
@@ -89,37 +88,10 @@
       }
     },
     {
-      "path": "pages/login/index",
-      "style": {
-        "navigationBarTitleText": "",
-        "navigationStyle": "custom"
-      }
-    },
-    {
-      "path": "pages/login/login",
-      "style": {
-        "navigationBarTitleText": "",
-        "navigationStyle": "custom"
-      }
-    },
-    {
       "path": "pages/register/register",
       "style": {
         "navigationBarTitleText": "注册新账号",
         "navigationStyle": "custom"
-      }
-    },
-    {
-      "path": "pages/login/loginCode",
-      "style": {
-        "navigationBarTitleText": "",
-        "navigationStyle": "custom"
-      }
-    },
-    {
-      "path": "pages/login/forgetPwd",
-      "style": {
-        "navigationBarTitleText": "忘记密码"
       }
     },
     {
@@ -181,6 +153,38 @@
           "path": "pages/set/sdkSheet",
           "style": {
             "navigationBarTitleText": "SDK共享清单"
+          }
+        }
+      ]
+    },
+    {
+      "root": "subpkg_login",
+      "pages": [
+        {
+          "path": "pages/login/index",
+          "style": {
+            "navigationBarTitleText": "",
+            "navigationStyle": "custom"
+          }
+        },
+        {
+          "path": "pages/login/login",
+          "style": {
+            "navigationBarTitleText": "",
+            "navigationStyle": "custom"
+          }
+        },
+        {
+          "path": "pages/login/loginCode",
+          "style": {
+            "navigationBarTitleText": "",
+            "navigationStyle": "custom"
+          }
+        },
+        {
+          "path": "pages/login/forgetPwd",
+          "style": {
+            "navigationBarTitleText": "忘记密码"
           }
         }
       ]
