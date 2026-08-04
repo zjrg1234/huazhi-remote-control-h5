@@ -79,15 +79,15 @@ const handleModifyPhone = () => {
 }
 
 const handleOpenPrivacy = () => {
-  uni.navigateTo({ url: '/pages/set/privacy' })
+  uni.navigateTo({ url: '/subpkg_set/pages/set/privacy' })
 }
 
 const handleOpenInfoList = () => {
-  uni.navigateTo({ url: '/pages/set/infoSheet' })
+  uni.navigateTo({ url: '/subpkg_set/pages/set/infoSheet' })
 }
 
 const handleOpenSDKList = () => {
-  uni.navigateTo({ url: '/pages/set/sdkSheet' })
+  uni.navigateTo({ url: '/subpkg_set/pages/set/sdkSheet' })
 }
 
 const handleOpenCompanyIntro = () => {

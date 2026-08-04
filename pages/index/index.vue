@@ -226,7 +226,7 @@ onLoad(() => {
 
 const handleCar = (item) => {
   uni.setStorageSync('carTitle', item.venue_name)
-  uni.navigateTo({ url: '/pages/car/details?id=' + item.id })
+  uni.navigateTo({ url: '/subpkg_car/pages/car/index?id=' + item.id })
 }
 </script>
 

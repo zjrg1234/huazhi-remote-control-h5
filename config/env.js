@@ -7,7 +7,7 @@ const envConfig = {
     baseUrl: 'https://htzksj.zksjyk.cn'
   },
   production: {
-    baseUrl: 'https://htzksj.zksjyk.cn'
+    baseUrl: 'https://api.fzbkapp.com'
   }
 }
 

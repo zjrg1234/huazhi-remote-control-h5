@@ -222,7 +222,7 @@ const handleAction = async (item) => {
         // 清理驾驶页面的缓存
 
         uni.navigateTo({
-          url: `/pages/drive/index?order_no=${item.order_no}&vehicle_id=${item.vehicle_id}`,
+          url: `/subpkg_drive/pages/drive/index?order_no=${item.order_no}&vehicle_id=${item.vehicle_id}`,
           animationType: 'none',  // 关闭动画
           animationDuration: 0,
         });

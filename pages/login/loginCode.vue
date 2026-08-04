@@ -37,8 +37,8 @@
 				</view>
 				<text class="text">
 					我已同意<text class="highlight"
-					 @click="goto('/pages/set/userPolicy')">用户协议</text> 和 
-					 <text @click="goto('/pages/set/privacy')" class="highlight">隐私条款</text>
+					 @click="goto('/subpkg_set/pages/set/userPolicy')">用户协议</text> 和 
+					 <text @click="goto('/subpkg_set/pages/set/privacy')" class="highlight">隐私条款</text>
 				</text>
 			</view>
 		
