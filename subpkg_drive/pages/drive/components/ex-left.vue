@@ -12,10 +12,10 @@
 
         <!-- 四个方向箭头 -->
         <cover-view class="arrow up" :class="{ active: isUpActive }">
-          <cover-image class="image" src="./static/btn_up2@2x.png" />
+          <cover-image class="image" src="../static/btn_up2@2x.png" />
         </cover-view>
         <cover-view class="arrow down" :class="{ active: isDownActive }">
-          <cover-image class="image" src="./static/btn_down2@2x.png" />
+          <cover-image class="image" src="../static/btn_down2@2x.png" />
         </cover-view>
         <cover-view class="arrow left" :class="{ active: isLeftActive }"></cover-view>
         <cover-view class="arrow right" :class="{ active: isRightActive }"></cover-view>
@@ -34,7 +34,7 @@
       <cover-view class="arrow1 up" :class="{ active: isUpActive }">
         <cover-image
           class="image"
-          src="./static/btn_up_ex@2x.png"
+          src="../static/btn_up_ex@2x.png"
           @touchend.prevent="handleClick('up')"
           mode="aspectFit"
         />
@@ -42,7 +42,7 @@
       <cover-view class="arrow1 down" :class="{ active: isDownActive }">
         <cover-image
           class="image"
-          src="./static/btn_down_ex@2x.png"
+          src="../static/btn_down_ex@2x.png"
           @touchend.prevent="handleClick('down')"
           mode="aspectFit"
         />

@@ -1,11 +1,11 @@
 <template>
   <cover-view class="control-box" ref="boxRef" :style="{ transform: `translate3d(${boxX}px, ${boxY}px, 0)` }"
     @touchstart="handleStart" @touchmove.stop="handleMove" @touchend="handleEnd" @mousedown="handleStart">
-    <cover-image class="arrow left" src="./static/arrow_left_big@2x.png"
+    <cover-image class="arrow left" src="../static/arrow_left_big@2x.png"
       :class="{ active: isLeftActive }"></cover-image>
 
   
-      <cover-image class="dot" ref="dotRef"  :class="{ ready: isReadyMode }" src="./static/dot@2x.png" :style="{
+      <cover-image class="dot" ref="dotRef"  :class="{ ready: isReadyMode }" src="../static/dot@2x.png" :style="{
         transition: isDragging
           ? 'none'
           : 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease, box-shadow 0.3s ease',
@@ -14,7 +14,7 @@
 
 
 
-    <cover-image class="arrow right" src="./static/arrow_right_big@2x.png"
+    <cover-image class="arrow right" src="../static/arrow_right_big@2x.png"
       :class="{ active: isRightActive }"></cover-image>
   </cover-view>
 </template>

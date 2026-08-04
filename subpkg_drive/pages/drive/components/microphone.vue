@@ -7,7 +7,7 @@
   >
     <cover-image
       class="image"
-      src="./static/icon_microphone_open@2x.png"
+      src="../static/icon_microphone_open@2x.png"
       mode="aspectFit"
     />
 
