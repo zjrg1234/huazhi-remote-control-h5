@@ -1692,7 +1692,7 @@ const report = (text) => {
           UDPSocket.value.close();
           clearTimeout(timer);
           uni.reLaunch({
-            url: "/pages/mine/reservation", // 你的首页路径
+            url: "/subpkg_mine/pages/mine/reservation", 
           });
         }, 2000);
       } else {

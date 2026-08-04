@@ -19,68 +19,6 @@
         "navigationBarTitleText": "",
         "navigationStyle": "custom"
       }
-    },
-    {
-      "path": "pages/mine/changeArea",
-      "style": {
-        "navigationBarTitleText": "变更专区",
-        "enablePullDownRefresh": false
-      }
-    },
-    {
-      "path": "pages/mine/reservation",
-      "style": {
-        "navigationBarTitleText": "我的预约",
-        "enablePullDownRefresh": false
-      }
-    },
-    {
-      "path": "pages/mine/appeal",
-      "style": {
-        "navigationBarTitleText": "我的申诉",
-        "enablePullDownRefresh": false
-      }
-    },
-    {
-      "path": "pages/mine/orderAppeal",
-      "style": {
-        "navigationBarTitleText": "预约申诉",
-        "enablePullDownRefresh": false
-      }
-    },
-    {
-      "path": "pages/mine/driveRecord",
-      "style": {
-        "navigationBarTitleText": "驾驶记录",
-        "enablePullDownRefresh": false
-      }
-    },
-    {
-      "path": "pages/mine/set",
-      "style": {
-        "navigationBarTitleText": "设置"
-      }
-    },
-    {
-      "path": "pages/mine/battery",
-      "style": {
-        "navigationBarTitleText": "我的电池",
-        "navigationStyle": "custom"
-      }
-    },
-    {
-      "path": "pages/mine/recharge",
-      "style": {
-        "navigationBarTitleText": "我的电池",
-        "navigationStyle": "custom"
-      }
-    },
-
-    {
-      "path": "pages/mine/editProfile",
-      "style": {
-        "navigationBarTitleText": "个人简介"
-      }
     }
   ],
   "subPackages": [
@@ -196,6 +134,72 @@
           "path": "pages/user/modifyPhone",
           "style": {
             "navigationBarTitleText": "修改手机号"
+          }
+        }
+      ]
+    },
+    {
+      "root": "subpkg_mine",
+      "pages": [
+        {
+          "path": "pages/mine/changeArea",
+          "style": {
+            "navigationBarTitleText": "变更专区",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "pages/mine/reservation",
+          "style": {
+            "navigationBarTitleText": "我的预约",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "pages/mine/appeal",
+          "style": {
+            "navigationBarTitleText": "我的申诉",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "pages/mine/orderAppeal",
+          "style": {
+            "navigationBarTitleText": "预约申诉",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "pages/mine/driveRecord",
+          "style": {
+            "navigationBarTitleText": "驾驶记录",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "pages/mine/set",
+          "style": {
+            "navigationBarTitleText": "设置"
+          }
+        },
+        {
+          "path": "pages/mine/battery",
+          "style": {
+            "navigationBarTitleText": "我的电池",
+            "navigationStyle": "custom"
+          }
+        },
+        {
+          "path": "pages/mine/recharge",
+          "style": {
+            "navigationBarTitleText": "我的电池",
+            "navigationStyle": "custom"
+          }
+        },
+        {
+          "path": "pages/mine/editProfile",
+          "style": {
+            "navigationBarTitleText": "个人简介"
           }
         }
       ]

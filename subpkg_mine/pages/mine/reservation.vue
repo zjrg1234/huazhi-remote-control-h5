@@ -241,7 +241,7 @@ const handleAppeal = (item) => {
   // 申诉
   if (item.reservation_status == 4 && item.is_reservation == 1) {
     uni.navigateTo({
-      url: "/pages/mine/orderAppeal?order_no=" + item.order_no,
+      url: "/subpkg_mine/pages/mine/orderAppeal?order_no=" + item.order_no,
     });
   }
 };

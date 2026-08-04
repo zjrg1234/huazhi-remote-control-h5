@@ -97,25 +97,25 @@ const menuList = ref([
 		name: "变更专区",
 		icon: "/static/images/mine/icon_change@2x.png",
 		key: "area",
-		url: "/pages/mine/changeArea"
+		url: "/subpkg_mine/pages/mine/changeArea"
 	},
 	{
 		name: "我的预约",
 		icon: "/static/images/mine/icon_book@2x.png",
 		key: "order",
-		url: "/pages/mine/reservation",
+		url: "/subpkg_mine/pages/mine/reservation",
 	},
 	{
 		name: "我的申诉",
 		icon: "/static/images/mine/icon_appeal@2x.png",
 		key: "appeal",
-		url: "/pages/mine/appeal",
+		url: "/subpkg_mine/pages/mine/appeal",
 	},
 	{
 		name: "驾驶记录",
 		icon: "/static/images/mine/icon_record@2x.png",
 		key: "record",
-		url: "/pages/mine/driveRecord",
+		url: "/subpkg_mine/pages/mine/driveRecord",
 	},
 	{
 		name: "在线客服",
@@ -133,7 +133,7 @@ const menuList = ref([
 		name: "设置",
 		icon: "/static/images/mine/icon_set@2x.png",
 		key: "set",
-		url: "/pages/mine/set",
+		url: "/subpkg_mine/pages/mine/set",
 	},
 ]);
 
@@ -151,7 +151,7 @@ onPageShow(() => {
  })
 const goPage = () => {
 	uni.navigateTo({
-		url: "/pages/mine/battery",
+		url: "/subpkg_mine/pages/mine/battery",
 	});
 };
 const handleClick = (key, url) => {
@@ -242,7 +242,7 @@ const openService = () => {
 
 const gotoProfile = () => {
  uni.navigateTo({
- 	url: "/pages/mine/editProfile",
+ 	url: "/subpkg_mine/pages/mine/editProfile",
  });
 }
 

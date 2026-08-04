@@ -2,12 +2,12 @@ import { useUserStore } from '@/store/modules/user'
 
 // 需要登录才能访问的页面
 const needLoginPages = [
-  '/pages/mine/changeArea',
-  '/pages/mine/driveRecord',
-  '/pages/mine/appeal',
-  '/pages/mine/reservation',
-  '/pages/user/modifyPwd',
-  '/pages/user/modifyPhone'
+  '/subpkg_mine/pages/mine/changeArea',
+  '/subpkg_mine/pages/mine/driveRecord',
+  '/subpkg_mine/pages/mine/appeal',
+  '/subpkg_mine/pages/mine/reservation',
+  '/subpkg_mine/pages/user/modifyPwd',
+  '/subpkg_mine/pages/user/modifyPhone'
 ]
 
 let userStore = null

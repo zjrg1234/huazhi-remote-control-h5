@@ -353,7 +353,7 @@ const onBillingConfirm = (params) => {
 const gotoUrl = () => {
   orderVisible.value = false;
   uni.navigateTo({
-    url: "/pages/mine/reservation",
+    url: "/subpkg_mine/pages/mine/reservation",
   });
 };
 </script>
