@@ -71,7 +71,7 @@ import { onLoad, onPullDownRefresh, onReachBottom } from "@dcloudio/uni-app";
 import { formatDate } from "../utils/utils.js";
 import { GetReservationList } from "@/axios/mine";
 import { GetCarDetails } from "@/axios/index";
-import { billingMethod } from "@/utils/filter.js";
+import { billingMethod } from "../utils/filter.js";
 import { StartDrive, CheckCar, LockCar } from "@/axios/index.js";
 
 // 状态映射：预约状态 1已预约 2待使用 3使用中 4已完成 5已取消
