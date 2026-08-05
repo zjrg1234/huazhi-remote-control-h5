@@ -14,7 +14,7 @@
 
     <!-- 版本与服务信息组 -->
     <view class="card">
-      
+
       <view class="item" @click="handleOpenPrivacy">
         <text class="label">隐私政策</text>
         <image class="arrow" src="/static/images/common/icon_arrows_gray@2x.png" mode="aspectFill" />
@@ -47,15 +47,15 @@
       退出登录
     </view>
   </view>
-	
-	<CustomModal  v-model:visible="logoutModal" title="提示" content="是否注销账号?" 
-	 cancelText="取消" confirmText="确定" @cancel="logoutModal = false" @confirm="handleConfirm"  />
+
+  <CustomModal v-model:visible="logoutModal" title="提示" content="是否注销账号?" cancelText="取消" confirmText="确定"
+    @cancel="logoutModal = false" @confirm="handleConfirm" />
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-	import CustomModal from '@/components/common-modal/common-modal.vue'
-import {logoutAccount} from "@/axios/mine.js"
+import CustomModal from '@/components/common-modal/common-modal.vue'
+import { logoutAccount } from "@/axios/mine.js"
 const cacheSize = ref('34.23kb')
 const logoutModal = ref(false)
 // 模拟获取缓存大小
@@ -116,10 +116,10 @@ const handleDeleteAccount = () => {
   logoutModal.value = true
 }
 const handleConfirm = () => {
-	logoutAccount().then(res => {
-		uni.showToast({ title: '注销成功', icon: 'success' });
-		// 回到首页
-	}).catch();
+  logoutAccount().then(res => {
+    uni.showToast({ title: '注销成功', icon: 'success' });
+    // 回到首页
+  }).catch();
 }
 const handleLogout = () => {
   uni.showModal({
@@ -131,7 +131,10 @@ const handleLogout = () => {
         uni.removeStorageSync('token')
         uni.removeStorageSync('userInfo')
         uni.showToast({ title: '已退出' })
-        uni.reLaunch({ url: '/pages/mine/index' })
+        const timer = setTimeout(() => {
+          uni.reLaunch({ url: '/subpkg_login/pages/login/login' })
+          clearTimeout(timer)
+        }, 1500)
       }
     }
   })
@@ -139,13 +142,13 @@ const handleLogout = () => {
 </script>
 
 <style lang="scss" scoped>
-
 page {
-	background: #F8F8F8;
+  background: #F8F8F8;
 }
+
 .page {
   padding: 20rpx;
-	background: #F8F8F8;
+  background: #F8F8F8;
 }
 
 .card {
@@ -190,9 +193,9 @@ page {
   border-radius: 16rpx;
   text-align: center;
   padding: 25rpx;
-	font-family: PingFangSC, PingFang SC;
-	font-weight: 500;
-	font-size: 28rpx;
-	color: #222222;
+  font-family: PingFangSC, PingFang SC;
+  font-weight: 500;
+  font-size: 28rpx;
+  color: #222222;
 }
 </style>
