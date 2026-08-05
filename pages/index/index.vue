@@ -5,10 +5,6 @@
       <image :src="imgUrl" mode="widthFix" class="banner-img" lazy-load></image>
     </view>
 
-    <!-- <view>
-      <button @click="test">测试</button>
-    </view> -->
-
     <!-- 分类导航栏 (Sticky 吸顶 + 横向滚动) -->
     <view class="sticky-nav-wrapper">
       <scroll-view
@@ -31,8 +27,20 @@
       </scroll-view>
     </view>
 
+
+
+  <view v-if="loading && leftList.length === 0 && rightList.length === 0" class="skeleton-wrapper">
+    <view class="column col-left">
+      <SkeletonCard  :key="'s-left-4'"  />
+      <SkeletonCard v-for="i in 3" :key="'s-left-' + i"  cardHeight="540rpx" />
+    </view>
+    <view class="column col-right">
+      <SkeletonCard v-for="i in 4" :key="'s-right-' + i" cardHeight="540rpx" />
+    </view>
+  </view>
+
     <!-- 瀑布流列表区域 -->
-    <view class="waterfall-container">
+    <view v-else class="waterfall-container">
        <view v-if="leftList.length === 0 && rightList.length === 0 && loading == false" class="empty-state"> 
         <text class="empty-text">暂无相关数据</text>
       </view>
@@ -42,11 +50,12 @@
           v-for="(item, index) in leftList"
           :key="'left-' + index"
           class="card-item"
+        
           @click="handleCar(item)"
         >
           <image
-            :src="item.image"
-            mode="widthFix"
+            :src="item.venue_image[0]"
+            mode="scaleToFill"
             class="card-img"
             lazy-load
           ></image>
@@ -84,7 +93,7 @@
         >
           <image
             :src="item.venue_image[0]"
-            mode="widthFix"
+            mode="scaleToFill"
             class="card-img"
             lazy-load
           ></image>
@@ -126,6 +135,10 @@ import { ref, onMounted, computed } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
 import { throttle } from "@/utils/system.js"; // 引用封装好的节流函数
 import { GetHomeBanner, GetHomeTabTitle, GetHomeDataList } from "@/axios/index";
+
+
+import SkeletonCard from '@/components/skeleton-card/skeleton-card.vue'
+
 // --- 数据定义 ---
 const categories = ref([]);
 const currentCategory = ref("");
@@ -137,9 +150,6 @@ const loading = ref(false);
 const noMore = ref(false);
 const imgUrl = ref("");
 
-const test = () => {
-  
-};
 
 // --- 模拟接口请求 ---
 const fetchData = async (isRefresh = false) => {
@@ -350,6 +360,7 @@ const handleCar = (item) => {
   border-radius: 8rpx;
   height: 540rpx;
   .card-img {
+    height: 100%;
     width: 100%;
     display: block;
     position: absolute;
@@ -460,6 +471,15 @@ const handleCar = (item) => {
   .empty-text {
     font-size: 28rpx;
     color: #999;
+  }
+}
+
+.skeleton-wrapper {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+  .column {
+    width: 48%;
   }
 }
 </style>

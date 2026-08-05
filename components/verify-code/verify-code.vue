@@ -116,7 +116,7 @@ const handleClick = () => {
 
 .code-btn {
   color: #FFC200; /* 黄色 */
-  font-size: 18rpx;
+  	font-size: 28rpx;
 }
 .code-btn.disabled {
   color: #999; /* 倒计时期间变灰 */
@@ -134,7 +134,7 @@ const handleClick = () => {
 .input {
   flex: 1;
   margin-left: 10px;
-  font-size: 18rpx;
+  	font-size: 28rpx;
   height: 100%;
 }
 </style>
