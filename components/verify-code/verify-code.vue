@@ -112,29 +112,29 @@ const handleClick = () => {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 
 .code-btn {
   color: #FFC200; /* 黄色 */
-  font-size: 14px;
+  font-size: 18rpx;
 }
 .code-btn.disabled {
   color: #999; /* 倒计时期间变灰 */
 }
 /* 其他样式保持不变... */
 .input-item {
-  height: 88px;
+  height: 96rpx;
   background-color: #F7F8FA;
-  border-radius: 8px;
+  border-radius: 8rpx;
   display: flex;
   align-items: center;
-  padding: 0 15px;
-  margin-bottom: 15px;
+  padding: 0 15rpx;
+  margin-bottom: 15rpx;
 }
 .input {
   flex: 1;
   margin-left: 10px;
-  font-size: 14px;
+  font-size: 18rpx;
   height: 100%;
 }
 </style>

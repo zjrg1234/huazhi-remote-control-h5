@@ -115,8 +115,7 @@
         {
           "path": "pages/register/index",
           "style": {
-            "navigationBarTitleText": "注册新账号",
-            "navigationStyle": "custom"
+            "navigationBarTitleText": "注册新账号"
           }
         }
       ]

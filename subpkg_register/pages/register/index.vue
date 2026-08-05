@@ -28,9 +28,9 @@ import {
 import {
 	Register
 } from "@/axios/index.js"
-import {
-	useUserStore
-} from '@/store/modules/user'
+// import {
+// 	useUserStore
+// } from '@/store/modules/user'
 import VerifyCodeInput from '@/components/verify-code/verify-code.vue';
 const form = ref({
 	phone: '',
@@ -39,8 +39,8 @@ const form = ref({
 	passwordAgain: ''
 })
 
-const agree = ref(true)
-const userStore = useUserStore()
+
+// const userStore = useUserStore()
 // 登录
 const handleLogin = () => {
 
@@ -177,16 +177,7 @@ page {
 	}
 }
 
-.row-link {
-	display: flex;
-	justify-content: space-between;
-	margin-bottom: 50rpx;
 
-	.link {
-		font-size: 26rpx;
-		color: #999;
-	}
-}
 
 .login-btn {
 	background: linear-gradient(90deg, #FFC838 0%, #FFC838 100%);
@@ -198,91 +189,5 @@ page {
 	text-align: center;
 	margin-bottom: 50rpx;
 	padding: 25rpx 0;
-}
-
-.register-link {
-	text-align: center;
-	font-size: 28rpx;
-	color: #999;
-	margin-bottom: 60rpx;
-}
-
-.other-login {
-	display: flex;
-	align-items: center;
-	margin-bottom: 40rpx;
-
-	.line {
-		flex: 1;
-		height: 1rpx;
-		background-color: #eee;
-	}
-
-	.text {
-		font-size: 26rpx;
-		color: #999;
-		margin: 0 20rpx;
-	}
-}
-
-.third-list {
-	display: flex;
-	justify-content: center;
-	gap: 60rpx;
-	margin-bottom: 80rpx;
-
-	.third-item {
-		width: 72rpx;
-		height: 72rpx;
-		border-radius: 50%;
-		overflow: hidden;
-
-		.icon {
-			width: 100%;
-			height: 100%;
-		}
-	}
-}
-
-.agreement {
-	position: absolute;
-	bottom: env(safe-area-inset-bottom);
-	left: 50%;
-	width: 100%;
-	transform: translatex(-50%);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	.checkbox {
-		width: 46rpx;
-		height: 46rpx;
-		border-radius: 4rpx;
-		margin-right: 12rpx;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-
-		.check-icon {
-			width: 40rpx;
-			height: 40rpx;
-		}
-
-		.un-check-icon {
-			width: 46rpx;
-			height: 46rpx;
-		}
-	}
-
-	.text {
-		font-family: PingFangSC, PingFang SC;
-		font-weight: 400;
-		font-size: 24rpx;
-		color: #29220A;
-
-		.highlight {
-			color: #FFC838;
-		}
-	}
 }
 </style>
