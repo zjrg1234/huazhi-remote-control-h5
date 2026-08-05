@@ -40,6 +40,8 @@ const request = (options) => {
 				mask: true
 			})
 		}
+
+		console.log("请求的url")
 		const apiUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
 		
 		uni.request({
@@ -57,6 +59,7 @@ const request = (options) => {
 			success: (res) => {
 				if (loadingFlag) uni.hideLoading()
 				const data = res.data
+				console.log("返回成功", data)
 
 				if (data.code === 200) {
 					resolve(data)
@@ -81,6 +84,8 @@ const request = (options) => {
 				}
 			},
 			fail: (err) => {
+				console.log("返回err", err)
+
 				if (!loadingFlag) uni.hideLoading()
 				uni.showToast({
 					title: '网络异常，请稍后重试',

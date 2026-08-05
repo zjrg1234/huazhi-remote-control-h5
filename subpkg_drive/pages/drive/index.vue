@@ -740,7 +740,7 @@ import LeftRight from "./components/left-right.vue";
 import ExLeft from "./components/ex-left.vue";
 import ExRight from "./components/ex-right.vue";
 
-import { StartDrive } from "@/axios/index.js";
+import { StartDrive, UpdateBattery } from "@/axios/index.js";
 import { LoginTop, DeviceDetails } from "./axios/video.js";
 
 import {
@@ -1132,7 +1132,10 @@ const handlePopupAction = (val) => {
         console.log(res);
         if (res.code == 2000 || res.code == 200) {
           uni.showToast({ title: res.msg, icon: "none" });
-
+          UpdateBattery({
+            vehicle_id: vehicleId.value,
+            vehicle_battery: batteryPer.value 
+          })
           const timer = setTimeout(() => {
             clearInterval(sendMsgTimer);
             if (UDPSocket.value) {

@@ -85,3 +85,7 @@ export function WechatLogin(data) {
 export function WechatPay(data) {
   return post("api/user/wechat/jsapi/deposit", data);
 }
+
+export function UpdateBattery(data) {
+  return post("api/update/vehicle/battery", data);
+}
