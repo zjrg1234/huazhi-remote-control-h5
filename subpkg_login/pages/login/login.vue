@@ -57,8 +57,8 @@ import {
 	useUserStore
 } from '@/store/modules/user'
 const form = ref({
-	phone: '13062567585',
-	password: '123456'
+	phone: '',
+	password: ''
 })
 
 const agree = ref(true)

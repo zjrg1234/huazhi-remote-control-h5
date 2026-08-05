@@ -37,7 +37,7 @@ export const useUserStore = defineStore('user', {
 			this.userInfo = {}
 			uni.clearStorageSync()
 			uni.reLaunch({
-				url: '/pages/login/index'
+				url: '/subpkg_login/pages/login/index'
 			})
 		},
 

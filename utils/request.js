@@ -41,7 +41,7 @@ const request = (options) => {
 			})
 		}
 
-		console.log("请求的url")
+		console.log("请求的url", url)
 		const apiUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
 		
 		uni.request({
