@@ -75,12 +75,12 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted  } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { onPageShow } from "@dcloudio/uni-app";
 import BusinessModal from "@/components/business-modal/business-modal.vue";
 import CustomModal from "@/components/common-modal/common-modal.vue";
 import { ChangeHeadImg } from "@/axios/mine";
-import {GetUserInfo} from "@/axios/index";
+import { GetUserInfo } from "@/axios/index";
 import { useUserStore } from "@/store/modules/user";
 import { onBeforeUnmount } from "vue";
 const userStore = useUserStore();
@@ -139,16 +139,16 @@ const menuList = ref([
 
 onPageShow(() => {
 	GetUserInfo().then((res) => {
-      userStore.setUser(res.data);
-    })
-    .catch(() => {});
+		userStore.setUser(res.data);
+	})
+		.catch(() => { });
 })
- onBeforeUnmount(() => {
+onBeforeUnmount(() => {
 	GetUserInfo().then((res) => {
-      userStore.setUser(res.data);
-    })
-    .catch(() => {});
- })
+		userStore.setUser(res.data);
+	})
+		.catch(() => { });
+})
 const goPage = () => {
 	uni.navigateTo({
 		url: "/subpkg_mine/pages/mine/battery",
@@ -191,6 +191,10 @@ const openService = () => {
 	// ======================================
 	// #ifdef MP-WEIXIN
 	uni.openCustomerServiceSession({
+		extInfo: {
+			url: 'https://xxx.com/kefu' // 必须是后台已配置的 HTTPS 客服链接
+		},
+		corpId: 'wwc2e2dca3bf58025c',
 		success: () => { },
 		fail: () => {
 			uni.showToast({
@@ -241,9 +245,9 @@ const openService = () => {
 };
 
 const gotoProfile = () => {
- uni.navigateTo({
- 	url: "/subpkg_mine/pages/mine/editProfile",
- });
+	uni.navigateTo({
+		url: "/subpkg_mine/pages/mine/editProfile",
+	});
 }
 
 
@@ -317,7 +321,7 @@ const uploadFile = async (filePath) => {
 
 
 const gotoUrl = () => {
-	
+
 }
 </script>
 

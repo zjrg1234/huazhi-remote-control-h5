@@ -8,7 +8,7 @@
     <view class="grid">
       <view class="grid-item" v-for="(item, index) in list" :key="index" :class="{ active: selected === item.id }"
         @click="selected = item.id">
-        <image class="car-img" src="/static/images/common/car@2x.png" mode="aspectFill" />
+        <image class="car-img" :src="item.image" mode="aspectFill" />
         <view class="info">
           <text class="name">{{ item.agent_name }}</text>
           <text class="desc">分区数 ｜ {{ item.partitions_number }} 个</text>
