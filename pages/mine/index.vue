@@ -42,14 +42,14 @@
 			<view class="card-title">我的资产</view>
 			<view class="card-content">
 				<view class="asset-item">
-					<text class="asset-num">{{ userInfo && userInfo.wallet?.balance }}</text>
+					<text class="asset-num">{{ balance }}</text>
 					<view class="asset-label" @click="goPage">
 						<text>我的电池</text>
 						<image class="arrow-icon" src="/static/images/common/icon_arrows@2x.png" mode="aspectFit" />
 					</view>
 				</view>
 				<view class="asset-item">
-					<text class="asset-num">{{ userInfo && userInfo.wallet?.energy }}</text>
+					<text class="asset-num">{{ energy }}</text>
 					<text class="asset-label">我的能量</text>
 				</view>
 			</view>
@@ -65,6 +65,13 @@
 				</view>
 				<image class="menu-icon" src="/static/images/common/icon_arrows_gray@2x.png" mode="aspectFit" />
 			</view>
+		</view>
+
+
+		<view class="info">
+			<view>八方远控 | 实况赛车热血越野 工程车</view>
+			<view>宿迁战神信息科技有限公司</view>
+			<view>Copyright © 2025-2026 All Rights Reserved</view>
 		</view>
 	</view>
 
@@ -88,6 +95,15 @@ const userStore = useUserStore();
 const userInfo = computed(() => {
 	return userStore.getUserInfo();
 });
+
+const balance = computed(() => {
+	return userStore.balance || 0;
+});
+
+const energy = computed(() => {
+	return userStore.energy || 0;
+});
+
 const showModal = ref(false);
 const serviceTip = ref("");
 const serviceModal = ref(false);
@@ -139,6 +155,7 @@ const menuList = ref([
 
 onPageShow(() => {
 	GetUserInfo().then((res) => {
+		console.log(res)
 		userStore.setUser(res.data);
 	})
 		.catch(() => { });
@@ -190,13 +207,14 @@ const openService = () => {
 	// 1. 微信小程序 → 官方客服（最稳定）
 	// ======================================
 	// #ifdef MP-WEIXIN
-	uni.openCustomerServiceSession({
+	wx.openCustomerServiceChat({
 		extInfo: {
-			url: 'https://xxx.com/kefu' // 必须是后台已配置的 HTTPS 客服链接
+			url: 'https://work.weixin.qq.com/kfid/kfc01ee6e218344d59f' // 必须是后台已配置的 HTTPS 客服链接
 		},
 		corpId: 'wwc2e2dca3bf58025c',
 		success: () => { },
-		fail: () => {
+		fail: (e) => {
+			console.log("客服",e)
 			uni.showToast({
 				title: "客服暂时不可用",
 				icon: "none",
@@ -330,7 +348,20 @@ const gotoUrl = () => {
 	position: relative;
 	background-color: #fff;
 	min-height: 100vh;
-	//background: linear-gradient(to bottom, #F9F4E9 0%, #FFFFFF 100%);
+
+	.info {
+		position: absolute;
+		bottom: 150rpx;
+		width: 100%;
+		text-align: center;
+		font-size: 20rpx;
+		color: #999;
+		font-family: Regular,
+			PingFangSC,
+			PingFang SC;
+		font-weight: 400;
+		font-style: normal;
+	}
 }
 
 .bg-image {
@@ -520,5 +551,6 @@ const gotoUrl = () => {
 		PingFangSC,
 		PingFang SC;
 	font-weight: 400;
+	margin-left: 15rpx;
 }
 </style>

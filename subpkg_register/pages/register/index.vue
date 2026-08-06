@@ -91,7 +91,7 @@ const handleLogin = () => {
 			setTimeout(() => {
 				// 关闭当前所有页面，回到首页（推荐）
 				uni.reLaunch({
-					url: '/pages/index/index'  // 你的首页路径
+					url: '/subpkg_mine/pages/mine/changeArea'  // 你的首页路径
 				})
 			}, 1500)
 		}

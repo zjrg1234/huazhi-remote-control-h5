@@ -1,14 +1,20 @@
 <template>
   <view class="container">
-    <view class="loadingLayout" v-if="!list.length && !noData">
+    <!-- 1. 首次加载状态 -->
+    <view class="loadingLayout" v-if="loading && list.length === 0">
       <uni-load-more status="loading"></uni-load-more>
     </view>
 
-    <!-- 网格列表 -->
-    <view class="grid">
-      <view class="grid-item" v-for="(item, index) in list" :key="index" :class="{ active: selected === item.id }"
-        @click="selected = item.id">
-        <image class="car-img" :src="item.image" mode="aspectFill" />
+    <!-- 2. 网格列表 -->
+    <view class="grid" v-if="list.length > 0">
+      <view 
+        class="grid-item" 
+        v-for="item in list" 
+        :key="item.id" 
+        :class="{ active: selected === item.id }"
+        @click="selected = item.id"
+      >
+        <image class="car-img" :src="item.image" mode="aspectFill" lazy-load />
         <view class="info">
           <text class="name">{{ item.agent_name }}</text>
           <text class="desc">分区数 ｜ {{ item.partitions_number }} 个</text>
@@ -18,7 +24,8 @@
       </view>
     </view>
 
-    <view class="loadingLayout" v-if="list.length || noData">
+    <!-- 3. 列表底部加载状态 -->
+    <view class="loadingLayout" v-if="list.length > 0">
       <uni-load-more :status="noData ? 'noMore' : 'loading'"></uni-load-more>
     </view>
 
@@ -27,11 +34,12 @@
       <button class="confirm-btn common-btn" @click="confirm">确定</button>
     </view>
 
+    <!-- 提示弹窗 -->
     <TipModal title="提示" v-model:visible="tipVisible" key="2" @confirm="handleConfirm">
       <template #content>
         <view>
           <view class="text">变更专区后您所有的账户数据不会转移到新的专区（您稍后也可自行变更到当前专区）</view>
-          <view class="text">确定变更到专区{{ name }}吗?</view>
+          <view class="text">确定变更到专区「{{ name }}」吗?</view>
         </view>
       </template>
     </TipModal>
@@ -39,80 +47,99 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { onLoad, onReachBottom } from "@dcloudio/uni-app"
 import { GetSpecialList, ChangeSpecialList } from "@/axios/mine.js"
-import TipModal from "@/components/tip-modal/tip-modal.vue";
+import TipModal from "@/components/tip-modal/tip-modal.vue"
+import { useUserStore } from '@/store/modules/user'
 
-import { onLoad, onUnload, onReachBottom, onShareTimeline } from "@dcloudio/uni-app"
+const userStore = useUserStore()
 
-
-
+// --- 状态定义 ---
 const list = ref([])
-const selected = ref(0)
+const selected = ref(userStore.areaId || 0) // 初始化时直接赋值，避免后续覆盖
 const name = ref('')
 const tipVisible = ref(false)
-import {
-  useUserStore
-} from '@/store/modules/user'
-
-const userStore = useUserStore();
-selected.value = userStore.areaId
-
-
 const loading = ref(false)
-onMounted(() => {
-
-  getSpecialList()
-})
 const noData = ref(false)
-//定义data参数
-const queryParams = {
+
+// 分页参数
+const queryParams = ref({
   page: 1,
   size: 12
-}
-
-onReachBottom(() => {
-
-  if (noData.value) return;
-  if (loading.value) return
-
-  loading.value = true
-  queryParams.page++;
-
-
-  setTimeout(() => {
-    getSpecialList();
-    // 结束加载
-    loading.value = false
-  }, 1000)
 })
+
+// --- 核心逻辑 ---
+onMounted(() => {
+  getSpecialList()
+})
+
+// 下拉触底加载
+onReachBottom(() => {
+  if (noData.value || loading.value) return
+  queryParams.value.page++
+  getSpecialList()
+})
+
+// 获取列表数据
 const getSpecialList = async () => {
-  const res = await GetSpecialList()
-  list.value = [...list.value, ...res.data];
-  if (queryParams.size > res.data.length) noData.value = true;
-}
-
-
-const confirm = () => {
-  if (userStore.areaId == selected.value) return
-  const obj = list.value.find(item => item.id == selected.value)
-  name.value = obj.agent_name
-  tipVisible.value = true;
-}
-
-const handleConfirm = () => {
-  const obj = { special_id: selected.value }
-  const obj1 = list.value.find(item => item.id == selected.value)
-  console.log(obj1)
-  ChangeSpecialList(obj).then(res => {
-    if (res.code == 200) {
-      userStore.setAreaId(selected.value)
-
-      uni.showToast({ title: '更换专区成功', icon: 'success' })
-    } else {
-      uni.showToast({ title: res.msg, icon: 'error' })
+  if (loading.value) return // 防止重复请求
+  loading.value = true
+  
+  try {
+    // 假设接口支持分页参数，若不支持需后端配合
+    const res = await GetSpecialList(queryParams.value) 
+    const newData = res.data || []
+    
+    // 追加数据
+    list.value = [...list.value, ...newData]
+    
+    // 判断是否还有更多数据
+    if (newData.length < queryParams.value.size) {
+      noData.value = true
     }
-  });
+  } catch (err) {
+    console.error('获取专区列表失败:', err)
+    uni.showToast({ title: '加载失败', icon: 'none' })
+  } finally {
+    loading.value = false
+  }
+}
+
+// 点击确定
+const confirm = () => {
+  if (!selected.value) {
+    return uni.showToast({ title: '请选择一个专区', icon: 'none' })
+  }
+  if (userStore.areaId == selected.value) {
+    return uni.showToast({ title: '您已在当前专区', icon: 'none' })
+  }
+  
+  const obj = list.value.find(item => item.id == selected.value)
+  if (obj) {
+    name.value = obj.agent_name
+    tipVisible.value = true
+  }
+}
+
+// 确认变更
+const handleConfirm = async () => {
+  try {
+    const res = await ChangeSpecialList({ special_id: selected.value })
+    if (res.code == 200) {
+      tipVisible.value = false;
+      userStore.setAreaId(selected.value)
+      uni.showToast({ title: '更换专区成功', icon: 'success' })
+      setTimeout(() => {
+        uni.reLaunch({ url: '/pages/mine/index' })
+      },2001)
+
+    } else {
+      uni.showToast({ title: res.msg || '操作失败', icon: 'none' })
+    }
+  } catch (err) {
+    uni.showToast({ title: '网络异常，请重试', icon: 'none' })
+  }
 }
 </script>
 
@@ -120,6 +147,7 @@ const handleConfirm = () => {
 .container {
   background-color: #F2F5F8;
   min-height: 100vh;
+  padding-bottom: 140rpx; /* 防止底部按钮遮挡列表内容 */
 }
 
 /* 顶部栏 */
@@ -148,7 +176,6 @@ const handleConfirm = () => {
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  flex-wrap: wrap;
   gap: 10rpx;
   padding: 10rpx 20rpx;
 }
@@ -170,11 +197,10 @@ const handleConfirm = () => {
 
   .car-img {
     width: 100%;
-    height: 180rpx;
-    width: 210rpx;
     height: 177rpx;
     border-radius: 8rpx;
-    margin: 10rpx;
+    margin: 10rpx auto;
+    display: block;
   }
 
   .info {
@@ -187,7 +213,6 @@ const handleConfirm = () => {
       font-weight: 400;
       font-size: 28rpx;
       color: $uni-color-1;
-
     }
 
     .desc {
@@ -217,23 +242,23 @@ const handleConfirm = () => {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGYAAABQCAMAAADcIvDgAAAAnFBMVEUAAAD+xzj/yjb/wD//0DH/yDf/yDj/yDj/yDj/yTj/yDf/yTn/yTj/yDj/yTn/xzj/yDj/yDj/yDj/yTj/yDj/yDf/yDj/yDf/yTj/yDj/yTn/yDgaGholIhseHRr6xTfzvzbfsDNtWSQwKx2dfStKPiDquDWzji5gTyPXqjO8lS9VRyE5MR7GnDGphy19ZSc/Nh/OozKTdimIbShPW8HqAAAAG3RSTlMA/hkJBPHj18qXbEX6flst9evBroo4IxK5ok5DxgZVAAACLUlEQVRo3rzVOQKCQBQEUWRYxwFUFNC6/z0Nf2BkUPQFXlZdnbE0ViesHqj8Xe+cwOQLPpNW8JmlB5+ZW3ymeYLP1A/wmVcHPpMLPpPe4DPbgMpEXnxmuuAz+womE3nxmfmGyUReRCbyojKRF5/JBZOJvPjM1oPPfFp8ppnAZ/YDfGbpMJnIi880I/hMPaAycZM+kws+k1bwma3HZCIvJhM36TP7gcrETfrMXPCZNPL/lLz8zsrLtzZz21UQBqJoxONRYjwaXweQ+00Q1P//txPTkikMNHZC12NNWAp072nMS7+v2RqcwvVEjed5QYUaK/FSJd6HlKU5780sXsHR/H0bL09fWO54hy3ESztYQlzjTOF66kBYyhsgq8dLIS2xaoG1a/IxWDagwpjCdaSeoBtbgHHIb7MkDmGWl7S8YYJ5vESfF6nPYYa3tLxgilm84H1pIpiy6aQlBYL5Ib8Q10qiqSUWHwQPoJjHyy2Tnmq8PFgKmIExhYfS4z9VSykXa5iDEy/hXV6yXViiMOKFfHXyAymMeKEPIsfHtQAjXshrlff48i3AjRfcJKKQcSvNwp3Ccct3oirVYKCwpnAMMCTTWXbmh3wkVS0haNgzp3AsFyxkDVfOIR8psJC1uDRejKh9LGQNR3LINyQq/SbdgJ7dD5nCbeCSmrTBxRn/1WaJE5nCbXDYknixwK9jEC98y5nUpAUOjhIvtrictkpNWmLnOqQmVzbsr+5R2fv/YJisvL6xvsMAAAAASUVORK5CYII=);
     background-size: cover;
     background-repeat: no-repeat;
-
   }
 }
 
 /* 底部按钮 */
 .btn-wrap {
-
   position: fixed;
-  bottom: env(safe-area-inset-bottom);
-  left: 50%;
-  transform: translateX(-50%);
-  margin-bottom: 26rpx;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20rpx 36rpx calc(20rpx + env(safe-area-inset-bottom));
+  background: #F2F5F8;
 
   .confirm-btn {
-    width: 702rpx;
+    width: 100%;
     height: 94rpx;
     line-height: 94rpx;
+    border-radius: 47rpx;
     border: none;
     font-family: PingFangSC, PingFang SC;
     font-weight: 500;
