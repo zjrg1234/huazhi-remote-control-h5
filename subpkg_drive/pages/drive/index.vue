@@ -1652,6 +1652,30 @@ const setChangeVal = (flag, value) => {
   }
 };
 
+const handleAdd = (type) => handleValueChange(type, 1);
+const handleReduce = (type) => handleValueChange(type, -1);
+const valueMap = { 1: dirMiddle, 2: dirTurn, 3: throttle };
+// 2. 统一的加减处理函数
+const handleValueChange = (type, step) => {
+  const target = valueMap[type];
+  if (!target) return; // 如果 type 不匹配，直接返回
+  // 计算新值
+  const newValue = target.value + step;
+  target.value = Math.max(0, Math.min(100, newValue));
+
+  // 第一个滑块
+  if (type == 1) {
+    dirMiddleValFunc(target.value)
+    dirMiddle.value = target.value
+  }
+
+  // emit("changeValue", {
+  //   1: dirMiddleVal.value,
+  //   2: dirTurn.value,
+  //   3: throttle.value,
+  // });
+};
+
 // --------------------------tip -----------------------
 
 // 点击遮罩层处理（原配置为 false，即不关闭）

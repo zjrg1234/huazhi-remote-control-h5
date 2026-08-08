@@ -59,9 +59,7 @@ const request = (options) => {
         const data = res.data;
         console.log("返回成功", res);
 
-        if (res.statusCode == 200) {
-          resolve(data);
-        } else if (data.code === 401) {
+         if (data.code === 401) {
           uni.showToast({
             title: "登录已过期，请重新登录",
             icon: "none",
@@ -73,7 +71,10 @@ const request = (options) => {
             });
           }, 2000);
           reject(data);
-        } else {
+        }  else if (res.statusCode == 200) {
+          resolve(data);
+        } 
+        else {
           uni.showToast({
             title: data.msg || "请求失败",
             icon: "none",

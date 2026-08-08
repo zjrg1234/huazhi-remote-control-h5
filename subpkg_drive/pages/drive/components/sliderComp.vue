@@ -4,9 +4,9 @@
       class="cover-slider"
       :style="{ width: width }"
       :class="{ 'cover-slider-disabled': disabled }"
-      @touchstart="onTouchStart"
-      @touchmove="onTouchMove"
-      @touchend="onTouchEnd"
+      @touchstart.stop="onTouchStart"
+      @touchmove.stop="onTouchMove"
+      @touchend.stop="onTouchEnd"
     >
       <cover-view class="slider-track">
         <cover-view
@@ -26,7 +26,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, nextTick } from "vue";
+import { ref, onMounted, watch, nextTick, getCurrentInstance } from "vue";
 
 const props = defineProps({
   modelValue: { type: Number, default: 0 },
@@ -44,58 +44,88 @@ const progressWidth = ref(0);
 const trackWidth = ref(0);
 const startX = ref(0);
 const startValue = ref(0);
+const instance = getCurrentInstance(); // 获取组件实例
 
-const initSlider = () => {
-  nextTick(() => {
-    const query = uni.createSelectorQuery();
-    query
-      .select(".slider-track")
-      .boundingClientRect((res) => {
-        if (res && res.width > 0) {
-          trackWidth.value = res.width;
-          updateSliderUI();
-        }
-      })
-      .exec();
+// 获取轨道宽度
+const getTrackWidth = () => {
+  return new Promise((resolve) => {
+    nextTick(() => {
+      const query = uni.createSelectorQuery().in(instance.proxy);
+      query
+        .select(".slider-track")
+        .boundingClientRect((res) => {
+          if (res && res.width > 0) {
+            trackWidth.value = res.width;
+            resolve(res.width);
+          } else {
+            resolve(0);
+          }
+        })
+        .exec();
+    });
   });
 };
 
+// 初始化滑块UI
+const initSlider = async () => {
+  await getTrackWidth();
+  updateSliderUI();
+};
+
+// 更新滑块位置和进度条
 const updateSliderUI = () => {
-  if (trackWidth.value === 0) return;
-  const percent = (props.modelValue - props.min) / (props.max - props.min);
-  // 修复1：进度条最大宽度 = 轨道宽度 - 滑块宽度，避免进度条顶满
-  const maxTrackValidWidth = trackWidth.value - THUMB_SIZE;
-  // 进度百分比基于有效轨道长度计算
-  progressWidth.value = (maxTrackValidWidth / trackWidth.value) * percent * 100;
-  console.log(progressWidth.value)
+  if (trackWidth.value === 0) {
+    // 如果宽度为0，尝试重新获取（但不阻塞）
+    getTrackWidth().then(() => {
+      if (trackWidth.value > 0) updateSliderUI();
+    });
+    return;
+  }
+  const percent = Math.max(
+    0,
+    Math.min(1, (props.modelValue - props.min) / (props.max - props.min))
+  );
   const maxLeft = trackWidth.value - THUMB_SIZE;
   thumbLeft.value = percent * maxLeft;
+  // 进度条宽度 = thumbLeft（因为thumbLeft即进度条应占宽度）
+  progressWidth.value = (thumbLeft.value / trackWidth.value) * 100;
 };
 
 const onTouchStart = (e) => {
   if (props.disabled) return;
-  startX.value = e.touches[0].clientX;
+  // 如果轨道宽度尚未获取，先获取再继续
+  if (trackWidth.value === 0) {
+    getTrackWidth().then(() => {
+      if (trackWidth.value > 0) {
+        startX.value = e.touches[0].pageX || e.touches[0].clientX;
+        startValue.value = props.modelValue;
+      }
+    });
+    return;
+  }
+  startX.value = e.touches[0].pageX || e.touches[0].clientX;
   startValue.value = props.modelValue;
 };
 
 const onTouchMove = (e) => {
-  if (props.disabled) return;
-  const currentX = e.touches[0].clientX;
+  if (props.disabled || trackWidth.value === 0) return;
+  const currentX = e.touches[0].pageX || e.touches[0].clientX;
   const diff = currentX - startX.value;
   const maxLeft = trackWidth.value - THUMB_SIZE;
+  // 计算新比例
   const percent = Math.max(
     0,
     Math.min(
       1,
-      (startValue.value -
-        props.min +
-        (diff / maxLeft) * (props.max - props.min)) /
-        (props.max - props.min),
-    ),
+      (startValue.value - props.min) / (props.max - props.min) +
+        diff / maxLeft
+    )
   );
   const newValue = props.min + percent * (props.max - props.min);
   emit("update:modelValue", Math.round(newValue));
-  updateSliderUI();
+  // 直接更新UI，提高响应性
+  thumbLeft.value = percent * maxLeft;
+  progressWidth.value = (thumbLeft.value / trackWidth.value) * 100;
 };
 
 const onTouchEnd = () => {
@@ -107,20 +137,22 @@ onMounted(() => {
   initSlider();
 });
 
+// 监听外部值变化
 watch(
   () => props.modelValue,
   () => {
     updateSliderUI();
-  },
+  }
 );
 
+// 监听宽度变化
 watch(
   () => props.width,
   () => {
     nextTick(() => {
       initSlider();
     });
-  },
+  }
 );
 </script>
 
@@ -130,9 +162,10 @@ watch(
   position: relative;
   display: flex;
   align-items: center;
-  /* 修复2：给滑块预留左右边距，防止滑块被容器裁切 */
   padding: 0 10px;
   box-sizing: border-box;
+  /* 增加触摸区域 */
+  touch-action: none;
 }
 
 .cover-slider-disabled {
@@ -157,7 +190,7 @@ watch(
 .slider-thumb {
   position: absolute;
   top: 50%;
-  left: 10px; /* 对应父容器padding-left */
+  left: 10px; /* 与父容器padding-left对齐 */
   width: 20px;
   height: 20px;
   border: 2px solid #ffffff;
@@ -165,7 +198,7 @@ watch(
   border-radius: 50%;
   margin-top: -12px;
   transition: transform 0.1s ease;
-  /* 修复3：提升层级，避免被进度条遮挡 */
-  z-index: 2;
+  z-index: 199999;
+  touch-action: none;
 }
 </style>

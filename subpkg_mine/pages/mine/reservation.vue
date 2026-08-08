@@ -37,6 +37,7 @@
           <text class="label">如果不能驾驶可以向平台发起</text>    
         </view>
 
+        <view class="btn-wrap" @click="overDrive(item)">结束驾驶</view>
         <!-- 右侧按钮 -->
         <view class="btn-wrap bmt"  v-if="item.reservation_status == 1 || item.reservation_status == 2">
           <button class="btn" @click="handleAction(item)">开始驾驶</button>
