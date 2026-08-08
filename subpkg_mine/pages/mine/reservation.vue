@@ -384,10 +384,10 @@ page {
     bottom: 20rpx;
   }
   .bmt {
-    bottom: 100rpx;
+    bottom: 90rpx;
   }
   .bmc {
-    bottom: 30rpx;
+    bottom: 20rpx;
     .btn {
       color: #fff;
       background-color: #999;
