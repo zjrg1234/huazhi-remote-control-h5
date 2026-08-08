@@ -15,10 +15,8 @@
         />
       </cover-view>
 
-      <cover-image
+      <cover-view
         class="slider-thumb"
-        src="../static/icon_sider@2x.png"
-        mode="aspectFit"
         :style="{ transform: `translateX(${thumbLeft}px)` }"
       />
     </cover-view>
@@ -219,5 +217,7 @@ watch(() => props.width, () => setTimeout(initSlider, 100));
   z-index: 199999;
   touch-action: none;
   pointer-events: none; /* 避免图片干扰触摸，由父容器统一处理 */
+  /* 关键：确保无过渡动画 */
+  transition: none !important;
 }
 </style>

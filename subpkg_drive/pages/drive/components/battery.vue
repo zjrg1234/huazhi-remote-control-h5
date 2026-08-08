@@ -135,7 +135,7 @@ onHide(() => {
 }
 
 .battery-text {
-  font-size: 14px;
+  font-size: 10px;
   min-width: 20px;
   color: #ffffff;
   margin-left: 5px;
