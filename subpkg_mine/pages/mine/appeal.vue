@@ -8,7 +8,15 @@
         <text class="refresh-text">{{ isRefreshing ? '正在刷新...' : '下拉刷新' }}</text>
       </view>
       <!-- 预约列表 -->
+       <!-- 2. 无数据空状态 -->
+			
+			<view class="empty-box" v-if="!loading && list.length === 0">
+				<image class="empty-img" src="/static/images/common/car@2x.png" mode="widthFix"></image>
+				<text class="empty-text">暂时没有内容哦～</text>
+			</view>
+
       <view class="list">
+
         <view class="item" v-for="(item, index) in list" :key="index"
           :class="{ active: item.reservation_status === 'done' }">
           <!-- 信息行 -->
@@ -205,4 +213,25 @@ page {
     }
   }
 }
+
+	/* 空状态 */
+	.empty-box {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		padding: 150rpx 0;
+
+		.empty-img {
+      display: block;
+			width: 70%;
+			height: 100%;
+		}
+		.empty-text {
+			margin-top: 20rpx;
+			font-size: 26rpx;
+			color: #999;
+		}
+	}
+
 </style>
