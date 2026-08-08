@@ -33,7 +33,7 @@
           <text class="label">预约时间：</text>
           <text class="value">{{ formatDate(item.order_time) }}</text>
         </view>
-        <view class="info-line" v-if="item.reservation_status == 4 || item.reservation_status == 1">
+        <view class="info-line" v-if="item.is_reservation == 1">
           <text class="label">如果不能驾驶可以向平台发起</text>    
         </view>
 
@@ -42,11 +42,7 @@
           <button class="btn" @click="handleAction(item)">开始驾驶</button>
         </view>
 
-        <view class="btn-wrap" v-if="item.reservation_status == 3">
-          <button class="btn" @click="overDrive(item)">结束驾驶</button>
-        </view>
-
-        <view class="btn-wrap bt" v-if="(item.reservation_status == 4 && item.is_reservation == 1) || item.reservation_status == 1">
+        <view class="btn-wrap bt" v-if="(item.reservation_status == 4 && item.is_reservation == 1) || item.is_reservation == 1">
           <button class="btn btn-info" @click="handleAppeal(item)">申诉</button>
         </view>
       </view>
@@ -238,7 +234,7 @@ const handleAction = async (item) => {
 };
 // 按钮点击事件
 const handleAppeal = (item) => {
-  // 申诉
+  // 申诉 reservation_status 已完成
   if (item.reservation_status == 4 && item.is_reservation == 1) {
     uni.navigateTo({
       url: "/subpkg_mine/pages/mine/orderAppeal?order_no=" + item.order_no,

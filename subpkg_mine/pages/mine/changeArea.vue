@@ -273,5 +273,6 @@ const handleConfirm = async () => {
   font-family: PingFangSC, PingFang SC;
   font-weight: 400;
   font-size: 32rpx;
+  padding-bottom: 60rpx;
 }
 </style>

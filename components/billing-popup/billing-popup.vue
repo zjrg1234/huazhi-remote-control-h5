@@ -121,16 +121,17 @@ const open = () => {
     time: props.billData.time_billing?.time,
     battery: props.billData.time_billing?.battery,
   };
-
+  currentUnit.value = 1;
+  
   // 在打开弹窗时，安全地初始化默认选中的付费方式
-  const val = userInfo.value;
-  if (val && val.wallet) {
-    if (val.wallet.balance > 0 && val.wallet.energy == 0) {
-      currentUnit.value = 1;
-    } else if (val.wallet.balance == 0 && val.wallet.energy > 0) {
-      currentUnit.value = 2;
-    }
-  }
+  // const val = userInfo.value;
+  // if (val && val.wallet) {
+  //   if (val.wallet.balance > 0 && val.wallet.energy == 0) {
+  //     currentUnit.value = 1;
+  //   } else if (val.wallet.balance == 0 && val.wallet.energy > 0) {
+  //     currentUnit.value = 2;
+  //   }
+  // }
 
   popupRef.value.open();
 };

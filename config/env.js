@@ -1,13 +1,13 @@
 // 多环境域名配置
 const envConfig = {
   development: {
-    baseUrl: 'https://htzksj.zksjyk.cn'
+    baseUrl: 'https://htzksj.zksjyk.cn' // 掌中正式
   },
   test: {
     baseUrl: 'https://htzksj.zksjyk.cn'
   },
   production: {
-    baseUrl: 'https://api.fzbkapp.com'
+    baseUrl: 'https://api.fzbkapp.com' // 八方
   }
 }
 

@@ -148,12 +148,13 @@ const getParam = () => {
 
 const hideLoading = (loadingFlag) => {
   try {
-    // #ifdef MP-WEIXIN
+    // #ifdef MP-WEIXIN || H5
     if (loadingFlag)
       wx.hideLoading({
         fail() {},
       });
     //  #endif
+ 
   } catch (e) {
     if (loadingFlag)
       uni.hideLoading({

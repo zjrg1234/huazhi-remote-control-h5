@@ -8,10 +8,8 @@
           <text class="main-title">{{ detailData.venue_name }}</text>
           <text class="tag">{{ detailData.labels }}</text>
         </view>
-        <view class="time-text"
-          >营业时间：{{ detailData.start_time }} ~
-          {{ detailData.end_time }}</view
-        >
+        <view class="time-text">营业时间：{{ detailData.start_time }} ~
+          {{ detailData.end_time }}</view>
       </view>
     </view>
 
@@ -53,10 +51,7 @@
     <view class="car-list">
       <view class="car-card" v-for="car in carList" :key="car.id">
         <!-- 状态标签 -->
-        <view
-          class="status-tag"
-          :class="car.vehicle_state == 1 ? 'tag-green' : 'tag-blue'"
-        >
+        <view class="status-tag" :class="car.vehicle_state == 1 ? 'tag-green' : 'tag-blue'">
           {{
             car.vehicle_state == 1 ? "空闲" : "排队" + car.vehicle_queue + "人"
           }}
@@ -64,11 +59,7 @@
 
         <!-- 左侧图片区域 -->
         <view class="img-wrapper">
-          <image
-            class="car-img"
-            :src="car.vehicle_image"
-            mode="aspectFill"
-          ></image>
+          <image class="car-img" :src="car.vehicle_image" mode="aspectFill"></image>
           <view class="lock-mask" v-if="car.is_password == 1">
             <uni-icons type="locked" size="30" color="#ffffff"></uni-icons>
           </view>
@@ -89,12 +80,8 @@
           </view>
           <view class="bottom-row">
             <text class="battery">车辆电量：{{ car.vehicle_battery }}</text>
-            <button
-              class="action-btn"
-              :class="{ 'btn-disabled': car.vehicle_state == 2 }"
-              :disabled="car.vehicle_state == 2"
-              @click="handleDrive(car)"
-            >
+            <button class="action-btn" :class="{ 'btn-disabled': car.vehicle_state == 2 }"
+              :disabled="car.vehicle_state == 2" @click="handleDrive(car)">
               我要驾驶
             </button>
           </view>
@@ -102,12 +89,8 @@
       </view>
     </view>
 
-    <TipModal
-      title="用户驾驶协议"
-      v-model:visible="agree"
-      key="1"
-      @confirm="handleAgree"
-    >
+    <TipModal title="用户驾驶协议" v-model:visible="agree" key="1" :cancelFlag="false" confirmText="已阅读"
+      @confirm="handleAgree">
       <template #content>
         <view class="custom-content">
           <view class="cont"> 禁止未成年人充值使用。 </view>
@@ -122,59 +105,33 @@
       </template>
     </TipModal>
 
-    <TipModal
-      title="输入密码"
-      v-model:visible="pwdVisible"
-      key="2"
-      @confirm="handlePwd"
-    >
+    <TipModal title="输入密码" v-model:visible="pwdVisible" key="2" @confirm="handlePwd">
       <template #content>
         <view class="custom-input">
-          <input
-            class="input"
-            type="password"
-            maxlength="6"
-            placeholder="请输入密码"
-            v-model="password"
-          />
+          <input class="input" type="password" maxlength="6" placeholder="请输入密码" v-model="password" />
         </view>
       </template>
     </TipModal>
 
-    <TipModal
-      title="车辆预约"
-      v-model:visible="orderVisible"
-      key="2"
-      @confirm="gotoUrl"
-    >
+    <TipModal title="车辆预约" v-model:visible="orderVisible" key="2" @confirm="gotoUrl">
       <template #content>
         <view class="order-cont">
           <view class="img">
-            <image
-              class="car-image"
-              :src="selectCar.vehicle_image"
-              mode="aspectFill"
-            />
+            <image class="car-image" :src="selectCar.vehicle_image" mode="aspectFill" />
           </view>
           <!-- 注意：请将 src 替换为你实际的图片路径或网络地址 -->
 
           <!-- 3. 主要状态文本 -->
-          <text class="main-status"
-            >已成功预约 {{ orderCar.vehicle_name }} 车辆</text
-          >
-          <text class="sub-status"
-            >当前还有 {{ orderCar.people_number }} 人排队，请耐心等待</text
-          >
+          <text class="main-status">已成功预约 {{ orderCar.vehicle_name }} 车辆</text>
+          <text class="sub-status">当前还有 {{ orderCar.people_number }} 人排队，请耐心等待</text>
 
           <!-- 4. 详情信息卡片 (灰色背景区域) -->
           <view class="info-card">
             <view class="info-item">
               <text class="label">预约类型：</text>
-              <text class="value"
-                >按{{
-                  orderCar.billing_method == "0" ? "时间" : "次"
-                }}计费</text
-              >
+              <text class="value">按{{
+                orderCar.billing_method == "0" ? "时间" : "次"
+                }}计费</text>
             </view>
             <view class="info-item">
               <text class="label">预约时间：</text>
@@ -188,11 +145,7 @@
       </template>
     </TipModal>
 
-    <BillingPopup
-      ref="billingPopupRef"
-      :billData="billingMethod"
-      @confirm="onBillingConfirm"
-    />
+    <BillingPopup ref="billingPopupRef" :billData="billingMethod" @confirm="onBillingConfirm" />
   </view>
 </template>
 
@@ -337,13 +290,26 @@ const onBillingConfirm = (params) => {
         orderCar.value = { ...res.data };
         uni.setStorageSync('app_id', res.data.transmitter_id);
         orderVisible.value = true;
+      } else {
+        uni.showToast({
+          title: res.msg,
+          icon: "none",
+        });
       }
     })
-    .catch(() => {
-      uni.showToast({
-        title: "预约失败",
-        icon: "none",
-      });
+    .catch((e) => {
+      if (e.code == 2000) {
+        uni.showToast({
+          title: e.msg,
+          icon: "none",
+        });
+      } else {
+        uni.showToast({
+          title: '预约失败，请稍后预约',
+          icon: "none",
+        });
+      }
+
     })
     .finally(() => {
       flag.value = true;
@@ -604,15 +570,17 @@ const gotoUrl = () => {
 
       .action-btn {
         background: #ffc838;
-        /* 黄色按钮 */
-        color: #333;
-        font-size: 24rpx;
-        font-weight: bold;
         padding: 0 30rpx;
-        height: 60rpx;
-        line-height: 60rpx;
-        border-radius: 30rpx;
+        height: 54rpx;
+        line-height: 54rpx;
         margin: 0;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        font-size: 24rpx;
+        color: #1A1A1A;
+        height: 54rpx;
+        background: #FFC838;
+        border-radius: 12rpx;
         /* 去除默认外边距 */
 
         &.btn-disabled {
@@ -642,6 +610,7 @@ const gotoUrl = () => {
   font-size: 28rpx;
   color: #333333;
 
+
   .title {
     font-weight: 600;
   }
@@ -649,10 +618,13 @@ const gotoUrl = () => {
   .cont {
     display: block;
     text-align: left;
+    padding-bottom: 60rpx;
   }
 }
 
 .order-cont {
+  padding-bottom: 60rpx;
+
   .popup-title {
     font-size: 36rpx;
     font-weight: bold;
@@ -726,7 +698,6 @@ const gotoUrl = () => {
   .tip-text {
     font-size: 24rpx;
     color: #999999;
-    margin-bottom: 40rpx;
   }
 }
 </style>

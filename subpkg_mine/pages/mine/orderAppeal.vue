@@ -3,7 +3,7 @@
         <view class="wrap-content">
             <!-- 申诉图片 -->
             <view class="form-item">
-                <text class="label required">申诉图片</text>
+                <text class="label">申诉图片</text>
                 <view class="upload-box" @click="chooseImage">
                     <view v-if="!imageUrl" class="upload-placeholder">
                         <text class="plus-icon">+</text>
@@ -127,10 +127,10 @@ const uploadFile = async (filePath) => {
 
 // 提交申诉
 const handleSubmit = () => {
-    if (!imageUrl.value) {
-        uni.showToast({ title: '请上传申诉图片', icon: 'none' })
-        return
-    }
+    // if (!imageUrl.value) {
+    //     uni.showToast({ title: '请上传申诉图片', icon: 'none' })
+    //     return
+    // }
     if (!selectedReason.value) {
         uni.showToast({ title: '请选择申诉原因', icon: 'none' })
         return

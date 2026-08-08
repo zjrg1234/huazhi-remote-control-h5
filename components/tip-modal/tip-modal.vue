@@ -21,8 +21,8 @@
         <!-- ✅ 底部按钮插槽 -->
         <view class="btn-group">
           <slot name="footer">
-            <view class="btn refuse" @click="onCancel">{{ cancelText || '取消' }}</view>
-            <view class="btn allow" @click="onConfirm">{{ confirmText || '确认' }}</view>
+            <view class="btn refuse" v-if="cancelFlag" @click="onCancel">{{ cancelText || '取消' }}</view>
+            <view class="btn allow" :class="{len: !cancelFlag}" @click="onConfirm">{{ confirmText || '确认' }}</view>
           </slot>
         </view>
       </view>
@@ -43,6 +43,7 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  
   title: {
     type: String,
     default: ''
@@ -58,7 +59,12 @@ const props = defineProps({
   confirmText: {
     type: String,
     default: '确认'
-  }
+  },
+   cancelFlag: {
+    type: Boolean,
+    default: true
+  },
+  
 })
 
 // --- Emits ---
@@ -120,7 +126,6 @@ const onConfirm = () => {
 .modal-content {
   padding: 0 40rpx;
   text-align: center;
-  margin-bottom: 75rpx;
 }
 
 
@@ -128,7 +133,7 @@ const onConfirm = () => {
 .btn-group {
   display: flex;
   justify-content: space-around;
-  padding: 0 32rpx 32rpx;
+  padding:  0 32rpx 32rpx 32rpx;
 }
 
 .btn {
@@ -145,8 +150,12 @@ const onConfirm = () => {
   }
 
   &.allow {
+    
     font-weight: 600;
     background: #ffc838;
+  }
+  &.len {
+    width: 80%;
   }
 }
 
