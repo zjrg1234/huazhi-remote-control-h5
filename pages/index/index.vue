@@ -5,9 +5,14 @@
       <image :src="imgUrl" mode="widthFix" class="banner-img" lazy-load></image>
     </view>
 
-    <!-- 分类导航栏 -->
-    <view class="static-nav-wrapper">
-      <scroll-view scroll-x class="nav-scroll" :show-scrollbar="false" enable-flex>
+    <!-- 分类导航栏 (Sticky 吸顶 + 横向滚动) -->
+    <view class="sticky-nav-wrapper">
+      <scroll-view
+        scroll-x
+        class="nav-scroll"
+        :show-scrollbar="false"
+        enable-flex
+      >
         <view class="nav-list">
           <view
             v-for="(item, index) in categories"
@@ -38,85 +43,85 @@
       </view>
 
       <!-- 骨架屏 -->
-      <view v-if="loading && leftList.length === 0 && rightList.length === 0" class="skeleton-wrapper">
-        <view class="column col-left">
+  <view v-if="loading && leftList.length === 0 && rightList.length === 0" class="skeleton-wrapper">
+    <view class="column col-left">
           <SkeletonCard :key="'s-left-4'" />
           <SkeletonCard v-for="i in 3" :key="'s-left-' + i" cardHeight="540rpx" />
-        </view>
-        <view class="column col-right">
-          <SkeletonCard v-for="i in 4" :key="'s-right-' + i" cardHeight="540rpx" />
-        </view>
-      </view>
+    </view>
+    <view class="column col-right">
+      <SkeletonCard v-for="i in 4" :key="'s-right-' + i" cardHeight="540rpx" />
+    </view>
+  </view>
 
-      <!-- 瀑布流列表区域 -->
-      <view v-else class="waterfall-container">
+    <!-- 瀑布流列表区域 -->
+    <view v-else class="waterfall-container">
         <view v-if="leftList.length === 0 && rightList.length === 0 && !loading" class="empty-state">
           <image class="empty-img" src="/static/images/common/car@2x.png" mode="widthFix"></image>
           <text class="empty-text">暂时没有内容哦～</text>
-        </view>
+      </view>
 
-        <!-- 左列 -->
-        <view class="column col-left">
-          <view
-            v-for="(item, index) in leftList"
-            :key="'left-' + index"
-            class="card-item"
-            @click="handleCar(item)"
-          >
+      <!-- 左列 -->
+      <view class="column col-left">
+        <view
+          v-for="(item, index) in leftList"
+          :key="'left-' + index"
+          class="card-item"
+          @click="handleCar(item)"
+        >
             <image :src="item.venue_image[0]" mode="scaleToFill" class="card-img" lazy-load></image>
-            <view class="meta">
-              <text class="status online"></text>
+          <view class="meta">
+            <text class="status online"></text>
               <text>在线{{ item.online }}</text>
-              <text class="divider">|</text>
-              <text class="drivers">驾驶{{ item.drivers }}</text>
-            </view>
-            <view class="card-info">
-              <view class="title-tags">
-                <text class="title">{{ item.title }}</text>
-                <text class="tag">{{ item.tag }}</text>
-              </view>
-              <view class="num">
-                <image src="/static/images/common/icon_queue@2x.png" mode="widthFix" class="icon" lazy-load></image>
-                <text class="text"> {{ item.online }}人排队</text>
-              </view>
-            </view>
+            <text class="divider">|</text>
+            <text class="drivers">驾驶{{ item.drivers }}</text>
           </view>
-        </view>
-
-        <!-- 右列 -->
-        <view class="column col-right">
-          <view
-            v-for="(item, index) in rightList"
-            :key="'right-' + index"
-            class="card-item"
-            @click="handleCar(item)"
-          >
-            <image :src="item.venue_image[0]" mode="scaleToFill" class="card-img" lazy-load></image>
-            <view class="meta">
-              <text class="status online"></text>
-              <text>在线{{ item.online }}</text>
-              <text class="divider">|</text>
-              <text class="drivers">驾驶{{ item.driving }}</text>
+          <view class="card-info">
+            <view class="title-tags">
+              <text class="title">{{ item.title }}</text>
+              <text class="tag">{{ item.tag }}</text>
             </view>
-            <view class="card-info">
-              <view class="title-tags">
-                <text class="title">{{ item.venue_name }}</text>
-                <text class="tag">{{ item.labels }}</text>
-              </view>
-              <view class="num">
+            <view class="num">
                 <image src="/static/images/common/icon_queue@2x.png" mode="widthFix" class="icon" lazy-load></image>
-                <text class="text">{{ item.queue }}人排队</text>
-              </view>
+              <text class="text"> {{ item.online }}人排队</text>
             </view>
           </view>
         </view>
       </view>
 
-      <!-- 加载状态提示 -->
-      <view class="loading-status">
-        <text v-if="loading">加载中...</text>
-        <text v-else-if="noMore">没有更多了</text>
+      <!-- 右列 -->
+      <view class="column col-right">
+        <view
+          v-for="(item, index) in rightList"
+          :key="'right-' + index"
+          class="card-item"
+          @click="handleCar(item)"
+        >
+            <image :src="item.venue_image[0]" mode="scaleToFill" class="card-img" lazy-load></image>
+          <view class="meta">
+            <text class="status online"></text>
+            <text>在线{{ item.online }}</text>
+            <text class="divider">|</text>
+            <text class="drivers">驾驶{{ item.driving }}</text>
+          </view>
+          <view class="card-info">
+            <view class="title-tags">
+              <text class="title">{{ item.venue_name }}</text>
+              <text class="tag">{{ item.labels }}</text>
+            </view>
+            <view class="num">
+                <image src="/static/images/common/icon_queue@2x.png" mode="widthFix" class="icon" lazy-load></image>
+              <text class="text">{{ item.queue }}人排队</text>
+            </view>
+          </view>
+        </view>
       </view>
+    </view>
+
+    <!-- 加载状态提示 -->
+    <view class="loading-status">
+      <text v-if="loading">加载中...</text>
+      <text v-else-if="noMore">没有更多了</text>
+    </view>
     </scroll-view>
   </view>
 </template>
@@ -124,13 +129,16 @@
 <script setup>
 import { ref, nextTick } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
-import { throttle } from "@/utils/system.js";
+import { throttle } from "@/utils/system.js"; // 引用封装好的节流函数
 import { GetHomeBanner, GetHomeTabTitle, GetHomeDataList } from "@/axios/index";
+
+
 import SkeletonCard from '@/components/skeleton-card/skeleton-card.vue'
 
 // --- 数据定义 ---
 const categories = ref([]);
 const currentCategory = ref("");
+
 const leftList = ref([]);
 const rightList = ref([]);
 const page = ref(1);
@@ -139,11 +147,11 @@ const noMore = ref(false);
 const imgUrl = ref("");
 const isRefreshing = ref(false); // ✅ 控制刷新状态
 
-// --- 接口请求 ---
+// --- 模拟接口请求 ---
 const fetchData = async (isRefresh = false) => {
-  if (loading.value || (noMore.value && !isRefresh)) return;
+  if (loading.value || noMore.value) return;
+
   loading.value = true;
-  
   if (isRefresh) {
     page.value = 1;
     noMore.value = false;
@@ -152,10 +160,11 @@ const fetchData = async (isRefresh = false) => {
       rightList.value = [];
     });
   }
-  
+
   try {
     const { code, data: { venueList } } = await GetHomeDataList({ type: currentCategory.value, size: 9999 });
     if (code == 200 && venueList.length) {
+       // 简单的左右分发逻辑
       venueList.forEach((item, index) => {
         if (index % 2 === 0) {
           leftList.value.push(item);
@@ -166,6 +175,7 @@ const fetchData = async (isRefresh = false) => {
     } else if (isRefresh) {
       noMore.value = true;
     }
+    
   } catch (error) {
     console.error("获取数据失败", error);
   } finally {
@@ -183,10 +193,13 @@ const onRefresh = async () => {
   }
 };
 
-// --- 事件处理 ---
+// --- 事件处理 (应用节流) ---
+
+// 分类点击节流 (300ms内只能点一次)
 const handleCategoryClick = throttle((item) => {
   if (currentCategory.value === item.id) return;
   currentCategory.value = item.id;
+  // 切换分类时重新加载第一页
   fetchData(true);
 }, 300);
 
@@ -219,7 +232,7 @@ onLoad(() => {
   overflow: hidden;
   height: 280rpx;
   flex-shrink: 0; /* 防止被压缩 */
-  .banner-img { width: 100%; display: block; }
+  .banner-img { width: 100%; height: 100%; display: block; }
 }
 
 /* 导航栏 */
@@ -239,8 +252,8 @@ onLoad(() => {
   &.active {
     color: #1A1A1A; font-weight: bold; font-size: 30rpx;
     &::after { content: ""; position: absolute; bottom: 10rpx; left: 50%; transform: translateX(-50%); width: 30rpx; height: 6rpx; background-color: #000; border-radius: 3rpx; }
+    }
   }
-}
 
 /* ✅ 核心样式：scroll-view 必须占据剩余空间 */
 .waterfall-scroll {
@@ -265,15 +278,23 @@ onLoad(() => {
   padding: 10rpx;
   padding-top: 20rpx;
   gap: 10rpx;
+  /* 列间距 */
   background-color: #fff;
-  .column { flex: 1; display: flex; flex-direction: column; gap: 10rpx; }
+
+  .column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10rpx;
+    /* 卡片上下间距 */
+  }
 }
-/* ... 其他原有卡片样式保持不变 ... */
 
 .col-left {
   .card-item {
     &:first-child {
       height: 400rpx;
+
       .card-img {
         width: 100%;
         display: block;
@@ -290,6 +311,7 @@ onLoad(() => {
   border-radius: 16rpx;
   overflow: hidden;
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.03);
+
   background: #e9e9e9;
   border-radius: 8rpx;
   height: 540rpx;
@@ -299,25 +321,30 @@ onLoad(() => {
     display: block;
     position: absolute;
   }
+
   .card-info {
     padding: 10rpx;
     position: absolute;
     bottom: 0;
+
     .title-tags {
       margin-bottom: 10rpx;
       display: flex;
       align-items: center;
+
       .title {
         font-family: PingFangSC, PingFang SC;
         font-weight: 600;
         font-size: 38rpx;
         color: #ffffff;
         text-align: center;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 270rpx;
+         // 单行省略
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 270rpx;
       }
+
       .tag {
         font-family: PingFangSC, PingFang SC;
         font-weight: 400;
@@ -328,6 +355,7 @@ onLoad(() => {
         border-radius: 4rpx;
       }
     }
+
     .num {
       display: flex;
       justify-content: flex-start;
@@ -345,6 +373,7 @@ onLoad(() => {
       }
     }
   }
+
   .meta {
     position: absolute;
     right: 10rpx;
@@ -357,8 +386,8 @@ onLoad(() => {
     font-weight: 400;
     font-size: 24rpx;
     color: #ffffff;
-    padding: 0 15rpx;
-    height: 40rpx;
+    padding: 2rpx 10rpx;
+
     .online {
       width: 8rpx;
       height: 8rpx;
@@ -366,6 +395,7 @@ onLoad(() => {
       margin-right: 5rpx;
       background: #15cb50;
     }
+
     .divider {
       margin: 0 10rpx;
       color: #ddd;
@@ -388,10 +418,12 @@ onLoad(() => {
   align-items: center;
   justify-content: center;
   padding: 100rpx 0;
+
   .empty-img {
-    width: 300rpx;
+    width: 300rpx; /* 根据你的实际图片大小调整 */
     margin-bottom: 20rpx;
   }
+
   .empty-text {
     font-size: 28rpx;
     color: #999;
