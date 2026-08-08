@@ -77,8 +77,8 @@
           </view>
           <view class="card-info">
             <view class="title-tags">
-              <text class="title">{{ item.title }}</text>
-              <text class="tag">{{ item.tag }}</text>
+              <text class="title">{{ item.venue_name }}</text>
+              <text class="tag">{{ item.labels }}</text>
             </view>
             <view class="num">
                 <image src="/static/images/common/icon_queue@2x.png" mode="widthFix" class="icon" lazy-load></image>

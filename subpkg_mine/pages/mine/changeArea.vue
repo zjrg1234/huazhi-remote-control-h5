@@ -25,7 +25,7 @@
     </view>
 
     <!-- 3. 列表底部加载状态 -->
-    <view class="loadingLayout" v-if="list.length > 0">
+    <view class="loadingLayout" v-if="list.length > 15">
       <uni-load-more :status="noData ? 'noMore' : 'loading'"></uni-load-more>
     </view>
 
