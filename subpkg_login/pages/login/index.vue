@@ -7,11 +7,7 @@
     <view class="form">
       <!-- #ifdef MP-WEIXIN -->
       <!-- 必须使用原生 button 组件才能触发手机号授权 -->
-      <button
-        class="login-btn"
-        open-type="getPhoneNumber"
-        @getphonenumber="handleGetPhoneNumber"
-      >
+      <button class="login-btn" open-type="getPhoneNumber" @getphonenumber="handleGetPhoneNumber">
         手机号一键登录
       </button>
       <!-- #endif -->
@@ -20,27 +16,13 @@
     </view>
 
     <view class="agreement">
-      <view
-        class="checkbox"
-        :class="{ checked: agree }"
-        @click="agree = !agree"
-      >
-        <image
-          class="check-icon"
-          src="/static/images/login/checked@2x.png"
-          mode="aspectFill"
-          v-if="agree"
-        />
-        <image
-          class="un-check-icon"
-          src="/static/images/login/circle@2x.png"
-          mode="aspectFill"
-          v-if="!agree"
-        />
+      <view class="checkbox" :class="{ checked: agree }" @click="agree = !agree">
+        <image class="check-icon" src="/static/images/login/checked@2x.png" mode="aspectFill" v-if="agree" />
+        <image class="un-check-icon" src="/static/images/login/circle@2x.png" mode="aspectFill" v-if="!agree" />
       </view>
       <text class="text">
         我已同意<text class="highlight" @click="goto('/subpkg_set/pages/set/userPolicy')">用户协议和</text>
-		<text @click="goto('/subpkg_set/pages/set/privacy')" class="highlight">隐私条款</text>
+        <text @click="goto('/subpkg_set/pages/set/privacy')" class="highlight">隐私条款</text>
       </text>
     </view>
   </view>
@@ -51,7 +33,7 @@ import { ref } from "vue";
 
 import { WechatLogin, GetUserInfo } from "@/axios/index.js"
 import {
-	useUserStore
+  useUserStore
 } from '@/store/modules/user'
 
 const userStore = useUserStore()
@@ -88,34 +70,38 @@ const handleGetPhoneNumber = async (e) => {
       fail: (err) => reject(err),
     });
   });
- 
+
   console.log("loginCode", loginRes.code)
+  try {
+    const res = await WechatLogin({
+      phone_code: e.detail.code,
+      login_code: loginRes.code,
+    })
 
-  const res = await WechatLogin({
-    phone_code: e.detail.code,
-    login_code: loginRes.code,
-  })
-	console.log(res);
-  if (res.code == 200) {
-			userStore.setToken(res.data.session_key)
-			userStore.setAreaId(res.data.special_area)
-			userStore.setId(res.data.id)
+    if (res.code == 200) {
+      userStore.setToken(res.data.session_key)
+      userStore.setAreaId(res.data.special_area)
+      userStore.setId(res.data.id)
 
-			GetUserInfo({ uid: res.data.id }).then(res => {
+      GetUserInfo({ uid: res.data.id }).then(res => {
 
-				userStore.setUser(res.data)
+        userStore.setUser(res.data)
 
-				uni.switchTab({
-					url: "/pages/index/index"
-				})
-			}).catch()
-		} else {
-			uni.showToast({
-				title: res.msg,
-				icon: "none",
-			});
-		}
- 
+        uni.switchTab({
+          url: "/pages/index/index"
+        })
+      }).catch()
+    } else {
+      uni.showToast({
+        title: res.msg,
+        icon: "none",
+      });
+    }
+  } catch (e) {
+    console.log("e", e)
+  }
+
+
 };
 </script>
 
@@ -305,9 +291,8 @@ page {
   /* 2. 应用你原本的设计样式 */
   background: linear-gradient(90deg, #ffc838 0%, #ffc838 100%);
   border-radius: 24rpx;
-  font-family:
-    PingFangSC,
-    PingFang SC;
+  font-family: PingFangSC,
+  PingFang SC;
   font-weight: 400;
   font-size: 32rpx;
   color: #1a1a1a;
