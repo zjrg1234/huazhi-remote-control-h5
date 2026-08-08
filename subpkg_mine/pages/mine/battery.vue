@@ -61,7 +61,7 @@
 			<!-- 2. 无数据空状态 -->
 			
 			<view class="empty-box" v-if="!loading && list.length === 0">
-				<image class="empty-img" src="/static/images/common/car_nodata@2x.jpg" mode="widthFix"></image>
+				<image class="empty-img" src="/static/images/common/car@2x.png" mode="widthFix"></image>
 				<text class="empty-text">暂时没有内容哦～</text>
 			</view>
 

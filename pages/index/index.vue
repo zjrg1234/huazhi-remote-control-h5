@@ -42,7 +42,8 @@
     <!-- 瀑布流列表区域 -->
     <view v-else class="waterfall-container">
        <view v-if="leftList.length === 0 && rightList.length === 0 && loading == false" class="empty-state"> 
-        <text class="empty-text">暂无相关数据</text>
+        <image class="empty-img" src="/static/images/common/car@2x.png" mode="widthFix"></image>
+				<text class="empty-text">暂时没有内容哦～</text>
       </view>
       <!-- 左列 -->
       <view class="column col-left">
@@ -244,7 +245,7 @@ const handleCar = (item) => {
 /* 全局容器 */
 .container {
   min-height: 100vh;
-  background-color: #f5f6fa;
+  background-color: #fff;
   padding-bottom: 40rpx;
 }
 
@@ -267,9 +268,10 @@ const handleCar = (item) => {
   top: 0;
   z-index: 99;
   background-color: #fff;
-  box-shadow: 0rpx -4rpx 20rpx 0rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0rpx -4rpx 20rpx -10rpx rgba(0, 0, 0, 0.1); 
   border-radius: 40rpx 40rpx 0rpx 0rpx;
   margin-top: -10rpx;
+  border-bottom: 1rpx solid #f6f6f6;
 }
 
 .nav-scroll {
