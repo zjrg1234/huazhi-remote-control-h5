@@ -79,19 +79,6 @@ const fetchData = async (isRefresh = false) => {
   // 模拟接口请求
   await new Promise((resolve) => setTimeout(resolve, 800));
 
-  // 生成模拟数据
-  list.value = [
-    {
-      id: 1,
-      uid: 9,
-      order_no: "aaacasd13213121", //预约号
-      venue_id: 1,
-      venue_name: "测试", //场地名称
-      billing_method: 0, //计费方式 0按时间 1按次
-      appeal_status: 2, //申诉状态 0未申请 1待处理 2已处理
-      time: 1766747094, //时间
-    },
-  ];
 
   loading.value = false;
   uni.stopPullDownRefresh(); // 结束下拉刷新动画

@@ -57,9 +57,9 @@ const request = (options) => {
         hideLoading(loadingFlag);
 
         const data = res.data;
-        console.log("返回成功", data);
+        console.log("返回成功", res);
 
-        if (data.code === 200) {
+        if (res.statusCode == 200) {
           resolve(data);
         } else if (data.code === 401) {
           uni.showToast({

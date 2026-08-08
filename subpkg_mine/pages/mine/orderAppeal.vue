@@ -76,7 +76,7 @@ const chooseImage = async () => {
         })
 
         const tempFilePath = res.tempFilePaths[0]
-        
+
         // 校验大小 1M
         const fileInfo = await uni.getFileInfo({ filePath: tempFilePath })
         const sizeMB = fileInfo.size / (1024 * 1024)
@@ -95,10 +95,10 @@ const chooseImage = async () => {
 // 上传文件（已修复 BUG）
 const uploadFile = async (filePath) => {
     uni.showLoading({ title: '上传中...' })
-    
+
     // 上传前先清空旧图，防止显示错误
     imageUrl.value = ''
-    
+
     try {
         const uploadRes = await uni.uploadFile({
             url: baseUrl + '/api/upload/picture',
@@ -148,10 +148,16 @@ const handleSubmit = () => {
 
     AppealOrderNo(submitData).then(res => {
         console.log(res, "===")
-        uni.showToast({ title: '提交成功' })
-        setTimeout(() => {
-            uni.navigateBack()
-        }, 1500)
+        if (res.code == 200) {
+            uni.showToast({ title: '提交成功', icon: "success" })
+            setTimeout(() => {
+                uni.navigateBack()
+            }, 1500)
+        } else {
+            uni.showToast({ title: res.msg, icon: 'none' })
+
+        }
+
     }).catch(err => {
         uni.showToast({ title: '提交失败', icon: 'none' })
     })
