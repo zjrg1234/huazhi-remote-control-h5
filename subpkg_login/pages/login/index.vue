@@ -78,7 +78,7 @@ const handleGetPhoneNumber = async (e) => {
     uni.showToast({ title: "已取消授权", icon: "none" });
     return;
   }
-  console.log(e.detail, "===");
+  console.log("phoneCode", e.detail.code)
   // 有手机的
   // 2. 获取微信登录的临时凭证 code
   const loginRes = await new Promise((resolve, reject) => {
@@ -88,7 +88,9 @@ const handleGetPhoneNumber = async (e) => {
       fail: (err) => reject(err),
     });
   });
-  console.log(loginRes, "loginRes");
+ 
+  console.log("loginCode", loginRes.code)
+
   const res = await WechatLogin({
     phone_code: e.detail.code,
     login_code: loginRes.code,
