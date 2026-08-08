@@ -17,4 +17,8 @@
 wx-cover-view, wx-cover-image {
   visibility: visible !important;
 }
+
+.uni-page-refresh--refreshing {
+  display: none !important;
+}
 </style>

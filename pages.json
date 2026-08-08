@@ -10,7 +10,8 @@
       "path": "pages/index/index",
       "style": {
         "navigationBarTitleText": "",
-        "navigationStyle": "custom"
+        "navigationStyle": "custom",
+				"enablePullDownRefresh": true
       }
     },
     {
