@@ -1758,6 +1758,7 @@ const report = (text) => {
   left: 50%;
   transform: translateX(-50%);
   padding: 3px 15px;
+  zoom: 0.8;
 
   .flex {
     display: flex;
@@ -1876,9 +1877,9 @@ const report = (text) => {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: rgba(20, 20, 20, 0.75);
+  background: rgba(0,0,0,0.5);
+  border-radius: 24px;
   backdrop-filter: blur(20px);
-  border-radius: 40px;
   padding: 10px 4px;
 }
 
@@ -1886,7 +1887,7 @@ const report = (text) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-
+  margin-bottom: 10px;
   .img {
     width: 18px;
     height: 18px;
