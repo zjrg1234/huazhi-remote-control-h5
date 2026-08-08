@@ -357,7 +357,8 @@ onLoad(() => {
     font-weight: 400;
     font-size: 24rpx;
     color: #ffffff;
-    padding: 2rpx 10rpx;
+    padding: 0 15rpx;
+    height: 40rpx;
     .online {
       width: 8rpx;
       height: 8rpx;
