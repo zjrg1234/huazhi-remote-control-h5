@@ -15,7 +15,7 @@
 
 			<!-- 密码 -->
 			<view class="input-item">
-				<input class="input" type="password" maxlength="6" placeholder="请输入密码" v-model="form.password" />
+				<input class="input" type="password" maxlength="10" placeholder="请输入密码" v-model="form.password" />
 			</view>
 
 			<!-- 忘记密码 / 验证码登录 -->

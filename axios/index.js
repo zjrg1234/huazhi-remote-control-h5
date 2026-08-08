@@ -79,13 +79,18 @@ export function LockCar(data) {
 
 // 登录
 export function WechatLogin(data) {
-  return post("api/wechat/applet/login", data);
+  return post("/api/wechat/applet/login", data);
 }
 
 export function WechatPay(data) {
-  return post("api/user/wechat/jsapi/deposit", data);
+  return post("/api/user/wechat/jsapi/deposit", data);
 }
 
 export function UpdateBattery(data) {
-  return post("api/update/vehicle/battery", data);
+  return post("/api/update/vehicle/battery", data);
+}
+
+//  取消预约
+export function CancelReservation(data) {
+  return post("/api/user/cancel/reservation", data);
 }

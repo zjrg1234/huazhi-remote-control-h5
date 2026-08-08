@@ -623,7 +623,7 @@ const gotoUrl = () => {
 }
 
 .order-cont {
-  padding-bottom: 60rpx;
+  padding-bottom: 20rpx;
 
   .popup-title {
     font-size: 36rpx;

@@ -33,7 +33,7 @@
           <text class="label">预约时间：</text>
           <text class="value">{{ formatDate(item.order_time) }}</text>
         </view>
-        <view class="info-line" v-if="item.is_reservation == 1">
+        <view class="info-line" v-if="(item.reservation_status == 4 && item.is_reservation == 1)">
           <text class="label">如果不能驾驶可以向平台发起</text>    
         </view>
 
@@ -42,8 +42,12 @@
           <button class="btn" @click="handleAction(item)">开始驾驶</button>
         </view>
 
-        <view class="btn-wrap bt" v-if="(item.reservation_status == 4 && item.is_reservation == 1) || item.is_reservation == 1">
-          <button class="btn btn-info" @click="handleAppeal(item)">申诉</button>
+        <view class="btn-wrap bmc"  v-if="item.reservation_status == 1 || item.reservation_status == 2">
+          <button class="btn" @click="cancelOrder(item)">取消预约</button>
+        </view>
+
+        <view class="btn-wrap bt" v-if="(item.reservation_status == 4 && item.is_reservation == 1) ">
+          <button class="btn" @click="handleAppeal(item)">申诉</button>
         </view>
       </view>
 
@@ -66,7 +70,7 @@ import { ref } from "vue";
 import { onLoad, onPullDownRefresh, onReachBottom } from "@dcloudio/uni-app";
 import { formatDate } from "../utils/utils.js";
 import { GetReservationList } from "@/axios/mine";
-import { GetCarDetails } from "@/axios/index";
+import { GetCarDetails , CancelReservation } from "@/axios/index";
 import { billingMethod } from "../utils/filter.js";
 import { StartDrive, CheckCar, LockCar } from "@/axios/index.js";
 
@@ -252,6 +256,22 @@ const overDrive = (item) => {
     refreshData()
   }).catch()
 }
+
+
+const cancelOrder = (item) => {
+  CancelReservation({
+    order_no: item.order_no
+  }).then(res => {
+    if (res.code == 200) {
+      uni.showToast({ title: '取消预约成功', icon: 'success' })
+      fetchData();
+    } else {
+      uni.showToast({ title: res.msg, icon: 'none' })
+
+    }
+
+  }).catch()
+}
 </script>
 
 <style lang="scss" scoped>
@@ -358,16 +378,20 @@ page {
       color: #1a1a1a;
     }
 
-    .btn-info {
-      border: 1rpx solid #ffc838;
-      background: none;
-    }
+    
   }
   .bt {
     bottom: 10rpx;
   }
   .bmt {
     bottom: 100rpx;
+  }
+  .bmc {
+    bottom: 30rpx;
+    .btn {
+      color: #fff;
+      background-color: #999;
+    }
   }
 }
 
