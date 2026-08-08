@@ -5,14 +5,9 @@
       <image :src="imgUrl" mode="widthFix" class="banner-img" lazy-load></image>
     </view>
 
-    <!-- 分类导航栏 (Sticky 吸顶 + 横向滚动) -->
-    <view class="sticky-nav-wrapper">
-      <scroll-view
-        scroll-x
-        class="nav-scroll"
-        :show-scrollbar="false"
-        enable-flex
-      >
+    <!-- 分类导航栏 (已移除吸顶效果) -->
+    <view class="static-nav-wrapper">
+      <scroll-view scroll-x class="nav-scroll" :show-scrollbar="false" enable-flex>
         <view class="nav-list">
           <view
             v-for="(item, index) in categories"
@@ -27,42 +22,36 @@
       </scroll-view>
     </view>
 
-
-
-  <view v-if="loading && leftList.length === 0 && rightList.length === 0" class="skeleton-wrapper">
-    <view class="column col-left">
-      <SkeletonCard  :key="'s-left-4'"  />
-      <SkeletonCard v-for="i in 3" :key="'s-left-' + i"  cardHeight="540rpx" />
+    <!-- 骨架屏 -->
+    <view v-if="loading && leftList.length === 0 && rightList.length === 0" class="skeleton-wrapper">
+      <view class="column col-left">
+        <SkeletonCard :key="'s-left-4'" />
+        <SkeletonCard v-for="i in 3" :key="'s-left-' + i" cardHeight="540rpx" />
+      </view>
+      <view class="column col-right">
+        <SkeletonCard v-for="i in 4" :key="'s-right-' + i" cardHeight="540rpx" />
+      </view>
     </view>
-    <view class="column col-right">
-      <SkeletonCard v-for="i in 4" :key="'s-right-' + i" cardHeight="540rpx" />
-    </view>
-  </view>
 
     <!-- 瀑布流列表区域 -->
     <view v-else class="waterfall-container">
-       <view v-if="leftList.length === 0 && rightList.length === 0 && loading == false" class="empty-state"> 
+      <view v-if="leftList.length === 0 && rightList.length === 0 && loading == false" class="empty-state">
         <image class="empty-img" src="/static/images/common/car@2x.png" mode="widthFix"></image>
-				<text class="empty-text">暂时没有内容哦～</text>
+        <text class="empty-text">暂时没有内容哦～</text>
       </view>
+
       <!-- 左列 -->
       <view class="column col-left">
         <view
           v-for="(item, index) in leftList"
           :key="'left-' + index"
           class="card-item"
-        
           @click="handleCar(item)"
         >
-          <image
-            :src="item.venue_image[0]"
-            mode="scaleToFill"
-            class="card-img"
-            lazy-load
-          ></image>
+          <image :src="item.venue_image[0]" mode="scaleToFill" class="card-img" lazy-load></image>
           <view class="meta">
             <text class="status online"></text>
-            <text> 在线{{ item.online }}</text>
+            <text>在线{{ item.online }}</text>
             <text class="divider">|</text>
             <text class="drivers">驾驶{{ item.drivers }}</text>
           </view>
@@ -72,12 +61,7 @@
               <text class="tag">{{ item.tag }}</text>
             </view>
             <view class="num">
-              <image
-                src="/static/images/common/icon_queue@2x.png"
-                mode="widthFix"
-                class="icon"
-                lazy-load
-              ></image>
+              <image src="/static/images/common/icon_queue@2x.png" mode="widthFix" class="icon" lazy-load></image>
               <text class="text"> {{ item.online }}人排队</text>
             </view>
           </view>
@@ -92,12 +76,7 @@
           class="card-item"
           @click="handleCar(item)"
         >
-          <image
-            :src="item.venue_image[0]"
-            mode="scaleToFill"
-            class="card-img"
-            lazy-load
-          ></image>
+          <image :src="item.venue_image[0]" mode="scaleToFill" class="card-img" lazy-load></image>
           <view class="meta">
             <text class="status online"></text>
             <text>在线{{ item.online }}</text>
@@ -110,12 +89,7 @@
               <text class="tag">{{ item.labels }}</text>
             </view>
             <view class="num">
-              <image
-                src="/static/images/common/icon_queue@2x.png"
-                mode="widthFix"
-                class="icon"
-                lazy-load
-              ></image>
+              <image src="/static/images/common/icon_queue@2x.png" mode="widthFix" class="icon" lazy-load></image>
               <text class="text">{{ item.queue }}人排队</text>
             </view>
           </view>
@@ -132,18 +106,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
-import { throttle } from "@/utils/system.js"; // 引用封装好的节流函数
+import { throttle } from "@/utils/system.js";
 import { GetHomeBanner, GetHomeTabTitle, GetHomeDataList } from "@/axios/index";
-
-
 import SkeletonCard from '@/components/skeleton-card/skeleton-card.vue'
 
 // --- 数据定义 ---
 const categories = ref([]);
 const currentCategory = ref("");
-
 const leftList = ref([]);
 const rightList = ref([]);
 const page = ref(1);
@@ -151,27 +122,23 @@ const loading = ref(false);
 const noMore = ref(false);
 const imgUrl = ref("");
 
-
 // --- 模拟接口请求 ---
 const fetchData = async (isRefresh = false) => {
   if (loading.value || noMore.value) return;
-
   loading.value = true;
+  
   if (isRefresh) {
     page.value = 1;
     leftList.value = [];
     rightList.value = [];
     noMore.value = false;
   }
-
+  
   try {
     // 模拟网络延迟
-    const {code,data:{venueList}} = await GetHomeDataList({
-      type: currentCategory.value
-    });
-
+    const { code, data: { venueList } } = await GetHomeDataList({ type: currentCategory.value });
     if (code == 200 && venueList.length) {
-       // 简单的左右分发逻辑
+      // 简单的左右分发逻辑
       venueList.forEach((item, index) => {
         if (index % 2 === 0) {
           leftList.value.push(item);
@@ -180,17 +147,15 @@ const fetchData = async (isRefresh = false) => {
         }
       });
     }
-    
   } catch (error) {
     console.error("获取数据失败", error);
   } finally {
     loading.value = false;
-    uni.stopPullDownRefresh();
+    // 已移除 uni.stopPullDownRefresh()
   }
 };
 
 // --- 事件处理 (应用节流) ---
-
 // 分类点击节流 (300ms内只能点一次)
 const handleCategoryClick = throttle((item) => {
   if (currentCategory.value === item.id) return;
@@ -210,7 +175,6 @@ onMounted(() => {
 });
 
 onLoad(() => {
-
   categories.value = [{ name: "全部", id: "" }];
   GetHomeBanner()
     .then((res) => {
@@ -224,20 +188,16 @@ onLoad(() => {
     .catch();
 });
 
-// 下拉刷新
-// onPullDownRefresh(() => {
-//   fetchData(true);
-// });
-
 // 触底加载
 // onReachBottom(() => {
 //   loadMore();
 // });
 
-
 const handleCar = (item) => {
   uni.setStorageSync('carTitle', item.venue_name)
-  uni.navigateTo({ url: '/subpkg_car/pages/car/index?id=' + item.id })
+  uni.navigateTo({
+    url: '/subpkg_car/pages/car/index?id=' + item.id
+  })
 }
 </script>
 
@@ -254,21 +214,18 @@ const handleCar = (item) => {
   width: 100%;
   overflow: hidden;
   height: 280rpx;
-
   .banner-img {
     width: 100%;
     display: block;
-    /* 消除图片底部间隙 */
   }
 }
 
-/* 导航栏核心样式 (重点修改部分) */
-.sticky-nav-wrapper {
-  position: sticky;
-  top: 0;
+/* 导航栏核心样式 (已移除吸顶) */
+.static-nav-wrapper {
+  position: static; /* 修改为 static */
   z-index: 99;
   background-color: #fff;
-  box-shadow: 0rpx -4rpx 20rpx -10rpx rgba(0, 0, 0, 0.1); 
+  box-shadow: 0rpx -4rpx 20rpx -10rpx rgba(0, 0, 0, 0.1);
   border-radius: 40rpx 40rpx 0rpx 0rpx;
   margin-top: -10rpx;
   border-bottom: 1rpx solid #f6f6f6;
@@ -277,12 +234,10 @@ const handleCar = (item) => {
 .nav-scroll {
   width: 100%;
   white-space: nowrap;
-  /* 关键：强制内部内容不换行 */
 }
 
 .nav-list {
   display: inline-flex;
-  /* 配合 white-space: nowrap 撑开宽度 */
   padding: 0 20rpx;
   height: 88rpx;
   align-items: center;
@@ -290,20 +245,16 @@ const handleCar = (item) => {
 
 .nav-item {
   display: inline-block;
-  /* 关键：让元素在一行排列 */
   padding: 0 30rpx;
-  font-size: 30rpx;
-  color: #666;
+  font-size: 28rpx;
+  color: #777;
   position: relative;
   flex-shrink: 0;
-  /* 关键：防止文字过多时被挤压换行 */
   line-height: 88rpx;
-
   &.active {
-    color: #000;
+    color: #1A1A1A;
     font-weight: bold;
-    font-size: 32rpx;
-
+    font-size: 30rpx;
     &::after {
       content: "";
       position: absolute;
@@ -324,15 +275,12 @@ const handleCar = (item) => {
   padding: 10rpx;
   padding-top: 20rpx;
   gap: 10rpx;
-  /* 列间距 */
   background-color: #fff;
-
   .column {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 10rpx;
-    /* 卡片上下间距 */
   }
 }
 
@@ -340,7 +288,6 @@ const handleCar = (item) => {
   .card-item {
     &:first-child {
       height: 400rpx;
-
       .card-img {
         width: 100%;
         display: block;
@@ -357,7 +304,6 @@ const handleCar = (item) => {
   border-radius: 16rpx;
   overflow: hidden;
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.03);
-
   background: #e9e9e9;
   border-radius: 8rpx;
   height: 540rpx;
@@ -367,30 +313,25 @@ const handleCar = (item) => {
     display: block;
     position: absolute;
   }
-
   .card-info {
     padding: 10rpx;
     position: absolute;
     bottom: 0;
-
     .title-tags {
       margin-bottom: 10rpx;
       display: flex;
       align-items: center;
-
       .title {
         font-family: PingFangSC, PingFang SC;
         font-weight: 600;
         font-size: 38rpx;
         color: #ffffff;
         text-align: center;
-         // 单行省略
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          max-width: 270rpx;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 270rpx;
       }
-
       .tag {
         font-family: PingFangSC, PingFang SC;
         font-weight: 400;
@@ -401,7 +342,6 @@ const handleCar = (item) => {
         border-radius: 4rpx;
       }
     }
-
     .num {
       display: flex;
       justify-content: flex-start;
@@ -419,7 +359,6 @@ const handleCar = (item) => {
       }
     }
   }
-
   .meta {
     position: absolute;
     right: 10rpx;
@@ -433,7 +372,6 @@ const handleCar = (item) => {
     font-size: 24rpx;
     color: #ffffff;
     padding: 2rpx 10rpx;
-
     .online {
       width: 8rpx;
       height: 8rpx;
@@ -441,7 +379,6 @@ const handleCar = (item) => {
       margin-right: 5rpx;
       background: #15cb50;
     }
-
     .divider {
       margin: 0 10rpx;
       color: #ddd;
@@ -464,12 +401,10 @@ const handleCar = (item) => {
   align-items: center;
   justify-content: center;
   padding: 100rpx 0;
-
   .empty-img {
-    width: 300rpx; /* 根据你的实际图片大小调整 */
+    width: 300rpx;
     margin-bottom: 20rpx;
   }
-
   .empty-text {
     font-size: 28rpx;
     color: #999;
