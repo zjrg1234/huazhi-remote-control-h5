@@ -2,7 +2,7 @@
   <view class="container">
     <!-- 顶部 Banner -->
     <view class="banner-section">
-      <image :src="imgUrl" mode="widthFix" class="banner-img" lazy-load></image>
+      <image :src="imgUrl" mode="scaleToFill" class="banner-img" lazy-load></image>
     </view>
 
     <!-- 分类导航栏 (Sticky 吸顶 + 横向滚动) -->
@@ -118,10 +118,10 @@
     </view>
 
     <!-- 加载状态提示 -->
-    <view class="loading-status">
+    <!-- <view class="loading-status">
       <text v-if="loading">加载中...</text>
       <text v-else-if="noMore">没有更多了</text>
-    </view>
+    </view> -->
     </scroll-view>
   </view>
 </template>
@@ -232,11 +232,26 @@ onLoad(() => {
   overflow: hidden;
   height: 280rpx;
   flex-shrink: 0; /* 防止被压缩 */
-  .banner-img { width: 100%; height: 100%; display: block; }
+  .banner-img { 
+    width: 100%; 
+    height: 100%; 
+    display: block; 
+}
+}
+
+/* 导航栏核心样式 (重点修改部分) */
+.sticky-nav-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  background-color: #fff;
+  box-shadow: 0rpx -4rpx 20rpx 0rpx rgba(0, 0, 0, 0.1);
+  border-radius: 40rpx 40rpx 0rpx 0rpx;
+  margin-top: -10rpx;
 }
 
 /* 导航栏 */
-.static-nav-wrapper {
+.sticky-nav-wrapper {
   flex-shrink: 0; /* 防止被压缩 */
   z-index: 99;
   background-color: #fff;
