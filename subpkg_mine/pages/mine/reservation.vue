@@ -381,7 +381,7 @@ page {
     
   }
   .bt {
-    bottom: 10rpx;
+    bottom: 20rpx;
   }
   .bmt {
     bottom: 100rpx;

@@ -49,8 +49,7 @@
 </template>
 
 <script setup>
-import { ref, nextTick } from "vue";
-import { onLoad } from "@dcloudio/uni-app";
+import { ref, nextTick, onMounted } from "vue";
 import { formatDate } from "../utils/utils.js";
 import { GetAppealList } from "@/axios/mine.js";
 
@@ -61,7 +60,7 @@ const isRefreshing = ref(false);
 const page = ref(1); // ✅ 新增：当前页码
 
 // 初始化加载
-onLoad(() => {
+onMounted(() => {
   fetchData();
 });
 

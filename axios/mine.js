@@ -34,7 +34,7 @@ export function ChangeSpecialList(data) {
 
 // 申诉记录
 export function GetAppealList(data) {
-  return post('/api/user/complain/list',data,  { loadingFlag: true })
+  return post('/api/user/complain/list',data)
 }
 
 // 驾驶记录
