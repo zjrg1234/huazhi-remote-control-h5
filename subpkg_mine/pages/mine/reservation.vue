@@ -6,7 +6,9 @@
         :class="{ active: item.reservation_status === 4 }">
         <!-- 状态角标 -->
         <view class="corner-tag" :class="item.reservation_status">
-          <image class="image" :src="statusMap[item.reservation_status]" mode="aspectFill"></image>
+          <image class="image" v-if="item.vehicle_state == 1" :src="statusMap[item.reservation_status]"
+            mode="aspectFill"></image>
+          <image class="image" v-else :src="statusMap[2]" mode="aspectFill"></image>
         </view>
 
         <!-- 标题 -->
@@ -34,22 +36,29 @@
           <text class="value">{{ formatDate(item.order_time) }}</text>
         </view>
         <view class="info-line" v-if="(item.reservation_status == 4 && item.is_reservation == 1)">
-          <text class="label">如果不能驾驶可以向平台发起</text>    
+          <text class="label">如果不能驾驶可以向平台发起</text>
         </view>
 
-        <view class="btn-wrap" @click="overDrive(item)">结束驾驶</view>
-        <!-- 右侧按钮 -->
-        <view class="btn-wrap bmt"  v-if="item.reservation_status == 1 || item.reservation_status == 2">
-          <button class="btn" @click="handleAction(item)">开始驾驶</button>
-        </view>
+        <template v-if="item.vehicle_state == 1">
+          <view class="btn-wrap" @click="overDrive(item)">结束驾驶</view>
+          <!-- 右侧按钮 -->
+          <view class="btn-wrap bmt" v-if="item.reservation_status == 1 || item.reservation_status == 2">
+            <button class="btn" @click="handleAction(item)">开始驾驶</button>
+          </view>
 
-        <view class="btn-wrap bmc"  v-if="item.reservation_status == 1 || item.reservation_status == 2">
-          <button class="btn" @click="cancelOrder(item)">取消预约</button>
-        </view>
+          <view class="btn-wrap bmc" v-if="item.reservation_status == 1 || item.reservation_status == 2">
+            <button class="btn" @click="cancelOrder(item)">取消预约</button>
+          </view>
 
-        <view class="btn-wrap bt" v-if="(item.reservation_status == 4 && item.is_reservation == 1) ">
-          <button class="btn" @click="handleAppeal(item)">申诉</button>
-        </view>
+          <view class="btn-wrap bt" v-if="(item.reservation_status == 4 && item.is_reservation == 1)">
+            <button class="btn" @click="handleAppeal(item)">申诉</button>
+          </view>
+        </template>
+        <template v-if="item.vehicle_state != 1">
+          <view class="btn-wrap bmt">
+            <button class="btn" @click="handleAction(item)">等待中</button>
+          </view>
+        </template>
       </view>
 
       <!-- 加载状态提示 -->
@@ -71,7 +80,7 @@ import { ref } from "vue";
 import { onLoad, onPullDownRefresh, onReachBottom } from "@dcloudio/uni-app";
 import { formatDate } from "../utils/utils.js";
 import { GetReservationList } from "@/axios/mine";
-import { GetCarDetails , CancelReservation } from "@/axios/index";
+import { GetCarDetails, CancelReservation } from "@/axios/index";
 import { billingMethod } from "../utils/filter.js";
 import { StartDrive, CheckCar, LockCar } from "@/axios/index.js";
 
@@ -145,7 +154,7 @@ const fetchData = async () => {
     };
     const { data } = await GetReservationList(params);
     const content = data?.content || [];
-
+   
     if (isLoadMore) {
       // 追加数据
       list.value = list.value.concat(content);
@@ -190,6 +199,11 @@ const handleAction = async (item) => {
   if (flag.value) return;
   flag.value = true;
 
+  if(item.vehicle_state != 1) {
+    uni.showToast('排队等待中，请稍后');
+    return
+  }
+
   const { data, code, msg } = await CheckCar({
     vehicle_id: item.vehicle_id,
   })
@@ -208,7 +222,7 @@ const handleAction = async (item) => {
     return;
   }
   console.log("锁车成功")
-  
+
   GetCarDetails({
     id: item.vehicle_id,
   })
@@ -246,7 +260,7 @@ const handleAppeal = (item) => {
 };
 
 const overDrive = (item) => {
-    
+
   StartDrive({
     order_no: item.order_no,
     type: 3,
@@ -377,16 +391,20 @@ page {
       color: #1a1a1a;
     }
 
-    
+
   }
+
   .bt {
     bottom: 20rpx;
   }
+
   .bmt {
     bottom: 90rpx;
   }
+
   .bmc {
     bottom: 20rpx;
+
     .btn {
       color: #fff;
       background-color: #999;
