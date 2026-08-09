@@ -44,12 +44,12 @@ export function GetDrivingRecordlList(data) {
 
 // 修改密码
 export function ChangePwd(data) {
-  return get('/api/user/change/password',data)
+  return post('/api/user/change/password',data)
 }
 
 // 修改手机号
 export function ChangePhone(data) {
-  return get('/api/user/change/phone',data)
+  return post('/api/user/change/phone',data)
 }
 
 

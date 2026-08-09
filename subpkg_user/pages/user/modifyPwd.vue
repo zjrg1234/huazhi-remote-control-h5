@@ -13,6 +13,7 @@
 
 
       <view class="input-item">
+        <!-- <uni-icons type="locked" size="20" color="#999" /> -->
 
         <input class="input" :password="!showPassword1" maxlength="12" placeholder="请输入新密码"
           v-model="formData.password1" />
@@ -23,7 +24,7 @@
 
 
       <view class="input-item">
-        <uni-icons type="locked" size="20" color="#999" />
+        <!-- <uni-icons type="locked" size="20" color="#999" /> -->
         <input class="input" maxlength="12" :password="!showPassword2" placeholder="请再次输入密码"
           v-model="formData.password2" />
         <uni-icons :type="showPassword2 ? 'eye-slash' : 'eye'" size="20" color="#999"
@@ -67,7 +68,7 @@ const handleSubmit = () => {
   if (formData.password1 !== formData.password2)
     return uni.showToast({ title: '两次密码不一致', icon: 'none' });
   console.log(formData)
-  ChangePwd({ ...formData, phone: userInfo.phone_number }).then(res => {
+  ChangePwd({ code: formData.code, phone: userStore.getUserInfo().phone_number, password: formData.password1 }).then(res => {
     if(res.code  == 200) {
       uni.showToast({ title: '密码重置成功', icon: 'success' });
     } else {
