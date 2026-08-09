@@ -338,10 +338,10 @@
         <!-- </cover-view> -->
       </cover-view>
 
-      <input v-show="type === 'repair'" :style="{ display: allPopupVisible ? 'block' : 'none' }" v-model="message"
-        class="repair-input" type="text" maxlength="20" placeholder="请输入故障原因，最多20字（选填）" />
-      <!-- :style="{ display: allPopupVisible ? 'block' : 'none' }" -->
-      <cover-view class="tip-popup-mask" v-show="allPopupVisible" :style="{ display: 'none' }"
+      <!-- <input v-show="type === 'repair'" :style="{ display: allPopupVisible ? 'block' : 'none' }" v-model="message"
+        class="repair-input" type="text" maxlength="20" placeholder="请输入故障原因，最多20字（选填）" /> -->
+   
+      <cover-view class="tip-popup-mask" v-show="allPopupVisible" :style="{ display: allPopupVisible ? 'block' : 'none' }"
         @tap.stop="handleMaskClick">
         <cover-view class="fcenter">
           <!-- 弹窗主体内容 -->
@@ -518,6 +518,7 @@ import { reactive } from "vue";
 
 const videoUrl = ref(""); // 视频地址
 const allPopupVisible = ref(false);
+const type = ref('tip')
 const carStatus = ref(false);
 const currentTime = ref("");
 const showSpeed = ref(false);
@@ -987,6 +988,7 @@ onMounted(() => {
   // 注意：uni-app 不支持 sessionStorage，需改用 uni.getStorageSync
   if (uni.getStorageSync("loadingOne") !== "1") {
     allPopupVisible.value = true;
+
     countdownTimer = setInterval(() => {
       count.value -= 1;
       if (count.value == 0) {
@@ -1422,7 +1424,7 @@ const handleMaskClick = () => {
   // 如果需要点击遮罩关闭，可在此处设置 visible.value = false;
 };
 
-const type = ref("tip");
+
 const message = ref("");
 const text = ref();
 let countdownTimer = null;

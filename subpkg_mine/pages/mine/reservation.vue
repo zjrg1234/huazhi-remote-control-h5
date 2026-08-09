@@ -8,7 +8,7 @@
         <view class="corner-tag" :class="item.reservation_status">
           <image class="image" v-if="item.vehicle_state == 1" :src="statusMap[item.reservation_status]"
             mode="aspectFill"></image>
-          <image class="image" v-else :src="statusMap[2]" mode="aspectFill"></image>
+          <image class="image" v-if="item.vehicle_state == 2" :src="statusMap[2]" mode="aspectFill"></image>
         </view>
 
         <!-- 标题 -->
@@ -39,7 +39,7 @@
           <text class="label">如果不能驾驶可以向平台发起</text>
         </view>
 
-        <template v-if="item.vehicle_state == 1">
+        <template v-if="item.vehicle_state != 1">
           <view class="btn-wrap" @click="overDrive(item)">结束驾驶</view>
           <!-- 右侧按钮 -->
           <view class="btn-wrap bmt" v-if="item.reservation_status == 1 || item.reservation_status == 2">
@@ -54,7 +54,7 @@
             <button class="btn" @click="handleAppeal(item)">申诉</button>
           </view>
         </template>
-        <template v-if="item.vehicle_state != 1">
+        <template v-if="item.vehicle_state == 1">
           <view class="btn-wrap bmt">
             <button class="btn" @click="handleAction(item)">等待中</button>
           </view>
@@ -199,17 +199,17 @@ const handleAction = async (item) => {
   if (flag.value) return;
   flag.value = true;
 
-  if(item.vehicle_state != 1) {
-    uni.showToast('排队等待中，请稍后');
-    return
-  }
+  // if(item.vehicle_state != 1) {
+  //   uni.showToast({title:'排队等待中，请稍后', icon:'none'});
+  //   return
+  // }
 
   const { data, code, msg } = await CheckCar({
     vehicle_id: item.vehicle_id,
   })
 
   if (code != 200) {
-    uni.showToast(msg);
+    uni.showToast({title: msg, icon:'none'});
     return
   }
 
@@ -218,7 +218,7 @@ const handleAction = async (item) => {
   })
 
   if (res.code != 200) {
-    uni.showToast("车辆没锁成功，不能驾驶");
+    uni.showToast({title: res.msg, icon:'none'});
     return;
   }
   console.log("锁车成功")
