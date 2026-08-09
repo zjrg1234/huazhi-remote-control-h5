@@ -2,6 +2,7 @@
   <cover-view
     class="control-wrapper"
     ref="wrapperRef"
+    :style="wrapperStyle"
     @touchstart="handleWrapperStart"
     @touchmove="handleWrapperMove"
     @touchend="handleWrapperEnd"
@@ -36,18 +37,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch, getCurrentInstance } from "vue";
+import { ref, onMounted, onBeforeUnmount, watch, getCurrentInstance, reactive } from "vue";
 
 const emit = defineEmits(["action"]);
 
 const props = defineProps({
   isLeft: { type: Boolean, default: false },
   wrapperWidth: { type: Number, default: 360 },
-  wrapperHeight: { type: Number, default: 300 },
+  wrapperHeight: { type: Number, default: 270 },
 });
 
 // 配置参数
-const IDLE_DELAY = 200;
+const IDLE_DELAY = 400;
 const SWIPE_THRESHOLD = 20;
 const MAX_DOT_DRAG = 40;
 const BOX_WIDTH = 180;
@@ -64,7 +65,7 @@ const boxY = ref(0);
 const dotX = ref(0);
 const boxTransition = ref("none");
 
-// ref 声明（虽然后面没用 DOM 方法，但保留以便调试）
+// refs (保留用于其他目的，但获取位置统一使用 SelectorQuery)
 const wrapperRef = ref(null);
 const boxRef = ref(null);
 const dotRef = ref(null);
@@ -82,15 +83,22 @@ let wrapperSize = { width: props.wrapperWidth, height: props.wrapperHeight };
 let wrapperStartClientX = 0;
 let wrapperDotBaseX = 0;
 
-// 用于存储 wrapper 的真实位置（通过 SelectorQuery 获取）
-const wrapperRect = ref({ left: 0, top: 0, width: 0, height: 0 });
 
+// 动态 wrapper 样式
+const wrapperStyle = reactive({
+  width: '300px',
+  height: '270px',
+  right: '90px',
+  bottom: '50px'
+});
+
+// 存储 wrapper 的真实位置（缓存）
+const wrapperRect = ref({ right: '90px', bottom: '50px', width: 360, height: 270 });
 const instance = getCurrentInstance();
 
 // ---------- 跨平台获取 wrapper 位置 ----------
 const fetchWrapperRect = () => {
   return new Promise((resolve) => {
-    // 使用 uni.createSelectorQuery 统一处理 H5 和小程序
     const query = uni.createSelectorQuery().in(instance.proxy);
     query.select('.control-wrapper').boundingClientRect((rect) => {
       if (rect) {
@@ -118,8 +126,15 @@ const clampInWrapper = (x, y) => {
 
 // 右侧初始化
 const backRightInit = () => {
-  const x = wrapperSize.width - BOX_WIDTH - 10;
+
+  wrapperStyle.right = '90px';
+  wrapperStyle.bottom = '50px';
+  delete wrapperStyle.left; // 确保不冲突
+
+  const x = wrapperSize.width - BOX_WIDTH - 10 - 50;
+ 
   const y = (wrapperSize.height - BOX_HEIGHT) / 2 + 50;
+ 
   const clamped = clampInWrapper(x, y);
   boxX.value = clamped.x;
   boxY.value = clamped.y;
@@ -129,6 +144,11 @@ const backRightInit = () => {
 
 // 左侧初始化
 const backLeftInit = () => {
+
+  wrapperStyle.left = '0px';
+  wrapperStyle.bottom = '50px';
+  delete wrapperStyle.right; // 确保不冲突
+
   const x = 10;
   const y = (wrapperSize.height - BOX_HEIGHT) / 2;
   const clamped = clampInWrapper(x, y);
@@ -148,7 +168,7 @@ onMounted(async () => {
   if (props.isLeft) backLeftInit();
   else backRightInit();
 
-  // 等待 DOM 渲染完成，获取真实位置
+  // 首次获取位置
   await fetchWrapperRect();
 
   // #ifdef H5
@@ -288,12 +308,13 @@ const handleEnd = () => {
   boxY.value = originBoxY;
 };
 
-// --- 从 wrapper 空白区域开始的操作（使用 wrapperRect） ---
-const handleWrapperStart = (e) => {
-  // 如果尚未获取到 wrapperRect，则忽略本次操作
-  if (!wrapperRect.value.width) {
-    return;
-  }
+// --- 从 wrapper 空白区域开始的操作（核心修复：每次实时获取 rect） ---
+const handleWrapperStart = async (e) => {
+  // 实时获取 wrapper 的最新位置，确保计算准确
+  await fetchWrapperRect();
+
+  // 如果仍然没有获取到（理论上不会），则忽略
+  if (!wrapperRect.value.width) return;
 
   const { clientX, clientY } = getClientPos(e);
   const relX = clientX - wrapperRect.value.left;
@@ -323,8 +344,9 @@ const handleWrapperStart = (e) => {
   const clamped = clampInWrapper(targetBoxX, targetBoxY);
   boxX.value = clamped.x;
   boxY.value = clamped.y;
-  dotX.value = 0;
+  dotX.value = 0; // 圆点居中
 
+  // 记录移动基准
   wrapperStartClientX = clientX;
   wrapperDotBaseX = 0;
 };
@@ -368,8 +390,8 @@ const handleWrapperEnd = () => {
 <style scoped>
 .control-wrapper {
   position: fixed;
-  right: 90px;
-  bottom: 50px;
+  /* left: 90px;  
+  bottom: 50px; */
   width: v-bind(wrapperWidth + 'px');
   height: v-bind(wrapperHeight + 'px');
   background: rgba(0, 0, 0, 0.15);
