@@ -53,6 +53,8 @@ const rippleColor = `rgba(255, 200, 56, ${ALPHA})`; // 波纹颜色
 let timer = null; // 定时器引用
 const show = ref(true)
 
+const emit = defineEmits(["action"]);
+
 // 停止波纹（清除定时器）
 const stopRipple = () => {
   if (timer) {
@@ -97,6 +99,7 @@ const createRipple = (clientX, clientY) => {
       // 3. 动画结束后自动清理节点，防止内存泄漏
       setTimeout(() => {
         show.value = !show.value
+        emit("action", show.value)
         ripples.value = ripples.value.filter((r) => r.id !== id);
       }, 1500); // 对应 CSS 中的 1.2s 动画时间
     })

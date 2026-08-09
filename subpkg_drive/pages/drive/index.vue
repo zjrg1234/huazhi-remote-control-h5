@@ -50,11 +50,11 @@
 
       <!-- 声音/波纹图标 -->
       <cover-view class="side-menu-icon">
-        <microphone></microphone>
+        <microphone @action="handleMic"></microphone>
         <cover-image class="image sound" v-show="!showSound" :style="{ display: !showSound ? 'block' : 'none' }"
-          src="./static/icon_sound_close@2x.png" @click="showSound = true" mode="aspectFit" />
+          src="./static/icon_sound_close@2x.png" @click="handleSound(true, 0)" mode="aspectFit" />
         <cover-image class="image sound" v-show="showSound" :style="{ display: showSound ? 'block' : 'none' }"
-          src="./static/icon_sound_open@2x.png" @click="showSound = false" mode="aspectFit" />
+          src="./static/icon_sound_open@2x.png" @click="handleSound(false, 0)" mode="aspectFit" />
       </cover-view>
 
       <!-- 右侧菜单 -->
@@ -75,8 +75,12 @@
                 {{ constSpeed }}
               </cover-view>
             </cover-view>
-            <slider :value="constSpeed" :min="1" :max="100" :step="1" activeColor="#f5c542" backgroundColor="#e9e9e9"
-              block-size="6" @change="changeConstSpeed" />
+            <!-- <slider :value="constSpeed" :min="1" :max="100" :step="1" activeColor="#f5c542" backgroundColor="#e9e9e9"
+              block-size="6" @change="changeConstSpeed" /> -->
+
+              <SliderComp v-model="constSpeed" :min="1" :max="100" @change="changeConstSpeed">
+                      </SliderComp>
+
             <cover-view class="slider-label-bottom">
               <cover-view class="num-text num-left">0 km/h</cover-view>
               <cover-view class="num-text num-right">100 km/h</cover-view>
@@ -664,6 +668,22 @@ const clearAllTimers = () => {
   }
 };
 
+const handleMic = (val) => {
+  handleSound(!val, 1)
+}
+// 处理音频
+const handleSound = (val, type) =>{
+  if (type == 0) {
+    showSound.value = val;
+  }
+  let newInitAction = "video_audio";
+  if (!val) {
+    newInitAction = "video_only"
+  }
+  videoUrl.value = videoUrl.value.replace( /([?&])initAction=[^&]*/,'&initAction=' + newInitAction);
+  console.log(videoUrl.value,"videoUrl")
+}
+
 // 结束驾驶逻辑
 const handleDriveEnd = () => {
   clearAllTimers();
@@ -738,6 +758,9 @@ const sendConDrive = () => {
 };
 
 // 获取视频设备信息
+
+//video_only:自动打开视频
+//video_audio:自动打开视频+音频
 const GetDeviceInfo = (data) => {
   DeviceDetails({ ...data })
     .then((res) => {
@@ -1114,6 +1137,7 @@ const initSocket = () => {
       // 收到消息，重置定时器
       clearTimeout(messageTimer.value);
       handleReceive(msg);
+      console.log("收到的消息", model)
       batteryPer.value = handleBattery(model.volt, carDetails.value.battery);
       // 重新启动超时检测
       startMessageTimeout();
@@ -1191,8 +1215,9 @@ const handleFBDrive = (item) => {
 };
 
 // 速度
-const changeConstSpeed = (e) => {
-  constSpeed.value = e.detail.value;
+const changeConstSpeed = (val) => {
+  console.log(val)
+  constSpeed.value = val;
   carHandler.value.handleTwoDirectionControlChannel(
     true,
     "upType",
@@ -1614,13 +1639,11 @@ const report = (text) => {
   font-size: 22px;
 }
 
-
-
 .side-menu-icon {
   position: fixed;
   z-index: 199999;
   top: 80px;
-  right: 60px;
+  right: 55px;
   z-index: 2;
   display: flex;
   flex-direction: column;

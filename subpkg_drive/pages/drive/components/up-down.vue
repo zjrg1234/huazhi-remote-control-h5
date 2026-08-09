@@ -31,6 +31,7 @@
 import { ref, reactive, watch, nextTick, onMounted, onBeforeUnmount, getCurrentInstance } from "vue";
 
 const emit = defineEmits(["action"]);
+
 const props = defineProps({
   isLeft: { type: Boolean, default: true },
 });
