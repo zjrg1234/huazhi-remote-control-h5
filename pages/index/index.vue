@@ -197,8 +197,10 @@ const onRefresh = async () => {
 
 // 分类点击节流 (300ms内只能点一次)
 const handleCategoryClick = throttle((item) => {
+
   if (currentCategory.value === item.id) return;
   currentCategory.value = item.id;
+  noMore.value = false;
   // 切换分类时重新加载第一页
   fetchData(true);
 }, 300);
