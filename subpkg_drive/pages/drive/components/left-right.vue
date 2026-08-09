@@ -36,7 +36,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch } from "vue";
+import { ref, onMounted, onBeforeUnmount, watch, getCurrentInstance } from "vue";
 
 const emit = defineEmits(["action"]);
 
@@ -52,12 +52,10 @@ const SWIPE_THRESHOLD = 20;
 const MAX_DOT_DRAG = 40;
 const BOX_WIDTH = 180;
 const BOX_HEIGHT = 50;
-const WRAPPER_RIGHT = 20;
-const WRAPPER_BOTTOM = 20;
 
 // 响应式状态
-const isDragging = ref(false);          // 从 box 自身开始拖拽
-const isWrapperDragging = ref(false);   // 从 wrapper 空白区域开始拖拽
+const isDragging = ref(false);
+const isWrapperDragging = ref(false);
 const isReadyMode = ref(false);
 const isLeftActive = ref(false);
 const isRightActive = ref(false);
@@ -65,6 +63,11 @@ const boxX = ref(0);
 const boxY = ref(0);
 const dotX = ref(0);
 const boxTransition = ref("none");
+
+// ref 声明（虽然后面没用 DOM 方法，但保留以便调试）
+const wrapperRef = ref(null);
+const boxRef = ref(null);
+const dotRef = ref(null);
 
 // 内部变量
 let idleTimer = null;
@@ -76,19 +79,31 @@ let initialBoxY = 0;
 let originBoxX = 0;
 let originBoxY = 0;
 let wrapperSize = { width: props.wrapperWidth, height: props.wrapperHeight };
-// wrapper 操作基准值
 let wrapperStartClientX = 0;
 let wrapperDotBaseX = 0;
 
-// 获取屏幕尺寸
-const getRealScreenSize = () => {
-  // #ifdef H5
-  return { width: window.innerWidth, height: window.innerHeight };
-  // #endif
-  // #ifdef MP-WEIXIN
-  const info = uni.getSystemInfoSync();
-  return { width: info.windowWidth, height: info.windowHeight };
-  // #endif
+// 用于存储 wrapper 的真实位置（通过 SelectorQuery 获取）
+const wrapperRect = ref({ left: 0, top: 0, width: 0, height: 0 });
+
+const instance = getCurrentInstance();
+
+// ---------- 跨平台获取 wrapper 位置 ----------
+const fetchWrapperRect = () => {
+  return new Promise((resolve) => {
+    // 使用 uni.createSelectorQuery 统一处理 H5 和小程序
+    const query = uni.createSelectorQuery().in(instance.proxy);
+    query.select('.control-wrapper').boundingClientRect((rect) => {
+      if (rect) {
+        wrapperRect.value = {
+          left: rect.left,
+          top: rect.top,
+          width: rect.width,
+          height: rect.height,
+        };
+      }
+      resolve(wrapperRect.value);
+    }).exec();
+  });
 };
 
 // 限制 box 在容器内
@@ -128,15 +143,20 @@ const updateWrapperSize = () => {
   wrapperSize.height = props.wrapperHeight;
 };
 
-onMounted(() => {
+onMounted(async () => {
   updateWrapperSize();
   if (props.isLeft) backLeftInit();
   else backRightInit();
+
+  // 等待 DOM 渲染完成，获取真实位置
+  await fetchWrapperRect();
+
   // #ifdef H5
-  window.addEventListener('resize', () => {
+  window.addEventListener('resize', async () => {
     updateWrapperSize();
     if (props.isLeft) backLeftInit();
     else backRightInit();
+    await fetchWrapperRect();
   });
   // #endif
 });
@@ -207,7 +227,7 @@ const getClientPos = (e) => {
   };
 };
 
-// --- 从 control-box 自身开始拖拽（原有逻辑，未变） ---
+// --- 从 control-box 自身开始拖拽 ---
 const handleStart = (e) => {
   e.stopPropagation();
   if (e.cancelable) e.preventDefault();
@@ -268,19 +288,16 @@ const handleEnd = () => {
   boxY.value = originBoxY;
 };
 
-// --- 从 wrapper 空白区域开始的操作（核心新逻辑） ---
+// --- 从 wrapper 空白区域开始的操作（使用 wrapperRect） ---
 const handleWrapperStart = (e) => {
-  const { width: screenW, height: screenH } = getRealScreenSize();
-  const wrapperRect = {
-    left: screenW - wrapperSize.width - WRAPPER_RIGHT,
-    top: screenH - wrapperSize.height - WRAPPER_BOTTOM,
-    width: wrapperSize.width,
-    height: wrapperSize.height,
-  };
+  // 如果尚未获取到 wrapperRect，则忽略本次操作
+  if (!wrapperRect.value.width) {
+    return;
+  }
 
   const { clientX, clientY } = getClientPos(e);
-  const relX = clientX - wrapperRect.left;
-  const relY = clientY - wrapperRect.top;
+  const relX = clientX - wrapperRect.value.left;
+  const relY = clientY - wrapperRect.value.top;
 
   // 判断是否点在 control-box 内部
   if (
@@ -301,15 +318,13 @@ const handleWrapperStart = (e) => {
   resetArrows();
   boxTransition.value = "none";
 
-  // 目标：box 中心 = (relX, relY)
   let targetBoxX = relX - BOX_WIDTH / 2;
   let targetBoxY = relY - BOX_HEIGHT / 2;
   const clamped = clampInWrapper(targetBoxX, targetBoxY);
   boxX.value = clamped.x;
   boxY.value = clamped.y;
-  dotX.value = 0; // 圆点已在中心
+  dotX.value = 0;
 
-  // 记录移动基准
   wrapperStartClientX = clientX;
   wrapperDotBaseX = 0;
 };
@@ -318,10 +333,8 @@ const handleWrapperMove = (e) => {
   if (!isWrapperDragging.value) return;
   if (e.cancelable) e.preventDefault();
   const { clientX } = getClientPos(e);
-  // 计算相对于按下点的位移，作为 dot 偏移量
-  let deltaX = clientX - wrapperStartClientX + wrapperDotBaseX; // wrapperDotBaseX 初始为0，可扩展
+  let deltaX = clientX - wrapperStartClientX + wrapperDotBaseX;
 
-  // 弹性限制（与原待命模式相同）
   const absDelta = Math.abs(deltaX);
   if (absDelta > MAX_DOT_DRAG) {
     const excess = absDelta - MAX_DOT_DRAG;
@@ -341,12 +354,10 @@ const handleWrapperEnd = () => {
   isReadyMode.value = false;
   clearTimeout(idleTimer);
 
-  // 让 box 回到原始位置，圆点归零
   boxTransition.value = "transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
   dotX.value = 0;
   wrapperDotBaseX = 0;
   resetArrows();
-  // 延迟一点点再移动 box，让圆点先归位更自然
   setTimeout(() => {
     boxX.value = originBoxX;
     boxY.value = originBoxY;
@@ -361,7 +372,7 @@ const handleWrapperEnd = () => {
   bottom: 50px;
   width: v-bind(wrapperWidth + 'px');
   height: v-bind(wrapperHeight + 'px');
-  /* background: rgba(0, 0, 0, 0.15); */
+  background: rgba(0, 0, 0, 0.15);
   border-radius: 12px;
   overflow: hidden;
   z-index: 9998;
