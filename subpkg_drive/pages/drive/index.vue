@@ -1485,6 +1485,7 @@ const report = (text) => {
   height: 100%;
   box-sizing: border-box;
   position: relative;
+  background: rgba(0, 0, 0, 0.6);
 }
 
 .logout {

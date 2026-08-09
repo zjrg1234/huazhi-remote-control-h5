@@ -38,8 +38,8 @@
         <view class="info-line" v-if="(item.reservation_status == 4 && item.is_reservation == 1)">
           <text class="label">如果不能驾驶可以向平台发起</text>
         </view>
-
-        <template v-if="item.vehicle_state == 1">
+<!-- v-if="item.vehicle_state == 1" -->
+       
           <view class="btn-wrap" @click="overDrive(item)">结束驾驶</view>
           <!-- 右侧按钮 -->
           <view class="btn-wrap bmt" v-if="item.reservation_status == 1 || item.reservation_status == 2">
@@ -53,12 +53,12 @@
           <view class="btn-wrap bt" v-if="(item.reservation_status == 4 && item.is_reservation == 1)">
             <button class="btn" @click="handleAppeal(item)">申诉</button>
           </view>
-        </template>
-        <template v-if="item.vehicle_state != 1">
+     
+        <!-- <template v-if="item.vehicle_state != 1">
           <view class="btn-wrap bmt">
             <button class="btn" @click="handleAction(item)">等待中</button>
           </view>
-        </template>
+        </template> -->
       </view>
 
       <!-- 加载状态提示 -->
