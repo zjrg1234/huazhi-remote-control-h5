@@ -934,7 +934,6 @@ const logout = () => {
   showSpeed.value = false;
   handleFBDrive({ fb: false, value: 0 });
   handleIcon("speed");
-  handlePopupAction('logout')
 };
 
 const logoutCont = ref(5);
