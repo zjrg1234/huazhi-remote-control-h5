@@ -5,11 +5,11 @@
 
       <view class="input-item phone-box">
 
-        <text class="phone-text">188 **** 8888</text>
+        <text class="phone-text">{{ userInfo.phone_number }}</text>
       </view>
 
 
-      <VerifyCodeInput v-model="formData.code" phone="188888888" />
+      <VerifyCodeInput v-model="formData.code" :phone="userInfo.phone_number" />
 
 
       <view class="input-item">
@@ -39,9 +39,17 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import VerifyCodeInput from '@/components/verify-code/verify-code.vue';
-import { ChangePhone } from "@/axios/mine.js"
+import { ChangePwd } from "@/axios/mine.js"
+
+import { useUserStore } from "@/store/modules/user";
+
+const userStore = useUserStore();
+const userInfo = computed(() => {
+  return userStore.getUserInfo();
+});
+
 // --- 数据定义 ---
 const formData = reactive({
   code: '',
@@ -59,10 +67,14 @@ const handleSubmit = () => {
   if (formData.password1 !== formData.password2)
     return uni.showToast({ title: '两次密码不一致', icon: 'none' });
   console.log(formData)
-  ChangePhone({ ...formData }).then(res => {
+  ChangePwd({ ...formData, phone: userInfo.phone_number }).then(res => {
+    if(res.code  == 200) {
+      uni.showToast({ title: '密码重置成功', icon: 'success' });
+    } else {
+      uni.showToast({ title: res.msg, icon: 'none' });
+    }
     // 这里执行提交逻辑
-    uni.showToast({ title: '密码重置成功', icon: 'success' });
-  }).catch()
+    }).catch()
 
 };
 </script>
