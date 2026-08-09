@@ -80,8 +80,8 @@
           </view>
           <view class="bottom-row">
             <text class="battery">车辆电量：{{ car.vehicle_battery }}</text>
-            <button class="action-btn" :class="{ 'btn-disabled': car.vehicle_state == 2 }"
-              :disabled="car.vehicle_state == 2" @click="handleDrive(car)">
+            <button class="action-btn"
+              @click="handleDrive(car)">
               我要驾驶
             </button>
           </view>

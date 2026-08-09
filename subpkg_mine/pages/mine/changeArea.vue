@@ -7,13 +7,8 @@
 
     <!-- 2. 网格列表 -->
     <view class="grid" v-if="list.length > 0">
-      <view 
-        class="grid-item" 
-        v-for="item in list" 
-        :key="item.id" 
-        :class="{ active: selected === item.id }"
-        @click="selected = item.id"
-      >
+      <view class="grid-item" v-for="item in list" :key="item.id" :class="{ active: selected === item.id }"
+        @click="selected = item.id">
         <image class="car-img" :src="item.image" mode="aspectFill" lazy-load />
         <view class="info">
           <text class="name">{{ item.agent_name }}</text>
@@ -63,11 +58,7 @@ const tipVisible = ref(false)
 const loading = ref(false)
 const noData = ref(false)
 
-// 分页参数
-const queryParams = ref({
-  page: 1,
-  size: 12
-})
+
 
 // --- 核心逻辑 ---
 onMounted(() => {
@@ -77,7 +68,7 @@ onMounted(() => {
 // 下拉触底加载
 onReachBottom(() => {
   if (noData.value || loading.value) return
-  queryParams.value.page++
+
   getSpecialList()
 })
 
@@ -85,18 +76,14 @@ onReachBottom(() => {
 const getSpecialList = async () => {
   if (loading.value) return // 防止重复请求
   loading.value = true
-  
+
   try {
     // 假设接口支持分页参数，若不支持需后端配合
-    const res = await GetSpecialList(queryParams.value) 
-    const newData = res.data || []
-    
-    // 追加数据
-    list.value = [...list.value, ...newData]
-    
-    // 判断是否还有更多数据
-    if (newData.length < queryParams.value.size) {
-      noData.value = true
+    const res = await GetSpecialList()
+    if (res.code != 200) {
+      uni.showToast({ title: res.msg, icon: 'none' })
+    } else {
+      list.value = [...res.data]
     }
   } catch (err) {
     console.error('获取专区列表失败:', err)
@@ -114,7 +101,7 @@ const confirm = () => {
   if (userStore.areaId == selected.value) {
     return uni.showToast({ title: '您已在当前专区', icon: 'none' })
   }
-  
+
   const obj = list.value.find(item => item.id == selected.value)
   if (obj) {
     name.value = obj.agent_name
@@ -132,7 +119,7 @@ const handleConfirm = async () => {
       uni.showToast({ title: '更换专区成功', icon: 'success' })
       setTimeout(() => {
         uni.reLaunch({ url: '/pages/mine/index' })
-      },2001)
+      }, 2001)
 
     } else {
       uni.showToast({ title: res.msg || '操作失败', icon: 'none' })
@@ -147,7 +134,8 @@ const handleConfirm = async () => {
 .container {
   background-color: #F2F5F8;
   min-height: 100vh;
-  padding-bottom: 140rpx; /* 防止底部按钮遮挡列表内容 */
+  padding-bottom: 140rpx;
+  /* 防止底部按钮遮挡列表内容 */
 }
 
 /* 顶部栏 */
@@ -273,6 +261,6 @@ const handleConfirm = async () => {
   font-family: PingFangSC, PingFang SC;
   font-weight: 400;
   font-size: 32rpx;
-  padding-bottom: 60rpx;
+  padding-bottom: 2rpx;
 }
 </style>

@@ -1,21 +1,37 @@
 <template>
-  <cover-view class="control-box" ref="boxRef" :style="{ transform: `translate3d(${boxX}px, ${boxY}px, 0)` }"
-    @touchstart="handleStart" @touchmove.stop="handleMove" @touchend="handleEnd" @mousedown="handleStart">
-    <cover-image class="arrow left" src="../static/arrow_left_big@2x.png"
-      :class="{ active: isLeftActive }"></cover-image>
+  <cover-view
+    class="control-wrapper"
+    ref="wrapperRef"
+    @touchstart="handleWrapperStart"
+    @touchmove="handleWrapperMove"
+    @touchend="handleWrapperEnd"
+    @mousedown="handleWrapperStart"
+    @mousemove="handleWrapperMove"
+    @mouseup="handleWrapperEnd"
+  >
+    <cover-view
+      class="control-box"
+      ref="boxRef"
+      :style="{
+        transform: `translate3d(${boxX}px, ${boxY}px, 0)`,
+        transition: boxTransition
+      }"
+      @touchstart.stop="handleStart"
+      @touchmove.stop="handleMove"
+      @touchend="handleEnd"
+      @mousedown.stop="handleStart"
+    >
+      <cover-image class="arrow left" src="../static/arrow_left_big@2x.png"
+        :class="{ active: isLeftActive }"></cover-image>
 
-  
-      <cover-image class="dot" ref="dotRef"  :class="{ ready: isReadyMode }" src="../static/dot@2x.png" :style="{
-        transition: isDragging
-          ? 'none'
-          : 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease, box-shadow 0.3s ease',
+      <cover-image class="dot" ref="dotRef" :class="{ ready: isReadyMode }" src="../static/dot@2x.png" :style="{
+        transition: isDragging || isWrapperDragging ? 'none' : 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease, box-shadow 0.3s ease',
         transform: `translateX(${dotX}px) scale(1)`
       }"></cover-image>
 
-
-
-    <cover-image class="arrow right" src="../static/arrow_right_big@2x.png"
-      :class="{ active: isRightActive }"></cover-image>
+      <cover-image class="arrow right" src="../static/arrow_right_big@2x.png"
+        :class="{ active: isRightActive }"></cover-image>
+    </cover-view>
   </cover-view>
 </template>
 
@@ -26,133 +42,126 @@ const emit = defineEmits(["action"]);
 
 const props = defineProps({
   isLeft: { type: Boolean, default: false },
+  wrapperWidth: { type: Number, default: 360 },
+  wrapperHeight: { type: Number, default: 300 },
 });
 
-// --- 配置参数 ---
-const IDLE_DELAY = 500;
+// 配置参数
+const IDLE_DELAY = 200;
 const SWIPE_THRESHOLD = 20;
 const MAX_DOT_DRAG = 40;
-const BOX_WIDTH = 90;
+const BOX_WIDTH = 180;
+const BOX_HEIGHT = 50;
+const WRAPPER_RIGHT = 20;
+const WRAPPER_BOTTOM = 20;
 
-// --- 响应式状态 ---
-const isDragging = ref(false);
+// 响应式状态
+const isDragging = ref(false);          // 从 box 自身开始拖拽
+const isWrapperDragging = ref(false);   // 从 wrapper 空白区域开始拖拽
 const isReadyMode = ref(false);
 const isLeftActive = ref(false);
 const isRightActive = ref(false);
-
 const boxX = ref(0);
 const boxY = ref(0);
 const dotX = ref(0);
+const boxTransition = ref("none");
 
-// --- 内部非响应式状态 ---
+// 内部变量
 let idleTimer = null;
 let dragOffsetX = 0;
 let dragOffsetY = 0;
 let dotStartOffset = 0;
 let initialBoxX = 0;
 let initialBoxY = 0;
+let originBoxX = 0;
+let originBoxY = 0;
+let wrapperSize = { width: props.wrapperWidth, height: props.wrapperHeight };
+// wrapper 操作基准值
+let wrapperStartClientX = 0;
+let wrapperDotBaseX = 0;
 
-// 工具函数：获取屏幕尺寸（横屏适配）
-const getScreenSize = () => {
+// 获取屏幕尺寸
+const getRealScreenSize = () => {
   // #ifdef H5
   return { width: window.innerWidth, height: window.innerHeight };
   // #endif
-
   // #ifdef MP-WEIXIN
   const info = uni.getSystemInfoSync();
-  // 强制取长边为 width（适配横屏）
-  return {
-    width: Math.max(info.windowWidth, info.windowHeight),
-    height: Math.min(info.windowWidth, info.windowHeight),
-  };
+  return { width: info.windowWidth, height: info.windowHeight };
   // #endif
 };
 
-// 工具函数：限制组件位置在屏幕内
-const clampPosition = (x, y) => {
-  const { width, height } = getScreenSize();
+// 限制 box 在容器内
+const clampInWrapper = (x, y) => {
+  const maxX = wrapperSize.width - BOX_WIDTH;
+  const maxY = wrapperSize.height - BOX_HEIGHT;
   return {
-    x: Math.max(0, Math.min(x, width - 180)),   // 180 是组件宽度
-    y: Math.max(0, Math.min(y, height - 50)),   // 50 是组件高度
+    x: Math.max(0, Math.min(x, maxX)),
+    y: Math.max(0, Math.min(y, maxY)),
   };
 };
 
 // 右侧初始化
 const backRightInit = () => {
-  const { width, height } = getScreenSize();
-  let x = width / 2 + 130 + 40;
-  let y = height / 2 + 40;
-  // 不调用 clampPosition 直接赋值，测试一下。
-  const clamped = clampPosition(x, y);
+  const x = wrapperSize.width - BOX_WIDTH - 10;
+  const y = (wrapperSize.height - BOX_HEIGHT) / 2 + 50;
+  const clamped = clampInWrapper(x, y);
   boxX.value = clamped.x;
   boxY.value = clamped.y;
+  originBoxX = clamped.x;
+  originBoxY = clamped.y;
 };
 
 // 左侧初始化
 const backLeftInit = () => {
-  // const { width, height } = getScreenSize();
-  let x = 20;
-  let y = 190;
-  const clamped = clampPosition(x, y);
+  const x = 10;
+  const y = (wrapperSize.height - BOX_HEIGHT) / 2;
+  const clamped = clampInWrapper(x, y);
   boxX.value = clamped.x;
   boxY.value = clamped.y;
+  originBoxX = clamped.x;
+  originBoxY = clamped.y;
 };
 
-// 生命周期：初始化位置
-onMounted(() => {
-  if (props.isLeft) {
-    backLeftInit();
-  } else {
-    backRightInit();
-  }
+const updateWrapperSize = () => {
+  wrapperSize.width = props.wrapperWidth;
+  wrapperSize.height = props.wrapperHeight;
+};
 
+onMounted(() => {
+  updateWrapperSize();
+  if (props.isLeft) backLeftInit();
+  else backRightInit();
   // #ifdef H5
   window.addEventListener('resize', () => {
-    if (props.isLeft) {
-      backLeftInit();
-    } else {
-      backRightInit();
-    }
+    updateWrapperSize();
+    if (props.isLeft) backLeftInit();
+    else backRightInit();
   });
   // #endif
 });
 
 onBeforeUnmount(() => {
   clearTimeout(idleTimer);
-
-  // #ifdef MP-WEIXIN
-  wx.offWindowResize();
-  // #endif
-
   // #ifdef H5
-  window.removeEventListener('resize', () => { });
+  window.removeEventListener('resize', () => {});
   // #endif
 });
 
-// 监听 isLeft 变化（移除 immediate，避免与 onMounted 重复初始化）
-watch(
-  () => props.isLeft,
-  (val) => {
-    if (val) {
-      backLeftInit();
-    } else {
-      backRightInit();
-    }
-  },
-  { deep: true }
-);
+watch(() => props.isLeft, (val) => {
+  updateWrapperSize();
+  if (val) backLeftInit();
+  else backRightInit();
+}, { deep: true });
 
-// --- 核心方法 ---
+// --- 辅助函数 ---
 const resetIdleTimer = () => {
   clearTimeout(idleTimer);
-  if (!isReadyMode.value) {
-    idleTimer = setTimeout(enterReadyMode, IDLE_DELAY);
-  }
+  if (!isReadyMode.value) idleTimer = setTimeout(enterReadyMode, IDLE_DELAY);
 };
 
 const enterReadyMode = () => {
   isReadyMode.value = true;
-  // 震动反馈
   // #ifdef H5
   if (navigator.vibrate) navigator.vibrate(50);
   // #endif
@@ -171,15 +180,20 @@ const resetArrows = () => {
   isLeftActive.value = false;
   isRightActive.value = false;
   emit("action", { lr: false, value: 0 });
-  // 位置复位
-  if (props.isLeft) {
-    backLeftInit();
-  } else {
-    backRightInit();
-  }
 };
 
-// 获取触摸/鼠标坐标（统一使用 pageX/pageY，避免固定定位偏移）
+const resetToOrigin = () => {
+  boxX.value = originBoxX;
+  boxY.value = originBoxY;
+  dotX.value = 0;
+  dotStartOffset = 0;
+  wrapperDotBaseX = 0;
+  resetArrows();
+  isReadyMode.value = false;
+  clearTimeout(idleTimer);
+  boxTransition.value = "transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
+};
+
 const getClientPos = (e) => {
   if (e.touches && e.touches.length > 0) {
     return {
@@ -193,69 +207,47 @@ const getClientPos = (e) => {
   };
 };
 
-// --- 事件处理 ---
+// --- 从 control-box 自身开始拖拽（原有逻辑，未变） ---
 const handleStart = (e) => {
+  e.stopPropagation();
+  if (e.cancelable) e.preventDefault();
   isDragging.value = true;
+  isWrapperDragging.value = false;
   isReadyMode.value = false;
   clearTimeout(idleTimer);
   resetArrows();
+  boxTransition.value = "none";
 
   const { clientX, clientY } = getClientPos(e);
-
   initialBoxX = boxX.value;
   initialBoxY = boxY.value;
-
   dragOffsetX = clientX - boxX.value;
   dragOffsetY = clientY - boxY.value;
-
   const dotScreenCenterX = boxX.value + BOX_WIDTH / 2 + dotX.value;
   dotStartOffset = clientX - dotScreenCenterX;
-
   resetIdleTimer();
 };
 
 const handleMove = (e) => {
   if (!isDragging.value) return;
-
-  // 小程序端由于使用了 @touchmove.stop，已自动阻止冒泡，此处无需额外操作
-  // 但为了 H5 的兼容，仍调用 preventDefault（如果可取消）
-  // #ifdef H5
   if (e.cancelable) e.preventDefault();
-  // #endif
-
   const { clientX, clientY } = getClientPos(e);
-
   resetIdleTimer();
 
   if (!isReadyMode.value) {
-    // 自由拖动容器
-    let deltaX = clientX - dragOffsetX - initialBoxX;
-    let deltaY = clientY - dragOffsetY - initialBoxY;
-
-    const LIMIT = 80;
-    if (props.isLeft) {
-      deltaX = Math.max(0, Math.min(100, deltaX));
-    } else {
-      deltaX = Math.max(-LIMIT, Math.min(LIMIT, deltaX));
-    }
-    deltaY = Math.max(-LIMIT, Math.min(LIMIT, deltaY));
-
-    boxX.value = initialBoxX + deltaX;
-    boxY.value = initialBoxY + deltaY;
+    let newX = clientX - dragOffsetX;
+    let newY = clientY - dragOffsetY;
+    const clamped = clampInWrapper(newX, newY);
+    boxX.value = clamped.x;
+    boxY.value = clamped.y;
   } else {
-    // 待命模式：圆点左右弹性滑动
     let deltaX = clientX - (boxX.value + BOX_WIDTH / 2) - dotStartOffset;
     const absDelta = Math.abs(deltaX);
-    console.log(absDelta, "absDelta", MAX_DOT_DRAG)
-
     if (absDelta > MAX_DOT_DRAG) {
       const excess = absDelta - MAX_DOT_DRAG;
       const sign = deltaX > 0 ? 1 : -1;
       deltaX = sign * (MAX_DOT_DRAG + excess * 0.2);
     }
-
-    console.log(deltaX, "deltaX")
-
     if (deltaX < -65) deltaX = -65;
     if (deltaX > 65) deltaX = 65;
     dotX.value = deltaX;
@@ -265,20 +257,120 @@ const handleMove = (e) => {
 
 const handleEnd = () => {
   if (!isDragging.value) return;
-
   isDragging.value = false;
   isReadyMode.value = false;
   clearTimeout(idleTimer);
-
   dotX.value = 0;
   dotStartOffset = 0;
   resetArrows();
+  boxTransition.value = "transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
+  boxX.value = originBoxX;
+  boxY.value = originBoxY;
+};
+
+// --- 从 wrapper 空白区域开始的操作（核心新逻辑） ---
+const handleWrapperStart = (e) => {
+  const { width: screenW, height: screenH } = getRealScreenSize();
+  const wrapperRect = {
+    left: screenW - wrapperSize.width - WRAPPER_RIGHT,
+    top: screenH - wrapperSize.height - WRAPPER_BOTTOM,
+    width: wrapperSize.width,
+    height: wrapperSize.height,
+  };
+
+  const { clientX, clientY } = getClientPos(e);
+  const relX = clientX - wrapperRect.left;
+  const relY = clientY - wrapperRect.top;
+
+  // 判断是否点在 control-box 内部
+  if (
+    relX >= boxX.value &&
+    relX <= boxX.value + BOX_WIDTH &&
+    relY >= boxY.value &&
+    relY <= boxY.value + BOX_HEIGHT
+  ) {
+    return; // 由 box 自身事件处理
+  }
+
+  // 点在空白区域：移动整个 box 使圆点对准点击位置
+  if (e.cancelable) e.preventDefault();
+  isWrapperDragging.value = true;
+  isDragging.value = false;
+  isReadyMode.value = true;
+  clearTimeout(idleTimer);
+  resetArrows();
+  boxTransition.value = "none";
+
+  // 目标：box 中心 = (relX, relY)
+  let targetBoxX = relX - BOX_WIDTH / 2;
+  let targetBoxY = relY - BOX_HEIGHT / 2;
+  const clamped = clampInWrapper(targetBoxX, targetBoxY);
+  boxX.value = clamped.x;
+  boxY.value = clamped.y;
+  dotX.value = 0; // 圆点已在中心
+
+  // 记录移动基准
+  wrapperStartClientX = clientX;
+  wrapperDotBaseX = 0;
+};
+
+const handleWrapperMove = (e) => {
+  if (!isWrapperDragging.value) return;
+  if (e.cancelable) e.preventDefault();
+  const { clientX } = getClientPos(e);
+  // 计算相对于按下点的位移，作为 dot 偏移量
+  let deltaX = clientX - wrapperStartClientX + wrapperDotBaseX; // wrapperDotBaseX 初始为0，可扩展
+
+  // 弹性限制（与原待命模式相同）
+  const absDelta = Math.abs(deltaX);
+  if (absDelta > MAX_DOT_DRAG) {
+    const excess = absDelta - MAX_DOT_DRAG;
+    const sign = deltaX > 0 ? 1 : -1;
+    deltaX = sign * (MAX_DOT_DRAG + excess * 0.2);
+  }
+  if (deltaX < -65) deltaX = -65;
+  if (deltaX > 65) deltaX = 65;
+
+  dotX.value = deltaX;
+  updateArrows(deltaX);
+};
+
+const handleWrapperEnd = () => {
+  if (!isWrapperDragging.value) return;
+  isWrapperDragging.value = false;
+  isReadyMode.value = false;
+  clearTimeout(idleTimer);
+
+  // 让 box 回到原始位置，圆点归零
+  boxTransition.value = "transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
+  dotX.value = 0;
+  wrapperDotBaseX = 0;
+  resetArrows();
+  // 延迟一点点再移动 box，让圆点先归位更自然
+  setTimeout(() => {
+    boxX.value = originBoxX;
+    boxY.value = originBoxY;
+  }, 50);
 };
 </script>
 
 <style scoped>
-.control-box {
+.control-wrapper {
   position: fixed;
+  right: 90px;
+  bottom: 50px;
+  width: v-bind(wrapperWidth + 'px');
+  height: v-bind(wrapperHeight + 'px');
+  /* background: rgba(0, 0, 0, 0.15); */
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 9998;
+  touch-action: none;
+  user-select: none;
+}
+
+.control-box {
+  position: absolute;
   top: 0;
   left: 0;
   width: 180px;
@@ -288,11 +380,9 @@ const handleEnd = () => {
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-  z-index: 9999;
   will-change: transform;
   user-select: none;
   touch-action: none;
-  /* H5 下禁止默认触摸行为 */
 }
 
 .arrow {
@@ -331,9 +421,7 @@ const handleEnd = () => {
 
 .dot.ready {
   box-shadow: 0 0 7.5px rgba(255, 167, 38, 0.6);
-  /* background-color: rgba(255, 167, 38, 0.3); */
   border: 1px solid rgba(255, 167, 38, 0.8);
   border-radius: 50%;
-
 }
 </style>

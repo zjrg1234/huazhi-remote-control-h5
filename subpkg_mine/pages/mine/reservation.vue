@@ -190,15 +190,13 @@ const handleAction = async (item) => {
   if (flag.value) return;
   flag.value = true;
 
-  const { data, code } = await CheckCar({
+  const { data, code, msg } = await CheckCar({
     vehicle_id: item.vehicle_id,
   })
 
-  if (code == 200) {
-    if (data && data.state != 1) {
-      uni.showToast("车辆不在空闲中");
-      return;
-    }
+  if (code != 200) {
+    uni.showToast(msg);
+    return
   }
 
   const res = await LockCar({

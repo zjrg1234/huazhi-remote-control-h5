@@ -155,10 +155,10 @@ const menuList = ref([
 
 onPageShow(() => {
 	GetUserInfo().then((res) => {
-		console.log(res)
 		userStore.setUser(res.data);
 	})
 		.catch(() => { });
+	uni.removeStorageSync("loadingOne")
 })
 onBeforeUnmount(() => {
 	GetUserInfo().then((res) => {

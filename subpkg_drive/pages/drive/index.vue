@@ -51,9 +51,9 @@
       <!-- 声音/波纹图标 -->
       <cover-view class="side-menu-icon">
         <microphone></microphone>
-        <cover-image class="image" v-show="!showSound" :style="{ display: !showSound ? 'block' : 'none' }"
+        <cover-image class="image sound" v-show="!showSound" :style="{ display: !showSound ? 'block' : 'none' }"
           src="./static/icon_sound_close@2x.png" @click="showSound = true" mode="aspectFit" />
-        <cover-image class="image" v-show="showSound" :style="{ display: showSound ? 'block' : 'none' }"
+        <cover-image class="image sound" v-show="showSound" :style="{ display: showSound ? 'block' : 'none' }"
           src="./static/icon_sound_open@2x.png" @click="showSound = false" mode="aspectFit" />
       </cover-view>
 
@@ -1617,7 +1617,7 @@ const report = (text) => {
 .side-menu-icon {
   position: fixed;
   z-index: 99999;
-  top: 40px;
+  top: 80px;
   right: 60px;
   z-index: 2;
   display: flex;
@@ -1626,8 +1626,12 @@ const report = (text) => {
   align-items: center;
 
   .image {
-    width: 28px;
-    height: 28px;
+    width: 25px;
+    height: 25px;
+  }
+
+  .sound {
+    margin-top: 5px;
   }
 }
 
@@ -1635,8 +1639,7 @@ const report = (text) => {
   position: fixed;
   z-index: 99999;
   top: 80px;
-  right: 14px;
-  z-index: 2;
+  right: 19px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1650,7 +1653,7 @@ const report = (text) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 4px;
 
   .img {
     width: 18px;
@@ -1659,7 +1662,7 @@ const report = (text) => {
   }
 
   .label {
-    font-size: 14px;
+    font-size: 10px;
     color: #fff;
   }
 }
@@ -1667,11 +1670,9 @@ const report = (text) => {
 .slider {
   position: fixed;
   z-index: 99999;
-  bottom: 30px;
-  right: 60px;
-
+  bottom: 70px;
+  right: 30px;
   width: 140px;
-
   overflow: visible !important;
 }
 

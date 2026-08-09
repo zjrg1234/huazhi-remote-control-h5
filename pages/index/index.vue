@@ -73,7 +73,7 @@
             <text class="status online"></text>
               <text>在线{{ item.online }}</text>
             <text class="divider">|</text>
-            <text class="drivers">驾驶{{ item.drivers }}</text>
+            <text class="drivers">驾驶{{ item.driving }}</text>
           </view>
           <view class="card-info">
             <view class="title-tags">

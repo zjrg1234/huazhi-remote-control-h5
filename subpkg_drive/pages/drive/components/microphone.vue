@@ -9,7 +9,19 @@
       class="image"
       src="../static/icon_microphone_open@2x.png"
       mode="aspectFit"
+      v-show="!show"
+      :style="{ display: !show ? 'block' : 'none' }"
     />
+
+     <cover-image
+      class="image"
+       v-show="show"
+      src="../static/icon_microphone_close@2x.png"
+      mode="aspectFit"
+      :style="{ display: show ? 'block' : 'none' }"
+    />
+
+   
 
     <!-- 动态水波纹节点 -->
     <cover-view
@@ -39,6 +51,7 @@ const ALPHA = 0.4; // 波纹透明度
 const rippleColor = `rgba(255, 200, 56, ${ALPHA})`; // 波纹颜色
 
 let timer = null; // 定时器引用
+const show = ref(true)
 
 // 停止波纹（清除定时器）
 const stopRipple = () => {
@@ -83,8 +96,9 @@ const createRipple = (clientX, clientY) => {
 
       // 3. 动画结束后自动清理节点，防止内存泄漏
       setTimeout(() => {
+        show.value = !show.value
         ripples.value = ripples.value.filter((r) => r.id !== id);
-      }, 1200); // 对应 CSS 中的 1.2s 动画时间
+      }, 1500); // 对应 CSS 中的 1.2s 动画时间
     })
     .exec();
 };
