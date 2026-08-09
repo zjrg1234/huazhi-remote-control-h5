@@ -1,7 +1,7 @@
 <template>
   <cover-view
     class="control-wrapper"
-    ref="wrapperRef"
+    :style="wrapperStyle"
     @touchstart="handleWrapperStart"
     @touchmove="handleWrapperMove"
     @touchend="handleWrapperEnd"
@@ -28,14 +28,14 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, reactive, watch, nextTick, onMounted, onBeforeUnmount, getCurrentInstance } from "vue";
 
 const emit = defineEmits(["action"]);
 const props = defineProps({
   isLeft: { type: Boolean, default: true },
 });
 
-const IDLE_DELAY = 500;
+const IDLE_DELAY = 200;
 const SWIPE_THRESHOLD = 20;
 const MAX_DOT_DRAG = 40;
 
@@ -49,6 +49,16 @@ const currentBoxX = ref(0);
 const currentBoxY = ref(0);
 const currentDotY = ref(0);
 
+// 动态 wrapper 样式
+const wrapperStyle = reactive({
+  width: '300px',
+  height: '290px',
+  // left 或 right 以及 bottom 将在初始化时动态设置
+});
+
+
+
+// 内部变量
 let idleTimer = null;
 let dragOffsetX = 0;
 let dragOffsetY = 0;
@@ -56,47 +66,75 @@ let lastPointerY = 0;
 let readyStartPointerY = 0;
 let dragBaseX = 0;
 let dragBaseY = 0;
-
 let wrapperStartY = 0;
 let wrapperDotBaseY = 0;
 
-// 原始位置（基于 wrapper 左上角）
-let originX = 60;
-let originY = 10;  // 靠上显示
+// box 在 wrapper 内的初始位置
+let originX = 0;
+let originY = 0;
 
-const getScreenSize = () => {
-  const sysInfo = uni.getSystemInfoSync();
-  return { width: sysInfo.windowWidth, height: sysInfo.windowHeight };
+// 动态获取 wrapper 的真实屏幕矩形
+const wrapperRect = ref({ left: 0, top: 0, width: 300, height: 290 });
+
+const instance = getCurrentInstance();
+
+const updateWrapperRect = () => {
+ 
+ 
+  return new Promise((resolve) => {
+    const query = uni.createSelectorQuery().in(instance.proxy);
+    query.select('.control-wrapper').boundingClientRect((rect) => {
+      if (rect) {
+        wrapperRect.value = {
+          left: rect.left,
+          top: rect.top,
+          width: rect.width,
+          height: rect.height,
+        };
+      }
+      resolve(wrapperRect.value);
+    }).exec();
+  });
+
 };
 
-const backRightInit = () => {
-  // 示例：靠右上方
-  const { width, height } = getScreenSize();
-  currentBoxX.value = width - 260;
-  currentBoxY.value = 10;
-  originX = currentBoxX.value;
-  originY = currentBoxY.value;
-};
-
+// 左侧初始化
 const backLeftInit = () => {
-  currentBoxX.value = 60;
-  currentBoxY.value = 10;  // 距顶部 10px
-  originX = 60;
-  originY = 10;
+  wrapperStyle.left = '0px';
+  wrapperStyle.bottom = '40px';
+  delete wrapperStyle.right; // 确保不冲突
+
+  currentBoxX.value = 40;
+  currentBoxY.value = 85;
+  originX = 40;
+  originY = 85;
 };
 
+// 右侧初始化
+const backRightInit = () => {
+  delete wrapperStyle.left;
+  wrapperStyle.right = '160px';
+  wrapperStyle.bottom = '40px';
+
+  // box 在 wrapper 内部靠右的位置（wrapper 宽度 300，box 宽度 50）
+  originX = 300 - 50 ; // 右边距 10
+  originY = 85;
+  currentBoxX.value = originX;
+  currentBoxY.value = originY;
+};
+
+// 监听 isLeft 变化，重新初始化位置并更新矩形
 watch(
   () => props.isLeft,
   (val) => {
-    if (val) {
-      backLeftInit();
-    } else {
-      backRightInit();
-    }
+    if (val) backLeftInit();
+    else backRightInit();
+    nextTick(() => updateWrapperRect());
   },
   { immediate: true }
 );
 
+// ---------- 工具函数 ----------
 const getClientPos = (e) => {
   if (e.touches && e.touches.length > 0) {
     return {
@@ -208,22 +246,35 @@ const handleEnd = (e) => {
   currentBoxY.value = originY;
 };
 
+const fetchWrapperRect = () => {
+  return new Promise((resolve) => {
+    const query = uni.createSelectorQuery().in(instance.proxy);
+    query.select('.control-wrapper').boundingClientRect((rect) => {
+      if (rect) {
+        wrapperRect.value = {
+          left: rect.left,
+          top: rect.top,
+          width: rect.width,
+          height: rect.height,
+        };
+      }
+      resolve(wrapperRect.value);
+    }).exec();
+  });
+};
+
 // ---------- Wrapper 空白区域操作 ----------
-const handleWrapperStart = (e) => {
+const handleWrapperStart = async (e) => {
+
+  await updateWrapperRect();
+
   const { clientX, clientY } = getClientPos(e);
-  const { height: screenH } = getScreenSize();
-  // wrapper 左上角屏幕坐标（fixed left:0 bottom:0 -> top = screenH - 300）
-  const wrapperRect = {
-    left: 0,
-    top: screenH - 300,
-    width: 350,
-    height: 300,
-  };
+  const rect = wrapperRect.value;
 
-  const relX = clientX - wrapperRect.left;
-  const relY = clientY - wrapperRect.top;
+  const relX = clientX - rect.left;
+  const relY = clientY - rect.top;
 
-  // 点在 box 内则不处理
+  // 点在 box 内部则交给 box 自身处理
   if (
     relX >= currentBoxX.value &&
     relX <= currentBoxX.value + 50 &&
@@ -240,12 +291,12 @@ const handleWrapperStart = (e) => {
   clearTimeout(idleTimer);
   resetArrows();
 
-  // 目标：box 中心对准触点
+  // box 中心对准触点
   let targetX = relX - 25;   // 50/2
   let targetY = relY - 90;   // 180/2
-  // 限制在 wrapper 内
-  targetX = Math.max(0, Math.min(targetX, 350 - 50));
-  targetY = Math.max(0, Math.min(targetY, 300 - 180));
+  // 限制在 wrapper 内部
+  targetX = Math.max(0, Math.min(targetX, rect.width - 50));
+  targetY = Math.max(0, Math.min(targetY, rect.height - 180));
   currentBoxX.value = targetX;
   currentBoxY.value = targetY;
   currentDotY.value = 0;
@@ -281,25 +332,40 @@ const handleWrapperEnd = () => {
   currentDotY.value = 0;
   wrapperDotBaseY = 0;
   resetArrows();
-  // 回弹到初始位置
   currentBoxX.value = originX;
   currentBoxY.value = originY;
 };
+
+// 生命周期
+onMounted(() => {
+  updateWrapperRect();
+  // #ifdef H5
+  window.addEventListener('resize', updateWrapperRect);
+  // #endif
+});
+
+onBeforeUnmount(() => {
+  clearTimeout(idleTimer);
+  // #ifdef H5
+  window.removeEventListener('resize', updateWrapperRect);
+  // #endif
+});
 </script>
 
 <style scoped>
 .control-wrapper {
   position: fixed;
-  left: 40px;
-  bottom:40px;
+  /* left/right 和 bottom 由 :style 动态绑定，这里不写 */
   width: 300px;
-  height: 300px;
-  background: rgba(255, 167, 38, 0.6);
+  height: 270px;
+  /* 调试时可加背景色 */
+  /* background: rgba(255, 167, 38, 0.2); */
+	z-index: 9998;
 }
 
 .control-box {
   position: absolute;
-  top: 0;      /* 修改点：改为 top:0，基于 wrapper 顶部定位 */
+  top: 0;
   left: 0;
   width: 50px;
   height: 180px;
@@ -308,7 +374,6 @@ const handleWrapperEnd = () => {
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-  z-index: 9999;
   will-change: transform;
   user-select: none;
   touch-action: none;

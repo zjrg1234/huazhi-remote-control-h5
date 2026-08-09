@@ -320,7 +320,7 @@
             </cover-view>
             <cover-view class="right">
               <cover-view class="settings-bar">
-                <cover-view class="text-area">设置</cover-view>
+                <cover-view class="text-area" @click="close">设置</cover-view>
                 <cover-view class="close-btn" @click="close">
                   <cover-image class="image" src="./static/icon_close@2x.png" mode="widthFix"></cover-image>
                 </cover-view>
@@ -1618,7 +1618,7 @@ const report = (text) => {
 
 .side-menu-icon {
   position: fixed;
-  z-index: 99999;
+  z-index: 199999;
   top: 80px;
   right: 60px;
   z-index: 2;
@@ -1671,10 +1671,10 @@ const report = (text) => {
 
 .slider {
   position: fixed;
-  z-index: 99999;
+  z-index: 199999;
   bottom: 70px;
-  right: 30px;
-  width: 140px;
+  right: 35px;
+  width: 125px;
   overflow: visible !important;
 }
 
@@ -1919,7 +1919,7 @@ const report = (text) => {
       background: transparent;
       border: 1px solid #f5c542;
       color: #f5c542;
-      padding: 3px 10px;
+      padding: 7px 10px 3px 10px ;
       border-radius: 4px;
       font-size: 14px;
       cursor: pointer;

@@ -394,7 +394,7 @@ const handleWrapperEnd = () => {
   bottom: 50px; */
   width: v-bind(wrapperWidth + 'px');
   height: v-bind(wrapperHeight + 'px');
-  background: rgba(0, 0, 0, 0.15);
+  /* background: rgba(0, 0, 0, 0.15); */
   border-radius: 12px;
   overflow: hidden;
   z-index: 9998;
