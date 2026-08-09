@@ -38,13 +38,19 @@
         <view class="info-line" v-if="(item.reservation_status == 4 && item.is_reservation == 1)">
           <text class="label">如果不能驾驶可以向平台发起</text>
         </view>
-<!-- v-if="item.vehicle_state == 1" -->
-       <template v-if="item.vehicle_state == 1">
-          <view class="btn-wrap" @click="overDrive(item)">结束驾驶</view>
+
+         <template v-if="item.vehicle_state == 1">
+         
           <!-- 右侧按钮 -->
           <view class="btn-wrap bmt" v-if="item.reservation_status == 1 || item.reservation_status == 2">
             <button class="btn" @click="handleAction(item)">开始驾驶</button>
+
           </view>
+
+           <view class="btn-wrap bmt" v-if="item.reservation_status == 3">
+            <button class="btn" @click="overDrive(item)">结束驾驶</button>
+           </view>
+
 
           <view class="btn-wrap bmc" v-if="item.reservation_status == 1 || item.reservation_status == 2">
             <button class="btn" @click="cancelOrder(item)">取消预约</button>
@@ -53,7 +59,8 @@
           <view class="btn-wrap bt" v-if="(item.reservation_status == 4 && item.is_reservation == 1)">
             <button class="btn" @click="handleAppeal(item)">申诉</button>
           </view>
-     </template>
+        </template>
+
         <template v-if="item.vehicle_state != 1">
           <view class="btn-wrap bmt">
             <button class="btn" @click="handleAction(item)">等待中</button>
@@ -266,6 +273,11 @@ const overDrive = (item) => {
     type: 3,
     vehicle_id: item.vehicle_id,
   }).then(res => {
+    if (res.code == 200) {
+      uni.showToast({title: "结束驾驶成功", icon: "success"})
+    } else {
+      uni.showToast({title: res.msg, icon: "none"})
+    }
     refreshData()
   }).catch()
 }
