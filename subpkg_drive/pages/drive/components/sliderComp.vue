@@ -204,12 +204,12 @@ watch(() => props.width, () => setTimeout(initSlider, 100));
   position: absolute;
   top: 50%;
   left: 10px; /* 与父容器padding-left对齐 —— 保持不变 */
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
   border: 2px solid #ffffff;
   background-color: #ffffff;
   border-radius: 50%;
-  margin-top: -12px;
+  margin-top: -10px;
   /* 关键优化：移除过渡动画，避免拖拽延迟 */
   /* transition: transform 0.1s ease; */
   /* 关键优化：启用硬件加速 */

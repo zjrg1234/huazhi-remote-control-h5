@@ -71,7 +71,7 @@
         <cover-view class="slider-left">
           <cover-view class="slider-wrapper-cont">
             <cover-view class="slider-label">
-              <cover-view class="num" :style="{ left: (constSpeed - 1) + '%' }">
+              <cover-view class="num" :style="{ left: '50%' }">
                 {{ constSpeed }}
               </cover-view>
             </cover-view>
@@ -82,8 +82,8 @@
                       </SliderComp>
 
             <cover-view class="slider-label-bottom">
-              <cover-view class="num-text num-left">0 km/h</cover-view>
-              <cover-view class="num-text num-right">100 km/h</cover-view>
+              <cover-view class="num-text num-left">0</cover-view>
+              <cover-view class="num-text num-right">100</cover-view>
             </cover-view>
           </cover-view>
         </cover-view>
@@ -228,7 +228,7 @@
                     <!-- 滑块区域（占据主要空间） -->
                     <cover-view class="slider-wrapper">
                       <cover-view class="slider-label">
-                        <cover-view class="num" :style="{ left: dirMiddle + '%' }">
+                        <cover-view class="num" :style="{ left: '50%' }">
                           {{ dirMiddleVal }}
                         </cover-view>
                       </cover-view>
@@ -263,7 +263,7 @@
                     <!-- 滑块区域（占据主要空间） -->
                     <cover-view class="slider-wrapper">
                       <cover-view class="slider-label">
-                        <cover-view class="num" :style="{ left: dirTurn + '%' }">
+                        <cover-view class="num" :style="{ left: '50%' }">
                           {{ dirTurn }}
                         </cover-view>
                       </cover-view>
@@ -296,7 +296,7 @@
                     <!-- 滑块区域（占据主要空间） -->
                     <cover-view class="slider-wrapper">
                       <cover-view class="slider-label">
-                        <cover-view class="num" :style="{ left: throttle + '%' }">
+                        <cover-view class="num" :style="{ left: '50%' }">
                           {{ throttle }}
                         </cover-view>
                       </cover-view>
@@ -1227,6 +1227,7 @@ const changeConstSpeed = (val) => {
 
 // 四驱车 左右
 const handleLRDrive = (item) => {
+  showSpeed.value = false;
   let type = "endType";
   let ratioValue = 0;
   if (item.lr == true) {
@@ -1695,7 +1696,7 @@ const report = (text) => {
 .slider {
   position: fixed;
   z-index: 199999;
-  bottom: 70px;
+  top: 260px;
   right: 35px;
   width: 125px;
   overflow: visible !important;
