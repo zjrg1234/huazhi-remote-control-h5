@@ -186,7 +186,7 @@
           "path": "pages/mine/battery",
           "style": {
             "navigationBarTitleText": "我的电池",
-            "navigationStyle": "custom"
+						"navigationStyle": "custom"
           }
         },
         {

@@ -2,7 +2,7 @@
 	<view class="page">
 		<!-- 自定义导航栏（H5不显示） -->
 		<!-- #ifndef H5 -->
-		<custom-nav-bar title="我的电池"></custom-nav-bar>
+		<custom-nav-bar title="我的电池" url="/pages/mine/index" flag="1"></custom-nav-bar>
 		<!-- #endif -->
 
 		<view class="wrap-content">

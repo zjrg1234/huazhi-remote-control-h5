@@ -76,10 +76,10 @@
           </view>
           <view class="desc-row">
             <text class="label">最高时速：</text>
-            <text class="value">{{ car.top_speed || "0km/h" }}</text>
+            <text class="value">{{ car.top_speed }} km/h</text>
           </view>
           <view class="bottom-row">
-            <text class="battery">车辆电量：{{ car.vehicle_battery }}</text>
+            <text class="battery">车辆电量：{{ car.vehicle_battery.includes("%") ? car.vehicle_battery : car.vehicle_battery + "%" }}</text>
             <button class="action-btn"
               @click="handleDrive(car)">
               我要驾驶
@@ -113,7 +113,7 @@
       </template>
     </TipModal>
 
-    <TipModal title="车辆预约" v-model:visible="orderVisible" key="2" @confirm="gotoUrl">
+    <TipModal title="车辆预约" v-model:visible="orderVisible" key="2" cancelText="取消预约" @confirm="gotoUrl">
       <template #content>
         <view class="order-cont">
           <view class="img">

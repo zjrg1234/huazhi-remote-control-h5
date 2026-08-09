@@ -6,7 +6,8 @@
     </view>
 
     <!-- 分类导航栏 (Sticky 吸顶 + 横向滚动) -->
-    <view class="sticky-nav-wrapper">
+<view class="nav">
+     <view class="sticky-nav-wrapper">
       <scroll-view
         scroll-x
         class="nav-scroll"
@@ -26,6 +27,11 @@
         </view>
       </scroll-view>
     </view>
+</view>
+  
+
+
+ 
 
     <!-- ✅ 核心改动：使用 scroll-view 包裹瀑布流区域 -->
     <scroll-view
@@ -226,13 +232,14 @@ onLoad(() => {
   flex-direction: column;
   height: 100vh;
   background-color: #fff;
+
 }
 
 /* Banner 区域 */
 .banner-section {
   width: 100%;
   overflow: hidden;
-  height: 280rpx;
+  height: 300rpx;
   flex-shrink: 0; /* 防止被压缩 */
   .banner-img { 
     width: 100%; 
@@ -241,27 +248,24 @@ onLoad(() => {
 }
 }
 
+.nav {
+  margin-top: -20rpx;
+}
+
 /* 导航栏核心样式 (重点修改部分) */
 .sticky-nav-wrapper {
   position: sticky;
-  top: 0;
+  top: -10rpx;
   z-index: 99;
   background-color: #fff;
   box-shadow: 0rpx -4rpx 20rpx 0rpx rgba(0, 0, 0, 0.1);
   border-radius: 40rpx 40rpx 0rpx 0rpx;
   margin-top: -10rpx;
-}
-
-/* 导航栏 */
-.sticky-nav-wrapper {
   flex-shrink: 0; /* 防止被压缩 */
-  z-index: 99;
-  background-color: #fff;
-  box-shadow: 0rpx -4rpx 20rpx -10rpx rgba(0, 0, 0, 0.1);
-  border-radius: 40rpx 40rpx 0rpx 0rpx;
-  margin-top: -10rpx;
   border-bottom: 1rpx solid #f6f6f6;
 }
+
+
 .nav-scroll { width: 100%; white-space: nowrap; }
 .nav-list { display: inline-flex; padding: 0 20rpx; height: 88rpx; align-items: center; }
 .nav-item {
@@ -359,7 +363,7 @@ onLoad(() => {
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
-          max-width: 270rpx;
+          max-width: 250rpx;
       }
 
       .tag {
@@ -370,6 +374,7 @@ onLoad(() => {
         padding: 0 5rpx;
         background: #fee2a2;
         border-radius: 4rpx;
+        margin-left: 15rpx;
       }
     }
 
@@ -387,6 +392,7 @@ onLoad(() => {
         font-weight: 400;
         font-size: 22rpx;
         color: #ffc838;
+        margin-left: 10rpx;
       }
     }
   }
@@ -409,7 +415,7 @@ onLoad(() => {
       width: 8rpx;
       height: 8rpx;
       border-radius: 50%;
-      margin-right: 5rpx;
+      margin-right: 10rpx;
       background: #15cb50;
     }
 
