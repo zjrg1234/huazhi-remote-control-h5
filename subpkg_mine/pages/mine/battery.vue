@@ -171,7 +171,7 @@
 	// ==================== 事件 ====================
 	const goBack = () => uni.navigateBack()
 	const handleRecharge = () => uni.navigateTo({
-		url: "/pages/mine/recharge"
+		url: "/subpkg_mine/pages/mine/recharge"
 	})
 </script>
 

@@ -130,14 +130,14 @@
     <view class="section">
       <text class="section-title">支付方式</text>
       <view class="pay-list">
-        <view
+        <!-- <view
           class="pay-item"
           :class="{ active: payType === 'alipay' }"
           @click="payType = 'alipay'"
         >
           <image class="pay-icon" src="/static/images/common/icon_zfb@2x.png" />
           <text>支付宝支付</text>
-        </view>
+        </view> -->
         <view
           class="pay-item"
           :class="{ active: payType === 'wechat' }"
@@ -244,7 +244,7 @@ watch(customNum, (newValue, oldValue) => {
 });
 
 // 支付方式
-const payType = ref("alipay");
+const payType = ref("wechat");
 
 // 套餐列表
 const packageList = ref();
@@ -318,14 +318,14 @@ const handleSubmit = async () => {
       paySign: res.data.paySign,
       success: (res) => {
         // 支付成功
-        uni.showToast("支付成功")
+        uni.showToast({title:'支付成功',icon:'success'})
         
       },
       fail: (err) => {
         // 支付失败或取消
       }});
     } else {
-      uni.showToast(res.msg)
+      uni.showToast({title: res.msg, icon: 'none'})
     }
   }
 

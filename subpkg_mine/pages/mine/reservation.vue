@@ -241,7 +241,7 @@ const handleAction = async (item) => {
         });
 
       } else {
-        uni.showToast("联系客服，报错原因：" + res.msg);
+        uni.showToast({title: "联系客服，报错原因：" + res.msg, icon: "none"});
       }
     })
     .catch()
