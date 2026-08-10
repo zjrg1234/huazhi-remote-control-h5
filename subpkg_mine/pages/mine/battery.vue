@@ -15,7 +15,7 @@
 			<!-- #endif -->
 			<!-- #ifndef H5 -->
 			<!-- 顶部背景图 小程序-->
-			<view class="bg-image" :style="{top: '-' + getNavBarHeight() + 'px'}">
+			<view class="bg-image" :style="{top: '-' + (getNavBarHeight() + 10)+ 'px'}">
 				<image class="image" src="/static/images/mine/bg2@2x.png" mode="widthFix"></image>
 			</view>
 			<!-- #endif -->

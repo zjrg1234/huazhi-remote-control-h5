@@ -19,7 +19,7 @@
         <!-- #endif -->
         <!-- #ifndef H5 -->
         <!-- 顶部背景图 小程序-->
-        <view class="bg-image" :style="{ top: '-' + getNavBarHeight() + 'px' }">
+        <view class="bg-image" :style="{ top: '-' + (getNavBarHeight() + 10)+ 'px' }">
           <image class="image" src="/static/images/mine/bg2@2x.png" mode="widthFix"></image>
         </view>
         <!-- #endif -->
@@ -303,6 +303,7 @@ page {
 }
 
 .page {
+  height: 100vh;
   background: #f8f8f8;
   padding-bottom: 200rpx;
 }
@@ -310,7 +311,7 @@ page {
 .sticky-content {
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 1;
 }
 
 .wrap-content {
