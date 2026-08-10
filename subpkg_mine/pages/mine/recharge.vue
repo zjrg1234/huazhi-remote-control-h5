@@ -108,8 +108,9 @@
     <!-- 说明文字 -->
     <view class="desc">
       <text class="desc-title">充值说明：</text>
-      <view class="desc-item">1. 如您未满18岁，请在监护人陪同下操作；</view>
-      <view class="desc-item">2. 如对充值有其它疑问，请联系客服。</view>
+      <view class="desc-item">1. 禁止未成年人充值；</view>
+      <view class="desc-item">2. 如您未满18岁，请在监护人陪同下操作；</view>
+      <view class="desc-item">3. 如对充值有其它疑问，请联系客服。</view>
     </view>
 
     <!-- 确定按钮 -->
