@@ -73,7 +73,7 @@ export function  AppealOrderNo(data) {
 
 // 预约
 export function  GetReservationList(data) {
-	return post('/api/user/reservation/list',data,  { loadingFlag: true })
+	return post('/api/user/reservation/list',data)
 }
 
 export function  StartDriving(data) {

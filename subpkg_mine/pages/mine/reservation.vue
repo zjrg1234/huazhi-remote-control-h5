@@ -93,6 +93,7 @@ import { StartDrive, CheckCar, LockCar } from "@/axios/index.js";
 
 // 状态映射：预约状态 1已预约 2待使用 3使用中 4已完成 5已取消
 const statusMap = {
+  1: "/static/images/reservation/icon_waiting@2x.png",
   2: "/static/images/reservation/icon_waiting@2x.png",
   5: "/static/images/reservation/icon_canceled@2x.png",
   3: "/static/images/reservation/icon_driving@2x.png",
@@ -272,7 +273,7 @@ const overDrive = (item) => {
     order_no: item.order_no,
     type: 3,
     vehicle_id: item.vehicle_id,
-  }).then(res => {
+  }, true).then(res => {
     if (res.code == 200) {
       uni.showToast({title: "结束驾驶成功", icon: "success"})
     } else {

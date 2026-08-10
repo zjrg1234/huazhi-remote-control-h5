@@ -79,9 +79,9 @@
             <text class="value">{{ car.top_speed }} km/h</text>
           </view>
           <view class="bottom-row">
-            <text class="battery">车辆电量：{{ car.vehicle_battery.includes("%") ? car.vehicle_battery : car.vehicle_battery + "%" }}</text>
-            <button class="action-btn"
-              @click="handleDrive(car)">
+            <text class="battery">车辆电量：{{ car.vehicle_battery.includes("%") ? car.vehicle_battery : car.vehicle_battery
+              + "%" }}</text>
+            <button class="action-btn" @click="handleDrive(car)">
               我要驾驶
             </button>
           </view>
@@ -113,7 +113,8 @@
       </template>
     </TipModal>
 
-    <TipModal title="车辆预约" v-model:visible="orderVisible" key="2" cancelText="取消预约" @confirm="gotoUrl">
+    <TipModal title="车辆预约" v-model:visible="orderVisible" key="2" cancelText="取消预约" @cancel="cancelOrder"
+      @confirm="gotoUrl">
       <template #content>
         <view class="order-cont">
           <view class="img">
@@ -146,7 +147,8 @@
     </TipModal>
 
 
-     <TipModal title="存在已预约的订单" v-model:visible="orderedVisible" key="3" cancelText="驾驶已有" @cancel="gotoUrl" confirmText="继续支付" @confirm="continuePay">
+    <TipModal title="存在已预约的订单" v-model:visible="orderedVisible" key="3" cancelText="驾驶已有" @cancel="gotoUrl"
+      confirmText="继续支付" @confirm="continuePay">
       <template #content>
         <view class="order-cont">
           <view class="order-text">您有预约单还未驾驶，如果继续支付，将取消之前的预约单，请选择</view>
@@ -164,7 +166,8 @@ import { onLoad } from "@dcloudio/uni-app";
 
 import TipModal from "@/components/tip-modal/tip-modal.vue";
 import BillingPopup from "@/components/billing-popup/billing-popup.vue";
-import { GetVenueDetail, OrderCar } from "@/axios/index";
+import { GetVenueDetail, OrderCar, CancelReservation, StartDrive } from "@/axios/index";
+import { GetReservationList } from "@/axios/mine";
 
 const title = ref("");
 const stats = ref({ queue: 0, online: 0, drive: 0 });
@@ -203,6 +206,8 @@ const orderCar = ref({
 });
 const currentCar = ref({});
 const carList = ref([]);
+
+const selectParam = ref({})
 
 // 页面加载模拟
 onLoad((options) => {
@@ -280,12 +285,33 @@ const handleAgree = () => {
 };
 
 const flag = ref(true);
-const onBillingConfirm = (params) => {
+const onBillingConfirm = async (params) => {
   if (!flag.value) return;
   flag.value = false;
   const min = Math.pow(10, 7);
   const max = Math.pow(10, 8) - 1;
   const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+  selectParam.value = { ...params }
+
+
+  // 如果有正在驾驶的车辆，结束驾驶。
+  const res = await GetReservationList({ size: 99 })
+  if (res.code == 200 && res.data.content && res.data.content.length) {
+    const firstData = res.data.content.find(item => {
+      if (item.reservation_status == 3 && item.vehicle_id == selectCar.value.vehicle_id) {
+        return item;
+      }
+    })
+
+
+    if (firstData) {
+      await StartDrive({
+        order_no: firstData.order_no,
+        type: 3,
+        vehicle_id: firstData.vehicle_id,
+      }, false)
+    }
+  }
 
   OrderCar({
     vehicle_id: selectCar.value.vehicle_id,
@@ -305,7 +331,7 @@ const onBillingConfirm = (params) => {
       } else if (res.code === 2000) {
         orderedVisible.value = true;
       } else {
-         uni.showToast({
+        uni.showToast({
           title: res.msg,
           icon: "none",
         });
@@ -332,16 +358,58 @@ const onBillingConfirm = (params) => {
 
 const gotoUrl = () => {
   orderVisible.value = false;
-  orderedVisible.value =false;
+  orderedVisible.value = false;
   uni.navigateTo({
     url: "/subpkg_mine/pages/mine/reservation",
   });
 };
 
+const cancelOrder = () => {
+  CancelReservation({
+    order_no: orderCar.value.order_no
+  }).then(res => {
+    if (res.code == 200) {
+      orderVisible.value = false;
+      uni.showToast({ title: '取消预约成功', icon: 'none' });
+    } else {
+      uni.showToast({ title: res.msg, icon: 'none' });
+    }
+  }).catch()
+}
+
+// 继续预定同一台车
+const continuePay = async () => {
+  const res = await GetReservationList({ size: 99 })
+  if (res.code == 200 && res.data.content && res.data.content.length) {
+    const firstData = res.data.content.find(item => {
+      if (item.reservation_status == 1 || item.reservation_status == 2) {
+        if (item.vehicle_id == selectCar.value.vehicle_id) {
+          return item;
+        }
+      }
+    })
+    // 容错 没找到值 直接预约  找到值 取消再预约
+    if (firstData) {
+      CancelReservation({
+        order_no: firstData.order_no
+      }).then(res => {
+        if (res.code == 200) {
+          orderedVisible.value = false;
+          onBillingConfirm(selectParam.value)
+        } else {
+          uni.showToast({ title: res.msg, icon: 'none' });
+        }
+      }).catch()
+    } else {
+      orderedVisible.value = false;
+      onBillingConfirm(selectParam.value)
+    }
 
 
-const continuePay = () => {
 
+  } else {
+    uni.showToast({ title: res.msg, icon: 'success' });
+  }
 }
 </script>
 

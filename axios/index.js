@@ -51,9 +51,9 @@ export function Register(data) {
   return post("/api/login/save", data);
 }
 
-export function StartDrive(data) {
+export function StartDrive(data, loadingFlag) {
   return post("/api/user/start/driving", data, {
-    loadingFlag: data.type == 3 ? true : false,
+    loadingFlag
   });
 }
 

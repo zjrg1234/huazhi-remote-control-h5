@@ -890,7 +890,7 @@ const handlePopupAction = (val) => {
       order_no: orderNo.value,
       type: 3,
       vehicle_id: vehicleId.value,
-    })
+    }, true)
       .then((res) => {
         console.log(res);
         if (res.code == 2000 || res.code == 200) {
