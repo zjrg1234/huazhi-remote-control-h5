@@ -145,6 +145,15 @@
       </template>
     </TipModal>
 
+
+     <TipModal title="存在已预约的订单" v-model:visible="orderedVisible" key="3" cancelText="驾驶已有" @cancel="gotoUrl" confirmText="继续支付" @confirm="continuePay">
+      <template #content>
+        <view class="order-cont">
+          <view class="order-text">您有预约单还未驾驶，如果继续支付，将取消之前的预约单，请选择</view>
+        </view>
+      </template>
+    </TipModal>
+
     <BillingPopup ref="billingPopupRef" :billData="billingMethod" @confirm="onBillingConfirm" />
   </view>
 </template>
@@ -162,6 +171,9 @@ const stats = ref({ queue: 0, online: 0, drive: 0 });
 const agree = ref(false);
 const pwdVisible = ref(false);
 const orderVisible = ref(false);
+const orderedVisible = ref(false);
+
+
 const password = ref("");
 const billingPopupRef = ref(null);
 const imageUrl = ref("");
@@ -290,8 +302,10 @@ const onBillingConfirm = (params) => {
         orderCar.value = { ...res.data };
         uni.setStorageSync('app_id', res.data.transmitter_id);
         orderVisible.value = true;
+      } else if (res.code === 2000) {
+        orderedVisible.value = true;
       } else {
-        uni.showToast({
+         uni.showToast({
           title: res.msg,
           icon: "none",
         });
@@ -318,10 +332,17 @@ const onBillingConfirm = (params) => {
 
 const gotoUrl = () => {
   orderVisible.value = false;
+  orderedVisible.value =false;
   uni.navigateTo({
     url: "/subpkg_mine/pages/mine/reservation",
   });
 };
+
+
+
+const continuePay = () => {
+
+}
 </script>
 
 <style lang="scss" scoped>
@@ -626,6 +647,7 @@ const gotoUrl = () => {
   padding-bottom: 20rpx;
 
   .popup-title {
+    font-family: PingFangSC, PingFang SC;
     font-size: 36rpx;
     font-weight: bold;
     color: #333333;
@@ -649,6 +671,7 @@ const gotoUrl = () => {
 
   /* 主状态文本 */
   .main-status {
+    font-family: PingFangSC, PingFang SC;
     font-size: 32rpx;
     font-weight: bold;
     color: #333333;
@@ -658,6 +681,7 @@ const gotoUrl = () => {
 
   /* 副状态文本 */
   .sub-status {
+    font-family: PingFangSC, PingFang SC;
     font-size: 26rpx;
     color: #999999;
     margin-bottom: 30rpx;
@@ -676,6 +700,7 @@ const gotoUrl = () => {
   }
 
   .info-item {
+    font-family: PingFangSC, PingFang SC;
     display: flex;
     font-size: 26rpx;
     margin-bottom: 10rpx;
@@ -696,8 +721,16 @@ const gotoUrl = () => {
 
   /* 底部提示语 */
   .tip-text {
+    font-family: PingFangSC, PingFang SC;
     font-size: 24rpx;
     color: #999999;
+  }
+
+  .order-text {
+    font-family: PingFangSC, PingFang SC;
+    font-size: 28rpx;
+    color: #666;
+    margin-bottom: 10rpx;
   }
 }
 </style>

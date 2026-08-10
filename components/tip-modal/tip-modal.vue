@@ -138,12 +138,15 @@ const onConfirm = () => {
 
 .btn {
   text-align: center;
-  padding: 18rpx 86rpx;
+  padding: 18rpx 0;
   border-radius: 16rpx;
   font-family: PingFangSC, PingFang SC;
   font-weight: 400;
   font-size: 30rpx;
   color: #222222;
+  width: 232rpx;
+  height: 44rpx;
+  line-height: 44rpx;
 
   &.refuse {
     background: #f0f0f0;
