@@ -4,10 +4,10 @@ export const useUserStore = defineStore("user", {
   state: () => ({
     token: uni.getStorageSync("token") || "",
     id: uni.getStorageSync("id") || "",
-    userInfo: uni.getStorageSync("userInfo")  || {},
+    userInfo: uni.getStorageSync("userInfo") || {},
     areaId: uni.getStorageSync("areaId") || "",
-    balance: 0,
-    energy: 0,
+    balance: uni.getStorageSync("balance"),
+    energy: uni.getStorageSync("energy"),
   }),
   actions: {
     // 登录保存信息
@@ -16,9 +16,10 @@ export const useUserStore = defineStore("user", {
       this.id = data.id;
       uni.setStorageSync("userInfo", data);
       uni.setStorageSync("id", data.id);
-	  this.balance = data.wallet.balance || 0;
+      this.balance = data.wallet.balance || 0;
       this.energy = data.wallet.energy || 0;
-      
+      uni.setStorageSync("balance", this.balance);
+      uni.setStorageSync("energy", this.energy);
     },
     setToken(token) {
       this.token = token;

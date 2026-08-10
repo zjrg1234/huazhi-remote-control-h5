@@ -56,8 +56,8 @@
       <!-- 我的余额卡片 -->
       <view class="card">
         <text class="card-title">我的{{ unitText }}</text>
-        <text class="battery-num" v-if="currentUnit === 1">{{ userInfo.wallet.balance }}</text>
-        <text class="battery-num" v-if="currentUnit !== 1">{{ userInfo.wallet.energy }}</text>
+        <text class="battery-num" v-if="currentUnit === 1">{{ balance }}</text>
+        <text class="battery-num" v-if="currentUnit !== 1">{{ energy }}</text>
       </view>
 
       <!-- 底部按钮 -->
@@ -89,26 +89,35 @@ const userInfo = computed(() => {
   return userStore.getUserInfo();
 });
 
+const balance = computed(() => {
+	return userStore.balance || 0;
+});
+
+const energy = computed(() => {
+	return userStore.energy || 0;
+});
+
+
 /**
  * 核心修复：使用 watch 统一管理 isWallet 的状态
  * 同时监听 currentUnit 和 userInfo，任意变化都会重新计算余额是否充足
  */
 watch(
-  [currentUnit, userInfo, selectedIndex, selectedOpt], // 增加监听 selectedIndex 和 selectedOpt
-  ([newUnit, newUser, newSelectIndex, newSelectOpt]) => {
-    if (!newUser || !newUser.wallet) return;
+  [currentUnit, balance, energy,selectedIndex, selectedOpt], // 增加监听 selectedIndex 和 selectedOpt
+  ([newUnit, newBalance, newEnergy, newSelectIndex, newSelectOpt]) => {
+   
 
-    const balance = Number(newUser.wallet.balance) || 0;
-    const energy = Number(newUser.wallet.energy) || 0;
+    const balanceVal = Number(newBalance) || 0;
+    const energyVal = Number(newEnergy) || 0;
     // 获取当前选中项需要消耗的数量
     const cost = Number(newSelectOpt?.battery) || 0; 
 
     if (newUnit === 1) {
       // 电池模式：余额 >= 消耗量
-      isWallet.value = balance >= cost;
+      isWallet.value = balanceVal >= cost;
     } else if (newUnit === 2) {
       // 能量模式：余额 >= 消耗量
-      isWallet.value = energy >= cost;
+      isWallet.value = energyVal >= cost;
     }
   },
   { immediate: true, deep: true }
@@ -145,18 +154,6 @@ const close = () => {
 const switchUnit = (type) => {
   currentUnit.value = type;
 
-  // if (type == 2) {
-  //   // 按时间计费
-  //   if (Object.hasOwn(props.billData, 'time_billing')) {
-  //     if(Number(props.billData.time_billing.battery) > Number(userInfo.value.wallet.energy) ) {
-  //       isWallet.value = false;
-  //     }
-  //   }
-  // }
-
-  // if (type == 1) {
-
-  // }
 };
 
 // 选择具体的时长卡片
@@ -232,31 +229,30 @@ defineExpose({
   margin-bottom: 40rpx;
 
   .label {
+
+    font-family: PingFangSC, PingFang SC;
+    font-weight: 500;
     font-size: 28rpx;
-    font-weight: bold;
-    color: #333;
-    margin-right: 20rpx;
+    color: #1A1A1A;
+    font-size: 28rpx;
+    margin-right: 60rpx;
   }
 
   .type-selector {
     display: flex;
-    gap: 30rpx;
+    gap: 25rpx;
   }
 
   .type-item {
     display: flex;
     align-items: center;
-    font-size: 28rpx;
-    color: #666;
-
-    &.active {
-      color: #333;
-      font-weight: bold;
-    }
-
+      font-family: PingFangSC, PingFang SC;
+      font-weight: 400;
+      font-size: 28rpx;
+      color: #1A1A1A;
     .radio-circle {
-      width: 30rpx;
-      height: 30rpx;
+      width: 32rpx;
+      height: 32rpx;
       border-radius: 50%;
       border: 2rpx solid #ccc;
       margin-right: 10rpx;
@@ -284,16 +280,18 @@ defineExpose({
 
 /* 分区样式 */
 .section {
-  margin-bottom: 30rpx;
+  margin-bottom: 40rpx;
 
   .section-title {
     font-size: 30rpx;
     font-weight: bold;
     color: #333;
-    margin-bottom: 10rpx;
+    margin-bottom: 20rpx;
   }
 
   .desc {
+    font-family: PingFangSC, PingFang SC;
+    font-weight: 400;
     font-size: 24rpx;
     color: #999;
     margin-bottom: 20rpx;
@@ -322,6 +320,7 @@ defineExpose({
   font-weight: 400;
   font-size: 24rpx;
   color: #1a1a1a;
+
 
   &.selected {
     background: #ffc838;
