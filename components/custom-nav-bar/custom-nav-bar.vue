@@ -91,14 +91,14 @@ const handleBack = () => {
 			justify-content: center;
 			width: 48rpx;
 			height: 48rpx;
-			margin-top: 16rpx;
+			margin-top: 22rpx;
 			margin-left: 10rpx;
 		}
 
 		.back-icon {
+			display: block;
 			width: 48rpx;
 			height: 48rpx;
-			
 			transform: rotate(180deg);
 			/* 箭头方向正确 */
 		}
