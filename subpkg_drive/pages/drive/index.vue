@@ -360,9 +360,21 @@
                   <cover-view>如果一切正常，请点击“开始驾驶”</cover-view>
                 </cover-view>
               </cover-view>
-              <cover-view class="footer">
-                <cover-view class="btn left mr" @tap.stop="handlePopupAction('report')">上报故障</cover-view>
-                <cover-view class="btn right" @tap.stop="handlePopupAction('driving')">开始驾驶</cover-view>
+             
+               <cover-view class="footer fc">
+                <cover-view class="flex">
+                  <cover-view class="btn left" @tap.stop="logoutOne('logout')">
+                    退出驾驶
+                  </cover-view>
+                  <cover-view class="btn left ml" @tap.stop="handlePopupAction('report')">
+                    上报故障
+                  </cover-view>
+                </cover-view>
+                <cover-view class="flex mt">
+                  <cover-view class="btn right" @tap.stop="handlePopupAction('driving')">
+                    开始驾驶
+                  </cover-view>
+                </cover-view>
               </cover-view>
             </cover-view>
 
@@ -800,8 +812,8 @@ const reportModal = () => {
     cancelText: "取消",
     success(res) {
       if (res.confirm) {
-        console.log("故障原因：", res.content);
-        if (!res.content) {
+        
+        if (res.content) {
           // 调用上报接口
           report(res.content);
         } else {
@@ -849,6 +861,11 @@ const handleIcon = (item) => {
   }
 };
 
+const logoutOne = () => {
+  uni.reLaunch({
+    url: "/subpkg_mine/pages/mine/reservation", // 你的首页路径
+  });
+}
 // 弹窗动作处理
 const handlePopupAction = (val) => {
   // 维修显示 各种原因   上报故障不显示原因
@@ -1490,6 +1507,7 @@ const report = (text) => {
           });
         }, 2000);
       } else {
+        uni.showToast({title: res.msg, icon: 'none'})
       }
     },
   );

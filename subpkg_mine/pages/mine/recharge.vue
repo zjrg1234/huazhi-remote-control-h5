@@ -124,10 +124,9 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from "vue";
-
-
+// #ifdef  H5
 import NavBar from "@/components/nav-bar/nav-bar.vue";
-
+	// #endif
 import {
   GetDepositList,
   GetFirstDepositList,

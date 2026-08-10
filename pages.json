@@ -151,8 +151,8 @@
         {
           "path": "pages/mine/reservation",
           "style": {
-            "navigationBarTitleText": "我的预约",
-            "enablePullDownRefresh": false
+            "navigationBarTitleText": "",
+            "navigationStyle": "custom"
           }
         },
         {

@@ -1,82 +1,91 @@
 <template>
   <view class="page">
-    <!-- 预约列表 -->
-    <view class="list">
-      <view class="item" v-for="(item, index) in list" :key="item.order_no || index"
-        :class="{ active: item.reservation_status === 4 }">
-        <!-- 状态角标 -->
-        <view class="corner-tag" :class="item.reservation_status">
-          <image class="image" v-if="item.vehicle_state == 1" :src="statusMap[item.reservation_status]"
-            mode="aspectFill"></image>
-          <image class="image" v-if="item.vehicle_state == 2" :src="statusMap[2]" mode="aspectFill"></image>
-        </view>
+    <!-- #ifdef H5 -->
+    <NavBar title="我的预约" url="/pages/mine/index"></NavBar>
+    <!-- #endif -->
 
-        <!-- 标题 -->
-        <view class="title">
-          <text class="name">{{ item.vehicle_name }}</text>
-        </view>
-
-        <!-- 信息行 -->
-        <view class="info-line">
-          <text class="label">预约编号：</text>
-          <text class="value">{{ item.order_no }}</text>
-          <image class="copy-icon" src="/static/images/common/icon_copy@2x.png" mode="aspectFill"
-            @click="copyOrderNo(item.order_no)" />
-        </view>
-        <view class="info-line">
-          <text class="label">预约类型：</text>
-          <text class="value">{{ billingMethod(item.billing_method) }}</text>
-        </view>
-        <view class="info-line">
-          <text class="label">预约场地：</text>
-          <text class="value">{{ item.venue_name }}</text>
-        </view>
-        <view class="info-line">
-          <text class="label">预约时间：</text>
-          <text class="value">{{ formatDate(item.order_time) }}</text>
-        </view>
-        <view class="info-line" v-if="(item.reservation_status == 4 && item.is_reservation == 1)">
-          <text class="label">如果不能驾驶可以向平台发起</text>
-        </view>
-
-         <template v-if="item.vehicle_state == 1">
-         
-          <!-- 右侧按钮 -->
-          <view class="btn-wrap bmt" v-if="item.reservation_status == 1 || item.reservation_status == 2">
-            <button class="btn" @click="handleAction(item)">开始驾驶</button>
-
+    <!-- #ifdef MP-WEIXIN -->
+    <custom-nav-bar title="我的预约" url="/pages/mine/index" flag="1"></custom-nav-bar>
+    <!-- #endif -->
+    <view class="main-cont">
+      <!-- 预约列表 -->
+      <view class="list">
+        <view class="item" v-for="(item, index) in list" :key="item.order_no || index"
+          :class="{ active: item.reservation_status === 4 }">
+          <!-- 状态角标 -->
+          <view class="corner-tag" :class="item.reservation_status">
+            <image class="image" v-if="item.vehicle_state == 1" :src="statusMap[item.reservation_status]"
+              mode="aspectFill"></image>
+            <image class="image" v-if="item.vehicle_state == 2" :src="statusMap[2]" mode="aspectFill"></image>
           </view>
 
-           <view class="btn-wrap bmt" v-if="item.reservation_status == 3">
-            <button class="btn" @click="overDrive(item)">结束驾驶</button>
-           </view>
-
-
-          <view class="btn-wrap bmc" v-if="item.reservation_status == 1 || item.reservation_status == 2">
-            <button class="btn" @click="cancelOrder(item)">取消预约</button>
+          <!-- 标题 -->
+          <view class="title">
+            <text class="name">{{ item.vehicle_name }}</text>
           </view>
 
-          <view class="btn-wrap bt" v-if="(item.reservation_status == 4 && item.is_reservation == 1)">
-            <button class="btn" @click="handleAppeal(item)">申诉</button>
+          <!-- 信息行 -->
+          <view class="info-line">
+            <text class="label">预约编号：</text>
+            <text class="value">{{ item.order_no }}</text>
+            <image class="copy-icon" src="/static/images/common/icon_copy@2x.png" mode="aspectFill"
+              @click="copyOrderNo(item.order_no)" />
           </view>
-        </template>
-
-        <template v-if="item.vehicle_state != 1">
-          <view class="btn-wrap bmt">
-            <button class="btn" @click="handleAction(item)">等待中</button>
+          <view class="info-line">
+            <text class="label">预约类型：</text>
+            <text class="value">{{ billingMethod(item.billing_method) }}</text>
           </view>
-        </template>
-      </view>
+          <view class="info-line">
+            <text class="label">预约场地：</text>
+            <text class="value">{{ item.venue_name }}</text>
+          </view>
+          <view class="info-line">
+            <text class="label">预约时间：</text>
+            <text class="value">{{ formatDate(item.order_time) }}</text>
+          </view>
+          <view class="info-line" v-if="(item.reservation_status == 4 && item.is_reservation == 1)">
+            <text class="label">如果不能驾驶可以向平台发起</text>
+          </view>
 
-      <!-- 加载状态提示 -->
-      <view class="loading-tips" v-if="loadingMore">
-        <text>加载中...</text>
-      </view>
-      <view class="loading-tips" v-if="!hasMore && list.length > 0">
-        <text>没有更多了</text>
-      </view>
-      <view class="loading-tips" v-if="!loading && list.length === 0">
-        <text>暂无预约记录</text>
+          <template v-if="item.vehicle_state == 1">
+
+            <!-- 右侧按钮 -->
+            <view class="btn-wrap bmt" v-if="item.reservation_status == 1 || item.reservation_status == 2">
+              <button class="btn" @click="handleAction(item)">开始驾驶</button>
+
+            </view>
+
+            <view class="btn-wrap bmt" v-if="item.reservation_status == 3">
+              <button class="btn" @click="overDrive(item)">结束驾驶</button>
+            </view>
+
+
+            <view class="btn-wrap bmc" v-if="item.reservation_status == 1 || item.reservation_status == 2">
+              <button class="btn" @click="cancelOrder(item)">取消预约</button>
+            </view>
+
+            <view class="btn-wrap bt" v-if="(item.reservation_status == 4 && item.is_reservation == 1)">
+              <button class="btn" @click="handleAppeal(item)">申诉</button>
+            </view>
+          </template>
+
+          <template v-if="item.vehicle_state != 1">
+            <view class="btn-wrap bmt">
+              <button class="btn" @click="handleAction(item)">等待中</button>
+            </view>
+          </template>
+        </view>
+
+        <!-- 加载状态提示 -->
+        <view class="loading-tips" v-if="loadingMore">
+          <text>加载中...</text>
+        </view>
+        <view class="loading-tips" v-if="!hasMore && list.length > 0">
+          <text>没有更多了</text>
+        </view>
+        <view class="loading-tips" v-if="!loading && list.length === 0">
+          <text>暂无预约记录</text>
+        </view>
       </view>
     </view>
   </view>
@@ -91,6 +100,10 @@ import { GetReservationList } from "@/axios/mine";
 import { GetCarDetails, CancelReservation } from "@/axios/index";
 import { billingMethod } from "../utils/filter.js";
 import { StartDrive, CheckCar, LockCar } from "@/axios/index.js";
+
+// #ifdef  H5
+import NavBar from "@/components/nav-bar/nav-bar.vue";
+// #endif
 
 // 状态映射：预约状态 1已预约 2待使用 3使用中 4已完成 5已取消
 const statusMap = {
@@ -164,7 +177,7 @@ const fetchData = async () => {
     };
     const { data } = await GetReservationList(params);
     const content = data?.content || [];
-   
+
     if (isLoadMore) {
       // 追加数据
       list.value = list.value.concat(content);
@@ -219,7 +232,7 @@ const handleAction = async (item) => {
   })
 
   if (code != 200) {
-    uni.showToast({title: msg, icon:'none'});
+    uni.showToast({ title: msg, icon: 'none' });
     return
   }
 
@@ -228,7 +241,7 @@ const handleAction = async (item) => {
   })
 
   if (res.code != 200) {
-    uni.showToast({title: res.msg, icon:'none'});
+    uni.showToast({ title: res.msg, icon: 'none' });
     return;
   }
   console.log("锁车成功")
@@ -251,7 +264,7 @@ const handleAction = async (item) => {
         });
 
       } else {
-        uni.showToast({title: "联系客服，报错原因：" + res.msg, icon: "none"});
+        uni.showToast({ title: "联系客服，报错原因：" + res.msg, icon: "none" });
       }
     })
     .catch()
@@ -277,9 +290,9 @@ const overDrive = (item) => {
     vehicle_id: item.vehicle_id,
   }, true).then(res => {
     if (res.code == 200) {
-      uni.showToast({title: "结束驾驶成功", icon: "success"})
+      uni.showToast({ title: "结束驾驶成功", icon: "success" })
     } else {
-      uni.showToast({title: res.msg, icon: "none"})
+      uni.showToast({ title: res.msg, icon: "none" })
     }
     refreshData()
   }).catch()
@@ -308,6 +321,10 @@ page {
 }
 
 .page {
+  color: #fff;
+}
+
+.main-cont {
   padding: 20rpx;
   background-color: #f2f4f7;
 }
