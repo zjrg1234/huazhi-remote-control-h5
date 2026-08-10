@@ -66,7 +66,7 @@
         </cover-view>
       </cover-view>
 
-      <!-- 定速滑块 -->
+      <!-- 定速巡航 滑块 -->
       <cover-view class="slider" v-show="showSpeed">
         <cover-view class="slider-left">
           <cover-view class="slider-wrapper-cont">
@@ -78,12 +78,13 @@
             <!-- <slider :value="constSpeed" :min="1" :max="100" :step="1" activeColor="#f5c542" backgroundColor="#e9e9e9"
               block-size="6" @change="changeConstSpeed" /> -->
 
-              <SliderComp v-model="constSpeed" :min="1" :max="100" @change="changeConstSpeed">
-                      </SliderComp>
+            <SliderComp v-model="constSpeed" :min="1" :max="acceleratorDynamics.current_value"
+              @change="changeConstSpeed">
+            </SliderComp>
 
             <cover-view class="slider-label-bottom">
-              <cover-view class="num-text num-left">0</cover-view>
-              <cover-view class="num-text num-right">100</cover-view>
+              <cover-view class="num-text num-left">1</cover-view>
+              <cover-view class="num-text num-right">{{ acceleratorDynamics.current_value }}</cover-view>
             </cover-view>
           </cover-view>
         </cover-view>
@@ -113,7 +114,8 @@
         :directionDynamics="directionDynamics" :operDir="operDir" :type="carType" @action="handleOper"
         @operAction="handleFBDir" @changeValue="changeVal" /> -->
 
-      <cover-view v-show="setVisible" :style="{ display: setVisible ? 'block' : 'none' }" class="custom-popup-mask" @click="close"> 
+      <cover-view v-show="setVisible" :style="{ display: setVisible ? 'block' : 'none' }" class="custom-popup-mask"
+        @click="close">
         <!-- <cover-view class="fe"> -->
         <cover-view class="custom-popup-right" @click.stop>
           <cover-view class="cont">
@@ -268,7 +270,8 @@
                         </cover-view>
                       </cover-view>
 
-                      <SliderComp v-model="dirTurn" :min="1" :max="directionDynamics.current_value" @change="setChangeVal(2, $event)"></SliderComp>
+                      <SliderComp v-model="dirTurn" :min="1" :max="directionDynamics.current_value"
+                        @change="setChangeVal(2, $event)"></SliderComp>
                       <cover-view class="slider-label-bottom">
                         <cover-view class="num-text">
                           {{ directionDynamics.mini_value }}
@@ -301,7 +304,8 @@
                         </cover-view>
                       </cover-view>
 
-                      <SliderComp v-model="throttle" :min="1" :max="acceleratorDynamics.current_value" @change="setChangeVal(3, $event)"></SliderComp>
+                      <SliderComp v-model="throttle" :min="1" :max="acceleratorDynamics.current_value"
+                        @change="setChangeVal(3, $event)"></SliderComp>
 
                       <cover-view class="slider-label-bottom">
                         <cover-view class="num-text num-left">
@@ -344,9 +348,9 @@
 
       <!-- <input v-show="type === 'repair'" :style="{ display: allPopupVisible ? 'block' : 'none' }" v-model="message"
         class="repair-input" type="text" maxlength="20" placeholder="请输入故障原因，最多20字（选填）" /> -->
-   
-      <cover-view class="tip-popup-mask" v-show="allPopupVisible" :style="{ display: allPopupVisible ? 'block' : 'none' }"
-        @tap.stop="handleMaskClick">
+
+      <cover-view class="tip-popup-mask" v-show="allPopupVisible"
+        :style="{ display: allPopupVisible ? 'block' : 'none' }" @tap.stop="handleMaskClick">
         <cover-view class="fcenter">
           <!-- 弹窗主体内容 -->
           <cover-view class="popup-container" :class="{ contmax: type === 'repair' }" @tap.stop>
@@ -360,8 +364,8 @@
                   <cover-view>如果一切正常，请点击“开始驾驶”</cover-view>
                 </cover-view>
               </cover-view>
-             
-               <cover-view class="footer fc">
+
+              <cover-view class="footer fc">
                 <cover-view class="flex">
                   <cover-view class="btn left" @tap.stop="logoutOne('logout')">
                     退出驾驶
@@ -471,6 +475,22 @@
                 </cover-view>
               </cover-view>
             </cover-view>
+
+
+            <cover-view v-show="type === 'offLineTip'">
+              <!-- 场景5：长时间无操作 -->
+
+              <cover-view class="tip-content">
+
+                <cover-view class="text">当前车辆已离线，是否退出驾驶？</cover-view>
+
+              </cover-view>
+              <cover-view class="footer">
+                <cover-view class="btn left mr" @tap.stop="handlePopupAction('logout')">退出驾驶</cover-view>
+                <cover-view class="btn right" @tap.stop="continueDrive">继续驾驶</cover-view>
+              </cover-view>
+            </cover-view>
+
           </cover-view>
         </cover-view>
       </cover-view>
@@ -684,7 +704,7 @@ const handleMic = (val) => {
   handleSound(!val, 1)
 }
 // 处理音频
-const handleSound = (val, type) =>{
+const handleSound = (val, type) => {
   if (type == 0) {
     showSound.value = val;
   }
@@ -692,8 +712,8 @@ const handleSound = (val, type) =>{
   if (!val) {
     newInitAction = "video_only"
   }
-  videoUrl.value = videoUrl.value.replace( /([?&])initAction=[^&]*/,'&initAction=' + newInitAction);
-  console.log(videoUrl.value,"videoUrl")
+  videoUrl.value = videoUrl.value.replace(/([?&])initAction=[^&]*/, '&initAction=' + newInitAction);
+  console.log(videoUrl.value, "videoUrl")
 }
 
 // 结束驾驶逻辑
@@ -751,24 +771,28 @@ const sendConDrive = () => {
       }, 1000);
     }
 
-    try {
-      const res = await StartDrive({
-        order_no: orderNo.value,
-        type: 2,
-        vehicle_id: vehicleId.value,
-      });
-      console.log("继续驾驶返回", res);
-      if (res.code != 200) {
-        uni.showToast({ title: res.msg, icon: "none" });
-      }
-    } catch (e) {
-      console.error("继续驾驶请求失败", e);
-    } finally {
-      isRequesting = false;
-    }
+    await continueDrive()
+    isRequesting = false;
   }, 30 * 1000);
 };
 
+const continueDrive = async () => {
+  try {
+    const res = await StartDrive({
+      order_no: orderNo.value,
+      type: 2,
+      vehicle_id: vehicleId.value,
+    });
+    console.log("继续驾驶返回", res);
+    if (res.code != 200) {
+      uni.showToast({ title: res.msg, icon: "none" });
+    }
+  } catch (e) {
+    console.error("继续驾驶请求失败", e);
+  } finally {
+    isRequesting = false;
+  }
+}
 // 获取视频设备信息
 
 //video_only:自动打开视频
@@ -812,7 +836,7 @@ const reportModal = () => {
     cancelText: "取消",
     success(res) {
       if (res.confirm) {
-        
+
         if (res.content) {
           // 调用上报接口
           report(res.content);
@@ -862,9 +886,18 @@ const handleIcon = (item) => {
 };
 
 const logoutOne = () => {
+
+  clearAllTimers();
+  clearInterval(timerNum.value);
+  clearInterval(countdownTimer);
+
+  if (UDPSocket.value) {
+    UDPSocket.value.close();
+  }
   uni.reLaunch({
     url: "/subpkg_mine/pages/mine/reservation", // 你的首页路径
   });
+
 }
 // 弹窗动作处理
 const handlePopupAction = (val) => {
@@ -999,12 +1032,7 @@ const onUserActivity = () => {
   resetTimer();
 };
 
-onUnload(() => {
-  if (UDPSocket.value) {
-    UDPSocket.value.close();
-    UDPSocket.value = null;
-  }
-});
+
 // ------------------- 生命周期 -------------------
 // 先onload 再onMounted
 // 前置摄像头 切换清晰度 前置 切换的前置 有喇叭， 后置摄像头只有标清
@@ -1175,7 +1203,9 @@ const initSocket = () => {
     messageTimer.value = setTimeout(() => {
       console.warn("5秒内未收到消息");
       carStatus.value = false;
-    }, 5000);
+      allPopupVisible.value = true;
+      type.value = 'offLineTip';
+    }, 1000);
   }
 
   // 初始启动
@@ -1243,6 +1273,9 @@ const changeConstSpeed = (val) => {
     "upType",
     constSpeed.value / 100,
   );
+  chValue.value.ch2 = carHandler.value.ch2;
+  console.log("定速ch2:", chValue.value.ch2);
+
 };
 
 // 四驱车 左右
@@ -1268,7 +1301,17 @@ const handleLRDrive = (item) => {
 onUnmounted(() => {
   clearAllTimers();
   clearInterval(timerNum.value);
+  clearInterval(countdownTimer);
 });
+onUnload(() => {
+  if (UDPSocket.value) {
+    UDPSocket.value.close();
+    UDPSocket.value = null;
+  }
+  clearAllTimers();
+  clearInterval(timerNum.value);
+  clearInterval(countdownTimer);
+})
 
 // 遥杆操作 挖机
 const handleLeftDrive = (param) => {
@@ -1360,7 +1403,7 @@ const setQualityList = () => {
   qualityList.value = qualityListMap.filter((item) =>
     targetValues.includes(item.value),
   );
-  currentQuality.value = targetValues[0];
+  currentQuality.value = carDetails.value.default_camera_clarity + '';
 };
 
 // 正反 旋转，上下操作
@@ -1515,7 +1558,7 @@ const report = (text) => {
           });
         }, 2000);
       } else {
-        uni.showToast({title: res.msg, icon: 'none'})
+        uni.showToast({ title: res.msg, icon: 'none' })
       }
     },
   );
@@ -1583,10 +1626,10 @@ const report = (text) => {
     border: 2px solid #ff4d4f;
     border-radius: 50%;
 
-     position: absolute;
-      bottom: 4px;
-      right: 0px;
-    
+    position: absolute;
+    bottom: 4px;
+    right: 0px;
+
     &::after {
       content: "";
       position: absolute;
@@ -1969,7 +2012,7 @@ const report = (text) => {
       background: transparent;
       border: 1px solid #f5c542;
       color: #f5c542;
-      padding: 7px 10px 3px 10px ;
+      padding: 7px 10px 3px 10px;
       border-radius: 4px;
       font-size: 14px;
       cursor: pointer;
