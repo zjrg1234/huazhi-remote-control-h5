@@ -1,25 +1,26 @@
 <template>
   <view class="page">
-    <!-- 自定义导航栏（H5不显示） -->
-    <!-- #ifndef H5 -->
+  
 
-    <custom-nav-bar title="我的电池" url="/subpkg_mine/pages/mine/battery" flag="0"></custom-nav-bar>
-
-    <!-- #endif -->
 
     <view class="sticky-content">
       <view class="wrap-content">
         <!-- #ifdef H5 -->
-
         <NavBar title="我的电池" url="/pages/mine/index"></NavBar>
-
-        <view class="bg-image">
+        <view class="bg-image bg-image-h5">
           <image class="image" src="/static/images/mine/bg2@2x.png" mode="widthFix"></image>
         </view>
         <!-- #endif -->
+
+
+
+            <!-- #ifdef MP-WEIXIN -->
+    <custom-nav-bar title="我的电池" url="/subpkg_mine/pages/mine/battery" flag="0"></custom-nav-bar>
+    <!-- #endif -->
+
         <!-- #ifndef H5 -->
         <!-- 顶部背景图 小程序-->
-        <view class="bg-image" :style="{ top: '-' + (getNavBarHeight() + 10)+ 'px' }">
+        <view class="bg-image">
           <image class="image" src="/static/images/mine/bg2@2x.png" mode="widthFix"></image>
         </view>
         <!-- #endif -->
@@ -323,7 +324,7 @@ page {
   /* 顶部背景图 */
   .bg-image {
     position: absolute;
-    top: -97rpx;
+    top: 0;
     left: 0;
     width: 100%;
     height: 170rpx;
@@ -336,6 +337,9 @@ page {
       display: block;
       height: 170rpx;
     }
+  }
+  .bg-image-h5 {
+    top: -97rpx;
   }
 
   /* 电池卡片 */
@@ -588,14 +592,12 @@ page {
 /* 提交按钮 */
 .submit-btn {
   position: fixed;
-  bottom: env(safe-area-inset-bottom);
-  
+  padding-bottom: env(safe-area-inset-bottom);
+  bottom: 0;
   width: 100%;
-  height: 186rpx;
-  background: #FFFFFF;
+  background: #fff;
 
   .btn {
-   
     margin: 25rpx;
     border: none;
     background: #FFC838;
@@ -610,10 +612,6 @@ page {
 }
 
 
-
-
-
-
 .recharge-btn {
   background: #ffc838;
   border-radius: 12rpx;
@@ -625,8 +623,6 @@ page {
   color: #1a1a1a;
   padding: 10rpx 40rpx;
 }
-
-
 
 /* 列表 */
 .list {
