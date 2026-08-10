@@ -2,115 +2,77 @@
   <view class="page">
     <!-- 自定义导航栏（H5不显示） -->
     <!-- #ifndef H5 -->
-   
 
-		<custom-nav-bar title="我的电池" url="/subpkg_mine/pages/mine/battery" flag="0"></custom-nav-bar>
+    <custom-nav-bar title="我的电池" url="/subpkg_mine/pages/mine/battery" flag="0"></custom-nav-bar>
 
     <!-- #endif -->
-    <view class="wrap-content">
-      <!-- #ifdef H5 -->
 
-      <NavBar title="我的电池" url="/pages/mine/index"></NavBar>
+    <view class="sticky-content">
+      <view class="wrap-content">
+        <!-- #ifdef H5 -->
 
-      <view class="bg-image">
-        <image
-          class="image"
-          src="/static/images/mine/bg2@2x.png"
-          mode="widthFix"
-        ></image>
-      </view>
-      <!-- #endif -->
-      <!-- #ifndef H5 -->
-      <!-- 顶部背景图 小程序-->
-      <view class="bg-image" :style="{ top: '-' + getNavBarHeight() + 'px' }">
-        <image
-          class="image"
-          src="/static/images/mine/bg2@2x.png"
-          mode="widthFix"
-        ></image>
-      </view>
-      <!-- #endif -->
+        <NavBar title="我的电池" url="/pages/mine/index"></NavBar>
 
-      <!-- 电池卡片 -->
-      <view class="card">
-        <view class="card-bg">
-          <image
-            class="card-bg-img"
-            src="/static/images/mine/bg_battery@2x.png"
-            mode="widthFix"
-          ></image>
+        <view class="bg-image">
+          <image class="image" src="/static/images/mine/bg2@2x.png" mode="widthFix"></image>
         </view>
-        <view class="card-content">
-          <view class="card-left">
-            <view class="label">
-              <view class="label-text"> 我的电池 </view>
-              <image
-                class="battery"
-                src="/static/images/mine/icon_battery@2x.png"
-                mode="widthFix"
-              >
-              </image>
+        <!-- #endif -->
+        <!-- #ifndef H5 -->
+        <!-- 顶部背景图 小程序-->
+        <view class="bg-image" :style="{ top: '-' + getNavBarHeight() + 'px' }">
+          <image class="image" src="/static/images/mine/bg2@2x.png" mode="widthFix"></image>
+        </view>
+        <!-- #endif -->
+
+        <!-- 电池卡片 -->
+        <view class="card">
+          <view class="card-bg">
+            <image class="card-bg-img" src="/static/images/mine/bg_battery@2x.png" mode="widthFix"></image>
+          </view>
+          <view class="card-content">
+            <view class="card-left">
+              <view class="label">
+                <view class="label-text"> 我的电池 </view>
+                <image class="battery" src="/static/images/mine/icon_battery@2x.png" mode="widthFix">
+                </image>
+              </view>
+              <view class="num">{{ balance }}</view>
             </view>
-            <view class="num">{{ balance }}</view>
           </view>
         </view>
       </view>
-    </view>
-    <!-- 标签切换 -->
-    <!-- <view class="tabs">
-			<text class="tab" :class="{ active: tab === 'normal' }" @click="handleSelect('normal')">普通充值</text>
-			<text class="tab" :class="{ active: tab === 'first' }" @click="handleSelect('first')">首充优惠</text>
-		</view> -->
 
-    <view class="tabs">
-      <view
-        v-for="item in tabs"
-        :key="item.id"
-        class="tab-item"
-        :class="{ active: tab === item.id }"
-        @click="handleSelect(item.id)"
-      >
-        <text>{{ item.name }}</text>
-        <!-- 底部激活横线 -->
-        <view v-if="tab === item.id" class="line"></view>
+
+      <view class="tabs">
+        <view v-for="item in tabs" :key="item.id" class="tab-item" :class="{ active: tab === item.id }"
+          @click="handleSelect(item.id)">
+          <text>{{ item.name }}</text>
+          <!-- 底部激活横线 -->
+          <view v-if="tab === item.id" class="line"></view>
+        </view>
       </view>
     </view>
+
 
     <!-- 充值套餐 -->
     <view class="section">
       <text class="section-title">充值套餐</text>
       <view class="package-list" v-if="tab == 'normal'">
-        <view
-          class="package-item"
-          :class="{ active: selectedPackage === item.amount }"
-          v-for="item in packageList"
-          :key="item.amount"
-          @click="selectedPackageIndex(1, item.amount)"
-        >
+        <view class="package-item" :class="{ active: selectedPackage === item.amount }" v-for="item in packageList"
+          :key="item.amount" @click="selectedPackageIndex(1, item.amount)">
           <view class="num">
             <text> {{ item.amount }} </text>
-            <image
-              class="icon"
-              src="/static/images/common/icon_battery@2x.png"
-            />
+            <image class="icon" src="/static/images/common/icon_battery@2x.png" />
           </view>
           <view class="price">¥{{ item.amount.toFixed(2) }}</view>
         </view>
       </view>
       <view class="package-list" v-if="tab == 'first'">
-        <view
-          class="package-item"
-          :class="{ active: selectedPackage === item.payment_amount }"
-          v-for="item in packageFirstList"
-          :key="item.payment_amount"
-          @click="selectedPackageIndex(2, item)"
-        >
+        <view class="package-item" :class="{ active: selectedPackage === item.payment_amount }"
+          v-for="item in packageFirstList" :key="item.payment_amount" @click="selectedPackageIndex(2, item)">
           <view class="num">
             <text> {{ item.payment_amount }} </text>
-            <image
-              class="icon"
-              src="/static/images/common/icon_battery@2x.png"
-            />
+            <image class="icon" src="/static/images/common/icon_battery@2x.png" />
           </view>
           <view class="energy">送{{ item.send_energy }}能量</view>
           <view class="price">¥{{ item.payment_amount.toFixed(2) }}</view>
@@ -121,12 +83,7 @@
     <!-- 自定义充值 -->
     <view class="section">
       <text class="section-title">自定义数量充值</text>
-      <input
-        class="custom-input"
-        type="number"
-        placeholder="请输入电池数量（不低于3个）"
-        v-model.number="customNum"
-      />
+      <input class="custom-input" type="number" placeholder="请输入电池数量（不低于3个）" v-model.number="customNum" />
     </view>
 
     <!-- 支付方式 -->
@@ -141,11 +98,7 @@
           <image class="pay-icon" src="/static/images/common/icon_zfb@2x.png" />
           <text>支付宝支付</text>
         </view> -->
-        <view
-          class="pay-item"
-          :class="{ active: payType === 'wechat' }"
-          @click="payType = 'wechat'"
-        >
+        <view class="pay-item" :class="{ active: payType === 'wechat' }" @click="payType = 'wechat'">
           <image class="pay-icon" src="/static/images/common/icon_wx@2x.png" />
           <text>微信支付</text>
         </view>
@@ -160,7 +113,10 @@
     </view>
 
     <!-- 确定按钮 -->
-    <button class="submit-btn" @click="handleSubmit">确定</button>
+    <view class="submit-btn">
+      <button class="btn" @click="handleSubmit">确定</button>
+
+    </view>
   </view>
 </template>
 
@@ -314,21 +270,22 @@ const handleSubmit = async () => {
     res = await WechatPay(obj);
     if (res.code == 200) {
       wx.requestPayment({
-      timeStamp: res.data.timeStamp,
-      nonceStr: res.data.nonceStr,
-      package: res.data.package, // 格式为: 'prepay_id=***'
-      signType: res.data.signType, // 通常为 'RSA'
-      paySign: res.data.paySign,
-      success: (res) => {
-        // 支付成功
-        uni.showToast({title:'支付成功',icon:'success'})
-        
-      },
-      fail: (err) => {
-        // 支付失败或取消
-      }});
+        timeStamp: res.data.timeStamp,
+        nonceStr: res.data.nonceStr,
+        package: res.data.package, // 格式为: 'prepay_id=***'
+        signType: res.data.signType, // 通常为 'RSA'
+        paySign: res.data.paySign,
+        success: (res) => {
+          // 支付成功
+          uni.showToast({ title: '支付成功', icon: 'success' })
+
+        },
+        fail: (err) => {
+          // 支付失败或取消
+        }
+      });
     } else {
-      uni.showToast({title: res.msg, icon: 'none'})
+      uni.showToast({ title: res.msg, icon: 'none' })
     }
   }
 
@@ -338,73 +295,125 @@ const handleSubmit = async () => {
 
 <style lang="scss" scoped>
 page {
-  background: #f5f6f8;
+  background: #f8f8f8;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box;
 }
 
 .page {
-  min-height: 100vh;
-  padding-bottom: 80rpx;
-  position: relative;
+  background: #f8f8f8;
+  padding-bottom: 200rpx;
 }
 
-/* 顶部导航 */
-.header {
-  background: #ffc832;
-  height: 88rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
+.sticky-content {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
 
-  .back {
+.wrap-content {
+  position: relative;
+  width: 100%;
+  background: #ffffff;
+
+
+  /* 顶部背景图 */
+  .bg-image {
     position: absolute;
-    left: 30rpx;
-    font-size: 32rpx;
+    top: -97rpx;
+    left: 0;
+    width: 100%;
+    height: 170rpx;
+    z-index: 0;
+
+    .image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      height: 170rpx;
+    }
   }
 
-  .title {
-    font-size: 34rpx;
-    font-weight: 500;
-  }
-}
+  /* 电池卡片 */
+  .card {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    height: 196rpx;
+    margin: 10rpx;
+    margin-bottom: 0;
+    padding: 20rpx;
+    padding-bottom: 0;
+    padding-left: 30rpx;
 
-/* 余额卡片 */
-.balance-card {
-  background: linear-gradient(to right, #fff9e6, #fff);
-  margin: 20rpx 30rpx;
-  border-radius: 16rpx;
-  padding: 30rpx;
+  }
+
+  .card-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 0;
+
+    .card-bg-img {
+      width: 100%;
+      height: 196rpx;
+    }
+  }
+
+  .card-content {
+    position: relative;
+    z-index: 1;
+    padding: 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+  }
 
   .label {
-    font-size: 30rpx;
+    padding-top: 10rpx;
+
     display: flex;
+    justify-content: left;
     align-items: center;
 
-    .icon {
-      width: 32rpx;
-      height: 32rpx;
-      margin-left: 8rpx;
+    .label-text {
+      font-family:
+        PingFangSC,
+        PingFang SC;
+      font-weight: 400;
+      font-size: 28rpx;
+      color: #222222;
+    }
+
+    .battery {
+      width: 38rpx;
+      height: 38rpx;
     }
   }
 
   .num {
-    font-size: 48rpx;
-    font-weight: bold;
-    margin-top: 10rpx;
+    font-family:
+      PingFangSC,
+      PingFang SC;
+    font-weight: 600;
+    font-size: 40rpx;
+    color: #222222;
+    padding-top: 25rpx;
+    padding-left: 10rpx;
   }
-}
 
-/* 标签切换 */
+
+}
 
 .tabs {
   display: flex;
   justify-content: space-around;
   background-color: #ffffff;
-  padding: 20rpx 0 10rpx 0;
   margin-bottom: 20rpx;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  padding-bottom: 13rpx;
 
   .tab-item {
     margin: 0 40rpx;
@@ -444,15 +453,18 @@ page {
 /* 通用 section */
 .section {
   background: #fff;
-  margin: 20rpx 10rpx 0;
+  margin: 20rpx 20rpx 0;
   border-radius: 16rpx;
   padding: 20rpx;
 
   .section-title {
-    font-size: 30rpx;
-    font-weight: 500;
-    margin-bottom: 20rpx;
     display: block;
+    font-family: PingFangSC, PingFang SC;
+    font-weight: 500;
+    font-size: 28rpx;
+    color: #222222;
+    margin-bottom: 20rpx;
+
   }
 }
 
@@ -516,7 +528,7 @@ page {
 
 /* 自定义输入框 */
 .custom-input {
-  height: 80rpx;
+  height: 88rpx;
   background: #f8f8f8;
   border-radius: 12rpx;
   padding: 0 10rpx;
@@ -575,177 +587,30 @@ page {
 .submit-btn {
   position: fixed;
   bottom: env(safe-area-inset-bottom);
-  margin: 20rpx;
-  padding: 10rpx 320rpx;
-  background: #ffc832;
-  border: none;
-  border-radius: 16rpx;
-  font-family:
-    PingFangSC,
-    PingFang SC;
-  font-weight: 500;
-  font-size: 32rpx;
-  color: #1a1a1a;
-}
-
-/* 电池卡片 */
-.card {
-  position: relative;
-  z-index: 1;
-  padding: 20rpx;
-  padding-bottom: 0;
-  overflow: hidden;
-  padding-left: 30rpx;
-  height: 196rpx;
-}
-
-.card-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
+  
   width: 100%;
-  z-index: 0;
+  height: 186rpx;
+  background: #FFFFFF;
 
-  .card-bg-img {
-    width: 100%;
-    height: 196rpx;
-  }
-}
-
-.card-content {
-  position: relative;
-  z-index: 1;
-  padding: 0 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-}
-
-.label {
-  padding-top: 10rpx;
-
-  display: flex;
-  justify-content: left;
-  align-items: center;
-
-  .label-text {
+  .btn {
+   
+    margin: 25rpx;
+    border: none;
+    background: #FFC838;
+    border-radius: 16rpx;
     font-family:
       PingFangSC,
       PingFang SC;
-    font-weight: 400;
-    font-size: 28rpx;
-    color: #222222;
-  }
-
-  .battery {
-    width: 38rpx;
-    height: 38rpx;
+    font-weight: 500;
+    font-size: 32rpx;
+    color: #1a1a1a;
   }
 }
 
-.num {
-  font-family:
-    PingFangSC,
-    PingFang SC;
-  font-weight: 600;
-  font-size: 40rpx;
-  color: #222222;
-  padding-top: 6rpx;
-  padding-left: 10rpx;
-}
 
-page {
-  background: #f8f8f8;
-  padding: 0 !important;
-  margin: 0 !important;
-  box-sizing: border-box;
-}
 
-.page {
-  min-height: 100vh;
-  box-sizing: border-box;
-}
 
-.wrap-content {
-  position: relative;
-  width: 100%;
-  background: #ffffff;
-}
 
-/* H5 导航栏 */
-.header {
-  position: relative;
-  z-index: 99;
-  height: 88rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-family:
-    PingFangSC,
-    PingFang SC;
-  font-weight: 500;
-  font-size: 32rpx;
-  color: #333333;
-
-  .back-image {
-    position: absolute;
-    left: 30rpx;
-    color: #fff;
-    transform: rotate(180deg);
-    width: 32rpx;
-  }
-}
-
-/* 顶部背景图 */
-.bg-image {
-  position: absolute;
-  top: -97rpx;
-  left: 0;
-  width: 100%;
-  height: 170rpx;
-  z-index: 0;
-
-  .image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    height: 170rpx;
-  }
-}
-
-.label {
-  padding-top: 10rpx;
-  display: flex;
-  justify-content: left;
-  align-items: center;
-
-  .label-text {
-    font-family:
-      PingFangSC,
-      PingFang SC;
-    font-weight: 400;
-    font-size: 28rpx;
-    color: #222222;
-  }
-
-  .battery {
-    width: 38rpx;
-    height: 38rpx;
-  }
-}
-
-.num {
-  font-family:
-    PingFangSC,
-    PingFang SC;
-  font-weight: 600;
-  font-size: 40rpx;
-  color: #222222;
-  padding-top: 6rpx;
-  padding-left: 10rpx;
-}
 
 .recharge-btn {
   background: #ffc838;
@@ -759,61 +624,7 @@ page {
   padding: 10rpx 40rpx;
 }
 
-/* 说明 */
-.desc {
-  padding: 0 20rpx;
-  font-family:
-    PingFangSC,
-    PingFang SC;
-  font-weight: 400;
-  font-size: 24rpx;
-  color: #999999;
-}
 
-.tabs {
-  display: flex;
-  justify-content: space-around;
-  background-color: #ffffff;
-  padding: 20rpx 0 10rpx 0;
-  margin-bottom: 20rpx;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-
-  .tab-item {
-    margin: 0 40rpx;
-    position: relative;
-    padding-bottom: 10rpx;
-
-    text {
-      font-family:
-        PingFangSC,
-        PingFang SC;
-      font-weight: 400;
-      font-size: 28rpx;
-      color: #777777;
-    }
-
-    /* 激活状态样式 */
-    &.active text {
-      font-weight: 500;
-      font-size: 30rpx;
-      color: #1a1a1a;
-    }
-
-    .line {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 40rpx;
-      height: 4rpx;
-
-      background: #1a1a1a;
-      border-radius: 2rpx;
-    }
-  }
-}
 
 /* 列表 */
 .list {
