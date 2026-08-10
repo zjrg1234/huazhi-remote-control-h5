@@ -2,11 +2,7 @@
   <view class="page">
     <!-- 列表 -->
     <view class="list">
-      <view
-        class="item"
-        v-for="(item, index) in list"
-        :key="index"
-      >
+      <view class="item" v-for="(item, index) in list" :key="index">
         <!-- 头像 + 用户名 -->
         <view class="header">
           <image class="avatar" :src="item.head_shot" mode="aspectFill" />
@@ -41,11 +37,11 @@
           </view>
           <view class="info-item">
             <text class="label">消费电池：</text>
-            <text class="value">{{ paymentType(item.payment_type) }} {{item.payment_amount}}</text>
+            <text class="value">{{ paymentType(item.payment_type) }} {{ item.payment_amount }}</text>
           </view>
           <view class="info-item">
             <text class="label">开始时间：</text>
-            <text class="value">{{ formatDate(item.start_time)  }}</text>
+            <text class="value">{{ formatDate(item.start_time) }}</text>
           </view>
           <view class="info-item">
             <text class="label">结束时间：</text>
@@ -60,9 +56,9 @@
 <script setup>
 import { ref } from 'vue'
 import { onLoad, onReachBottom, } from "@dcloudio/uni-app"
-import {GetDrivingRecordlList} from "@/axios/mine.js"
-import {reservationStatus, billingMethod, paymentType} from "../utils/filter.js"
-import {formatDate, compareTimestamp} from "../utils/utils.js"
+import { GetDrivingRecordlList } from "@/axios/mine.js"
+import { reservationStatus, billingMethod, paymentType } from "../utils/filter.js"
+import { formatDate, compareTimestamp } from "../utils/utils.js"
 // ==================== 核心变量 ====================
 const list = ref([])        // 列表数据
 const page = ref(1)         // 当前页码
@@ -74,28 +70,24 @@ const noMore = ref(false)    // 是否没有更多数据
 const getList = async () => {
   // 节流：正在加载 或 没有更多 → 直接return
   if (loading.value || noMore.value) return
-
   loading.value = true
+  const res = await GetDrivingRecordlList()
 
-  
-    const res = await GetDrivingRecordlList()
+  // 第一页 → 覆盖
+  if (page.value === 1) {
+    list.value = res.data.content
+  } else {
+    // 后续页 → 追加
+    list.value = [...list.value, res.data.content]
+  }
 
-    // 第一页 → 覆盖
-    if (page.value === 1) {
-      list.value = res.data.content
-    } else {
-      // 后续页 → 追加
-      list.value = [...list.value, res.data.content]
-    }
+  // 如果返回数据不足一页 → 没有更多
+  if (res.data.content.length < pageSize.value) {
+    noMore.value = true
+  }
 
-    // 如果返回数据不足一页 → 没有更多
-    if (res.data.content.length < pageSize.value) {
-      noMore.value = true
-    }
-
-    page.value++
-    loading.value = false
-
+  page.value++
+  loading.value = false
 }
 
 // ==================== 上拉触底加载（核心） ====================
@@ -110,16 +102,15 @@ onLoad(() => {
 })
 </script>
 <style lang="scss" scoped>
-
 .page {
- background: #F8F8F8;
+  background: #F8F8F8;
 }
 
 .list {
   display: flex;
   flex-direction: column;
   gap: 20rpx;
-	padding: 20rpx;
+  padding: 20rpx;
 }
 
 .item {
@@ -145,28 +136,30 @@ onLoad(() => {
     font-weight: 600;
     font-size: 28rpx;
     color: #1A1A1A;
-		line-height: 40rpx;
-		text-align: left;
-		font-style: normal;
+    line-height: 40rpx;
+    text-align: left;
+    font-style: normal;
   }
 }
 
 .info-list {
   padding-left: 80rpx;
+
   .info-item {
     display: flex;
     margin-bottom: 16rpx;
     font-size: 0;
 
     .label {
-			font-family: PingFangSC, PingFang SC;
-			font-weight: 400;
-			font-size: 24rpx;
-			color: #777777;
-		
-			text-align: left;
+      font-family: PingFangSC, PingFang SC;
+      font-weight: 400;
+      font-size: 24rpx;
+      color: #777777;
+
+      text-align: left;
       white-space: nowrap;
     }
+
     .value {
       font-family: PingFangSC, PingFang SC;
       font-weight: 400;
