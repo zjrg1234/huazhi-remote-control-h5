@@ -268,13 +268,13 @@
                         </cover-view>
                       </cover-view>
 
-                      <SliderComp v-model="dirTurn" :min="1" :max="100" @change="setChangeVal(2, $event)"></SliderComp>
+                      <SliderComp v-model="dirTurn" :min="1" :max="directionDynamics.current_value" @change="setChangeVal(2, $event)"></SliderComp>
                       <cover-view class="slider-label-bottom">
                         <cover-view class="num-text">
                           {{ directionDynamics.mini_value }}
                         </cover-view>
                         <cover-view class="num-text">
-                          {{ directionDynamics.max_value }}
+                          {{ directionDynamics.current_value }}
                         </cover-view>
                       </cover-view>
                     </cover-view>
@@ -301,14 +301,14 @@
                         </cover-view>
                       </cover-view>
 
-                      <SliderComp v-model="throttle" :min="1" :max="100" @change="setChangeVal(3, $event)"></SliderComp>
+                      <SliderComp v-model="throttle" :min="1" :max="acceleratorDynamics.current_value" @change="setChangeVal(3, $event)"></SliderComp>
 
                       <cover-view class="slider-label-bottom">
                         <cover-view class="num-text num-left">
                           {{ acceleratorDynamics.mini_value }}
                         </cover-view>
                         <cover-view class="num-text num-right">
-                          {{ acceleratorDynamics.max_value }}
+                          {{ acceleratorDynamics.current_value }}
                         </cover-view>
                       </cover-view>
                     </cover-view>
@@ -1094,6 +1094,9 @@ const initVehicleConfig = () => {
     acceleratorCenter.value = carDetails.value.accelerator_center || {};
     acceleratorDynamics.value = carDetails.value.accelerator_dynamics || {};
 
+    dirMiddle.value = directionCenter.value.current_value
+    dirTurn.value = directionDynamics.value.current_value
+    throttle.value = acceleratorDynamics.value.current_value
     const config = carDetails.value.vehicle_config_detail || {};
     ["ch3", "ch4", "ch5", "ch6", "ch7", "ch8"].forEach((key) => {
       if (config[key])
@@ -1438,13 +1441,18 @@ const setChangeVal = (flag, value) => {
 const handleAdd = (type) => handleValueChange(type, 1);
 const handleReduce = (type) => handleValueChange(type, -1);
 const valueMap = { 1: dirMiddle, 2: dirTurn, 3: throttle };
+const valueMapMax = { 1: dirMiddle, 2: directionDynamics, 3: acceleratorDynamics };
 // 2. 统一的加减处理函数
 const handleValueChange = (type, step) => {
   const target = valueMap[type];
   if (!target) return; // 如果 type 不匹配，直接返回
   // 计算新值
   const newValue = target.value + step;
-  target.value = Math.max(0, Math.min(100, newValue));
+  if (type == 2 || type == 3) {
+    target.value = Math.max(1, Math.min(valueMapMax[type].value.current_value, newValue));
+  } else {
+    target.value = Math.max(1, Math.min(100, newValue));
+  }
 
   // 第一个滑块
   if (type == 1) {
