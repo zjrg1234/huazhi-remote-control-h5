@@ -3,8 +3,8 @@
 		<view class="navbar">
 			<view class="statusBar" :style="{ height: getStatusBarHeight() + 'px' }"></view>
 
-			<view class="nav-back" @click="handleBack">
-				<image class="back-icon" src="/static/images/common/icon_arrows@2x.png" mode="widthFix" />
+			<view class="nav-back" @click="handleBack" :style="{top: getStatusBarHeight() + 'px'}">
+				<image class="back-icon" src="/static/images/common/icon_arrows@2x.png" mode="scaleToFill" />
 			</view>
 
 			<view class="titleBar" v-if="title"
@@ -24,7 +24,7 @@ import { ref } from 'vue';
 import { getStatusBarHeight, getTitleBarHeight, getNavBarHeight, getLeftIconLeft } from "@/utils/system.js"
 const emit = defineEmits(['back'])
 
-const props =  defineProps({
+const props = defineProps({
 	title: {
 		type: String,
 		default: ""
@@ -41,13 +41,13 @@ const props =  defineProps({
 
 // 返回事件
 const handleBack = () => {
-	console.log(123,props.url)
-  emit('back')
-	if(props.url) {
+	console.log(123, props.url)
+	emit('back')
+	if (props.url) {
 		if (props.flag == 1) {
-			uni.switchTab({url: props.url})
+			uni.switchTab({ url: props.url })
 		} else {
-		uni.navigateTo({ url: props.url })
+			uni.navigateTo({ url: props.url })
 
 		}
 	} else {
@@ -71,10 +71,8 @@ const handleBack = () => {
 			align-items: center;
 
 			.title {
-				
 				width: 100%;
 				text-align: center;
-
 				font-family: PingFangSC, PingFang SC;
 				font-weight: 500;
 				font-size: 32rpx;
@@ -88,18 +86,19 @@ const handleBack = () => {
 		.nav-back {
 			position: absolute;
 			left: 0;
-			
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			width: 60rpx;
-			height: 60rpx;
+			width: 48rpx;
+			height: 48rpx;
+			margin-top: 16rpx;
+			margin-left: 10rpx;
 		}
 
 		.back-icon {
 			width: 48rpx;
 			height: 48rpx;
-			margin-top: 12rpx;
+			
 			transform: rotate(180deg);
 			/* 箭头方向正确 */
 		}
