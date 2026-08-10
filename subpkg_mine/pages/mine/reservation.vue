@@ -307,6 +307,7 @@ page {
 
 .page {
   padding: 20rpx;
+  background-color: #f2f4f7;
 }
 
 .list {

@@ -95,6 +95,7 @@ page {
 .page {
   padding: 20rpx;
   min-height: 100vh;
+  background-color: #f7f8fa;
 }
 
 .title {

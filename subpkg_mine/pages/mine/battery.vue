@@ -186,6 +186,7 @@
 	.page {
 		min-height: 100vh;
 		box-sizing: border-box;
+		background: #F8F8F8;
 	}
 
 	.wrap-content {
