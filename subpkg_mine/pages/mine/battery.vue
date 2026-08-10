@@ -238,10 +238,13 @@
 	.card {
 		position: relative;
 		z-index: 1;
-		padding: 20rpx;
-		padding-bottom: 0;
+		margin: 10rpx;
+		margin-bottom: 0;
 		overflow: hidden;
 		height: 196rpx;
+		padding: 20rpx;
+		padding-bottom: 0;
+
 	}
 
 	.card-bg {
