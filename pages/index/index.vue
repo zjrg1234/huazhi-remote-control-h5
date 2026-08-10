@@ -239,7 +239,7 @@ onLoad(() => {
 .banner-section {
   width: 100%;
   overflow: hidden;
-  height: 300rpx;
+  height: 280rpx;
   flex-shrink: 0; /* 防止被压缩 */
   .banner-img { 
     width: 100%; 
@@ -249,18 +249,18 @@ onLoad(() => {
 }
 
 .nav {
-  margin-top: -20rpx;
+  margin-top: -60rpx;
 }
 
 /* 导航栏核心样式 (重点修改部分) */
 .sticky-nav-wrapper {
   position: sticky;
-  top: -10rpx;
+
   z-index: 99;
   background-color: #fff;
   box-shadow: 0rpx -4rpx 20rpx 0rpx rgba(0, 0, 0, 0.1);
   border-radius: 40rpx 40rpx 0rpx 0rpx;
-  margin-top: -10rpx;
+ 
   flex-shrink: 0; /* 防止被压缩 */
   border-bottom: 1rpx solid #f6f6f6;
 }
@@ -269,10 +269,18 @@ onLoad(() => {
 .nav-scroll { width: 100%; white-space: nowrap; }
 .nav-list { display: inline-flex; padding: 0 20rpx; height: 88rpx; align-items: center; }
 .nav-item {
-  display: inline-block; padding: 0 30rpx; font-size: 28rpx; color: #777; position: relative; flex-shrink: 0; line-height: 88rpx;
+  font-family: PingFangSC, PingFang SC;
+font-weight: 400;
+  display: inline-block; 
+  padding: 0 30rpx; 
+  font-size: 28rpx; 
+  color: #777;
+   position: relative;
+    flex-shrink: 0; 
+    line-height: 88rpx;
   &.active {
-    color: #1A1A1A; font-weight: bold; font-size: 30rpx;
-    &::after { content: ""; position: absolute; bottom: 10rpx; left: 50%; transform: translateX(-50%); width: 30rpx; height: 6rpx; background-color: #000; border-radius: 3rpx; }
+    color: #1A1A1A; font-weight: 500; font-size: 30rpx;
+    &::after { content: ""; position: absolute; bottom: 10rpx; left: 50%; transform: translateX(-50%); width: 31rpx; height: 5rpx; background-color: #000; border-radius: 2rpx; }
     }
   }
 
@@ -354,10 +362,11 @@ onLoad(() => {
       align-items: center;
 
       .title {
+      
         font-family: PingFangSC, PingFang SC;
         font-weight: 600;
-        font-size: 38rpx;
-        color: #ffffff;
+        font-size: 30rpx;
+        color: #fff;
         text-align: center;
          // 单行省略
           white-space: nowrap;
@@ -409,7 +418,10 @@ onLoad(() => {
     font-weight: 400;
     font-size: 24rpx;
     color: #ffffff;
-    padding: 2rpx 10rpx;
+    padding: 0 15rpx;
+    height: 40rpx;
+    line-height: 40rpx;
+    // width: 220rpx;
 
     .online {
       width: 8rpx;
@@ -420,7 +432,7 @@ onLoad(() => {
     }
 
     .divider {
-      margin: 0 10rpx;
+      margin: 0 15rpx;
       color: #ddd;
     }
   }
