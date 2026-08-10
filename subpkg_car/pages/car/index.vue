@@ -124,7 +124,8 @@
 
           <!-- 3. 主要状态文本 -->
           <text class="main-status">已成功预约 {{ orderCar.vehicle_name }} 车辆</text>
-          <text class="sub-status">当前还有 {{ orderCar.people_number }} 人排队，请耐心等待</text>
+          <text class="sub-status" v-if="orderCar.people_number > 0">当前还有 {{ orderCar.people_number }} 人排队，请耐心等待</text>
+          <text class="sub-status" v-if="orderCar.people_number == 0">当前排在首位，请尽快去驾驶</text>
 
           <!-- 4. 详情信息卡片 (灰色背景区域) -->
           <view class="info-card">
