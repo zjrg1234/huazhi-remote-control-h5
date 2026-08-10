@@ -39,7 +39,7 @@ export function GetAppealList(data) {
 
 // 驾驶记录
 export function GetDrivingRecordlList(data) {
-  return get('/api/user/driving/record', data)
+  return post('/api/user/driving/record', data)
 }
 
 // 修改密码

@@ -77,45 +77,25 @@ const getList = async () => {
 
   loading.value = true
 
-  // 模拟请求
-  setTimeout(() => {
-    // 模拟后端返回数据
-    const res = Array(10).fill(0).map((_, i) => ({
-      head_shot: "/static/logo.png",
-       "id": 1,
-				"user_name": "大笆斗", //用户名称
-				"vehicle_name": "飞车21111",//车辆名称
-				"vehicle_id": 12,
-				"order_no": "aaacasd13213121", //预约号
-				"billing_method": 0, //计费方式 0按时间 1按次
-				"venue_id": 1,
-				payment_type: 2,
-				"venue_name": "测试", //场地名称
-				"payment_amount": 8, //金额｜能量｜电池
-				"appeal_status": 0,//申诉状态 0未申请 1待处理 2已处理
-				"reservation_status": 3, //状态 1已预约 2待使用 3使用中 4已完成 5已取消
-				"order_time": 1766671601, //订单时间
-				"start_time": 1766671612, //开始时间
-				"end_time": 1766671618 //结束时间1766671618
-
-    }))
+  
+    const res = await GetDrivingRecordlList()
 
     // 第一页 → 覆盖
     if (page.value === 1) {
-      list.value = res
+      list.value = res.data.content
     } else {
       // 后续页 → 追加
-      list.value.push(...res)
+      list.value = [...list.value, res.data.content]
     }
 
     // 如果返回数据不足一页 → 没有更多
-    if (res.length < pageSize.value) {
+    if (res.data.content.length < pageSize.value) {
       noMore.value = true
     }
 
     page.value++
     loading.value = false
-  }, 800)
+
 }
 
 // ==================== 上拉触底加载（核心） ====================
@@ -172,6 +152,7 @@ onLoad(() => {
 }
 
 .info-list {
+  padding-left: 80rpx;
   .info-item {
     display: flex;
     margin-bottom: 16rpx;
