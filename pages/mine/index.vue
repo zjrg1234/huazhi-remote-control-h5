@@ -44,13 +44,13 @@
 				<view class="asset-item">
 					<text class="asset-num">{{ balance }}</text>
 					<view class="asset-label" @click="goPage">
-						<text>我的电池</text>
+						<view class="text">我的电池</view>
 						<image class="arrow-icon" src="/static/images/common/icon_arrows@2x.png" mode="aspectFit" />
 					</view>
 				</view>
 				<view class="asset-item">
 					<text class="asset-num">{{ energy }}</text>
-					<text class="asset-label">我的能量</text>
+					<text class="asset-label text">我的能量</text>
 				</view>
 			</view>
 		</view>
@@ -158,7 +158,6 @@ onPageShow(() => {
 		userStore.setUser(res.data);
 	})
 		.catch(() => { });
-	uni.removeStorageSync("loadingOne")
 })
 onBeforeUnmount(() => {
 	GetUserInfo().then((res) => {
@@ -495,7 +494,13 @@ const gotoUrl = () => {
 
 .asset-label {
 	display: flex;
-	//align-items: center;
+	align-items: center;
+    justify-items: center;
+    justify-content: center;
+}
+
+.text {
+
 	font-family:
 		PingFangSC,
 		PingFang SC;
@@ -507,7 +512,7 @@ const gotoUrl = () => {
 .arrow-icon {
 	width: 24rpx;
 	height: 24rpx;
-	margin-top: 7rpx;
+	margin-top: 3rpx;
 	display: block;
 }
 

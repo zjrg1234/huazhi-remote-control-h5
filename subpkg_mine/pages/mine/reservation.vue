@@ -84,7 +84,8 @@
 
 <script setup>
 import { ref } from "vue";
-import { onLoad, onPullDownRefresh, onReachBottom } from "@dcloudio/uni-app";
+import { onLoad, onPullDownRefresh, onReachBottom, onPageShow } from "@dcloudio/uni-app";
+
 import { formatDate } from "../utils/utils.js";
 import { GetReservationList } from "@/axios/mine";
 import { GetCarDetails, CancelReservation } from "@/axios/index";
@@ -112,8 +113,9 @@ const hasMore = ref(true);
 const loading = ref(false);
 const loadingMore = ref(false);
 
+
 // 初始化加载
-onLoad(() => {
+onPageShow(() => {
   fetchData();
 });
 

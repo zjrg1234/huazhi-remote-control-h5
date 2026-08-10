@@ -306,7 +306,7 @@ page {
 .page {
   height: 100vh;
   background: #f8f8f8;
-  padding-bottom: 200rpx;
+  padding-bottom: 100rpx;
 }
 
 .sticky-content {

@@ -113,9 +113,9 @@
         :directionDynamics="directionDynamics" :operDir="operDir" :type="carType" @action="handleOper"
         @operAction="handleFBDir" @changeValue="changeVal" /> -->
 
-      <cover-view v-show="setVisible" :style="{ display: setVisible ? 'block' : 'none' }" class="custom-popup-mask">
+      <cover-view v-show="setVisible" :style="{ display: setVisible ? 'block' : 'none' }" class="custom-popup-mask" @click="close"> 
         <!-- <cover-view class="fe"> -->
-        <cover-view class="custom-popup-right">
+        <cover-view class="custom-popup-right" @click.stop>
           <cover-view class="cont">
             <cover-view class="left">
               <!-- type 1 是遥控车 -->
