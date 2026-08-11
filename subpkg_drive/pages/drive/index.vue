@@ -549,7 +549,7 @@ import {
   light,
   light_selected,
 } from "./utils/img.js";
-import { reactive } from "vue";
+// import { reactive } from "vue";
 
 // ------------------- 状态 -------------------
 
@@ -980,20 +980,20 @@ const handleOper = (type) => {
 
 
 const set = () => {
-  console.log(setVisible.value);
+  saveFlag.value = { 1: false, 2: false, 3: false }
   setVisible.value = true;
-
   handleFBDrive({ fb: false, value: 0 });
-  // handleIcon("speed");
-
   const mapNum = createReverseMapper(
     1,
     100,
     directionCenter.value.mini_value,
     directionCenter.value.max_value,
   );
-  dirMiddle.value = mapNum(directionCenter.value.current_value);
+  console.log("点击设置， 当前中位值", saveVal.value[1])
+  dirMiddle.value = mapNum(saveVal.value[1]);
   dirMiddleValFunc(dirMiddle.value);
+  dirTurn.value = saveVal.value[2]
+  throttle.value = saveVal.value[3]
 };
 
 const logout = () => {
@@ -1019,7 +1019,7 @@ const handleInactivityAlarm = () => {
   }, 1000);
 };
 const { resetTimer, startListening } = useInactivityAlarm(
-  1800000 * 1000,
+  180 * 1000,
   handleInactivityAlarm,
 );
 // 页面触摸事件（小程序主要交互方式）
@@ -1120,6 +1120,12 @@ const initVehicleConfig = () => {
     dirMiddle.value = directionCenter.value.current_value
     dirTurn.value = directionDynamics.value.current_value
     throttle.value = acceleratorDynamics.value.current_value
+
+    saveVal.value = {
+      1: dirMiddle.value,
+      2: dirTurn.value,
+      3: throttle.value
+    }
     const config = carDetails.value.vehicle_config_detail || {};
     ["ch3", "ch4", "ch5", "ch6", "ch7", "ch8"].forEach((key) => {
       if (config[key])
@@ -1377,6 +1383,14 @@ const dirTurn = ref(1);
 const throttle = ref(1);
 const dirMiddleVal = ref(0);
 
+// 当前保存的值
+const saveVal = ref({
+  1: 0,
+  2: 0,
+  3: 0
+});
+
+
 const dirMiddleValFunc = (num) => {
   console.log("dirMiddleValFunc", num);
   const mapNum = createMapperNew(
@@ -1465,21 +1479,26 @@ const save = (type) => {
 //     3: { ...acceleratorDynamics.value },
 
 const close = () => {
-  const obj = JSON.parse(uni.getStorageSync("carDetails"));
-
+ 
+  
   const val = {
-    0: obj.direction_center.current_value,
-    2: obj.direction_dynamics.current_value,
-    3: obj.accelerator_dynamics.current_value,
+    0: carDetails.value.direction_center.current_value,
+    2: carDetails.value.direction_dynamics.current_value,
+    3: carDetails.value.accelerator_dynamics.current_value,
   };
+  // 关闭弹窗 如果保存 就保存 不保存回到最chu值
+  console.log( dirMiddleVal.value ," dirMiddleVal.value ")
   if (saveFlag.value[1]) {
-    val[0] =  dirMiddleVal.value;
+    val[0] = dirMiddleVal.value;
+    saveVal.value[1] = dirMiddleVal.value;
   }
   if (saveFlag.value[2]) {
     val[2] = dirTurn.value;
+    saveVal.value[2] = dirTurn.value;
   }
   if (saveFlag.value[3]) {
     val[3] = throttle.value;
+    saveVal.value[3] = throttle.value;
   }
   changeVal(val);
   setVisible.value = false;
@@ -1492,7 +1511,8 @@ const setChangeVal = (flag, value) => {
   let val = Object.assign({}, { 0: obj.direction_center.current_value,
     2: obj.direction_dynamics.current_value,
     3: obj.accelerator_dynamics.current_value,})
-  console.log("滑动slider之前,打印当前值", val)
+
+
  
   if (flag == 1) {
     dirMiddleValFunc(value);
@@ -1534,11 +1554,6 @@ const handleValueChange = (type, step) => {
     dirMiddle.value = target.value
   }
 
-  // emit("changeValue", {
-  //   1: dirMiddleVal.value,
-  //   2: dirTurn.value,
-  //   3: throttle.value,
-  // });
 };
 
 // --------------------------tip -----------------------
