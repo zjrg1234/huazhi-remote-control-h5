@@ -78,13 +78,13 @@
             <!-- <slider :value="constSpeed" :min="1" :max="100" :step="1" activeColor="#f5c542" backgroundColor="#e9e9e9"
               block-size="6" @change="changeConstSpeed" /> -->
 
-            <SliderComp v-model="constSpeed" :min="1" :max="acceleratorDynamics.current_value"
+            <SliderComp v-model="constSpeed" :min="1" :max="100"
               @change="changeConstSpeed">
             </SliderComp>
 
             <cover-view class="slider-label-bottom">
               <cover-view class="num-text num-left">1</cover-view>
-              <cover-view class="num-text num-right">{{ acceleratorDynamics.current_value }}</cover-view>
+              <cover-view class="num-text num-right">100</cover-view>
             </cover-view>
           </cover-view>
         </cover-view>
@@ -481,9 +481,10 @@
               <!-- 场景5：长时间无操作 -->
 
               <cover-view class="tip-content">
-
-                <cover-view class="text">当前车辆已离线，是否退出驾驶？</cover-view>
-
+                <cover-view class="tit">提示</cover-view>
+                <cover-view class="text">
+                  <cover-view class="text1">当前车辆已离线，是否退出驾驶？或继续等待车辆恢复链接</cover-view>
+                </cover-view>
               </cover-view>
               <cover-view class="footer">
                 <cover-view class="btn left mr" @tap.stop="handlePopupAction('logout')">退出驾驶</cover-view>
@@ -806,8 +807,10 @@ const GetDeviceInfo = (data) => {
           carDetails.value.front_camera +
           "&token=" +
           data.token +
-          "&initAction=video_only"; // 根据实际字段调整
+          "&initAction=video_audio"; // 根据实际字段调整
       }
+    console.log("videoUrl", videoUrl.value)
+
     })
     .catch(() => { });
 };
@@ -973,16 +976,7 @@ const handleOper = (type) => {
   operMode.value = type == "mode2";
 };
 
-const changeVal = (value) => {
-  directionCenter.value.current_value = value[1];
-  directionDynamics.value.current_value = value[2];
-  acceleratorDynamics.value.current_value = value[3];
-  carHandler.value.setConfigValue({
-    0: { ...directionCenter.value },
-    2: { ...directionDynamics.value },
-    3: { ...acceleratorDynamics.value },
-  });
-};
+
 
 const set = () => {
   console.log(setVisible.value);
@@ -1024,7 +1018,7 @@ const handleInactivityAlarm = () => {
   }, 1000);
 };
 const { resetTimer, startListening } = useInactivityAlarm(
-  180 * 1000,
+  1800000 * 1000,
   handleInactivityAlarm,
 );
 // 页面触摸事件（小程序主要交互方式）
@@ -1201,11 +1195,11 @@ const initSocket = () => {
   function startMessageTimeout() {
     clearTimeout(messageTimer.value);
     messageTimer.value = setTimeout(() => {
-      console.warn("5秒内未收到消息");
+      console.warn("10秒内未收到消息");
       carStatus.value = false;
       allPopupVisible.value = true;
       type.value = 'offLineTip';
-    }, 1000);
+    }, 10 * 1000);
   }
 
   // 初始启动
@@ -1266,13 +1260,13 @@ const handleFBDrive = (item) => {
 
 // 速度
 const changeConstSpeed = (val) => {
-  console.log(val)
   constSpeed.value = val;
   carHandler.value.handleTwoDirectionControlChannel(
     true,
     "upType",
-    constSpeed.value / 100,
+    constSpeed.value / 100 * throttle.value /100,
   );
+  console.log("定速",constSpeed.value / 100 * throttle.value)
   chValue.value.ch2 = carHandler.value.ch2;
   console.log("定速ch2:", chValue.value.ch2);
 
@@ -1380,16 +1374,17 @@ const throttle = ref(1);
 const dirMiddleVal = ref(0);
 
 const dirMiddleValFunc = (num) => {
-  console.log(num);
+  console.log("dirMiddleValFunc", num);
   const mapNum = createMapperNew(
     1,
     100,
-    directionCenter.value.current_value.mini_value ?? 500,
-    directionCenter.value.current_value.max_value ?? 1500,
+    directionCenter.value.mini_value ?? 500,
+    directionCenter.value.max_value ?? 1500,
     num,
   );
 
   dirMiddleVal.value = mapNum.toFixed(0);
+  console.log("dirMiddleVal.value",dirMiddleVal.value)
 };
 
 const setQualityList = () => {
@@ -1441,22 +1436,40 @@ const selectedIndex = ref(0);
 const handleItem = (index) => {
   selectedIndex.value = index;
 };
+
+// 改变值
+const changeVal = (value) => {
+  // directionCenter.value.current_value = value[1];
+  // directionDynamics.value.current_value = value[2];
+  // acceleratorDynamics.value.current_value = value[3];
+  carHandler.value.setConfigValue({
+    0: { current_value: value[0], max_value: directionCenter.value.max_value },
+    2: { current_value: value[2], max_value: directionDynamics.value.max_value },
+    3: { current_value: value[3], max_value: acceleratorDynamics.value.max_value },
+  });
+
+};
+
 // 是否点击保存
 const saveFlag = ref({ 1: false, 2: false, 3: false });
 const save = (type) => {
   saveFlag.value[type] = true;
 };
 
+// 0: { ...directionCenter.value },
+//     2: { ...directionDynamics.value },
+//     3: { ...acceleratorDynamics.value },
+
 const close = () => {
   const obj = JSON.parse(uni.getStorageSync("carDetails"));
 
   const val = {
-    1: obj.direction_center.current_value,
+    0: obj.direction_center.current_value,
     2: obj.direction_dynamics.current_value,
     3: obj.accelerator_dynamics.current_value,
   };
   if (saveFlag.value[1]) {
-    val[1] = dirMiddleVal.value;
+    val[0] =  dirMiddleVal.value;
   }
   if (saveFlag.value[2]) {
     val[2] = dirTurn.value;
@@ -1470,15 +1483,28 @@ const close = () => {
 // 滑动slider
 const setChangeVal = (flag, value) => {
 
-  const val = value;
+  const obj = JSON.parse(uni.getStorageSync("carDetails"));
+
+  let val = Object.assign({}, { 0: obj.direction_center.current_value,
+    2: obj.direction_dynamics.current_value,
+    3: obj.accelerator_dynamics.current_value,})
+  console.log("滑动slider之前,打印当前值", val)
+ 
   if (flag == 1) {
-    dirMiddleValFunc(val);
-    dirMiddle.value = val;
+    dirMiddleValFunc(value);
+    dirMiddle.value = value;
+    val[0] = dirMiddleVal.value;
+    // 改变方向的中位值
+    chValue.value.ch1 = dirMiddleVal.value;
   } else if (flag == 2) {
-    dirTurn.value = val;
+    dirTurn.value = value;
+    val[2] = value
   } else {
-    throttle.value = val;
+    throttle.value = value;
+    val[3] = value;
   }
+  console.log("滑动slider之后,打印当前值", val)
+  changeVal(val)
 };
 
 const handleAdd = (type) => handleValueChange(type, 1);
@@ -1499,6 +1525,7 @@ const handleValueChange = (type, step) => {
 
   // 第一个滑块
   if (type == 1) {
+    console.log("第一个滑块")
     dirMiddleValFunc(target.value)
     dirMiddle.value = target.value
   }
