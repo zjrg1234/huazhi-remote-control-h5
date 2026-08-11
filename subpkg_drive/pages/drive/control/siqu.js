@@ -28,10 +28,11 @@ export class CarControlHandler {
   }
 
   setConfigValue(obj) {
+    console.log("setConfigValue", obj)
     this.config[0] = obj[0]
     this.config[2] = obj[2]
     this.config[3] = obj[3]
-    console.log(this.config)
+    console.log("this.config", this.config)
   }
 
   // 明天加
@@ -56,7 +57,7 @@ export class CarControlHandler {
     if (isUpDown === true) {
      
       //maxValue = this.getConfigValue(1)?.max_value;
-      centerValue = this.getConfigValue(1)?.current_value;
+      centerValue = this.getConfigValue(1)?.current_value; // accelerator_center
       //minValue = this.getConfigValue(1)?.min_value ; // 计算油门力度比例
       console.log("中位值：",centerValue)
       const acceleratorDynamicsValue =
@@ -90,9 +91,9 @@ export class CarControlHandler {
     } else {
       
       // ==========0,2 左右控制 (方向) ==========
-      maxValue = this.getConfigValue(0)?.max_value;
+    
       centerValue = this.getConfigValue(0)?.current_value;
-      minValue = this.getConfigValue(0)?.min_value; // 计算方向力度比例
+     
 
       const directionDynamicsValue =
         this.getConfigValue(2)?.current_value;

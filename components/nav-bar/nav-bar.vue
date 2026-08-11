@@ -24,7 +24,12 @@ const props = defineProps({
 	url: {
 	  type: String,
 	  default: ''
+	},
+	flag: {
+	  type: String,
+	  default: ''
 	}
+  
 })
 
 const emit = defineEmits(['back'])
@@ -32,10 +37,14 @@ const emit = defineEmits(['back'])
 // 返回事件
 const handleBack = () => {
   emit('back')
-	if(props.url) {
-		history.back();
+	if (props.url) {
+		if (props.flag == 1) {
+			uni.switchTab({ url: props.url })
+		} else {
+			uni.navigateTo({ url: props.url })
+		}
 	} else {
-		 window.location.href = "/index/index"
+		window.location.href = "/pages/index/index"
 	}
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <view class="page">
     <!-- #ifdef H5 -->
-    <NavBar title="我的预约" url="/pages/mine/index"></NavBar>
+    <NavBar title="我的预约" url="/pages/mine/index" flag="1"></NavBar>
     <!-- #endif -->
 
     <!-- #ifdef MP-WEIXIN -->
