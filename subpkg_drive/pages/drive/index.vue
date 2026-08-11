@@ -1207,7 +1207,7 @@ const initSocket = () => {
       carStatus.value = false;
       allPopupVisible.value = true;
       type.value = 'offLineTip';
-    }, 10 * 1000);
+    }, 20 * 1000);
   }
 
   // 初始启动
