@@ -982,6 +982,7 @@ const handleOper = (type) => {
 const set = () => {
   saveFlag.value = { 1: false, 2: false, 3: false }
   setVisible.value = true;
+  showSpeed.value = false;
   handleFBDrive({ fb: false, value: 0 });
   const mapNum = createReverseMapper(
     1,
@@ -1283,7 +1284,6 @@ const changeConstSpeed = (value) => {
 
 // 四驱车 方向左右
 const handleLRDrive = (item) => {
-  showSpeed.value = false;
   let type = "endType";
   let ratioValue = 0;
   showSpeed.value = false;
@@ -1502,6 +1502,7 @@ const close = () => {
   }
   changeVal(val);
   setVisible.value = false;
+  showSpeed.value = true;
 };
 // 滑动slider
 const setChangeVal = (flag, value) => {
@@ -1891,7 +1892,6 @@ const report = (text) => {
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.6);
-
   width: 100%;
 
   .fe {
