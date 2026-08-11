@@ -78,7 +78,7 @@
             <!-- <slider :value="constSpeed" :min="1" :max="100" :step="1" activeColor="#f5c542" backgroundColor="#e9e9e9"
               block-size="6" @change="changeConstSpeed" /> -->
 
-            <SliderComp v-model="constSpeed" :min="1" :max="100"
+            <SliderComp v-model="constSpeed" :min="1" :max="100" height="30px"
               @change="changeConstSpeed">
             </SliderComp>
 
@@ -948,6 +948,7 @@ const handlePopupAction = (val) => {
         console.log(res);
         if (res.code == 2000 || res.code == 200) {
           uni.showToast({ title: res.msg, icon: "none" });
+          console.log("电池电量",batteryPer.value)
           UpdateBattery({
             vehicle_id: vehicleId.value,
             vehicle_battery: batteryPer.value
@@ -981,9 +982,9 @@ const handleOper = (type) => {
 const set = () => {
   console.log(setVisible.value);
   setVisible.value = true;
-  showSpeed.value = false;
+
   handleFBDrive({ fb: false, value: 0 });
-  handleIcon("speed");
+  // handleIcon("speed");
 
   const mapNum = createReverseMapper(
     1,
@@ -1237,7 +1238,7 @@ const initSendLoop = () => {
 // 四驱车 前进后退
 const handleFBDrive = (item) => {
   console.log(item);
-  showSpeed.value = false;
+ 
   let type = "";
   let ratioValue = 0;
   if (item.fb == true) {
@@ -1259,24 +1260,27 @@ const handleFBDrive = (item) => {
 };
 
 // 速度
-const changeConstSpeed = (val) => {
-  constSpeed.value = val;
+const changeConstSpeed = (value) => {
+  // 算速度  1-100 对应1-设置的油门力度  1 + (value - 1) * (45 - 1) / (100 - 1);
+  const zhuanhuanVal = 1 + (value - 1) * (throttle.value - 1) / (100 - 1);
+  console.log("转换值",zhuanhuanVal)
+  // constSpeed.value = value;
   carHandler.value.handleTwoDirectionControlChannel(
     true,
     "upType",
-    constSpeed.value / 100 * throttle.value /100,
+    zhuanhuanVal / throttle.value,
   );
-  console.log("定速",constSpeed.value / 100 * throttle.value)
+  console.log("定速",zhuanhuanVal / throttle.value)
   chValue.value.ch2 = carHandler.value.ch2;
   console.log("定速ch2:", chValue.value.ch2);
-
 };
 
-// 四驱车 左右
+// 四驱车 方向左右
 const handleLRDrive = (item) => {
   showSpeed.value = false;
   let type = "endType";
   let ratioValue = 0;
+  showSpeed.value = false;
   if (item.lr == true) {
     ratioValue = mapToPer(Math.abs(item.value));
     type = "leftType";
@@ -1813,15 +1817,12 @@ const report = (text) => {
 
   .num {
     position: absolute;
-
-    top: 10px;
-
+    top: 15px;
     left: 0;
     transform: translateX(-50%);
     color: #fff;
-    font-size: 13px;
+    font-size: 10px;
     white-space: nowrap;
-
     border-radius: 14px;
     overflow: visible;
     transition: left 0.1s ease;
@@ -1834,12 +1835,13 @@ const report = (text) => {
   .slider-label-bottom {
     display: flex;
     justify-content: space-between;
-    margin-top: 4px;
+    margin-top: 1px;
+    padding: 0 15px;
   }
 
   .slider-label-bottom .num-text {
     color: rgba(255, 255, 255, 0.8);
-    font-size: 12px;
+    font-size: 10px;
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
   }
 }

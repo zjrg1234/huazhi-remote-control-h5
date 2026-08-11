@@ -2,7 +2,7 @@
   <cover-view>
     <cover-view
       class="cover-slider"
-      :style="{ width: width }"
+      :style="{ width: width ,height: height}"
       :class="{ 'cover-slider-disabled': disabled }"
       @touchstart.stop="onTouchStart"
       @touchmove.stop="onTouchMove"
@@ -32,6 +32,7 @@ const props = defineProps({
   max: { type: Number, default: 100 },
   disabled: { type: Boolean, default: false },
   width: { type: String, default: "100%" },
+  height: { type: String, default: "40px"}
 });
 
 const emit = defineEmits(["update:modelValue", "change"]);
