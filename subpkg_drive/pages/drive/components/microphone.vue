@@ -57,11 +57,11 @@ const emit = defineEmits(["action"]);
 
 // 停止波纹（清除定时器）
 const stopRipple = () => {
-  if (timer) {
-    clearInterval(timer);
-    timer = null;
-  }
+  console.log(123)
+  show.value = !show.value
+  emit("action", show.value)
 };
+
 
 // 触发水波纹的核心方法
 const createRipple = (clientX, clientY) => {
@@ -89,27 +89,38 @@ const createRipple = (clientX, clientY) => {
       });
 
       // 2. 延迟一帧触发 CSS 扩散动画
-      setTimeout(() => {
+      const timer1 = setTimeout(() => {
         const rippleObj = ripples.value.find((r) => r.id === id);
         if (rippleObj) {
           rippleObj.opacity = 0;
         }
+        clearTimeout(timer1)
       }, 16);
 
       // 3. 动画结束后自动清理节点，防止内存泄漏
-      setTimeout(() => {
-        show.value = !show.value
-        emit("action", show.value)
+      const timer2 = setTimeout(() => {
+        clearTimeout(timer2)
         ripples.value = ripples.value.filter((r) => r.id !== id);
       }, 1500); // 对应 CSS 中的 1.2s 动画时间
     })
     .exec();
 };
 
+
+let lastTouchTime = 0;
+const THROTTLE_DELAY = 500;
+
 // 触摸按下：立即触发一次，并开启定时器持续触发
 const handleTouchStart = (event) => {
+
+   const now = Date.now();
+  if (now - lastTouchTime < THROTTLE_DELAY) return;
+  lastTouchTime = now;
   // 停止之前的定时器（防止快速连点导致定时器叠加）
-  stopRipple();
+  if (timer) {
+    clearInterval(timer);
+    timer = null;
+  }
 
   const touch = event.touches[0];
   const x = touch.clientX;

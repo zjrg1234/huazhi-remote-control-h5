@@ -52,9 +52,9 @@
       <cover-view class="side-menu-icon">
         <microphone @action="handleMic"></microphone>
         <cover-image class="image sound" v-show="!showSound" :style="{ display: !showSound ? 'block' : 'none' }"
-          src="./static/icon_sound_close@2x.png" @click="handleSound(true, 0)" mode="aspectFit" />
+          src="./static/icon_sound_close@2x.png" @click="handleSound(true)" mode="aspectFit" />
         <cover-image class="image sound" v-show="showSound" :style="{ display: showSound ? 'block' : 'none' }"
-          src="./static/icon_sound_open@2x.png" @click="handleSound(false, 0)" mode="aspectFit" />
+          src="./static/icon_sound_open@2x.png" @click="handleSound(false)" mode="aspectFit" />
       </cover-view>
 
       <!-- 右侧菜单 -->
@@ -671,6 +671,8 @@ const menuList = computed(() => {
   ];
 });
 
+
+const videoUrlVal = ref();
 // 计费定时器
 let sendMsgTimer = null;
 let billingTimer = null;
@@ -702,19 +704,19 @@ const clearAllTimers = () => {
 };
 
 const handleMic = (val) => {
-  handleSound(!val, 1)
+  // val false 是打开 true 是关闭
+  videoUrlVal.value.searchParams.set('micVal', !val ? '1': '0');
+  videoUrl.value = videoUrlVal.value.toString()
+
+  console.log( videoUrl.value)
+
 }
-// 处理音频
-const handleSound = (val, type) => {
-  if (type == 0) {
-    showSound.value = val;
-  }
-  let newInitAction = "video_audio";
-  if (!val) {
-    newInitAction = "video_only"
-  }
-  videoUrl.value = videoUrl.value.replace(/([?&])initAction=[^&]*/, '&initAction=' + newInitAction);
-  console.log(videoUrl.value, "videoUrl")
+// 处理音频 扬声器
+const handleSound = (val) => {
+  showSound.value = !!val;
+  videoUrlVal.value.searchParams.set('openSpeaker', val ?  '1' : '0');
+  videoUrl.value = videoUrlVal.value.toString()
+  console.log( videoUrl.value)
 }
 
 // 结束驾驶逻辑
@@ -802,15 +804,25 @@ const GetDeviceInfo = (data) => {
   DeviceDetails({ ...data })
     .then((res) => {
       if (res.data?.rows?.length) {
-        videoUrl.value =
-          "https://xyvision.top:8028/?device_id=" +
-          carDetails.value.front_camera +
-          "&token=" +
-          data.token +
-          "&initAction=video_audio"; // 根据实际字段调整
-      }
-    console.log("videoUrl", videoUrl.value)
+        videoUrlVal.value = new URL('https://xyvision.top:8028/');
+        videoUrlVal.value.searchParams.set('device_id', carDetails.value.front_camera);
+        videoUrlVal.value.searchParams.set('token', data.token);
+        videoUrlVal.value.searchParams.set('initAction', 'video_audio');
+        videoUrlVal.value.searchParams.set('micVal', '0');
+        videoUrlVal.value.searchParams.set('openSpeaker', '0');
+        videoUrlVal.value.searchParams.set('resRatio', Number(carDetails.value.default_camera_clarity) - 1);
+        videoUrlVal.value.searchParams.set('_t', Date.now().toString());
 
+        videoUrl.value = videoUrlVal.value.toString();
+
+
+        // videoUrl.value =
+        //   "https://xyvision.top:8028/?device_id=" +
+        //   carDetails.value.front_camera +
+        //   "&token=" +
+        //   data.token +
+        //   "&initAction=video_audio"; // 根据实际字段调整
+      }
     })
     .catch(() => { });
 };
@@ -1430,8 +1442,9 @@ const setHandleOper = (type, val) => {
 };
 
 const handleSelect = (value) => {
-  console.log("点击清晰度");
   currentQuality.value = value;
+  videoUrlVal.value.searchParams.set('resRatio', Number(value) - 1);
+  videoUrl.value = videoUrlVal.value.toString()
 };
 
 const selectedMode = ref("mode1");
