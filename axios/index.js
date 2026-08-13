@@ -94,3 +94,8 @@ export function UpdateBattery(data) {
 export function CancelReservation(data) {
   return post("/api/user/cancel/reservation", data);
 }
+
+// 获取公告
+export function GetNotice(data) {
+  return post("/api/user/notice", data);
+}

@@ -129,6 +129,15 @@
       <text v-else-if="noMore">没有更多了</text>
     </view> -->
     </scroll-view>
+
+
+    <NoticePopup
+      v-model="showNotice"
+      title="公告"
+      :content="noticeContent"
+      :is-rich-text="false"
+
+    />
   </view>
 </template>
 
@@ -136,9 +145,9 @@
 import { ref, nextTick } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
 import { throttle } from "@/utils/system.js"; // 引用封装好的节流函数
-import { GetHomeBanner, GetHomeTabTitle, GetHomeDataList } from "@/axios/index";
+import { GetHomeBanner, GetHomeTabTitle, GetHomeDataList, GetNotice } from "@/axios/index";
 
-
+import NoticePopup from '@/components/notice-popup/notice-popup.vue';
 import SkeletonCard from '@/components/skeleton-card/skeleton-card.vue'
 
 // --- 数据定义 ---
@@ -152,6 +161,10 @@ const loading = ref(false);
 const noMore = ref(false);
 const imgUrl = ref("");
 const isRefreshing = ref(false); // ✅ 控制刷新状态
+
+
+const showNotice = ref(false);
+const noticeContent = ref('');
 
 // --- 模拟接口请求 ---
 const fetchData = async (isRefresh = false) => {
@@ -222,7 +235,22 @@ onLoad(() => {
   GetHomeBanner().then((res) => { imgUrl.value = res.data[0]?.image; }).catch(() => {});
   GetHomeTabTitle().then((res) => { categories.value = [...categories.value, ...res.data]; }).catch(() => {});
   fetchData();
-});
+
+  getNotice()
+})
+
+
+const getNotice = () => {
+
+  GetNotice().then(res => {
+    if(res.data && res.data.status == 1){
+      showNotice.value = true
+      noticeContent.value = res.data.content
+    }
+  }).catch()
+}
+
+
 </script>
 
 <style lang="scss" scoped>
