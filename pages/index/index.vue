@@ -149,7 +149,7 @@ import { GetHomeBanner, GetHomeTabTitle, GetHomeDataList, GetNotice } from "@/ax
 
 import NoticePopup from '@/components/notice-popup/notice-popup.vue';
 import SkeletonCard from '@/components/skeleton-card/skeleton-card.vue'
-
+import { shouldFetchNotice, resetNoticeFlag } from '@/utils/notice';
 // --- 数据定义 ---
 const categories = ref([]);
 const currentCategory = ref("");
@@ -165,8 +165,9 @@ const isRefreshing = ref(false); // ✅ 控制刷新状态
 
 const showNotice = ref(false);
 const noticeContent = ref('');
+const isLoggedIn = ref(!!uni.getStorageSync('token'));
 
-// --- 模拟接口请求 ---
+
 const fetchData = async (isRefresh = false) => {
   if (loading.value || noMore.value) return;
 
@@ -235,8 +236,10 @@ onLoad(() => {
   GetHomeBanner().then((res) => { imgUrl.value = res.data[0]?.image; }).catch(() => {});
   GetHomeTabTitle().then((res) => { categories.value = [...categories.value, ...res.data]; }).catch(() => {});
   fetchData();
-
+if (shouldFetchNotice(isLoggedIn.value)) { 
   getNotice()
+
+}
 })
 
 
@@ -247,7 +250,9 @@ const getNotice = () => {
       showNotice.value = true
       noticeContent.value = res.data.content
     }
-  }).catch()
+  }).catch(() => {
+     resetNoticeFlag();
+  })
 }
 
 

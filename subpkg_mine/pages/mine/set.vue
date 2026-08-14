@@ -56,17 +56,12 @@
 import { ref, onMounted } from 'vue'
 import CustomModal from '@/components/common-modal/common-modal.vue'
 import { logoutAccount } from "@/axios/mine.js"
+import { resetNoticeFlag } from '@/utils/notice';
 const cacheSize = ref('34.23kb')
 const logoutModal = ref(false)
 // 模拟获取缓存大小
 onMounted(() => {
-  // 实际项目中可通过 uni.getStorageInfo 获取
-  // uni.getStorageInfo({
-  //   success: (res) => {
-  //     const sizeKB = (res.currentSize / 1024).toFixed(2)
-  //     cacheSize.value = `${sizeKB}kb`
-  //   }
-  // })
+
 })
 
 // 事件处理函数
@@ -117,7 +112,14 @@ const handleDeleteAccount = () => {
 }
 const handleConfirm = () => {
   logoutAccount().then(res => {
+    uni.removeStorageSync('token')
+    uni.removeStorageSync('userInfo')
     uni.showToast({ title: '注销成功', icon: 'success' });
+
+    const timer = setTimeout(() => {
+      uni.reLaunch({ url: '/subpkg_login/pages/login/login' })
+      clearTimeout(timer)
+    }, 1500)
     // 回到首页
   }).catch();
 }
@@ -127,6 +129,7 @@ const handleLogout = () => {
     content: '确定要退出登录吗？',
     success: (res) => {
       if (res.confirm) {
+        resetNoticeFlag()
         // 清除登录状态
         uni.removeStorageSync('token')
         uni.removeStorageSync('userInfo')
