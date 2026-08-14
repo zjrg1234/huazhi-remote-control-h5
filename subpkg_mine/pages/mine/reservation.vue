@@ -303,7 +303,7 @@ page {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 60px;
+  height: 100rpx;
   width: 100%;
 
   .refresh-text {
