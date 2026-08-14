@@ -8,17 +8,19 @@
     >
       <cover-view class="cont">
         <!-- 轨迹背景圈 -->
-        <cover-view class="track-bg"></cover-view>
+        <cover-view class="track-bg">
+          <cover-image src="../static/btn_directional.png"></cover-image>
+        </cover-view>
 
         <!-- 四个方向箭头 -->
-        <cover-view class="arrow up" :class="{ active: isUpActive }">
+        <!-- <cover-view class="arrow up" :class="{ active: isUpActive }">
           <cover-image class="image" src="../static/btn_up2@2x.png" />
         </cover-view>
         <cover-view class="arrow down" :class="{ active: isDownActive }">
           <cover-image class="image" src="../static/btn_down2@2x.png" />
         </cover-view>
         <cover-view class="arrow left" :class="{ active: isLeftActive }"></cover-view>
-        <cover-view class="arrow right" :class="{ active: isRightActive }"></cover-view>
+        <cover-view class="arrow right" :class="{ active: isRightActive }"></cover-view> -->
 
         <!-- 摇杆圆点（居中） -->
         <cover-view
@@ -194,22 +196,28 @@ const handleClick = (val) => {
 </script>
 
 <style lang="scss" scoped>
-.control-box {
+
+.control-wrapper {
   position: fixed;
   left: 55px;
   bottom: 40px;
-  width: 175px;
+  width: 265px;
   height: 175px;
   z-index: 9999;
+}
+.control-box {
+  position: absolute;
+
+  width: 175px;
+  height: 175px;
   user-select: none;
   touch-action: none;
-
 }
 
 .up-down-arrow {
-  position: fixed;
-  left: 230px;
-  bottom: 78px;
+  position: absolute;
+  left: 190px;
+  top: 45px;
   z-index: 9999;
   text-align: center;
 
@@ -243,10 +251,9 @@ const handleClick = (val) => {
     width: 128px;
     height: 128px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px dashed rgba(255, 255, 255, 0.2);
+
     pointer-events: none;
-    z-index: 0;
+
   }
 
   /* 箭头通用 */
@@ -336,7 +343,7 @@ const handleClick = (val) => {
     border-radius: 50%;
 
     z-index: 2;
-    border: 2px solid rgba(255, 255, 255, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.3);
 
     &.ready {
       box-shadow: 0 0 12px rgba(255, 167, 38, 0.8);

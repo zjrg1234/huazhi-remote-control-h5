@@ -36,7 +36,7 @@ const props = defineProps({
   isLeft: { type: Boolean, default: true },
 });
 
-const IDLE_DELAY = 200;
+const IDLE_DELAY = 300;
 const SWIPE_THRESHOLD = 20;
 const MAX_DOT_DRAG = 40;
 

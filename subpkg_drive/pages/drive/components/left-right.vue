@@ -48,7 +48,7 @@ const props = defineProps({
 });
 
 // 配置参数
-const IDLE_DELAY = 400;
+const IDLE_DELAY = 300;
 const SWIPE_THRESHOLD = 20;
 const MAX_DOT_DRAG = 40;
 const BOX_WIDTH = 180;

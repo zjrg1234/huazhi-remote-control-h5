@@ -93,8 +93,8 @@
       <LeftRight @action="handleLRDrive" v-show="carType == 1" :isLeft="operMode"></LeftRight>
       <UpDown @action="handleFBDrive" v-show="carType == 1" :isLeft="!operMode"></UpDown>
 
-      <ExLeft @action="handleLeftDrive" @action2="handleDrive" v-show="carType == 3"></ExLeft>
-      <ExRight @action="handleRightDrive" @action2="handleDrive" v-show="carType == 3"></ExRight>
+      <ExLeft @action="handleLeftDrive" @action2="handleDrive" v-show="carType == 3" ></ExLeft>
+      <ExRight @action="handleRightDrive" @action2="handleDrive" v-show="carType == 3" :mode="operMode"></ExRight>
       <!-- <pointOprea1 @action="handleLeftDrive" v-if="carType == 3"></pointOprea1> -->
       <!-- <pointOprea2 @action="handleRightDrive" v-if="carType == 3"></pointOprea2> -->
 
@@ -705,18 +705,15 @@ const clearAllTimers = () => {
 
 const handleMic = (val) => {
   // val false 是打开 true 是关闭
-  videoUrlVal.value.searchParams.set('micVal', !val ? '1': '0');
-  videoUrl.value = videoUrlVal.value.toString()
-
-  console.log( videoUrl.value)
+  videoUrl.value = videoUrl.value.replace(/micVal=\d+/, `micVal=${!val ? '1': '0'}`);
+  console.log("静音", videoUrl.value)
 
 }
 // 处理音频 扬声器
 const handleSound = (val) => {
   showSound.value = !!val;
-  videoUrlVal.value.searchParams.set('openSpeaker', val ?  '1' : '0');
-  videoUrl.value = videoUrlVal.value.toString()
-  console.log( videoUrl.value)
+  videoUrl.value = videoUrl.value.replace(/openSpeaker=\d+/, `openSpeaker=${val ? '1': '0'}`);
+  console.log("扬声器", videoUrl.value)
 }
 
 // 结束驾驶逻辑
@@ -804,17 +801,12 @@ const GetDeviceInfo = (data) => {
   DeviceDetails({ ...data })
     .then((res) => {
       if (res.data?.rows?.length) {
-        videoUrlVal.value = new URL('https://vedioafz.fzbkapp.com/');
-        videoUrlVal.value.searchParams.set('device_id', carDetails.value.front_camera);
-        videoUrlVal.value.searchParams.set('token', data.token);
-        videoUrlVal.value.searchParams.set('initAction', 'video_audio');
-        videoUrlVal.value.searchParams.set('micVal', '0');
-        videoUrlVal.value.searchParams.set('openSpeaker', '0');
-        videoUrlVal.value.searchParams.set('resRatio', Number(carDetails.value.default_camera_clarity) - 1);
-        videoUrlVal.value.searchParams.set('_t', Date.now().toString());
+        
+        const base = 'https://vedioafz.fzbkapp.com/';
+        const query = `?device_id=${encodeURIComponent(carDetails.value.front_camera)}&token=${encodeURIComponent(data.token)}&initAction=video_audio&micVal=0&openSpeaker=0&resRatio=${ Number(carDetails.value.default_camera_clarity) - 1}&_t=${Date.now()}`;
+        videoUrl.value = base + query;
 
-        videoUrl.value = videoUrlVal.value.toString();
-
+        console.log("请求接口之后的url:", videoUrl.value)
 
         // videoUrl.value =
         //   "https://xyvision.top:8028/?device_id=" +
@@ -1113,7 +1105,6 @@ const initRouteData = (options) => {
   } else {
     console.log("carDetails 空");
   }
-
 };
 
 const initVehicleConfig = () => {
@@ -1443,8 +1434,8 @@ const setHandleOper = (type, val) => {
 
 const handleSelect = (value) => {
   currentQuality.value = value;
-  videoUrlVal.value.searchParams.set('resRatio', Number(value) - 1);
-  videoUrl.value = videoUrlVal.value.toString()
+  videoUrl.value = videoUrl.value.replace(/resRatio=\d+/, `resRatio=${Number(value) - 1}`);
+  uni.showToast({title: "切换成功", icon:"none"})
 };
 
 const selectedMode = ref("mode1");
@@ -1509,7 +1500,10 @@ const close = () => {
   }
   changeVal(val);
   setVisible.value = false;
-  showSpeed.value = true;
+
+  if(carType.value == 1) {
+    showSpeed.value = true;
+  }
 };
 // 滑动slider
 const setChangeVal = (flag, value) => {

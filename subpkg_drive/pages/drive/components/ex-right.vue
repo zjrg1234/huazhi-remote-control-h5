@@ -1,90 +1,56 @@
 <template>
   <cover-view class="control-wrapper">
-    <cover-view
-      class="control-box"
-      @touchstart.prevent="handleStart"
-      @touchmove.prevent="handleMove"
-      @touchend.prevent="handleEnd"
-    >
+    <cover-view class="control-box" @touchstart.prevent="handleStart" @touchmove.prevent="handleMove"
+      @touchend.prevent="handleEnd">
       <cover-view class="cont">
         <!-- 轨迹背景圈 -->
-        <cover-view class="track-bg"></cover-view>
+        <cover-view class="track-bg">
+          <cover-image src="../static/btn_bg.png"></cover-image>
+        </cover-view>
 
         <!-- 四个方向箭头 -->
-        <cover-view class="arrow up" :class="{ active: isUpActive }">
-          <cover-image
-            class="cover-image"
-            src="/static/cover-images/btn_up1@2x.png"
-        
-          ></cover-image>
+        <!-- <cover-view class="arrow up" :class="{ active: isUpActive }">
+          <cover-image class="image" src="../static/btn_up1@2x.png"></cover-image>
         </cover-view>
         <cover-view class="arrow down" :class="{ active: isDownActive }">
-          <cover-image
-            class="cover-image"
-            src="/static/cover-images/btn_down1@2x.png"
-  
-          ></cover-image>
+          <cover-image class="image" src="../static/btn_down1@2x.png"></cover-image>
         </cover-view>
         <cover-view class="arrow left" :class="{ active: isLeftActive }">
-          <cover-image
-            class="cover-image"
-            src="/static/cover-images/btn_bucket_down@2x.png"
-         
-          ></cover-image>
+          <cover-image class="image" src="../static/btn_bucket_down@2x.png"></cover-image>
         </cover-view>
         <cover-view class="arrow right" :class="{ active: isRightActive }">
-          <cover-image
-            class="cover-image"
-            src="/static/cover-images/btn_bucket_up@2x.png"
-      
-          ></cover-image>
-        </cover-view>
+          <cover-image class="image" src="../static/btn_bucket_up@2x.png"></cover-image>
+        </cover-view> -->
 
         <!-- 摇杆圆点 -->
-        <cover-view
-          class="dot"
-          :class="{ ready: isReadyMode }"
-          :style="dotStyle"
-        ></cover-view>
+        <cover-view class="dot" :class="{ ready: isReadyMode }" :style="dotStyle"></cover-view>
       </cover-view>
     </cover-view>
 
-    <cover-view class="up-down-arrow" v-show="!mode">
+    <cover-view class="up-down-arrow" v-show="!mode" :style="{ display: !mode ? 'block' : 'none' }">
       <cover-view class="arrow1 up" :class="{ active: isUpActive }">
-        <cover-image
-          class="cover-image"
-          src="/static/cover-images/btn_up_ex@2x.png"
-          @touchend.prevent="handleClick('up')"
-          mode="aspectFit"
-        ></cover-image>
+        <cover-image class="image" src="../static/btn_up_ex@2x.png" @touchend.prevent="handleClick('up')"
+          mode="aspectFit"></cover-image>
       </cover-view>
       <cover-view class="arrow1 down" :class="{ active: isUpActive }">
-        <cover-image
-          class="cover-image"
-          src="/static/cover-images/btn_down_ex@2x.png"
-          mode="aspectFit"
-          @touchend.prevent="handleClick('down')"
-        ></cover-image>
+        <cover-image class="image" src="../static/btn_down_ex@2x.png" mode="aspectFit"
+          @touchend.prevent="handleClick('down')"></cover-image>
       </cover-view>
     </cover-view>
 
-    <cover-view class="up-down-arrow flex" v-if="mode">
-      <cover-view class="arrow1 up" :class="{ active: isUpActive }">
-        <cover-image
-          class="cover-image"
-          src="/static/cover-images/btn_up_ex@2x.png"
-          @touchend.prevent="handleClick('up')"
-          mode="aspectFit"
-        ></cover-image>
+    <cover-view class="up-up-arrow" v-show="mode" :style="{ display: mode ? 'block' : 'none' }">
+
+      <cover-view class="flex">
+        <cover-view class="arrow1 up" :class="{ active: isUpActive }">
+          <cover-image class="image" src="../static/btn_up_ex@2x.png" @touchend.prevent="handleClick('up')"
+            mode="aspectFit"></cover-image>
+        </cover-view>
+        <cover-view class="arrow1 up" :class="{ active: isUpActive }">
+          <cover-image class="image" src="../static/btn_up_ex@2x.png" mode="aspectFit"
+            @touchend.prevent="handleClick('down')"></cover-image>
+        </cover-view>
       </cover-view>
-      <cover-view class="arrow1 up" :class="{ active: isUpActive }">
-        <cover-image
-          class="cover-image"
-          src="/static/cover-images/btn_up_ex@2x.png"
-          mode="aspectFit"
-          @touchend.prevent="handleClick('down')"
-        ></cover-image>
-      </cover-view>
+
     </cover-view>
   </cover-view>
 </template>
@@ -255,27 +221,53 @@ const handleClick = (val) => {
 </script>
 
 <style lang="scss" scoped>
-
-
-.control-box {
+.control-wrapper {
   position: fixed;
-  right: 55px;
+  right: 85px;
   bottom: 40px;
-  width: 175px;
+  width: 265px;
   height: 175px;
   z-index: 9999;
+}
+
+.control-box {
+  position: absolute;
+  right: 0;
+  width: 175px;
+  height: 175px;
   user-select: none;
   touch-action: none;
+}
+
+.up-up-arrow {
+  position: absolute;
+  left: 0;
+  top: 70px;
+  z-index: 9999;
+  height: 175px;
+  text-align: center;
+  width: 90px;
+  .arrow1 {
+    width: 36px;
+    height: 36px;
+
+    .image {
+      display: block;
+      width: 36px;
+      height: 36px;
+    }
+  }
 
 }
 
 .up-down-arrow {
-  position: fixed;
-  right: 230px;
-  bottom: 78px;
+  position: absolute;
+  left: 40px;
+  top: 45px;
   z-index: 9999;
+  height: 175px;
   text-align: center;
-
+  width: 90px;
   .arrow1 {
     width: 36px;
     height: 36px;
@@ -306,10 +298,7 @@ const handleClick = (val) => {
     width: 128px;
     height: 128px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px dashed rgba(255, 255, 255, 0.2);
     pointer-events: none;
-    z-index: 0;
   }
 
   /* 箭头通用 */
@@ -356,18 +345,9 @@ const handleClick = (val) => {
     top: 50%;
     transform: translateY(-50%);
     left: 25px;
-    width: 0;
-    height: 0;
-    border-top: 12.5px solid transparent;
-    border-bottom: 12.5px solid transparent;
-    border-right: 21.65px solid #ffcc66;
-    background: none;
+   
 
-    &.active {
-      border-right-color: #ffa726;
-      filter: drop-shadow(0 0 6px rgba(255, 167, 38, 0.9));
-      transform: translateY(-50%) scale(1.2);
-    }
+
   }
 
   .arrow.right {
@@ -375,18 +355,6 @@ const handleClick = (val) => {
     top: 50%;
     transform: translateY(-50%);
     right: 25px;
-    width: 0;
-    height: 0;
-    border-top: 12.5px solid transparent;
-    border-bottom: 12.5px solid transparent;
-    border-left: 21.65px solid #ffcc66;
-    background: none;
-
-    &.active {
-      border-left-color: #ffa726;
-      filter: drop-shadow(0 0 6px rgba(255, 167, 38, 0.9));
-      transform: translateY(-50%) scale(1.2);
-    }
   }
 
   /* 摇杆圆点 — 居中 */
@@ -399,7 +367,7 @@ const handleClick = (val) => {
     border-radius: 50%;
 
     z-index: 2;
-    border: 2px solid rgba(255, 255, 255, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.3);
 
     &.ready {
       box-shadow: 0 0 12px rgba(255, 167, 38, 0.8);
@@ -411,7 +379,5 @@ const handleClick = (val) => {
 .flex {
   display: flex;
   justify-content: space-between;
-  width: 100px;
-  bottom: 110px;
 }
 </style>
