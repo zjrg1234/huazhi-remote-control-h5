@@ -804,7 +804,7 @@ const GetDeviceInfo = (data) => {
   DeviceDetails({ ...data })
     .then((res) => {
       if (res.data?.rows?.length) {
-        videoUrlVal.value = new URL('https://xyvision.top:8028/');
+        videoUrlVal.value = new URL('https://vedioafz.fzbkapp.com/');
         videoUrlVal.value.searchParams.set('device_id', carDetails.value.front_camera);
         videoUrlVal.value.searchParams.set('token', data.token);
         videoUrlVal.value.searchParams.set('initAction', 'video_audio');
@@ -1485,22 +1485,16 @@ const changeVal = (value) => {
 const saveFlag = ref({ 1: false, 2: false, 3: false });
 const save = (type) => {
   saveFlag.value[type] = true;
+  uni.showToast({title: "保存成功", icon:"none"})
 };
 
-// 0: { ...directionCenter.value },
-//     2: { ...directionDynamics.value },
-//     3: { ...acceleratorDynamics.value },
-
 const close = () => {
- 
-  
   const val = {
     0: carDetails.value.direction_center.current_value,
     2: carDetails.value.direction_dynamics.current_value,
     3: carDetails.value.accelerator_dynamics.current_value,
   };
-  // 关闭弹窗 如果保存 就保存 不保存回到最chu值
-  console.log( dirMiddleVal.value ," dirMiddleVal.value ")
+
   if (saveFlag.value[1]) {
     val[0] = dirMiddleVal.value;
     saveVal.value[1] = dirMiddleVal.value;

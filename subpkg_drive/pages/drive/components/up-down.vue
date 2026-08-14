@@ -105,9 +105,9 @@ const backLeftInit = () => {
   wrapperStyle.bottom = '40px';
   delete wrapperStyle.right; // 确保不冲突
 
-  currentBoxX.value = 40;
+  currentBoxX.value = 120;
   currentBoxY.value = 85;
-  originX = 40;
+  originX = 120;
   originY = 85;
 };
 
