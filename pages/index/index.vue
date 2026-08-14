@@ -6,7 +6,7 @@
     </view>
 
     <!-- 分类导航栏 (Sticky 吸顶 + 横向滚动) -->
-<view class="nav">
+    <view class="nav">
      <view class="sticky-nav-wrapper">
       <scroll-view
         scroll-x

@@ -291,4 +291,23 @@ const copyOrderNo = (text) => {
   font-size: 24rpx;
   color: #999;
 }
+
+	.empty-box {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		padding: 150rpx 0;
+
+		.empty-img {
+      display: block;
+			width: 70%;
+			height: 100%;
+		}
+		.empty-text {
+			margin-top: 20rpx;
+			font-size: 26rpx;
+			color: #999;
+		}
+	}
 </style>
