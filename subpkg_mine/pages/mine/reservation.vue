@@ -321,7 +321,7 @@ page {
 .item {
   background: #fff;
   border-radius: 16rpx;
-  padding: 20rpx;
+  padding: 20rpx 20rpx 0 20rpx;
   position: relative;
   overflow: hidden;
 
@@ -348,17 +348,17 @@ page {
       font-family: PingFangSC, PingFang SC;
       font-weight: 500;
       font-size: 28rpx;
-      color: $uni-color-1;
+      color: #1A1A1A;
     }
   }
 
   .info-line {
     display: flex;
     align-items: center;
-    margin: 10rpx 0;
+    margin-bottom: 20rpx;
 
     .label {
-      font-family: PingFangSC, PingFang SC;
+     font-family: PingFangSC, PingFang SC;
       font-weight: 400;
       font-size: 24rpx;
       color: #777777;
@@ -368,8 +368,8 @@ page {
       font-family: PingFangSC, PingFang SC;
       font-weight: 400;
       font-size: 24rpx;
-      color: $uni-color-1;
-      margin-left: 8rpx;
+      margin-left: 10rpx;
+      color: #1A1A1A;
     }
 
     .copy-icon {
