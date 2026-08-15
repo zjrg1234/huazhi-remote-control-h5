@@ -1,239 +1,150 @@
 <template>
-  <cover-view
-    class="control-wrapper"
-    ref="wrapperRef"
-    :style="wrapperStyle"
-    @touchstart="handleWrapperStart"
-    @touchmove="handleWrapperMove"
-    @touchend="handleWrapperEnd"
-    @mousedown="handleWrapperStart"
-    @mousemove="handleWrapperMove"
-    @mouseup="handleWrapperEnd"
-  >
-    <cover-view
-      class="control-box"
-      ref="boxRef"
-      :style="{
-        transform: `translate3d(${boxX}px, ${boxY}px, 0)`,
-        transition: boxTransition
-      }"
-      @touchstart.stop="handleStart"
-      @touchmove.stop="handleMove"
-      @touchend="handleEnd"
-      @mousedown.stop="handleStart"
-    >
-      <cover-image class="arrow left" src="../static/arrow_left_big@2x.png"
+  <cover-view class="control-wrapper" ref="wrapperRef" :style="wrapperStyle">
+    <cover-view class="control-box" @touchstart.prevent="handleStart" @touchmove.prevent="handleMove"
+      @touchend.prevent="handleEnd">
+      <cover-view class="cont">
+        <!-- 轨迹背景圈 -->
+        <cover-view class="track-bg">
+          
+        </cover-view>
+
+        <!-- 四个方向箭头 -->
+        <!-- <cover-view class="arrow up" :class="{ active: isUpActive }">
+          <cover-image class="image" src="../static/btn_up1@2x.png"></cover-image>
+        </cover-view>
+        <cover-view class="arrow down" :class="{ active: isDownActive }">
+          <cover-image class="image" src="../static/btn_down1@2x.png"></cover-image>
+        </cover-view>
+        <cover-view class="arrow left" :class="{ active: isLeftActive }">
+          <cover-image class="image" src="../static/btn_bucket_down@2x.png"></cover-image>
+        </cover-view>
+        <cover-view class="arrow right" :class="{ active: isRightActive }">
+          <cover-image class="image" src="../static/btn_bucket_up@2x.png"></cover-image>
+        </cover-view> -->
+
+           <cover-image class="arrow left" src="../static/arrow_left_big@2x.png"
         :class="{ active: isLeftActive }"></cover-image>
 
-      <cover-image class="dot" ref="dotRef" :class="{ ready: isReadyMode }" src="../static/dot@2x.png" :style="{
-        transition: isDragging || isWrapperDragging ? 'none' : 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease, box-shadow 0.3s ease',
-        transform: `translateX(${dotX}px) scale(1)`
-      }"></cover-image>
-
-      <cover-image class="arrow right" src="../static/arrow_right_big@2x.png"
+         <cover-image class="arrow right" src="../static/arrow_right_big@2x.png"
         :class="{ active: isRightActive }"></cover-image>
+        <!-- 摇杆圆点 -->
+        <cover-view class="dot" :class="{ ready: isReadyMode }" :style="dotStyle">
+
+           <cover-image  src="../static/dot@2x.png"></cover-image>
+        </cover-view>
+      </cover-view>
     </cover-view>
+
+ 
   </cover-view>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch, getCurrentInstance, reactive } from "vue";
 
-const emit = defineEmits(["action"]);
+import { ref, onMounted, computed,onBeforeUnmount, watch, getCurrentInstance, reactive } from "vue";
+
+const emit = defineEmits(["action", "action2"]);
 
 const props = defineProps({
+  mode: { type: Boolean, default: true },
   isLeft: { type: Boolean, default: false },
-  wrapperWidth: { type: Number, default: 360 },
-  wrapperHeight: { type: Number, default: 270 },
 });
 
-// 配置参数
-const IDLE_DELAY = 300;
-const SWIPE_THRESHOLD = 20;
-const MAX_DOT_DRAG = 40;
-const BOX_WIDTH = 180;
-const BOX_HEIGHT = 50;
-
-// 响应式状态
-const isDragging = ref(false);
-const isWrapperDragging = ref(false);
-const isReadyMode = ref(false);
-const isLeftActive = ref(false);
-const isRightActive = ref(false);
-const boxX = ref(0);
-const boxY = ref(0);
-const dotX = ref(0);
-const boxTransition = ref("none");
-
-// refs (保留用于其他目的，但获取位置统一使用 SelectorQuery)
-const wrapperRef = ref(null);
-const boxRef = ref(null);
-const dotRef = ref(null);
-
-// 内部变量
-let idleTimer = null;
-let dragOffsetX = 0;
-let dragOffsetY = 0;
-let dotStartOffset = 0;
-let initialBoxX = 0;
-let initialBoxY = 0;
-let originBoxX = 0;
-let originBoxY = 0;
-let wrapperSize = { width: props.wrapperWidth, height: props.wrapperHeight };
-let wrapperStartClientX = 0;
-let wrapperDotBaseX = 0;
-
-
-// 动态 wrapper 样式
-const wrapperStyle = reactive({
-  width: '300px',
-  height: '270px',
-  right: '90px',
-  bottom: '50px'
-});
-
-// 存储 wrapper 的真实位置（缓存）
-const wrapperRect = ref({ right: '90px', bottom: '50px', width: 360, height: 270 });
-const instance = getCurrentInstance();
-
-// ---------- 跨平台获取 wrapper 位置 ----------
-const fetchWrapperRect = () => {
-  return new Promise((resolve) => {
-    const query = uni.createSelectorQuery().in(instance.proxy);
-    query.select('.control-wrapper').boundingClientRect((rect) => {
-      if (rect) {
-        wrapperRect.value = {
-          left: rect.left,
-          top: rect.top,
-          width: rect.width,
-          height: rect.height,
-        };
-      }
-      resolve(wrapperRect.value);
-    }).exec();
-  });
-};
-
-// 限制 box 在容器内
-const clampInWrapper = (x, y) => {
-  const maxX = wrapperSize.width - BOX_WIDTH;
-  const maxY = wrapperSize.height - BOX_HEIGHT;
-  return {
-    x: Math.max(0, Math.min(x, maxX)),
-    y: Math.max(0, Math.min(y, maxY)),
-  };
-};
-
-// 右侧初始化
-const backRightInit = () => {
-
-  wrapperStyle.right = '90px';
-  wrapperStyle.bottom = '50px';
-  delete wrapperStyle.left; // 确保不冲突
-
-  const x = wrapperSize.width - BOX_WIDTH - 10 - 50;
- 
-  const y = (wrapperSize.height - BOX_HEIGHT) / 2 + 50;
- 
-  const clamped = clampInWrapper(x, y);
-  boxX.value = clamped.x;
-  boxY.value = clamped.y;
-  originBoxX = clamped.x;
-  originBoxY = clamped.y;
-};
-
-// 左侧初始化
-const backLeftInit = () => {
-
-  wrapperStyle.left = '0px';
-  wrapperStyle.bottom = '50px';
-  delete wrapperStyle.right; // 确保不冲突
-
-  const x = 10;
-  const y = (wrapperSize.height - BOX_HEIGHT) / 2;
-  const clamped = clampInWrapper(x, y);
-  boxX.value = clamped.x;
-  boxY.value = clamped.y;
-  originBoxX = clamped.x;
-  originBoxY = clamped.y;
-};
-
-const updateWrapperSize = () => {
-  wrapperSize.width = props.wrapperWidth;
-  wrapperSize.height = props.wrapperHeight;
-};
-
-onMounted(async () => {
-  updateWrapperSize();
-  if (props.isLeft) backLeftInit();
-  else backRightInit();
-
-  // 首次获取位置
-  await fetchWrapperRect();
-
-  // #ifdef H5
-  window.addEventListener('resize', async () => {
-    updateWrapperSize();
-    if (props.isLeft) backLeftInit();
-    else backRightInit();
-    await fetchWrapperRect();
-  });
-  // #endif
-});
-
-onBeforeUnmount(() => {
-  clearTimeout(idleTimer);
-  // #ifdef H5
-  window.removeEventListener('resize', () => {});
-  // #endif
-});
 
 watch(() => props.isLeft, (val) => {
-  updateWrapperSize();
+
   if (val) backLeftInit();
   else backRightInit();
 }, { deep: true });
 
-// --- 辅助函数 ---
+
+
+
+// --- 配置参数 ---
+const IDLE_DELAY = 500; // 进入待命模式的延迟时间(ms)
+const MAX_RADIUS = 65; // 圆点滑动的最大半径(px)
+const SWIPE_THRESHOLD = 5; // 触发箭头的阈值
+
+// --- 响应式状态 ---
+const isDragging = ref(false);
+const isReadyMode = ref(false);
+const isUpActive = ref(false);
+const isDownActive = ref(false);
+const isLeftActive = ref(false);
+const isRightActive = ref(false);
+
+// 仅保留圆点位置状态
+const currentDotX = ref(0);
+const currentDotY = ref(0);
+const wrapperRef = ref(null);
+// --- 内部非响应式状态 ---
+let idleTimer = null;
+let lastPointerX = 0;
+let lastPointerY = 0;
+let readyBaseX = 0;
+let readyBaseY = 0;
+
+// --- 计算属性 (仅绑定圆点样式) ---
+// const dotStyle = computed(() => ({
+//   transform: `translate3d(${currentDotX.value}px, ${currentDotY.value}px, 0) scale(1)`,
+//   transition: isDragging.value
+//     ? "none"
+//     : "transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease",
+// }));
+
+const dotStyle = computed(() => ({
+  transform: `translate(calc(-50% + ${currentDotX.value}px), calc(-50% + ${currentDotY.value}px))`,
+  transition: isDragging.value
+    ? "none"
+    : "transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease",
+}));
+
+const wrapperStyle = reactive({
+  right: '120px',
+  bottom: '50px'
+});
+
+const instance = getCurrentInstance();
+
+// ---------- 跨平台获取 wrapper 位置 ----------
+// const fetchWrapperRect = () => {
+//   return new Promise((resolve) => {
+//     const query = uni.createSelectorQuery().in(instance.proxy);
+//     query.select('.control-wrapper').boundingClientRect((rect) => {
+//       if (rect) {
+//         wrapperRect.value = {
+//           left: rect.left,
+//           top: rect.top,
+//           width: rect.width,
+//           height: rect.height,
+//         };
+//       }
+//       resolve(wrapperRect.value);
+//     }).exec();
+//   });
+// };
+
+const backLeftInit = () => {
+  wrapperStyle.left = '90px';
+  wrapperStyle.bottom = '50px';
+  delete wrapperStyle.right; // 确保不冲突
+}
+
+const backRightInit = () => {
+   wrapperStyle.right = '120px';
+  wrapperStyle.bottom = '50px';
+  delete wrapperStyle.left; // 确保不冲突
+}
+
+// --- 核心方法 ---
 const resetIdleTimer = () => {
   clearTimeout(idleTimer);
-  if (!isReadyMode.value) idleTimer = setTimeout(enterReadyMode, IDLE_DELAY);
+  if (!isReadyMode.value) {
+    idleTimer = setTimeout(enterReadyMode, IDLE_DELAY);
+  }
 };
 
-const enterReadyMode = () => {
-  isReadyMode.value = true;
-  // #ifdef H5
-  if (navigator.vibrate) navigator.vibrate(50);
-  // #endif
-  // #ifndef H5
-  uni.vibrateShort({ type: 'light' });
-  // #endif
-};
-
-const updateArrows = (deltaX) => {
-  isLeftActive.value = deltaX < -SWIPE_THRESHOLD;
-  isRightActive.value = deltaX > SWIPE_THRESHOLD;
-  emit("action", { lr: deltaX < 0, value: deltaX });
-};
-
-const resetArrows = () => {
-  isLeftActive.value = false;
-  isRightActive.value = false;
-  emit("action", { lr: false, value: 0 });
-};
-
-const resetToOrigin = () => {
-  boxX.value = originBoxX;
-  boxY.value = originBoxY;
-  dotX.value = 0;
-  dotStartOffset = 0;
-  wrapperDotBaseX = 0;
-  resetArrows();
-  isReadyMode.value = false;
-  clearTimeout(idleTimer);
-  boxTransition.value = "transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
-};
-
+// 获取触摸/鼠标坐标（统一使用 pageX/pageY，避免固定定位偏移）
 const getClientPos = (e) => {
   if (e.touches && e.touches.length > 0) {
     return {
@@ -246,215 +157,263 @@ const getClientPos = (e) => {
     clientY: e.pageY || e.clientY,
   };
 };
+const enterReadyMode = () => {
+  isReadyMode.value = true;
+  readyBaseX = lastPointerX;
+  readyBaseY = lastPointerY;
+  uni.vibrateShort({ type: "light" });
+};
 
-// --- 从 control-box 自身开始拖拽 ---
+const updateArrows = (dx, dy) => {
+ 
+  isUpActive.value = dy < -SWIPE_THRESHOLD;
+  isDownActive.value = dy > SWIPE_THRESHOLD;
+  isLeftActive.value = dx < -SWIPE_THRESHOLD;
+  isRightActive.value = dx > SWIPE_THRESHOLD;
+
+  if (isLeftActive.value == false && isRightActive.value == false) {
+    return;
+  }
+ 
+  emit("action", { lr: dx < 0, value: dx });
+
+};
+
+const resetArrows = () => {
+  isUpActive.value = false;
+  isDownActive.value = false;
+  isLeftActive.value = false;
+  isRightActive.value = false;
+  emit("action", { lr: false, value: 0 });
+};
+
+// --- 事件处理 ---
 const handleStart = (e) => {
-  e.stopPropagation();
-  if (e.cancelable) e.preventDefault();
   isDragging.value = true;
-  isWrapperDragging.value = false;
   isReadyMode.value = false;
   clearTimeout(idleTimer);
   resetArrows();
-  boxTransition.value = "none";
 
   const { clientX, clientY } = getClientPos(e);
-  initialBoxX = boxX.value;
-  initialBoxY = boxY.value;
-  dragOffsetX = clientX - boxX.value;
-  dragOffsetY = clientY - boxY.value;
-  const dotScreenCenterX = boxX.value + BOX_WIDTH / 2 + dotX.value;
-  dotStartOffset = clientX - dotScreenCenterX;
+  lastPointerX = clientX;
+  lastPointerY = clientY;
+
+  // 在按下时立刻记录基准点，防止移动时产生巨大偏移
+  readyBaseX = lastPointerX;
+  readyBaseY = lastPointerY;
+
   resetIdleTimer();
 };
 
 const handleMove = (e) => {
   if (!isDragging.value) return;
-  if (e.cancelable) e.preventDefault();
+
   const { clientX, clientY } = getClientPos(e);
+
+  lastPointerX = clientX;
+  lastPointerY = clientY;
   resetIdleTimer();
 
-  if (!isReadyMode.value) {
-    let newX = clientX - dragOffsetX;
-    let newY = clientY - dragOffsetY;
-    const clamped = clampInWrapper(newX, newY);
-    boxX.value = clamped.x;
-    boxY.value = clamped.y;
-  } else {
-    let deltaX = clientX - (boxX.value + BOX_WIDTH / 2) - dotStartOffset;
-    const absDelta = Math.abs(deltaX);
-    if (absDelta > MAX_DOT_DRAG) {
-      const excess = absDelta - MAX_DOT_DRAG;
-      const sign = deltaX > 0 ? 1 : -1;
-      deltaX = sign * (MAX_DOT_DRAG + excess * 0.2);
-    }
-    if (deltaX < -65) deltaX = -65;
-    if (deltaX > 65) deltaX = 65;
-    dotX.value = deltaX;
-    updateArrows(deltaX);
+  // 圆点滑动逻辑
+  let dx = clientX - readyBaseX;
+  let dy = clientY - readyBaseY;
+  
+
+  // 计算距离并限制在圆内
+  const distance = Math.sqrt(dx * dx + dy * dy);
+  if (distance > MAX_RADIUS) {
+    const angle = Math.atan2(dy, dx);
+    dx = Math.cos(angle) * MAX_RADIUS;
+    dy = Math.sin(angle) * MAX_RADIUS;
   }
+
+  currentDotX.value = dx;
+  currentDotY.value = dy;
+  updateArrows(dx, dy);
 };
 
 const handleEnd = () => {
   if (!isDragging.value) return;
+
   isDragging.value = false;
   isReadyMode.value = false;
   clearTimeout(idleTimer);
-  dotX.value = 0;
-  dotStartOffset = 0;
+
+  // 圆点回弹复位
+  currentDotX.value = 0;
+  currentDotY.value = 0;
   resetArrows();
-  boxTransition.value = "transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
-  boxX.value = originBoxX;
-  boxY.value = originBoxY;
 };
 
-// --- 从 wrapper 空白区域开始的操作（核心修复：每次实时获取 rect） ---
-const handleWrapperStart = async (e) => {
-  // 实时获取 wrapper 的最新位置，确保计算准确
-  await fetchWrapperRect();
-
-  // 如果仍然没有获取到（理论上不会），则忽略
-  if (!wrapperRect.value.width) return;
-
-  const { clientX, clientY } = getClientPos(e);
-  const relX = clientX - wrapperRect.value.left;
-  const relY = clientY - wrapperRect.value.top;
-
-  // 判断是否点在 control-box 内部
-  if (
-    relX >= boxX.value &&
-    relX <= boxX.value + BOX_WIDTH &&
-    relY >= boxY.value &&
-    relY <= boxY.value + BOX_HEIGHT
-  ) {
-    return; // 由 box 自身事件处理
-  }
-
-  // 点在空白区域：移动整个 box 使圆点对准点击位置
-  if (e.cancelable) e.preventDefault();
-  isWrapperDragging.value = true;
-  isDragging.value = false;
-  isReadyMode.value = true;
-  clearTimeout(idleTimer);
-  resetArrows();
-  boxTransition.value = "none";
-
-  let targetBoxX = relX - BOX_WIDTH / 2;
-  let targetBoxY = relY - BOX_HEIGHT / 2;
-  const clamped = clampInWrapper(targetBoxX, targetBoxY);
-  boxX.value = clamped.x;
-  boxY.value = clamped.y;
-  dotX.value = 0; // 圆点居中
-
-  // 记录移动基准
-  wrapperStartClientX = clientX;
-  wrapperDotBaseX = 0;
-};
-
-const handleWrapperMove = (e) => {
-  if (!isWrapperDragging.value) return;
-  if (e.cancelable) e.preventDefault();
-  const { clientX } = getClientPos(e);
-  let deltaX = clientX - wrapperStartClientX + wrapperDotBaseX;
-
-  const absDelta = Math.abs(deltaX);
-  if (absDelta > MAX_DOT_DRAG) {
-    const excess = absDelta - MAX_DOT_DRAG;
-    const sign = deltaX > 0 ? 1 : -1;
-    deltaX = sign * (MAX_DOT_DRAG + excess * 0.2);
-  }
-  if (deltaX < -65) deltaX = -65;
-  if (deltaX > 65) deltaX = 65;
-
-  dotX.value = deltaX;
-  updateArrows(deltaX);
-};
-
-const handleWrapperEnd = () => {
-  if (!isWrapperDragging.value) return;
-  isWrapperDragging.value = false;
-  isReadyMode.value = false;
-  clearTimeout(idleTimer);
-
-  boxTransition.value = "transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
-  dotX.value = 0;
-  wrapperDotBaseX = 0;
-  resetArrows();
-  setTimeout(() => {
-    boxX.value = originBoxX;
-    boxY.value = originBoxY;
-  }, 50);
+const handleClick = (val) => {
+  emit("action2", {
+    type: val,
+  });
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .control-wrapper {
   position: fixed;
-  /* left: 90px;  
-  bottom: 50px; */
-  width: v-bind(wrapperWidth + 'px');
-  height: v-bind(wrapperHeight + 'px');
-  /* background: rgba(0, 0, 0, 0.15); */
-  border-radius: 12px;
-  overflow: hidden;
-  z-index: 9998;
-  touch-action: none;
-  user-select: none;
+  right: 120px;
+  bottom: 40px;
+  width: 215px;
+  height: 175px;
+  z-index: 9999;
+
 }
 
 .control-box {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 180px;
-  height: 50px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  box-sizing: border-box;
-  will-change: transform;
+  right: 0;
+  width: 100%;
+  height: 175px;
   user-select: none;
   touch-action: none;
+
+
 }
 
-.arrow {
-  width: 50px;
+.up-up-arrow {
+  position: absolute;
+  left: 0;
+  top: 70px;
+  z-index: 9999;
+  height: 175px;
+  text-align: center;
+  width: 90px;
+  .arrow1 {
+    width: 50px;
+    height: 50px;
+    opacity: 0.8;
+
+    .image {
+      display: block;
+      width: 50px;
+      height: 50px;
+    }
+  }
+
+}
+
+.up-down-arrow {
+  position: absolute;
+  left: 40px;
+  top: 45px;
+  z-index: 9999;
+  height: 175px;
+  text-align: center;
+  width: 90px;
+  .arrow1 {
+    width: 36px;
+    height: 36px;
+
+    .image {
+      display: block;
+      width: 36px;
+      height: 36px;
+    }
+  }
+
+  .down {
+    margin-top: 20px;
+  }
+}
+
+.cont {
+  position: relative;
+  width: 235px;
+  height: 176px;
+
+  /* 轨迹背景圈 */
+  .track-bg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  /* 箭头通用 */
+  .arrow {
+     width: 50px;
   height: 50px;
-  opacity: 0.8;
-  transition: all 0.2s ease;
-  z-index: 1;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: contain;
-}
+    opacity: 0.7;
+    transition: all 0.2s ease;
+    z-index: 1;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
 
-.arrow.active {
-  opacity: 1;
-  filter: drop-shadow(0 0 4px rgba(255, 167, 38, 0.8));
-  transform: scale(1.15);
-}
+    .image {
+      display: block;
+       width: 50px;
+  height: 50px;
+    }
 
-.dot {
-  width: 48px;
+    &.active {
+      opacity: 1;
+      filter: drop-shadow(0 0 4px rgba(255, 167, 38, 0.8));
+      transform: scale(1.2);
+    }
+  }
+
+  /* 箭头位置 */
+  .arrow.up {
+    position: absolute;
+    left: 75px;
+    top: 25px;
+  }
+
+  .arrow.down {
+    position: absolute;
+    left: 75px;
+    bottom: 25px;
+  }
+
+  .arrow.left {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 25px;
+   
+
+
+  }
+
+  .arrow.right {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 25px;
+  }
+
+  /* 摇杆圆点 — 居中 */
+  .dot {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 48px;
   height: 48px;
   border-radius: 50%;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: contain;
-  cursor: grab;
-  position: relative;
-  z-index: 2;
-  will-change: transform;
+
+    z-index: 2;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+
+    &.ready {
+      box-shadow: 0 0 12px rgba(255, 167, 38, 0.8);
+    }
+  }
 }
 
-.dot:active {
-  cursor: grabbing;
-}
 
-.dot.ready {
-  box-shadow: 0 0 7.5px rgba(255, 167, 38, 0.6);
-  border: 1px solid rgba(255, 167, 38, 0.8);
-  border-radius: 50%;
+.flex {
+  display: flex;
+  justify-content: space-between;
 }
 </style>

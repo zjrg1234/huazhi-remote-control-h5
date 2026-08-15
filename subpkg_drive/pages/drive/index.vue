@@ -224,7 +224,11 @@
                   <cover-view class="tit">方向中位微调</cover-view>
                   <cover-view class="section">
                     <!-- 减少按钮 -->
-                    <cover-view class="reduce" @click="handleReduce(1)">
+                    <cover-view class="reduce"
+                      @touchstart.prevent="onTouchStart(1, -1)" 
+  @touchend.stop="onTouchEnd"
+  @touchcancel.stop="onTouchEnd"
+                    >
                       <cover-image class="image" src="./static/icon_reduce@2x.png" mode="widthFix"></cover-image>
                     </cover-view>
                     <!-- 滑块区域（占据主要空间） -->
@@ -236,7 +240,7 @@
                       </cover-view>
                       <!-- <slider :min="1" :max="100" :value="dirMiddle" @change="setChangeVal(1, $event)"
                         activeColor="#f5c542" backgroundColor="#e5e5e5" block-size="20" /> -->
-                      <SliderComp v-model="dirMiddle" :min="1" :max="100" @change="setChangeVal(1, $event)">
+                      <SliderComp :disabled="true" v-model="dirMiddle" :min="1" :max="100" @change="setChangeVal(1, $event)">
                       </SliderComp>
                       <cover-view class="slider-label-bottom">
                         <cover-view class="num-text">
@@ -248,7 +252,9 @@
                       </cover-view>
                     </cover-view>
                     <!-- 增加按钮 -->
-                    <cover-view class="add" @click="handleAdd(1)">
+                    <cover-view class="add"  @touchstart.prevent="onTouchStart(1, 1)" 
+  @touchend.stop="onTouchEnd"
+  @touchcancel.stop="onTouchEnd">
                       <cover-image class="image" src="./static/icon_add@2x.png" mode="widthFix"></cover-image>
                     </cover-view>
                     <!-- 保存按钮 -->
@@ -259,7 +265,9 @@
                   <cover-view class="tit">方向力度微调</cover-view>
                   <cover-view class="section">
                     <!-- 减少按钮 -->
-                    <cover-view class="reduce" @click="handleReduce(2)">
+                    <cover-view class="reduce"   @touchstart.prevent="onTouchStart(2, -1)" 
+  @touchend.stop="onTouchEnd"
+  @touchcancel.stop="onTouchEnd">
                       <cover-image class="image" src="./static/icon_reduce@2x.png" mode="widthFix"></cover-image>
                     </cover-view>
                     <!-- 滑块区域（占据主要空间） -->
@@ -270,7 +278,7 @@
                         </cover-view>
                       </cover-view>
 
-                      <SliderComp v-model="dirTurn" :min="1" :max="directionDynamics.current_value"
+                      <SliderComp  :disabled="true" v-model="dirTurn" :min="1" :max="directionDynamics.current_value"
                         @change="setChangeVal(2, $event)"></SliderComp>
                       <cover-view class="slider-label-bottom">
                         <cover-view class="num-text">
@@ -282,7 +290,9 @@
                       </cover-view>
                     </cover-view>
                     <!-- 增加按钮 -->
-                    <cover-view class="add" @click="handleAdd(2)">
+                    <cover-view class="add"  @touchstart.prevent="onTouchStart(2, 1)" 
+  @touchend.stop="onTouchEnd"
+  @touchcancel.stop="onTouchEnd">
                       <cover-image class="image" src="./static/icon_add@2x.png" mode="widthFix"></cover-image>
                     </cover-view>
                     <!-- 保存按钮 -->
@@ -293,7 +303,9 @@
                   <cover-view class="tit">油门力度微调</cover-view>
                   <cover-view class="section">
                     <!-- 减少按钮 -->
-                    <cover-view class="reduce" @click="handleReduce(3)">
+                    <cover-view class="reduce"  @touchstart.prevent="onTouchStart(3, -1)" 
+  @touchend.stop="onTouchEnd"
+  @touchcancel.stop="onTouchEnd">
                       <cover-image class="image" src="./static/icon_reduce@2x.png" mode="widthFix"></cover-image>
                     </cover-view>
                     <!-- 滑块区域（占据主要空间） -->
@@ -304,7 +316,7 @@
                         </cover-view>
                       </cover-view>
 
-                      <SliderComp v-model="throttle" :min="1" :max="acceleratorDynamics.current_value"
+                      <SliderComp :disabled="true" v-model="throttle" :min="1" :max="acceleratorDynamics.current_value"
                         @change="setChangeVal(3, $event)"></SliderComp>
 
                       <cover-view class="slider-label-bottom">
@@ -317,7 +329,9 @@
                       </cover-view>
                     </cover-view>
                     <!-- 增加按钮 -->
-                    <cover-view class="add" @click="handleAdd(3)">
+                    <cover-view class="add"  @touchstart.prevent="onTouchStart(3, 1)" 
+  @touchend.stop="onTouchEnd"
+  @touchcancel.stop="onTouchEnd">
                       <cover-image class="image" src="./static/icon_add@2x.png" mode="widthFix"></cover-image>
                     </cover-view>
                     <!-- 保存按钮 -->
@@ -562,7 +576,7 @@ const showSpeed = ref(false);
 const showRepairReason = ref(false);
 const constSpeed = ref(1);
 const setVisible = ref(false);
-const showSound = ref(false);
+const showSound = ref(true);
 const carType = ref("1");
 const orderNo = ref("");
 const vehicleId = ref("");
@@ -1301,8 +1315,10 @@ const handleLRDrive = (item) => {
       type = "rightType";
     }
   }
+
   carHandler.value.handleTwoDirectionControlChannel(false, type, ratioValue);
   chValue.value.ch1 = carHandler.value.ch1;
+
 };
 
 onUnmounted(() => {
@@ -1502,7 +1518,9 @@ const close = () => {
   setVisible.value = false;
 
   if(carType.value == 1) {
-    showSpeed.value = true;
+    if (activeKey.value.includes['speed']) {
+      showSpeed.value = true;
+    }
   }
 };
 // 滑动slider
@@ -1532,6 +1550,35 @@ const setChangeVal = (flag, value) => {
   console.log("滑动slider之后,打印当前值", val)
   changeVal(val)
 };
+
+let longPressTimer = null;
+const INITIAL_DELAY = 300;   // 首次触发前的等待时间(ms)，区分单击和长按
+const REPEAT_INTERVAL = 80;  // 长按后重复触发的间隔(ms)
+
+// 触摸开始
+const onTouchStart = (type, step) => {
+  // 立即执行一次
+  handleValueChange(type, step);
+  
+  // 设置长按定时器
+  longPressTimer = setTimeout(() => {
+    clearTimeout(longPressTimer)
+    // 首次延迟后，切换为快速重复模式
+    longPressTimer = setInterval(() => {
+      handleValueChange(type, step);
+    }, REPEAT_INTERVAL);
+  }, INITIAL_DELAY);
+};
+
+// 触摸结束 / 取消
+const onTouchEnd = () => {
+
+  longPressTimer && clearTimeout(longPressTimer);
+  longPressTimer && clearInterval(longPressTimer);
+  longPressTimer = null;
+  
+};
+
 
 const handleAdd = (type) => handleValueChange(type, 1);
 const handleReduce = (type) => handleValueChange(type, -1);
@@ -2232,6 +2279,15 @@ const report = (text) => {
   .add,
   .btn {
     flex-shrink: 0;
+
+     user-select: none;
+  -webkit-user-select: none;
+  
+  /* 禁止触摸高亮（移动端关键） */
+  -webkit-tap-highlight-color: transparent;
+  
+  /* 禁止长按弹出菜单（部分浏览器支持） */
+  -webkit-touch-callout: none;
   }
 
   .btn {
