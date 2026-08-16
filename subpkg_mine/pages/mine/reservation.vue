@@ -224,6 +224,7 @@ const handleAction = async (item) => {
       if (res.code == 200) {
         uni.setStorageSync("app_id", item.app_transmitter_id);
         uni.removeStorageSync("loadingOne");
+        uni.removeStorageSync("sendNum")
         uni.setStorageSync("carInfo", JSON.stringify(item));
         uni.setStorageSync("carDetails", JSON.stringify(res.data));
         uni.navigateTo({

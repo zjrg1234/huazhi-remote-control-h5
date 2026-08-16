@@ -127,11 +127,11 @@ const handleTouchStart = (event) => {
   const y = touch.clientY;
 
   // 立即生成第一个波纹
-  createRipple(x, y);
+  // createRipple(x, y);
 
   // 开启定时器，长按期间持续生成波纹
   timer = setInterval(() => {
-    createRipple(x, y);
+    // createRipple(x, y);
   }, INTERVAL);
 };
 
