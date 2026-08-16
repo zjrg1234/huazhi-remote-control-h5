@@ -37,7 +37,8 @@ const props = defineProps({
 
 const emit = defineEmits(["update:modelValue", "change"]);
 
-const THUMB_SIZE = 20;
+// 修改圆的大小 这个也要修改
+const THUMB_SIZE = 15;
 const thumbLeft = ref(0);
 const progressWidth = ref(0);
 const trackWidth = ref(0);
@@ -135,7 +136,7 @@ const onTouchMove = (e) => {
         pendingValue = null;
       }
       emitTimer = null;
-    }, 30); // 30ms 约 33fps，平衡流畅与性能
+    }, 100); // 30ms 约 33fps，平衡流畅与性能
   }
 };
 
