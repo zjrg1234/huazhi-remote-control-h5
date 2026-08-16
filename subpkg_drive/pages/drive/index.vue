@@ -814,7 +814,10 @@ const daojishiTip = () => {
         }
       }, 1000);
     }
-    continueDrive()
+
+    if (num <= countNum - 1) {
+      continueDrive()
+    }
     isRequesting = false;
   }, 30 * 1000);
 }
@@ -999,11 +1002,17 @@ const handlePopupAction = (val) => {
   }
   if (val == "logout") {
     console.log("退出驾驶");
+
+    uni.showLoading({
+      title: "...",
+      mask: true,
+    });
+
     StartDrive({
       order_no: orderNo.value,
       type: 3,
       vehicle_id: vehicleId.value,
-    }, true)
+    })
       .then((res) => {
         console.log(res);
         if (res.code == 2000 || res.code == 200) {
@@ -1019,6 +1028,9 @@ const handlePopupAction = (val) => {
               UDPSocket.value.close();
             }
             clearTimeout(timer);
+            uni.hideLoading({
+              fail() { },
+            });
             uni.reLaunch({
               url: "/subpkg_mine/pages/mine/reservation", // 你的首页路径
             });
@@ -1029,6 +1041,10 @@ const handlePopupAction = (val) => {
       })
       .catch((e) => {
         console.log("catch", e);
+      }).finally(() => {
+           uni.hideLoading({
+              fail() { },
+            });
       });
   }
 };

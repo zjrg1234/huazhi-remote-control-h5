@@ -71,14 +71,19 @@ const getList = async () => {
   // 节流：正在加载 或 没有更多 → 直接return
   if (loading.value || noMore.value) return
   loading.value = true
-  const res = await GetDrivingRecordlList()
+  const res = await GetDrivingRecordlList({
+    page: page.value,
+    size: 20,
+  })
 
   // 第一页 → 覆盖
   if (page.value === 1) {
     list.value = res.data.content
   } else {
     // 后续页 → 追加
-    list.value = [...list.value, res.data.content]
+    if (res.data.content && res.data.content.length) {
+      list.value = [...list.value, ...res.data.content]
+    }
   }
 
   // 如果返回数据不足一页 → 没有更多
