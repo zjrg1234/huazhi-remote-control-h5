@@ -100,7 +100,7 @@ const dotStyle = computed(() => ({
 }));
 
 const wrapperStyle = reactive({
-  right: '120px',
+  left: '90px',
   bottom: '50px'
 });
 
@@ -131,7 +131,7 @@ const backLeftInit = () => {
 }
 
 const backRightInit = () => {
-   wrapperStyle.right = '120px';
+  wrapperStyle.right = '120px';
   wrapperStyle.bottom = '50px';
   delete wrapperStyle.left; // 确保不冲突
 }
@@ -254,12 +254,9 @@ const handleClick = (val) => {
 <style lang="scss" scoped>
 .control-wrapper {
   position: fixed;
-  left: 80px;
-  bottom: 40px;
   width: 140px;
   height: 180px;
   z-index: 9999;
-
 }
 
 .control-box {
