@@ -1178,8 +1178,8 @@ const initVehicleConfig = () => {
   // 初始化车辆配置
   if (carDetails.value) {
     // 正反 上下
-    operFB.value = !!carDetails.value.reverse_up_down;
-    operDir.value = !!carDetails.value.reverse_left_right;
+    operFB.value = carDetails.value.reverse_up_down == 1;
+    operDir.value = carDetails.value.reverse_left_right == 1;
     directionCenter.value = carDetails.value.direction_center || {};
     directionDynamics.value = carDetails.value.direction_dynamics || {};
     acceleratorCenter.value = carDetails.value.accelerator_center || {};

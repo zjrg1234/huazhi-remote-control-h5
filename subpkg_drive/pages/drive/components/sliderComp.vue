@@ -32,7 +32,8 @@ const props = defineProps({
   max: { type: Number, default: 100 },
   disabled: { type: Boolean, default: false },
   width: { type: String, default: "100%" },
-  height: { type: String, default: "40px"}
+  height: { type: String, default: "40px"},
+  disabledSlider: { type: Boolean, default: true },
 });
 
 const emit = defineEmits(["update:modelValue", "change"]);
@@ -107,8 +108,8 @@ const onTouchStart = (e) => {
 };
 
 const onTouchMove = (e) => {
-  return;
-  if (props.disabled || trackWidth.value === 0) return;
+  
+  if (props.disabled || !props.disabledSlider || trackWidth.value === 0) return;
   const currentX = e.touches[0].pageX || e.touches[0].clientX;
   const diff = currentX - startX.value;
   const maxLeft = trackWidth.value - THUMB_SIZE;
