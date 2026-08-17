@@ -164,6 +164,9 @@ const enterReadyMode = () => {
   uni.vibrateShort({ type: "light" });
 };
 
+
+let lastEmitTime = 0;
+
 const updateArrows = (dx, dy) => {
  
   isUpActive.value = dy < -SWIPE_THRESHOLD;
@@ -174,9 +177,11 @@ const updateArrows = (dx, dy) => {
   if (isLeftActive.value == false && isRightActive.value == false) {
     return;
   }
- 
-  emit("action", { lr: dx < 0, value: dx });
-
+  const now = performance.now(); // 或 Date.now()
+  if (now - lastEmitTime >= 40) {
+    lastEmitTime = now;
+    emit("action", { lr: dx < 0, value: dx });
+  }
 };
 
 const resetArrows = () => {

@@ -78,7 +78,7 @@
             <!-- <slider :value="constSpeed" :min="1" :max="100" :step="1" activeColor="#f5c542" backgroundColor="#e9e9e9"
               block-size="6" @change="changeConstSpeed" /> -->
 
-            <SliderComp v-model="constSpeed" :min="1" :max="100" height="30px" @change="changeConstSpeed">
+            <SliderComp :disabledSlider="false" v-model="constSpeed" :min="1" :max="100" height="30px" @change="changeConstSpeed">
             </SliderComp>
 
             <cover-view class="slider-label-bottom">
@@ -610,17 +610,17 @@ const menuList = computed(() => {
         type: 1,
       },
       {
-        name: "前差",
-        icon: before_diff,
-        key: "chBefore",
-        iconSelect: before_diff_selected,
-        type: 1,
-      },
-      {
         name: "后差",
         icon: after_diff,
         key: "chAfter",
         iconSelect: after_diff_selected,
+        type: 1,
+      },
+      {
+        name: "前差",
+        icon: before_diff,
+        key: "chBefore",
+        iconSelect: before_diff_selected,
         type: 1,
       },
       { name: "CH4", icon: ch1, key: "ch4", iconSelect: ch_selected, type: 1 },
@@ -731,25 +731,7 @@ const handleMic = (val) => {
   console.log(videoUrl.value)
 
 }
-// 处理音频 扬声器
-const handleSound = (val) => {
-  showSound.value = !!val;
-  // videoUrl.value = videoUrl.value.replace(/openSpeaker=\d+/, `openSpeaker=${val ? '1' : '0'}`);
-  // console.log("扬声器", videoUrl.value)
 
-  if (videoUrl.value.includes("video_audio")) {
-    videoUrl.value = videoUrl.value.replace(/openSpeaker=\d+/, `openSpeaker=${val ? '1' : '0'}`);
-
-  } else {
-    const newUrl = videoUrl.value
-      .replace(/initAction=[^&]*/, `initAction=${val ? 'video_audio' : 'video_only'}`)
-      .replace(/openSpeaker=[^&]*/, `openSpeaker=${val ? '1' : '0'}`);
-    videoUrl.value = newUrl;
-  }
-
-  console.log(videoUrl.value)
-
-}
 
 // 结束驾驶逻辑
 const handleDriveEnd = () => {
@@ -856,6 +838,7 @@ const GetDeviceInfo = (data) => {
 
         const base = 'https://vedioafz.fzbkapp.com/';
         const query = `?device_id=${encodeURIComponent(carDetails.value.front_camera)}&token=${encodeURIComponent(data.token)}&initAction=video_only&videoDefinition=${carDetails.value.video_definition}&defaultCameraClarity=${carDetails.value.default_camera_clarity}&_t=${Date.now()}`;
+        // const query = `?device_id=${encodeURIComponent('1002211')}&token=${encodeURIComponent(data.token)}&initAction=video_only&videoDefinition=${carDetails.value.video_definition}&defaultCameraClarity=${carDetails.value.default_camera_clarity}&closeFlag=0&_t=${Date.now()}`;
         videoUrl.value = base + query;
 
         console.log("请求接口之后的url:", videoUrl.value)
@@ -1009,7 +992,9 @@ const handlePopupAction = (val) => {
       vehicle_id: vehicleId.value,
     }, true)
       .then((res) => {
-        videoUrl.value = "https://vedioafz.fzbkapp.com/?closeFlag=1&_t=" + Date.now();
+        
+        videoUrl.value = videoUrl.value.replace(/closeFlag=\d+/, `closeFlag=${'1'}`)
+          .replace(/_t=[^&]*/, `_t=${Date.now()}`);
        
         if (res.code == 2000 || res.code == 200) {
           uni.showToast({ title: "退出驾驶成功", icon: "none" });
