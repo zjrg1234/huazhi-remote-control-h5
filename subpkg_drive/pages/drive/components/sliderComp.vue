@@ -107,6 +107,7 @@ const onTouchStart = (e) => {
 };
 
 const onTouchMove = (e) => {
+  return;
   if (props.disabled || trackWidth.value === 0) return;
   const currentX = e.touches[0].pageX || e.touches[0].clientX;
   const diff = currentX - startX.value;

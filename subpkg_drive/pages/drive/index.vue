@@ -49,13 +49,13 @@
       </cover-view>
 
       <!-- 声音/波纹图标 -->
-      <cover-view class="side-menu-icon">
+      <!-- <cover-view class="side-menu-icon">
         <microphone @action="handleMic"></microphone>
         <cover-image class="image sound" v-show="!showSound" :style="{ display: !showSound ? 'block' : 'none' }"
           src="./static/icon_sound_close@2x.png" @click="handleSound(true)" mode="aspectFit" />
         <cover-image class="image sound" v-show="showSound" :style="{ display: showSound ? 'block' : 'none' }"
           src="./static/icon_sound_open@2x.png" @click="handleSound(false)" mode="aspectFit" />
-      </cover-view>
+      </cover-view> -->
 
       <!-- 右侧菜单 -->
       <!-- 右侧菜单 -->
@@ -121,7 +121,7 @@
             <cover-view class="left">
               <!-- type 1 是遥控车 -->
               <cover-view class="group" v-show="selectedIndex == 0 && carType == '1'">
-                <cover-view class="group-item">
+                <!-- <cover-view class="group-item">
                   <cover-view class="tit">视频清晰度</cover-view>
                   <cover-view class="flex">
                     <cover-view v-for="(item, index) in qualityList" :key="index" class="btn-quality"
@@ -129,7 +129,7 @@
                       {{ item.label }}
                     </cover-view>
                   </cover-view>
-                </cover-view>
+                </cover-view> -->
                 <cover-view class="group-item">
                   <cover-view class="tit">操作设置</cover-view>
                   <cover-view class="flex">
@@ -168,19 +168,19 @@
                   <cover-view class="flex fj">
                     <cover-view class="tit">方向反向操作</cover-view>
 
-                    <SwitchComp v-model="operFB" @change="setHandleOper(1, $event)"></SwitchComp>
+                    <SwitchComp v-model="operDir" @change="setHandleOper(2, $event)"></SwitchComp>
                   </cover-view>
                   <cover-view class="flex fj">
                     <cover-view class="tit">进退反向操作</cover-view>
 
-                    <SwitchComp v-model="operDir" @change="setHandleOper(2, $event)"></SwitchComp>
+                    <SwitchComp v-model="operFB" @change="setHandleOper(1, $event)"></SwitchComp>
                   </cover-view>
                 </cover-view>
               </cover-view>
 
               <cover-view class="group" v-show="selectedIndex == 0 && (carType == '2' || carType == '3')
                 ">
-                <cover-view class="group-item">
+                <!-- <cover-view class="group-item">
                   <cover-view class="tit">视频清晰度</cover-view>
                   <cover-view class="flex">
                     <cover-view v-for="(item, index) in qualityList" :key="index" class="btn-quality"
@@ -188,7 +188,7 @@
                       {{ item.label }}
                     </cover-view>
                   </cover-view>
-                </cover-view>
+                </cover-view> -->
                 <cover-view class="group-item">
                   <cover-view class="tit">操作设置</cover-view>
                   <cover-view class="flex">
@@ -510,7 +510,7 @@ import { useUserStore } from "@/store/modules/user";
 
 // import ALLPopup from "./components/tip.vue";
 // import SetPopup from "./components/set.vue";
-import microphone from "./components/microphone.vue";
+// import microphone from "./components/microphone.vue";
 import TimeClock from "./components/tclock.vue";
 import battery from "./components/battery.vue";
 import SwitchComp from "./components/switchComp.vue";
@@ -855,7 +855,7 @@ const GetDeviceInfo = (data) => {
       if (res.data?.rows?.length) {
 
         const base = 'https://vedioafz.fzbkapp.com/';
-        const query = `?device_id=${encodeURIComponent(carDetails.value.front_camera)}&token=${encodeURIComponent(data.token)}&initAction=video_only&micVal=0&openSpeaker=0&resRatio=${Number(carDetails.value.default_camera_clarity) - 1}&_t=${Date.now()}`;
+        const query = `?device_id=${encodeURIComponent(carDetails.value.front_camera)}&token=${encodeURIComponent(data.token)}&initAction=video_only&videoDefinition=${carDetails.value.video_definition}&defaultCameraClarity=${carDetails.value.default_camera_clarity}&_t=${Date.now()}`;
         videoUrl.value = base + query;
 
         console.log("请求接口之后的url:", videoUrl.value)
@@ -1002,21 +1002,17 @@ const handlePopupAction = (val) => {
   }
   if (val == "logout") {
     console.log("退出驾驶");
-
-    uni.showLoading({
-      title: "...",
-      mask: true,
-    });
-
+    
     StartDrive({
       order_no: orderNo.value,
       type: 3,
       vehicle_id: vehicleId.value,
-    })
+    }, true)
       .then((res) => {
-        console.log(res);
+        videoUrl.value = "https://vedioafz.fzbkapp.com/?closeFlag=1&_t=" + Date.now();
+       
         if (res.code == 2000 || res.code == 200) {
-          uni.showToast({ title: res.msg, icon: "none" });
+          uni.showToast({ title: "退出驾驶成功", icon: "none" });
           console.log("电池电量", batteryPer.value)
           UpdateBattery({
             vehicle_id: vehicleId.value,
@@ -1028,9 +1024,7 @@ const handlePopupAction = (val) => {
               UDPSocket.value.close();
             }
             clearTimeout(timer);
-            uni.hideLoading({
-              fail() { },
-            });
+           
             uni.reLaunch({
               url: "/subpkg_mine/pages/mine/reservation", // 你的首页路径
             });
@@ -1042,9 +1036,7 @@ const handlePopupAction = (val) => {
       .catch((e) => {
         console.log("catch", e);
       }).finally(() => {
-           uni.hideLoading({
-              fail() { },
-            });
+         
       });
   }
 };
@@ -1186,8 +1178,8 @@ const initVehicleConfig = () => {
   // 初始化车辆配置
   if (carDetails.value) {
     // 正反 上下
-    operFB.value = !!carDetails.value.reverse_left_right;
-    operDir.value = !!carDetails.value.reverse_up_down;
+    operFB.value = !!carDetails.value.reverse_up_down;
+    operDir.value = !!carDetails.value.reverse_left_right;
     directionCenter.value = carDetails.value.direction_center || {};
     directionDynamics.value = carDetails.value.direction_dynamics || {};
     acceleratorCenter.value = carDetails.value.accelerator_center || {};
@@ -1262,7 +1254,7 @@ const initSocket = () => {
       // 收到消息，重置定时器
       clearTimeout(messageTimer.value);
       handleReceive(msg);
-      console.log("收到的消息", model)
+      // console.log("收到的消息", model)
       batteryPer.value = handleBattery(model.volt, carDetails.value.battery);
       // 重新启动超时检测
       startMessageTimeout();
@@ -1299,7 +1291,7 @@ const initSendLoop = () => {
   sendMsgTimer = setInterval(() => {
     if (UDPSocket.value) {
       const app_id = uni.getStorageSync("app_id");
-      console.log("chValue.ch", chValue.value.ch1,chValue.value.ch2)
+      // console.log("chValue.ch", chValue.value.ch1,chValue.value.ch2)
       const val = handleDriverSocketData(
         app_id,
         chValue.value.ch1,
@@ -1499,7 +1491,6 @@ const setQualityList = () => {
 // 正反 旋转，上下操作
 const setHandleOper = (type, val) => {
   console.log(type, val);
-
   if (type == 1) operFB.value = val;
   if (type == 2) operDir.value = val;
   // 四驱车 液压挖机

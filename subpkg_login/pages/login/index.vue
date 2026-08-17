@@ -83,13 +83,22 @@ const handleGetPhoneNumber = async (e) => {
       userStore.setAreaId(res.data.special_area)
       userStore.setId(res.data.id)
 
-      GetUserInfo({ uid: res.data.id }).then(res => {
+      GetUserInfo({ uid: res.data.id }).then(res1 => {
 
-        userStore.setUser(res.data)
+        userStore.setUser(res1.data)
 
-        uni.switchTab({
-          url: "/pages/index/index"
-        })
+        if (res.data.new_user == 1) {
+          uni.switchTab({
+            url: '/subpkg_mine/pages/mine/changeArea'  // 你的首页路径
+          })
+        } else {
+          uni.switchTab({
+            url: "/pages/index/index"
+          })
+        }
+
+
+
       }).catch()
     } else {
       uni.showToast({

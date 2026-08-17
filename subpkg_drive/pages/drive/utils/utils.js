@@ -142,7 +142,7 @@ export const mapToPer = (value) => {
   if (value >= 65) return 1;
   
   // 2. 线性映射计算
-  const percentage = 1 + (value / 45) * 99;
+  const percentage = 1 + (value / 65) * 99;
   
   // 3. 四舍五入取整（根据需求也可以保留小数）
   return (Math.round(percentage)/ 100).toFixed(2); 

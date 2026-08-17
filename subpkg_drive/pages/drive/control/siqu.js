@@ -39,6 +39,7 @@ export class CarControlHandler {
   setReverseStatus(type1, type2) {
     this.reverseUpDownState = type1
     this.reverseLeftRightState = type2
+    console.log("this.reverseUpDownState", this.reverseUpDownState);
   }
   /**
    * 处理双摇杆控制通道
@@ -48,6 +49,7 @@ export class CarControlHandler {
    */
 
   handleTwoDirectionControlChannel(isUpDown, positionType, ratioValue) {
+// 如果输出 false，就是 this 丢失
     let maxValue = 0.0;
     let centerValue = 0.0;
     let minValue = 0.0;
@@ -72,6 +74,7 @@ export class CarControlHandler {
         this.ch2 = Math.round(centerValue);
       } else {
         const isReverse = this.reverseUpDownState;
+        console.log("reverseUpDownState", this.reverseUpDownState)
         const delta = 500 * rateValue * ratioValue;
        
 

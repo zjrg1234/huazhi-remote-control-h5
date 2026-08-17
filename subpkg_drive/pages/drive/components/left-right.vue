@@ -1,5 +1,6 @@
 <template>
-  <cover-view class="control-wrapper" ref="wrapperRef" :style="wrapperStyle">
+  <cover-view class="control-wrapper" @touchstart.prevent="handleStart" @touchmove.prevent="handleMove"
+      @touchend.prevent="handleEnd" ref="wrapperRef" :style="wrapperStyle">
     <cover-view class="control-box" >
       <cover-view class="cont">
         <!-- 轨迹背景圈 -->
@@ -27,8 +28,7 @@
          <cover-image class="arrow right" src="../static/arrow_right_big@2x.png"
         :class="{ active: isRightActive }"></cover-image>
         <!-- 摇杆圆点 -->
-        <cover-view @touchstart.prevent="handleStart" @touchmove.prevent="handleMove"
-      @touchend.prevent="handleEnd" class="dot" :class="{ ready: isReadyMode }" :style="dotStyle">
+        <cover-view  class="dot" :class="{ ready: isReadyMode }" :style="dotStyle">
 
            <cover-image  src="../static/dot@2x.png"></cover-image>
         </cover-view>
