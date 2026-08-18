@@ -508,7 +508,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed, getCurrentInstance } from "vue";
-import { onLoad, onUnload } from "@dcloudio/uni-app";
+import { onLoad, onUnload, onHide} from "@dcloudio/uni-app";
 import { useUserStore } from "@/store/modules/user";
 
 // import ALLPopup from "./components/tip.vue";
@@ -700,7 +700,9 @@ const energy = computed(() => {
   return userStore.energy || 0;
 });
 
-
+onHide(() => {
+  console.log("离开页面了")
+})
 
 // ------------------- 工具函数 -------------------
 const clearSendTimer = () => {
@@ -839,18 +841,11 @@ const GetDeviceInfo = (data) => {
       if (res.data?.rows?.length) {
 
         const base = 'https://vedioafz.fzbkapp.com/';
-        const query = `?device_id=${encodeURIComponent(carDetails.value.front_camera)}&token=${encodeURIComponent(data.token)}&initAction=video_only&videoDefinition=${carDetails.value.video_definition}&defaultCameraClarity=${carDetails.value.default_camera_clarity}&_t=${Date.now()}`;
+        const query = `?device_id=${encodeURIComponent(carDetails.value.front_camera)}&token=${encodeURIComponent(data.token)}&initAction=video_only&videoDefinition=${carDetails.value.video_definition}&defaultCameraClarity=${carDetails.value.default_camera_clarity}&orderNo=${orderNo.value}&_t=${Date.now()}`;
         // const query = `?device_id=${encodeURIComponent('1002211')}&token=${encodeURIComponent(data.token)}&initAction=video_only&videoDefinition=${carDetails.value.video_definition}&defaultCameraClarity=${carDetails.value.default_camera_clarity}&closeFlag=0&_t=${Date.now()}`;
         videoUrl.value = base + query;
 
         console.log("请求接口之后的url:", videoUrl.value)
-
-        // videoUrl.value =
-        //   "https://xyvision.top:8028/?device_id=" +
-        //   carDetails.value.front_camera +
-        //   "&token=" +
-        //   data.token +
-        //   "&initAction=video_audio"; // 根据实际字段调整
       }
     })
     .catch(() => { });
@@ -938,7 +933,7 @@ const logoutOne = () => {
   if (UDPSocket.value) {
     UDPSocket.value.close();
   }
-  uni.redirectTo({
+  uni.reLaunch({
     url: "/subpkg_mine/pages/mine/reservation", // 你的首页路径
   });
 
@@ -971,11 +966,13 @@ const handlePopupAction = (val) => {
           uni.showToast({ title: res.msg, icon: "none" });
         }
         else {
+           SetKey({
+            order_no: orderNo.value,
+            type: 0
+          })
           daojishiTip()
           sendConDrive();
         }
-
-
       })
       .catch(() => {
         allPopupVisible.value = false;
@@ -1014,7 +1011,7 @@ const handlePopupAction = (val) => {
               }
               clearTimeout(timer);
 
-              uni.redirectTo({
+              uni.reLaunch({
                 url: "/subpkg_mine/pages/mine/reservation", // 你的首页路径
               });
             }, 2100);
