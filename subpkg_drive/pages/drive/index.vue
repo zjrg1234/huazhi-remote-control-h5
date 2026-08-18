@@ -30,7 +30,7 @@
           </cover-view>
           <cover-view>
             <battery :percent="batteryPer"></battery>
-            
+
           </cover-view>
           <cover-view class="vlot-text">{{ vlot }}</cover-view>
           <cover-view class="split-vertical"></cover-view>
@@ -80,7 +80,8 @@
             <!-- <slider :value="constSpeed" :min="1" :max="100" :step="1" activeColor="#f5c542" backgroundColor="#e9e9e9"
               block-size="6" @change="changeConstSpeed" /> -->
 
-            <SliderComp :disabledSlider="true" v-model="constSpeed" :min="1" :max="100" height="30px" @change="changeConstSpeed">
+            <SliderComp :disabledSlider="true" v-model="constSpeed" :min="1" :max="100" height="30px"
+              @change="changeConstSpeed">
             </SliderComp>
 
             <cover-view class="slider-label-bottom">
@@ -524,7 +525,7 @@ import LeftRight from "./components/left-right.vue";
 import ExLeft from "./components/ex-left.vue";
 import ExRight from "./components/ex-right.vue";
 
-import { StartDrive, UpdateBattery } from "@/axios/index.js";
+import { StartDrive, UpdateBattery, SetKey } from "@/axios/index.js";
 import { LoginTop, DeviceDetails } from "./axios/video.js";
 
 import {
@@ -986,32 +987,40 @@ const handlePopupAction = (val) => {
   }
   if (val == "logout") {
     console.log("退出驾驶");
-    
+
     StartDrive({
       order_no: orderNo.value,
       type: 3,
       vehicle_id: vehicleId.value,
     }, true)
       .then((res) => {
-       
+
         if (res.code == 2000 || res.code == 200) {
-          uni.showToast({ title: "退出驾驶成功", icon: "none" });
-          console.log("电池电量", batteryPer.value)
-          UpdateBattery({
-            vehicle_id: vehicleId.value,
-            vehicle_battery: batteryPer.value
-          })
-          const timer = setTimeout(() => {
-            clearInterval(sendMsgTimer);
-            if (UDPSocket.value) {
-              UDPSocket.value.close();
-            }
-            clearTimeout(timer);
-           
-            uni.redirectTo({
-              url: "/subpkg_mine/pages/mine/reservation", // 你的首页路径
-            });
-          }, 2100);
+
+          SetKey({
+            order_no: orderNo.value,
+            type: 1
+          }).then(res1 => {
+            uni.showToast({ title: "退出驾驶成功", icon: "none" });
+            console.log("电池电量", batteryPer.value)
+            UpdateBattery({
+              vehicle_id: vehicleId.value,
+              vehicle_battery: batteryPer.value
+            })
+            const timer = setTimeout(() => {
+              clearInterval(sendMsgTimer);
+              if (UDPSocket.value) {
+                UDPSocket.value.close();
+              }
+              clearTimeout(timer);
+
+              uni.redirectTo({
+                url: "/subpkg_mine/pages/mine/reservation", // 你的首页路径
+              });
+            }, 2100);
+
+          }).catch()
+
         } else {
           uni.showToast({ title: res.msg, icon: "none" });
         }
@@ -1019,7 +1028,7 @@ const handlePopupAction = (val) => {
       .catch((e) => {
         console.log("catch", e);
       }).finally(() => {
-         
+
       });
   }
 };
@@ -1238,8 +1247,9 @@ const initSocket = () => {
       clearTimeout(messageTimer.value);
       handleReceive(msg);
       // console.log("收到的消息", model)
-      vlot.value =  Number(model.volt ?? 0).toFixed(1)
+      vlot.value = Number(model.volt ?? 0).toFixed(1)
       batteryPer.value = handleBattery(model.volt, carDetails.value.battery);
+      batteryPer.value = 100;
       // 重新启动超时检测
       startMessageTimeout();
     },
@@ -1807,11 +1817,13 @@ const report = (text) => {
     background: #ff4d4f;
     margin-right: 5px;
   }
+
   .vlot-text {
     font-size: 10px;
     color: #fff;
     margin-left: 5px;
   }
+
   .time-text {
     font-size: 10px;
     color: #fff;

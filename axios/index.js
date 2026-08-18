@@ -99,3 +99,9 @@ export function CancelReservation(data) {
 export function GetNotice(data) {
   return post("/api/user/notice", data);
 }
+
+
+// 设置key
+export function SetKey(data) {
+  return post("/api/set/key", data);
+}
