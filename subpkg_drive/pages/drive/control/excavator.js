@@ -45,6 +45,7 @@ export class ExcavatorControlHandler {
     this.config[3] = obj[3];
     console.log(this.config);
   }
+  
   resetChValue() {
     this.ch3 = this.config.ch3.close_value.current_value; // 旋转
     this.ch4 = this.config.ch4.close_value.current_value; // 大臂
@@ -63,6 +64,10 @@ export class ExcavatorControlHandler {
     };
   }
 
+  // 油泵的开关值
+  setCH7Value() {
+    this.ch7 = val; // 油泵
+  }
   /**
    *
    * @param {boolean} type - 是否为左侧，还是右侧， 左侧left，右侧right

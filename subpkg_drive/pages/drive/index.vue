@@ -68,6 +68,11 @@
         </cover-view>
       </cover-view>
 
+      <cover-view class="side-menu-oil" @click="handleOil">
+        <cover-image class="image" mode="aspectFit" v-show="!showOil" :style="{ display: !showOil  ? 'block' : 'none' }" src="./static/icon_oil_close.png" />
+        <cover-image class="image" mode="aspectFit" v-show="showOil" :style="{ display: showOil ? 'block' : 'none' }" src="./static/icon_oil_open.png" />
+      </cover-view>
+
       <!-- 定速巡航 滑块 -->
       <cover-view class="slider" v-show="showSpeed">
         <cover-view class="slider-left">
@@ -892,12 +897,22 @@ const reportModal = () => {
   });
 };
 
+const showOil = ref(false)
+const handleOil = (item) => {
+  showOil.value = !showOil.value;
+  if(showOil.value) {
+    chValue.value.ch7 = carDetails.value.vehicle_config_detail.ch7.open_value.current_value
+  } else {
+    chValue.value.ch7 = carDetails.value.vehicle_config_detail.ch7.close_value.current_value
+  }
+}
 // 图标点击处理
 const handleIcon = (item) => {
   if (item.key === "repairs") {
     reportModal();
     return;
   }
+  
 
   const updateChannel = (key, chKey) => {
     if (item.key === key) {
@@ -1900,6 +1915,19 @@ const report = (text) => {
   .label {
     font-size: 10px;
     color: #fff;
+  }
+}
+
+
+.side-menu-oil {
+  position: fixed;
+  z-index: 99999;
+  top: 180px;
+  right: 19px;
+
+  .image {
+    width: 28px;
+    height: 28px;
   }
 }
 
