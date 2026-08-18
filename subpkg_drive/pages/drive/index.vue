@@ -50,14 +50,6 @@
         <cover-image class="image" src="./static/icon_set@2x.png" mode="aspectFit" />
       </cover-view>
 
-      <!-- 声音/波纹图标 -->
-      <!-- <cover-view class="side-menu-icon">
-        <microphone @action="handleMic"></microphone>
-        <cover-image class="image sound" v-show="!showSound" :style="{ display: !showSound ? 'block' : 'none' }"
-          src="./static/icon_sound_close@2x.png" @click="handleSound(true)" mode="aspectFit" />
-        <cover-image class="image sound" v-show="showSound" :style="{ display: showSound ? 'block' : 'none' }"
-          src="./static/icon_sound_open@2x.png" @click="handleSound(false)" mode="aspectFit" />
-      </cover-view> -->
 
       <!-- 右侧菜单 -->
       <!-- 右侧菜单 -->
@@ -728,20 +720,7 @@ const clearAllTimers = () => {
   }
 };
 
-const handleMic = (val) => {
-  // val false 是打开 true 是关闭
-  if (videoUrl.value.includes("video_audio")) {
-    videoUrl.value = videoUrl.value.replace(/micVal=\d+/, `micVal=${!val ? '1' : '0'}`);
 
-  } else {
-    const newUrl = videoUrl.value
-      .replace(/initAction=[^&]*/, `initAction=${!val ? 'video_audio' : 'video_only'}`)
-      .replace(/micVal=[^&]*/, `micVal=${!val ? '1' : '0'}`);
-    videoUrl.value = newUrl;
-  }
-  console.log(videoUrl.value)
-
-}
 
 
 // 结束驾驶逻辑
@@ -990,7 +969,6 @@ const handlePopupAction = (val) => {
             type: 0
           })
           daojishiTip()
-          sendConDrive();
         }
       })
       .catch(() => {
@@ -1003,7 +981,7 @@ const handlePopupAction = (val) => {
   }
   if (val == "logout") {
     console.log("退出驾驶");
-
+    clearInterval(billingTimer);
     StartDrive({
       order_no: orderNo.value,
       type: 3,
@@ -1174,8 +1152,10 @@ const initRouteData = (options) => {
     videoDefinition.value = carDetails.value.video_definition || "1";
     const type = carDetails.value.vehicle_type;
     if (type >= 10 && type <= 19) carType.value = "1";
-    else if (type >= 20 && type <= 29) carType.value = "2";
-    else carType.value = "3";
+    else if (type >= 20 && type <= 29 && type != 21) carType.value = "2";
+    else if (type == 21) {
+      carType.value = "3";
+    }
   } else {
     console.log("carDetails 空");
   }
@@ -1204,19 +1184,25 @@ const initVehicleConfig = () => {
       2: dirTurn.value,
       3: throttle.value
     }
+    // 液压挖机ch1～ch6 全部都是中位值的current_value
+    // mixed_control 为1 油泵一直开着 为0时，ch5 ch4 ch6 需要开油泵 就是ch7 需要open_values
     const config = carDetails.value.vehicle_config_detail || {};
-    ["ch3", "ch4", "ch5", "ch6", "ch7", "ch8"].forEach((key) => {
+    ["ch3", "ch4", "ch5", "ch6"].forEach((key) => {
       if (config[key])
-        chValue.value[key] = config[key].close_value.current_value;
+        chValue.value[key] = config[key].center_value.current_value;
     });
-    chValue.value.ch1 = directionCenter.value.current_value;
-    chValue.value.ch2 = acceleratorCenter.value.current_value;
+    
 
     // 走设置清晰度 以及 转换switch 数值
     setQualityList();
 
     // 四驱车
     if (carType.value == 1) {
+      chValue.value.ch1 = directionCenter.value.current_value;
+      chValue.value.ch2 = acceleratorCenter.value.current_value;
+      chValue.value.ch7 =  config[key].close_value.current_value;
+      chValue.value.ch8 =  config[key].close_value.current_value;
+
       carHandler.value = new CarControlHandler({
         reverseUpDownState: operFB.value,
         reverseLeftRightState: operDir.value,
@@ -1227,13 +1213,29 @@ const initVehicleConfig = () => {
         2: { ...directionDynamics.value },
         3: { ...acceleratorDynamics.value },
       });
+
+
     }
     // 液压挖机
     if (carType.value == 3) {
+
+      if (carDetails.value.mixed_control == 1) {
+        showOil.value = true
+        chValue.value.ch7 = config['ch7'].open_value.current_value;
+      } else {
+        chValue.value.ch7 = config['ch7'].close_value.current_value;
+        showOil.value = false
+      }
+      chValue.value.ch1 = config['ch1'].center_value.current_value;
+      chValue.value.ch2 = config['ch2'].center_value.current_value;
+      chValue.value.ch8 = config['ch8'].close_value.current_value;
+
+      console.log(chValue.value.ch1,"chValue.value.ch1")
       carHandler.value = new ExcavatorControlHandler({
         reverseUpDownState: operFB.value,
         reverseLeftRightState: operDir.value,
         ...carDetails.value.vehicle_config_detail,
+        mixedControl: carDetails.value.mixed_control
       });
     }
   }

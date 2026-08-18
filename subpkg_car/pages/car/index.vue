@@ -685,7 +685,7 @@ const continuePay = async () => {
 .custom-input {
   background: #f8f8f8;
   border-radius: 16rpx;
-
+  margin-bottom: 25rpx;
   .input {
     height: 90rpx;
     line-height: 1;

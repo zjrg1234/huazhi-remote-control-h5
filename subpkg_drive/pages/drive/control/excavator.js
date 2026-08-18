@@ -17,6 +17,7 @@ export class ExcavatorControlHandler {
     // 通过参数传入初始值
     this.ch1 = config.ch1;
     this.ch2 = config.ch2;
+    this.mixedControl = config.mixedControl
     this.reverseUpDownState = config.reverseUpDownState;
     this.reverseRotateState = config.reverseRotateState;
     this.config = config;
@@ -38,13 +39,6 @@ export class ExcavatorControlHandler {
   getConfigValue(index) {
     return this.config[index];
   }
-
-  setConfigValue(obj) {
-    this.config[0] = obj[0];
-    this.config[2] = obj[2];
-    this.config[3] = obj[3];
-    console.log(this.config);
-  }
   
   resetChValue() {
     this.ch3 = this.config.ch3.close_value.current_value; // 旋转
@@ -52,6 +46,11 @@ export class ExcavatorControlHandler {
     this.ch5 = this.config.ch5.close_value.current_value; // 小臂
     this.ch6 = this.config.ch6.close_value.current_value; // 挖斗
     this.ch7 = this.config.ch7.close_value.current_value; // 油泵
+    if (this.mixedControl == 1) {
+      this.ch7 = this.config.ch7.open_value.current_value; // 油泵
+    } else {
+      this.ch7 = this.config.ch7.close_value.current_value; // 油泵
+    }
   }
   getChValue() {
    
@@ -64,10 +63,7 @@ export class ExcavatorControlHandler {
     };
   }
 
-  // 油泵的开关值
-  setCH7Value() {
-    this.ch7 = val; // 油泵
-  }
+
   /**
    *
    * @param {boolean} type - 是否为左侧，还是右侧， 左侧left，右侧right
