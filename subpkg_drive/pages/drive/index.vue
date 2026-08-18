@@ -60,9 +60,12 @@
         </cover-view>
       </cover-view>
 
-      <cover-view class="side-menu-oil" @click="handleOil" v-show="carType == 3" :style="{ display: carType == 3 ? 'block' : 'none' }" >
-        <cover-image class="image" mode="aspectFit" v-show="!showOil" :style="{ display: !showOil  ? 'block' : 'none' }" src="./static/icon_oil_close.png" />
-        <cover-image class="image" mode="aspectFit" v-show="showOil" :style="{ display: showOil ? 'block' : 'none' }" src="./static/icon_oil_open.png" />
+      <cover-view class="side-menu-oil" @click="handleOil" v-show="carType == 3"
+        :style="{ display: carType == 3 ? 'block' : 'none' }">
+        <cover-image class="image" mode="aspectFit" v-show="!showOil" :style="{ display: !showOil ? 'block' : 'none' }"
+          src="./static/icon_oil_close.png" />
+        <cover-image class="image" mode="aspectFit" v-show="showOil" :style="{ display: showOil ? 'block' : 'none' }"
+          src="./static/icon_oil_open.png" />
       </cover-view>
 
       <!-- 定速巡航 滑块 -->
@@ -92,8 +95,8 @@
       <LeftRight @action="handleLRDrive" v-show="carType == 1" :isLeft="operMode"></LeftRight>
       <UpDown @action="handleFBDrive" v-show="carType == 1" :isLeft="!operMode"></UpDown>
 
-      <ExLeft @action="handleLeftDrive" @action2="handleDrive" v-show="carType == 3"></ExLeft>
-      <ExRight @action="handleRightDrive" @action2="handleDrive" v-show="carType == 3" :mode="operMode"></ExRight>
+      <ExLeft @action="handleLeftDrive" @action2="handleUpDownDrive" v-show="carType == 3"></ExLeft>
+      <ExRight @action="handleRightDrive" @action2="handleUpDownDrive" v-show="carType == 3" :mode="operMode"></ExRight>
       <!-- <pointOprea1 @action="handleLeftDrive" v-if="carType == 3"></pointOprea1> -->
       <!-- <pointOprea2 @action="handleRightDrive" v-if="carType == 3"></pointOprea2> -->
 
@@ -505,7 +508,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed, getCurrentInstance } from "vue";
-import { onLoad, onUnload, onHide} from "@dcloudio/uni-app";
+import { onLoad, onUnload, onHide } from "@dcloudio/uni-app";
 import { useUserStore } from "@/store/modules/user";
 
 // import ALLPopup from "./components/tip.vue";
@@ -881,7 +884,7 @@ const showOil = ref(false)
 const handleOil = () => {
   onUserActivity()
   showOil.value = !showOil.value;
-  if(showOil.value) {
+  if (showOil.value) {
     chValue.value.ch7 = carDetails.value.vehicle_config_detail.ch7.open_value.current_value
   } else {
     chValue.value.ch7 = carDetails.value.vehicle_config_detail.ch7.close_value.current_value
@@ -889,12 +892,12 @@ const handleOil = () => {
 }
 // 图标点击处理
 const handleIcon = (item) => {
-	onUserActivity()
+  onUserActivity()
   if (item.key === "repairs") {
     reportModal();
     return;
   }
-  
+
 
   const updateChannel = (key, chKey) => {
     if (item.key === key) {
@@ -964,7 +967,7 @@ const handlePopupAction = (val) => {
           uni.showToast({ title: res.msg, icon: "none" });
         }
         else {
-           SetKey({
+          SetKey({
             order_no: orderNo.value,
             type: 0
           })
@@ -1034,7 +1037,7 @@ const handleOper = (type) => {
 
 
 const set = () => {
-	onUserActivity()
+  onUserActivity()
   saveFlag.value = { 1: false, 2: false, 3: false }
   setVisible.value = true;
   showSpeed.value = false;
@@ -1053,7 +1056,7 @@ const set = () => {
 };
 
 const logout = () => {
-	onUserActivity()
+  onUserActivity()
   allPopupVisible.value = true;
   type.value = "logout";
   showSpeed.value = false;
@@ -1191,7 +1194,7 @@ const initVehicleConfig = () => {
       if (config[key])
         chValue.value[key] = config[key].center_value.current_value;
     });
-    
+
 
     // 走设置清晰度 以及 转换switch 数值
     setQualityList();
@@ -1200,8 +1203,8 @@ const initVehicleConfig = () => {
     if (carType.value == 1) {
       chValue.value.ch1 = directionCenter.value.current_value;
       chValue.value.ch2 = acceleratorCenter.value.current_value;
-      chValue.value.ch7 =  config[key].close_value.current_value;
-      chValue.value.ch8 =  config[key].close_value.current_value;
+      chValue.value.ch7 = config[key].close_value.current_value;
+      chValue.value.ch8 = config[key].close_value.current_value;
 
       carHandler.value = new CarControlHandler({
         reverseUpDownState: operFB.value,
@@ -1230,12 +1233,12 @@ const initVehicleConfig = () => {
       chValue.value.ch2 = config['ch2'].center_value.current_value;
       chValue.value.ch8 = config['ch8'].close_value.current_value;
 
-      console.log(chValue.value.ch1,"chValue.value.ch1")
+      console.log(chValue.value.ch1, "chValue.value.ch1")
       carHandler.value = new ExcavatorControlHandler({
         reverseUpDownState: operFB.value,
         reverseLeftRightState: operDir.value,
         ...carDetails.value.vehicle_config_detail,
-        mixedControl: carDetails.value.mixed_control
+        mixedControl: carDetails.value.mixed_control,
       });
     }
   }
@@ -1344,7 +1347,7 @@ const handleFBDrive = (item) => {
   }
   carHandler.value.handleTwoDirectionControlChannel(true, type, ratioValue);
   chValue.value.ch2 = carHandler.value.ch2;
-	onUserActivity()
+  onUserActivity()
   console.log("ch2:", chValue.value.ch2);
 };
 
@@ -1383,7 +1386,7 @@ const handleLRDrive = (item) => {
 
   carHandler.value.handleTwoDirectionControlChannel(false, type, ratioValue);
   chValue.value.ch1 = carHandler.value.ch1;
-	onUserActivity()
+  onUserActivity()
 };
 
 onUnmounted(() => {
@@ -1407,26 +1410,46 @@ const handleLeftDrive = (param) => {
   onUserActivity()
 };
 
-const handleDrive = (param) => {
+// 正常左侧遥杆的上下箭头
+const handleUpDownDrive = (param) => {
+  let ch;
+  
   if (param.isLeft) {
-    carHandler.value.handleArrowControlChannel(
-      "left",
-      param.type == "up" ? true : false,
-    );
-  } else {
-    // 挖机右
-    carHandler.value.handleArrowControlChannel(
-      "right",
-      param.type == "up" ? true : false,
-    );
-  }
+    // 一直按
+    if (param.flag == 1) {
+      console.log(carHandler.value)
+      carHandler.value.handleArrowControlChannel(
+        "left",
+        param.type == "up" ? true : false,
+      );
 
-  const ch = carHandler.value.getChValue();
+      ch = carHandler.value.getCh1Ch2Value();
+      chValue.value.ch1 = ch.ch1;
+    } else {
+      chValue.value.ch1 = carDetails.value.vehicle_config_detail.ch1.center_value.current_value;
+    }
+
+  } else {
+
+    if (param.flag == 1) {
+      // 挖机右
+      carHandler.value.handleArrowControlChannel(
+        "right",
+        param.type == "up" ? true : false,
+      );
+      ch = carHandler.value.getCh1Ch2Value();
+      chValue.value.ch2 = ch.ch2;
+    } else {
+      chValue.value.ch2 = carDetails.value.vehicle_config_detail.ch2.center_value.current_value;
+    }
+  }
+  ch = carHandler.value.getChValue();
   chValue.value.ch3 = ch.ch3;
   chValue.value.ch4 = ch.ch4;
   chValue.value.ch5 = ch.ch5;
   chValue.value.ch6 = ch.ch6;
   chValue.value.ch7 = ch.ch7;
+  console.log(chValue.value)
 };
 
 // 遥杆操作
@@ -1442,6 +1465,8 @@ const handleComDrive = (type, param) => {
     param.down == false
   ) {
     carHandler.value.resetChValue();
+   
+
   } else {
     carHandler.value.handleRemoteControlChannel(
       type,
@@ -1458,6 +1483,7 @@ const handleComDrive = (type, param) => {
   chValue.value.ch5 = ch.ch5;
   chValue.value.ch6 = ch.ch6;
   chValue.value.ch7 = ch.ch7;
+  console.log("圆盘", chValue.value)
 };
 
 //  set

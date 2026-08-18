@@ -29,12 +29,14 @@
 
     <cover-view class="up-down-arrow" v-show="!mode" :style="{ display: !mode ? 'block' : 'none' }">
       <cover-view class="arrow1 up" :class="{ active: isUpActive }">
-        <cover-image class="image" src="../static/btn_up_ex@2x.png" @touchend.prevent="handleClick('up')"
-          mode="aspectFit"></cover-image>
+        <cover-image class="image" src="../static/btn_up_ex@2x.png" @pointerdown="handleClickUp"
+          @pointerup="handleClickUpLeave" @pointercancel="handleClickUpLeave" @pointerleave="handleClickUpLeave"
+          @contextmenu.prevent mode="aspectFit"></cover-image>
       </cover-view>
       <cover-view class="arrow1 down" :class="{ active: isUpActive }">
-        <cover-image class="image" src="../static/btn_down_ex@2x.png" mode="aspectFit"
-          @touchend.prevent="handleClick('down')"></cover-image>
+        <cover-image class="image" src="../static/btn_down_ex@2x.png" mode="aspectFit" @pointerdown="handleClickDown"
+          @pointerup="handleClickDownLeave" @pointercancel="handleClickDownLeave" @pointerleave="handleClickDownLeave"
+          @contextmenu.prevent></cover-image>
       </cover-view>
     </cover-view>
 
@@ -42,12 +44,14 @@
 
       <cover-view class="flex">
         <cover-view class="arrow1 up" :class="{ active: isUpActive }">
-          <cover-image class="image" src="../static/btn_up_ex@2x.png" @touchend.prevent="handleClick('up')"
-            mode="aspectFit"></cover-image>
+          <cover-image class="image" src="../static/btn_up_ex@2x.png" @pointerdown="handleClickUp"
+            @pointerup="handleClickUpLeave" @pointercancel="handleClickUpLeave" @pointerleave="handleClickUpLeave"
+            @contextmenu.prevent mode="aspectFit"></cover-image>
         </cover-view>
         <cover-view class="arrow1 up" :class="{ active: isUpActive }">
-          <cover-image class="image" src="../static/btn_up_ex@2x.png" mode="aspectFit"
-            @touchend.prevent="handleClick('down')"></cover-image>
+          <cover-image class="image" src="../static/btn_up_ex@2x.png" mode="aspectFit" @pointerdown="handleClickDown"
+            @pointerup="handleClickDownLeave" @pointercancel="handleClickDownLeave" @pointerleave="handleClickDownLeave"
+            @contextmenu.prevent></cover-image>
         </cover-view>
       </cover-view>
 
@@ -218,6 +222,23 @@ const handleClick = (val) => {
     type: val,
   });
 };
+
+const handleClickUp = (val) => {
+  emit("action2", { type: "up", isLeft: false, flag: 1 });
+}
+
+const handleClickUpLeave = (val) => {
+  emit("action2", { type: "up", isLeft: false, flag: 0 });
+}
+
+const handleClickDown = (val) => {
+  emit("action2", { type: "down", isLeft: false, flag: 1 });
+}
+
+const handleClickDownLeave = (val) => {
+  emit("action2", { type: "down", isLeft: false, flag: 0 });
+}
+
 </script>
 
 <style lang="scss" scoped>
@@ -247,6 +268,7 @@ const handleClick = (val) => {
   height: 175px;
   text-align: center;
   width: 90px;
+
   .arrow1 {
     width: 36px;
     height: 36px;
@@ -268,6 +290,7 @@ const handleClick = (val) => {
   height: 175px;
   text-align: center;
   width: 90px;
+
   .arrow1 {
     width: 36px;
     height: 36px;
@@ -345,7 +368,7 @@ const handleClick = (val) => {
     top: 50%;
     transform: translateY(-50%);
     left: 25px;
-   
+
 
 
   }

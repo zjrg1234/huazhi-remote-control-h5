@@ -15,17 +15,18 @@ export class ExcavatorControlHandler {
    */
   constructor(config) {
     // 通过参数传入初始值
-    this.ch1 = config.ch1;
-    this.ch2 = config.ch2;
+    this.config = config;
+    console.log(config,"config")
     this.mixedControl = config.mixedControl
     this.reverseUpDownState = config.reverseUpDownState;
     this.reverseRotateState = config.reverseRotateState;
-    this.config = config;
 
-    this.ch3 = config.ch3.close_value.current_value; // 旋转
-    this.ch4 = config.ch4.close_value.current_value; // 大臂
-    this.ch5 = config.ch5.close_value.current_value; // 小臂
-    this.ch6 = config.ch6.close_value.current_value; // 挖斗
+    this.ch1 = config.ch1.center_value.current_value; 
+    this.ch2 = config.ch2.center_value.current_value; 
+    this.ch3 = config.ch3.center_value.current_value; // 旋转
+    this.ch4 = config.ch4.center_value.current_value; // 大臂
+    this.ch5 = config.ch5.center_value.current_value; // 小臂
+    this.ch6 = config.ch6.center_value.current_value; // 挖斗
     this.ch7 = config.ch7.close_value.current_value; // 油泵
     this.ch8 = config.ch8.close_value.current_value;
   } // 模拟获取配置参数的方法
@@ -41,11 +42,12 @@ export class ExcavatorControlHandler {
   }
   
   resetChValue() {
-    this.ch3 = this.config.ch3.close_value.current_value; // 旋转
-    this.ch4 = this.config.ch4.close_value.current_value; // 大臂
-    this.ch5 = this.config.ch5.close_value.current_value; // 小臂
-    this.ch6 = this.config.ch6.close_value.current_value; // 挖斗
+    this.ch3 = this.config.ch3.center_value.current_value; // 旋转
+    this.ch4 = this.config.ch4.center_value.current_value; // 大臂
+    this.ch5 = this.config.ch5.center_value.current_value; // 小臂
+    this.ch6 = this.config.ch6.center_value.current_value; // 挖斗
     this.ch7 = this.config.ch7.close_value.current_value; // 油泵
+    this.ch8 = this.config.ch8.close_value.current_value; // 油泵
     if (this.mixedControl == 1) {
       this.ch7 = this.config.ch7.open_value.current_value; // 油泵
     } else {
@@ -55,11 +57,22 @@ export class ExcavatorControlHandler {
   getChValue() {
    
     return {
+      
       ch3: this.ch3,
       ch4: this.ch4,
       ch5: this.ch5,
       ch6: this.ch6,
       ch7: this.ch7
+    };
+  }
+
+  getCh1Ch2Value() {
+   
+    return {
+      
+      ch1: this.ch1,
+      ch2: this.ch2,
+   
     };
   }
 
@@ -74,25 +87,25 @@ export class ExcavatorControlHandler {
     // 左侧上下箭头
     if (type == "left") {
       // true 点击向上
-      const center = this.config.ch2.center_value.current_value;
-      const open = this.config.ch2.open_value.current_value;
+      const center = this.config.ch1.center_value.current_value;
+      const open = this.config.ch1.open_value.current_value;
       const offset = Math.abs(center - open);
 
       // 核心逻辑：非反向时 up=+offset / down=-offset；反向时取反
       const isUp = !!positionType;
       const direction = isUp !== this.reverseUpDownState ? 1 : -1;
 
-      this.ch2 = center + direction * offset;
+      this.ch1 = center + direction * offset;
     } else {
-      const center = this.config.ch1.center_value.current_value;
-      const open = this.config.ch1.open_value.current_value;
+      const center = this.config.ch2.center_value.current_value;
+      const open = this.config.ch2.open_value.current_value;
       const offset = Math.abs(center - open);
 
       // 核心逻辑：positionType 向左 还是向右
       // const isLeftRight = !!positionType;
       const direction = !!positionType ? 1 : -1;
 
-      this.ch1 = center + direction * offset;
+      this.ch2 = center + direction * offset;
     }
   
   }

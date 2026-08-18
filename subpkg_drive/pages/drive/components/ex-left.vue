@@ -37,7 +37,12 @@
         <cover-image
           class="image"
           src="../static/btn_up_ex@2x.png"
-          @touchend.prevent="handleClick('up')"
+
+         @touchstart.stop="handleClickUp"
+        @touchend.stop="handleClickUpLeave"
+        @touchcancel.stop="handleClickUpLeave"
+          @contextmenu.prevent 
+         
           mode="aspectFit"
         />
       </cover-view>
@@ -45,7 +50,9 @@
         <cover-image
           class="image"
           src="../static/btn_down_ex@2x.png"
-          @touchend.prevent="handleClick('down')"
+          @pointerdown="handleClickDown" @pointerup="handleClickDownLeave"
+          @pointercancel="handleClickDownLeave" @pointerleave="handleClickDownLeave" @contextmenu.prevent
+         
           mode="aspectFit"
         />
       </cover-view>
@@ -190,9 +197,96 @@ const handleEnd = () => {
   resetArrows();
 };
 
-const handleClick = (val) => {
-  emit("action2", { type: val, isLeft: true });
+
+//  ========== 上下按钮长按（连续触发） ==========
+let longPressTimerUp = null;
+let repeatTimerUp = null;
+let longPressTimerDown = null;
+let repeatTimerDown = null;
+
+const LONG_PRESS_DELAY = 300;   // 长按识别延迟（ms）
+const REPEAT_INTERVAL = 100;    // 重复触发间隔（ms）
+
+// ---- 上按钮 ----
+const handleClickUp = () => {
+  // 通知父组件重置无操作倒计时
+  emit("reset");
+
+  // 清除残留定时器
+  clearTimeout(longPressTimerUp);
+  clearInterval(repeatTimerUp);
+
+  // 立即执行一次（单击效果）
+  doUpAction(true);
+
+  // 延迟后启动重复定时器
+  longPressTimerUp = setTimeout(() => {
+    repeatTimerUp = setInterval(() => {
+      doUpAction(true);
+    }, REPEAT_INTERVAL);
+  }, LONG_PRESS_DELAY);
 };
+
+const handleClickUpLeave = () => {
+  clearTimeout(longPressTimerUp);
+  clearInterval(repeatTimerUp);
+  longPressTimerUp = null;
+  repeatTimerUp = null;
+  doUpAction(false);
+};
+
+const handleClickDown = () => {
+  emit("reset");
+  clearTimeout(longPressTimerDown);
+  clearInterval(repeatTimerDown);
+  doDownAction(true);
+
+  longPressTimerDown = setTimeout(() => {
+    repeatTimerDown = setInterval(() => {
+      doDownAction(true);
+    }, REPEAT_INTERVAL);
+  }, LONG_PRESS_DELAY);
+};
+
+const handleClickDownLeave = () => {
+  clearTimeout(longPressTimerDown);
+  clearInterval(repeatTimerDown);
+  longPressTimerDown = null;
+  repeatTimerDown = null;
+  doDownAction(false);
+};
+
+const doDownAction = (flag) => {
+  emit("action2", { type: "down", isLeft: true, flag: flag ? 1 : 0 });
+};
+
+const doUpAction = (flag) => {
+  emit("action2", { type: "up", isLeft: true, flag: flag ? 1 : 0 });
+  // 如果 flag 为 true 表示持续动作，这里也可以额外发送 reset 事件，但已在 touchstart 中发送
+};
+
+
+
+// const handleClickUp = (val) => {
+//   console.log('handleClickUp')
+//   emit("action2", { type: "up", isLeft: true, flag: 1 });
+// }
+
+// const handleClickUpLeave = (val) => {
+//   emit("action2", { type: "up", isLeft: true, flag: 0 });
+// }
+
+// const handleClickDown = (val) => {
+//   emit("action2", { type: "down", isLeft: true, flag: 1 });
+// }
+
+// const handleClickDownLeave = (val) => {
+//   emit("action2", { type: "down", isLeft: true, flag: 0 });
+// }
+
+// const handleClick = (val) => {
+//   emit("action2", { type: val, isLeft: true , flag: 0 });
+// };
 </script>
 
 <style lang="scss" scoped>
