@@ -30,7 +30,9 @@
           </cover-view>
           <cover-view>
             <battery :percent="batteryPer"></battery>
+            
           </cover-view>
+          <cover-view class="vlot-text">{{ vlot }}</cover-view>
           <cover-view class="split-vertical"></cover-view>
           <cover-view class="time-text">
             {{ currentTime }}
@@ -78,7 +80,7 @@
             <!-- <slider :value="constSpeed" :min="1" :max="100" :step="1" activeColor="#f5c542" backgroundColor="#e9e9e9"
               block-size="6" @change="changeConstSpeed" /> -->
 
-            <SliderComp :disabledSlider="false" v-model="constSpeed" :min="1" :max="100" height="30px" @change="changeConstSpeed">
+            <SliderComp :disabledSlider="true" v-model="constSpeed" :min="1" :max="100" height="30px" @change="changeConstSpeed">
             </SliderComp>
 
             <cover-view class="slider-label-bottom">
@@ -598,6 +600,7 @@ const UDPSocket = ref(null);
 const numTip = ref(0);
 const { handleReceive, model } = useHESbus();
 const batteryPer = ref(100);
+const vlot = ref('')
 // 菜单配置
 const menuList = computed(() => {
   if (carType.value == 1) {
@@ -755,8 +758,6 @@ const daojishiTip = () => {
     countNum = carInfo.billing_rules.time * 2;
   }
 
-  console.log(countNum, "======-")
-
   if (countNum <= 0) {
     handleDriveEnd();
     return;
@@ -818,7 +819,7 @@ const continueDrive = async () => {
       vehicle_id: vehicleId.value,
     });
     console.log("继续驾驶返回", res);
-    if (res.code != 200) {
+    if (res.code != 200 && res.code != 2000) {
       uni.showToast({ title: res.msg, icon: "none" });
     }
   } catch (e) {
@@ -936,7 +937,7 @@ const logoutOne = () => {
   if (UDPSocket.value) {
     UDPSocket.value.close();
   }
-  uni.reLaunch({
+  uni.redirectTo({
     url: "/subpkg_mine/pages/mine/reservation", // 你的首页路径
   });
 
@@ -992,9 +993,6 @@ const handlePopupAction = (val) => {
       vehicle_id: vehicleId.value,
     }, true)
       .then((res) => {
-        
-        videoUrl.value = videoUrl.value.replace(/closeFlag=\d+/, `closeFlag=${'1'}`)
-          .replace(/_t=[^&]*/, `_t=${Date.now()}`);
        
         if (res.code == 2000 || res.code == 200) {
           uni.showToast({ title: "退出驾驶成功", icon: "none" });
@@ -1010,7 +1008,7 @@ const handlePopupAction = (val) => {
             }
             clearTimeout(timer);
            
-            uni.reLaunch({
+            uni.redirectTo({
               url: "/subpkg_mine/pages/mine/reservation", // 你的首页路径
             });
           }, 2100);
@@ -1240,6 +1238,7 @@ const initSocket = () => {
       clearTimeout(messageTimer.value);
       handleReceive(msg);
       // console.log("收到的消息", model)
+      vlot.value =  Number(model.volt ?? 0).toFixed(1)
       batteryPer.value = handleBattery(model.volt, carDetails.value.battery);
       // 重新启动超时检测
       startMessageTimeout();
@@ -1608,11 +1607,9 @@ const onTouchStart = (type, step) => {
 
 // 触摸结束 / 取消
 const onTouchEnd = () => {
-
   longPressTimer && clearTimeout(longPressTimer);
   longPressTimer && clearInterval(longPressTimer);
   longPressTimer = null;
-
 };
 
 
@@ -1810,7 +1807,11 @@ const report = (text) => {
     background: #ff4d4f;
     margin-right: 5px;
   }
-
+  .vlot-text {
+    font-size: 10px;
+    color: #fff;
+    margin-left: 5px;
+  }
   .time-text {
     font-size: 10px;
     color: #fff;

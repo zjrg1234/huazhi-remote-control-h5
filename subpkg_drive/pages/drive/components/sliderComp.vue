@@ -33,7 +33,7 @@ const props = defineProps({
   disabled: { type: Boolean, default: false },
   width: { type: String, default: "100%" },
   height: { type: String, default: "40px"},
-  disabledSlider: { type: Boolean, default: true },
+  disabledSlider: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(["update:modelValue", "change"]);

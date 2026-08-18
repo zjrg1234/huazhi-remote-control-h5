@@ -35,7 +35,6 @@ export class CarControlHandler {
     console.log("this.config", this.config)
   }
 
-  // 明天加
   setReverseStatus(type1, type2) {
     this.reverseUpDownState = type1
     this.reverseLeftRightState = type2

@@ -152,34 +152,33 @@ export const mapToPer = (value) => {
 
 // 通过电压计算电量
 export const handleBattery = (voltage, batteryType) => {
-    let batteryRate = 0.0;
-    
-    // 单节锂电池的安全工作区间
+
+    // 1. 定义单节锂电池的安全工作区间
     const cellMaxVoltage = 4.2;
     const cellMinVoltage = 3.5;
     const cellVoltageRange = cellMaxVoltage - cellMinVoltage; // 0.7V
 
-    // 根据电池类型分配对应的串联节数
-    let cellCount = 0.0;
-    
-    const obj = {
-      1: '1.0',
-      2: '2.0',
-      3: '3.0',
-      4: '4.0',
-      5: '5.0',
-    }
-    cellCount = obj[batteryType] || 6.0
+    // 2. 直接将传入的类型转换为数字类型（规避字符串隐式转换）
+    // 假设 batteryType 是 1~5，如果是其他异常值则默认保底为 6 串
+    const cellCount = Number(batteryType) + 1;
 
-    // 计算电池类型的最高或最低电压
+    // 3. 计算电池总体的最高与最低电压
     const minVoltage = cellMinVoltage * cellCount;
     const voltageRange = cellVoltageRange * cellCount;
 
-    batteryRate = (voltage - minVoltage) / voltageRange;
+    // 4. 计算出原始比例
+    const rawRate = (voltage - minVoltage) / voltageRange;
 
-    // 限制在 0~1 之间
-    batteryRate = (Math.max(0.0, Math.min(1.0, batteryRate))).toFixed(2) * 100;
-    return batteryRate;
+    // 5. 限制在 0.0 ~ 1.0 之间
+    const clampedRate = Math.max(0.0, Math.min(1.0, rawRate));
+
+    // 6. 转换为百分比
+    // 方案 A：如果你需要整数百分比（推荐用于 UI 展示，如 7%）
+    // return Math.round(clampedRate * 100);
+
+    // 方案 B：如果你确实需要保留两位小数的浮点数（如 7.14），需包裹 Number 强转
+  
+    return Number((clampedRate * 100).toFixed(2));
 }
 
 

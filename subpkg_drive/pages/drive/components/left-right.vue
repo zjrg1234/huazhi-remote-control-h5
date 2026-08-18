@@ -177,11 +177,8 @@ const updateArrows = (dx, dy) => {
   if (isLeftActive.value == false && isRightActive.value == false) {
     return;
   }
-  const now = performance.now(); // 或 Date.now()
-  if (now - lastEmitTime >= 40) {
-    lastEmitTime = now;
-    emit("action", { lr: dx < 0, value: dx });
-  }
+  console.log(123)
+  emit("action", { lr: dx < 0, value: dx });
 };
 
 const resetArrows = () => {

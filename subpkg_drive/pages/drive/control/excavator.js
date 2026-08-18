@@ -29,7 +29,7 @@ export class ExcavatorControlHandler {
     this.ch8 = config.ch8.close_value.current_value;
   } // 模拟获取配置参数的方法
 
-    // 明天加
+  
   setReverseStatus(type1, type2) {
     this.reverseUpDownState = type1
     this.reverseLeftRightState = type2
