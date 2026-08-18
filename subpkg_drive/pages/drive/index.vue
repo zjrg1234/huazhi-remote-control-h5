@@ -68,7 +68,7 @@
         </cover-view>
       </cover-view>
 
-      <cover-view class="side-menu-oil" @click="handleOil">
+      <cover-view class="side-menu-oil" @click="handleOil" v-show="carType == 3" :style="{ display: carType == 3 ? 'block' : 'none' }" >
         <cover-image class="image" mode="aspectFit" v-show="!showOil" :style="{ display: !showOil  ? 'block' : 'none' }" src="./static/icon_oil_close.png" />
         <cover-image class="image" mode="aspectFit" v-show="showOil" :style="{ display: showOil ? 'block' : 'none' }" src="./static/icon_oil_open.png" />
       </cover-view>
