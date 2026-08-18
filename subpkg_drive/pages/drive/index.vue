@@ -483,7 +483,7 @@
               </cover-view>
               <cover-view class="footer">
                 <cover-view class="flex mt">
-                  <cover-view class="btn right" @tap.stop="handlePopupAction('logout')">退出驾驶</cover-view>
+                  <cover-view class="btn right" @tap.stop="continueDrive">继续驾驶</cover-view>
                 </cover-view>
               </cover-view>
             </cover-view>
@@ -820,6 +820,7 @@ const sendConDrive = async () => {
 };
 
 const continueDrive = async () => {
+  onUserActivity()
   try {
     const res = await StartDrive({
       order_no: orderNo.value,
@@ -898,7 +899,8 @@ const reportModal = () => {
 };
 
 const showOil = ref(false)
-const handleOil = (item) => {
+const handleOil = () => {
+  onUserActivity()
   showOil.value = !showOil.value;
   if(showOil.value) {
     chValue.value.ch7 = carDetails.value.vehicle_config_detail.ch7.open_value.current_value
@@ -908,6 +910,7 @@ const handleOil = (item) => {
 }
 // 图标点击处理
 const handleIcon = (item) => {
+	onUserActivity()
   if (item.key === "repairs") {
     reportModal();
     return;
@@ -965,6 +968,7 @@ const handlePopupAction = (val) => {
     type.value = "repair";
     allPopupVisible.value = false;
     reportModal();
+    onUserActivity()
     return;
   }
   if (val == "driving") {
@@ -1052,6 +1056,7 @@ const handleOper = (type) => {
 
 
 const set = () => {
+	onUserActivity()
   saveFlag.value = { 1: false, 2: false, 3: false }
   setVisible.value = true;
   showSpeed.value = false;
@@ -1070,6 +1075,7 @@ const set = () => {
 };
 
 const logout = () => {
+	onUserActivity()
   allPopupVisible.value = true;
   type.value = "logout";
   showSpeed.value = false;
@@ -1336,6 +1342,7 @@ const handleFBDrive = (item) => {
   }
   carHandler.value.handleTwoDirectionControlChannel(true, type, ratioValue);
   chValue.value.ch2 = carHandler.value.ch2;
+	onUserActivity()
   console.log("ch2:", chValue.value.ch2);
 };
 
@@ -1374,7 +1381,7 @@ const handleLRDrive = (item) => {
 
   carHandler.value.handleTwoDirectionControlChannel(false, type, ratioValue);
   chValue.value.ch1 = carHandler.value.ch1;
-
+	onUserActivity()
 };
 
 onUnmounted(() => {
@@ -1395,6 +1402,7 @@ onUnload(() => {
 // 遥杆操作 挖机
 const handleLeftDrive = (param) => {
   handleComDrive("left", param);
+  onUserActivity()
 };
 
 const handleDrive = (param) => {
@@ -1421,6 +1429,7 @@ const handleDrive = (param) => {
 
 // 遥杆操作
 const handleRightDrive = (param) => {
+  onUserActivity()
   handleComDrive("right", param);
 };
 const handleComDrive = (type, param) => {
@@ -1497,6 +1506,7 @@ const setQualityList = () => {
 // 正反 旋转，上下操作
 const setHandleOper = (type, val) => {
   console.log(type, val);
+  onUserActivity()
   if (type == 1) operFB.value = val;
   if (type == 2) operDir.value = val;
   // 四驱车 液压挖机
@@ -1519,6 +1529,7 @@ const steeringModes = [
 const handleSetSelect = (id) => {
   selectedMode.value = id;
   operMode.value = selectedMode.value == "mode2";
+  onUserActivity()
 };
 
 const setGroup = ref([
@@ -1528,6 +1539,7 @@ const setGroup = ref([
 const selectedIndex = ref(0);
 const handleItem = (index) => {
   selectedIndex.value = index;
+  onUserActivity()
 };
 
 // 改变值
@@ -1546,11 +1558,13 @@ const changeVal = (value) => {
 // 是否点击保存
 const saveFlag = ref({ 1: false, 2: false, 3: false });
 const save = (type) => {
+  onUserActivity()
   saveFlag.value[type] = true;
   uni.showToast({ title: "保存成功", icon: "none" })
 };
 
 const close = () => {
+  onUserActivity()
   const val = {
     0: carDetails.value.direction_center.current_value,
     2: carDetails.value.direction_dynamics.current_value,
@@ -1580,7 +1594,7 @@ const close = () => {
 };
 // 滑动slider
 const setChangeVal = (flag, value) => {
-
+  onUserActivity()
   const obj = JSON.parse(uni.getStorageSync("carDetails"));
 
   let val = Object.assign({}, {
@@ -1614,6 +1628,7 @@ const REPEAT_INTERVAL = 80;  // 长按后重复触发的间隔(ms)
 
 // 触摸开始
 const onTouchStart = (type, step) => {
+  onUserActivity()
   // 立即执行一次
   handleValueChange(type, step);
 
@@ -1691,11 +1706,12 @@ const selectReason = (index, item) => {
 const cancel = () => {
   allPopupVisible.value = false;
   selectedReasonIndex.value = 0;
+  onUserActivity()
 };
 
 const report = (text) => {
   let msg = "";
-
+  onUserActivity()
   // 调用 API 上报 2s 退出回去
   CarReport({ order_no: orderNo.value, id: vehicleId.value, text }).then(
     (res) => {
