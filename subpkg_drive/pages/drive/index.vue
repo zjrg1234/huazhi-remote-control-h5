@@ -95,8 +95,8 @@
       <LeftRight @action="handleLRDrive" v-show="carType == 1" :isLeft="operMode"></LeftRight>
       <UpDown @action="handleFBDrive" v-show="carType == 1" :isLeft="!operMode"></UpDown>
 
-      <ExLeft @action="handleLeftDrive" @action2="handleUpDownDrive" v-show="carType == 3"></ExLeft>
-      <ExRight @action="handleRightDrive" @action2="handleUpDownDrive" v-show="carType == 3" :mode="operMode"></ExRight>
+      <ExLeft @action="handleLeftDrive" @action2="handleUpDownDrive" v-show="carType == 3" @reset="onUserActivity"></ExLeft>
+      <ExRight @action="handleRightDrive" @action2="handleUpDownDrive" v-show="carType == 3" :mode="operMode" @reset="onUserActivity"></ExRight>
       <!-- <pointOprea1 @action="handleLeftDrive" v-if="carType == 3"></pointOprea1> -->
       <!-- <pointOprea2 @action="handleRightDrive" v-if="carType == 3"></pointOprea2> -->
 
@@ -495,7 +495,7 @@
               </cover-view>
               <cover-view class="footer">
                 <cover-view class="btn left mr" @tap.stop="handlePopupAction('logout')">退出驾驶</cover-view>
-                <cover-view class="btn right" @tap.stop="continueDrive">继续驾驶</cover-view>
+                <cover-view class="btn right" @tap.stop="handleContinueDrive">继续驾驶</cover-view>
               </cover-view>
             </cover-view>
 
@@ -801,6 +801,9 @@ const sendConDrive = async () => {
   await continueDrive()
 };
 
+const handleContinueDrive = () => {
+  allPopupVisible.value = false
+}
 const continueDrive = async () => {
   onUserActivity()
   try {
@@ -812,7 +815,7 @@ const continueDrive = async () => {
     console.log("继续驾驶返回", res);
     if (res.code != 200 && res.code != 2000) {
       uni.showToast({ title: res.msg, icon: "none" });
-    }
+    } 
   } catch (e) {
     console.error("继续驾驶请求失败", e);
   } finally {
@@ -1154,11 +1157,29 @@ const initRouteData = (options) => {
     carDetails.value = JSON.parse(details);
     videoDefinition.value = carDetails.value.video_definition || "1";
     const type = carDetails.value.vehicle_type;
+
+
+// case fourWheelVehicle = 10 //遥控车 - 四驱车
+// excavatorGeneralVehicle = 20 //挖机- 普通挖机case
+// caseexcavatorHydraulicVehicle = 21 //挖机- 液压挖机
+// bulldozerGeneralVehicle = 30 //铲车 (推土机) - 普通铲车case
+// bulldozerHydraulicVehicle = 31//铲车(推土机) - 液压铲车case
+// case otherVehicle = 40 
+
     if (type >= 10 && type <= 19) carType.value = "1";
     else if (type >= 20 && type <= 29 && type != 21) carType.value = "2";
     else if (type == 21) {
       carType.value = "3";
     }
+    else if (type == 30) {
+      carType.value= "4"
+    }
+    else if (type == 31) {
+      carType.value= "5"
+    }
+
+    carType.value = "3";
+
   } else {
     console.log("carDetails 空");
   }
@@ -1203,8 +1224,8 @@ const initVehicleConfig = () => {
     if (carType.value == 1) {
       chValue.value.ch1 = directionCenter.value.current_value;
       chValue.value.ch2 = acceleratorCenter.value.current_value;
-      chValue.value.ch7 = config[key].close_value.current_value;
-      chValue.value.ch8 = config[key].close_value.current_value;
+      chValue.value.ch7 = config["ch7"].close_value.current_value;
+      chValue.value.ch8 = config["ch8"].close_value.current_value;
 
       carHandler.value = new CarControlHandler({
         reverseUpDownState: operFB.value,
@@ -1233,7 +1254,7 @@ const initVehicleConfig = () => {
       chValue.value.ch2 = config['ch2'].center_value.current_value;
       chValue.value.ch8 = config['ch8'].close_value.current_value;
 
-      console.log(chValue.value.ch1, "chValue.value.ch1")
+      
       carHandler.value = new ExcavatorControlHandler({
         reverseUpDownState: operFB.value,
         reverseLeftRightState: operDir.value,
@@ -1413,7 +1434,7 @@ const handleLeftDrive = (param) => {
 // 正常左侧遥杆的上下箭头
 const handleUpDownDrive = (param) => {
   let ch;
-  
+  console.log(param)
   if (param.isLeft) {
     // 一直按
     if (param.flag == 1) {

@@ -29,13 +29,12 @@
 
     <cover-view class="up-down-arrow" v-show="!mode" :style="{ display: !mode ? 'block' : 'none' }">
       <cover-view class="arrow1 up" :class="{ active: isUpActive }">
-        <cover-image class="image" src="../static/btn_up_ex@2x.png" @pointerdown="handleClickUp"
-          @pointerup="handleClickUpLeave" @pointercancel="handleClickUpLeave" @pointerleave="handleClickUpLeave"
-          @contextmenu.prevent mode="aspectFit"></cover-image>
+        <cover-image class="image" src="../static/btn_up_ex@2x.png" @touchstart.stop="handleClickUp"
+          @touchend.stop="handleClickUpLeave" @touchcancel.stop="handleClickUpLeave" @contextmenu.prevent mode="aspectFit"></cover-image>
       </cover-view>
       <cover-view class="arrow1 down" :class="{ active: isUpActive }">
-        <cover-image class="image" src="../static/btn_down_ex@2x.png" mode="aspectFit" @pointerdown="handleClickDown"
-          @pointerup="handleClickDownLeave" @pointercancel="handleClickDownLeave" @pointerleave="handleClickDownLeave"
+        <cover-image class="image" src="../static/btn_down_ex@2x.png" mode="aspectFit" @touchstart.stop="handleClickDown"
+          @touchend.stop="handleClickDownLeave" @touchcancel.stop="handleClickDownLeave"
           @contextmenu.prevent></cover-image>
       </cover-view>
     </cover-view>
@@ -44,13 +43,12 @@
 
       <cover-view class="flex">
         <cover-view class="arrow1 up" :class="{ active: isUpActive }">
-          <cover-image class="image" src="../static/btn_up_ex@2x.png" @pointerdown="handleClickUp"
-            @pointerup="handleClickUpLeave" @pointercancel="handleClickUpLeave" @pointerleave="handleClickUpLeave"
-            @contextmenu.prevent mode="aspectFit"></cover-image>
+          <cover-image class="image" src="../static/btn_up_ex@2x.png" @touchstart.stop="handleClickUp"
+          @touchend.stop="handleClickUpLeave" @touchcancel.stop="handleClickUpLeave" @contextmenu.prevent mode="aspectFit"></cover-image>
         </cover-view>
         <cover-view class="arrow1 up" :class="{ active: isUpActive }">
-          <cover-image class="image" src="../static/btn_up_ex@2x.png" mode="aspectFit" @pointerdown="handleClickDown"
-            @pointerup="handleClickDownLeave" @pointercancel="handleClickDownLeave" @pointerleave="handleClickDownLeave"
+          <cover-image class="image" src="../static/btn_up_ex@2x.png" mode="aspectFit" @touchstart.stop="handleClickDown"
+          @touchend.stop="handleClickDownLeave" @touchcancel.stop="handleClickDownLeave"
             @contextmenu.prevent></cover-image>
         </cover-view>
       </cover-view>
@@ -61,7 +59,7 @@
 
 <script setup>
 import { ref, computed } from "vue";
-const emit = defineEmits(["action", "action2"]);
+const emit = defineEmits(["action", "action2","reset"]);
 
 const props = defineProps({
   mode: { type: Boolean, default: true },
@@ -217,27 +215,96 @@ const handleEnd = () => {
   resetArrows();
 };
 
-const handleClick = (val) => {
-  emit("action2", {
-    type: val,
-  });
+
+
+
+let longPressTimerUp = null;
+let repeatTimerUp = null;
+let longPressTimerDown = null;
+let repeatTimerDown = null;
+
+const LONG_PRESS_DELAY = 300;   // 长按识别延迟（ms）
+const REPEAT_INTERVAL = 100;    // 重复触发间隔（ms）
+
+// ---- 上按钮 ----
+const handleClickUp = () => {
+  // 通知父组件重置无操作倒计时
+  emit("reset");
+
+  // 清除残留定时器
+  clearTimeout(longPressTimerUp);
+  clearInterval(repeatTimerUp);
+
+  // 立即执行一次（单击效果）
+  doUpAction(true);
+
+  // 延迟后启动重复定时器
+  longPressTimerUp = setTimeout(() => {
+    repeatTimerUp = setInterval(() => {
+      doUpAction(true);
+    }, REPEAT_INTERVAL);
+  }, LONG_PRESS_DELAY);
 };
 
-const handleClickUp = (val) => {
-  emit("action2", { type: "up", isLeft: false, flag: 1 });
-}
+const handleClickUpLeave = () => {
+  clearTimeout(longPressTimerUp);
+  clearInterval(repeatTimerUp);
+  longPressTimerUp = null;
+  repeatTimerUp = null;
+  doUpAction(false);
+};
 
-const handleClickUpLeave = (val) => {
-  emit("action2", { type: "up", isLeft: false, flag: 0 });
-}
+const handleClickDown = () => {
+  emit("reset");
+  clearTimeout(longPressTimerDown);
+  clearInterval(repeatTimerDown);
+  doDownAction(true);
 
-const handleClickDown = (val) => {
-  emit("action2", { type: "down", isLeft: false, flag: 1 });
-}
+  longPressTimerDown = setTimeout(() => {
+    repeatTimerDown = setInterval(() => {
+      doDownAction(true);
+    }, REPEAT_INTERVAL);
+  }, LONG_PRESS_DELAY);
+};
 
-const handleClickDownLeave = (val) => {
-  emit("action2", { type: "down", isLeft: false, flag: 0 });
-}
+const handleClickDownLeave = () => {
+  clearTimeout(longPressTimerDown);
+  clearInterval(repeatTimerDown);
+  longPressTimerDown = null;
+  repeatTimerDown = null;
+  doDownAction(false);
+};
+
+const doDownAction = (flag) => {
+  emit("action2", { type: "down", isLeft: false, flag: flag ? 1 : 0 });
+};
+
+const doUpAction = (flag) => {
+  emit("action2", { type: "up", isLeft: false, flag: flag ? 1 : 0 });
+  // 如果 flag 为 true 表示持续动作，这里也可以额外发送 reset 事件，但已在 touchstart 中发送
+};
+
+// const handleClick = (val) => {
+//   emit("action2", {
+//     type: val,
+//   });
+// };
+
+// const handleClickUp = (val) => {
+//   emit("action2", { type: "up", isLeft: false, flag: 1 });
+// }
+
+// const handleClickUpLeave = (val) => {
+//   emit("action2", { type: "up", isLeft: false, flag: 0 });
+// }
+
+// const handleClickDown = (val) => {
+//   emit("action2", { type: "down", isLeft: false, flag: 1 });
+// }
+
+// const handleClickDownLeave = (val) => {
+//   emit("action2", { type: "down", isLeft: false, flag: 0 });
+// }
 
 </script>
 

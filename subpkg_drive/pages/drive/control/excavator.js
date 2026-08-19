@@ -113,7 +113,8 @@ export class ExcavatorControlHandler {
   // 遥杆操作
   handleRemoteControlChannel(type, left, right, up, down) {
     const rateValue = 1;
-
+    const ch7Open = this.config.ch7.open_value.current_value;
+    const ch7Close = this.config.ch7.close_value.current_value;
     // 左侧遥杆
     if (type == "left") {
       const ch3Center = this.config.ch3.center_value.current_value;
@@ -138,9 +139,9 @@ export class ExcavatorControlHandler {
         this.ch5 = ch5Center - (ch5Center - ch5Close);
       }
       if (up || down) {
-        this.ch7 = this.config.ch7.open_value.current_value;
+        this.ch7 = Math.max(ch7Open, ch7Close);
       } else {
-        this.ch7 = this.config.ch7.close_value.current_value;
+        this.ch7 = Math.min(ch7Open, ch7Close);
       }
     } else {
       // 右侧遥控
@@ -150,8 +151,7 @@ export class ExcavatorControlHandler {
       const ch6Center = this.config.ch6.center_value.current_value;
       const ch6Open = this.config.ch6.open_value.current_value;
       const ch6Close = this.config.ch6.close_value.current_value;
-      const ch7Open = this.config.ch7.open_value.current_value;
-      const ch7Close = this.config.ch7.close_value.current_value;
+     
 
       this.ch7 = Math.max(ch7Open, ch7Close);
       if (left) {

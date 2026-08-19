@@ -1,11 +1,7 @@
 <template>
   <cover-view class="control-wrapper">
-    <cover-view
-      class="control-box"
-      @touchstart.prevent="handleStart"
-      @touchmove.prevent="handleMove"
-      @touchend.prevent="handleEnd"
-    >
+    <cover-view class="control-box" @touchstart.prevent="handleStart" @touchmove.prevent="handleMove"
+      @touchend.prevent="handleEnd">
       <cover-view class="cont">
         <!-- 轨迹背景圈 -->
         <cover-view class="track-bg">
@@ -23,38 +19,21 @@
         <cover-view class="arrow right" :class="{ active: isRightActive }"></cover-view> -->
 
         <!-- 摇杆圆点（居中） -->
-        <cover-view
-          class="dot"
-          :class="{ ready: isReadyMode }"
-          :style="dotStyle"
-        ></cover-view>
+        <cover-view class="dot" :class="{ ready: isReadyMode }" :style="dotStyle"></cover-view>
       </cover-view>
     </cover-view>
 
     <!-- 独立的上下箭头（保留原功能） -->
     <cover-view class="up-down-arrow">
       <cover-view class="arrow1 up" :class="{ active: isUpActive }">
-        <cover-image
-          class="image"
-          src="../static/btn_up_ex@2x.png"
-
-         @touchstart.stop="handleClickUp"
-        @touchend.stop="handleClickUpLeave"
-        @touchcancel.stop="handleClickUpLeave"
-          @contextmenu.prevent 
-         
-          mode="aspectFit"
-        />
+        <cover-image class="image" src="../static/btn_up_ex@2x.png" @touchstart.stop="handleClickUp"
+          @touchend.stop="handleClickUpLeave" @touchcancel.stop="handleClickUpLeave" @contextmenu.prevent
+          mode="aspectFit" />
       </cover-view>
       <cover-view class="arrow1 down" :class="{ active: isDownActive }">
-        <cover-image
-          class="image"
-          src="../static/btn_down_ex@2x.png"
-          @pointerdown="handleClickDown" @pointerup="handleClickDownLeave"
-          @pointercancel="handleClickDownLeave" @pointerleave="handleClickDownLeave" @contextmenu.prevent
-         
-          mode="aspectFit"
-        />
+        <cover-image class="image" src="../static/btn_down_ex@2x.png" @touchstart.stop="handleClickDown"
+          @touchend.stop="handleClickDownLeave" @touchcancel.stop="handleClickDownLeave" @contextmenu.prevent
+          mode="aspectFit" />
       </cover-view>
     </cover-view>
   </cover-view>
@@ -63,7 +42,7 @@
 <script setup>
 import { ref, computed } from "vue";
 
-const emit = defineEmits(["action", "action2"]);
+const emit = defineEmits(["action", "action2", "reset"]);
 
 // --- 配置 ---
 const IDLE_DELAY = 500;       // 进入待命模式的延迟(ms)
@@ -290,7 +269,6 @@ const doUpAction = (flag) => {
 </script>
 
 <style lang="scss" scoped>
-
 .control-wrapper {
   position: fixed;
   left: 55px;
@@ -299,6 +277,7 @@ const doUpAction = (flag) => {
   height: 175px;
   z-index: 9999;
 }
+
 .control-box {
   position: absolute;
 
