@@ -2,11 +2,11 @@
   <cover-view>
     <cover-view
       class="cover-slider"
-      :style="{ width: width, height: height }"
+      :style="{ width: width ,height: height}"
       :class="{ 'cover-slider-disabled': disabled }"
-      @touchstart.stop.prevent="onTouchStart"
-      @touchmove.stop.prevent="onTouchMove"
-      @touchend.stop.prevent="onTouchEnd"
+      @touchstart.stop="onTouchStart"
+      @touchmove.stop="onTouchMove"
+      @touchend.stop="onTouchEnd"
     >
       <cover-view class="slider-track">
         <cover-view
@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, getCurrentInstance } from "vue";
+import { ref, onMounted, watch, nextTick, getCurrentInstance } from "vue";
 
 const props = defineProps({
   modelValue: { type: Number, default: 0 },
@@ -32,28 +32,26 @@ const props = defineProps({
   max: { type: Number, default: 100 },
   disabled: { type: Boolean, default: false },
   width: { type: String, default: "100%" },
-  height: { type: String, default: "40px" },
-  disabledSlider: { type: Boolean, default: false },
+  height: { type: String, default: "40px"},
+  disabledSlider: { type: Boolean, default: false }
 });
 
 const emit = defineEmits(["update:modelValue", "change"]);
 
+// 修改圆的大小 这个也要修改
 const THUMB_SIZE = 15;
 const thumbLeft = ref(0);
 const progressWidth = ref(0);
 const trackWidth = ref(0);
+const startX = ref(0);
+const startValue = ref(0);
 const instance = getCurrentInstance();
 
-// --- 状态锁与内部绝对坐标 ---
-const isDragging = ref(false); 
-let startX = 0;
-let startPercent = 0; // 记录按下瞬间的准确百分比
-let localPercent = 0; // 纯内部维护的百分比，拖拽时与 props 彻底隔离
-
+// ---------- 节流控制 ----------
 let emitTimer = null;
 let pendingValue = null;
 
-// ---------- 获取轨道宽度 ----------
+// ---------- 获取轨道宽度（增强版） ----------
 const getTrackWidth = (retry = 0) =>
   new Promise((resolve) => {
     setTimeout(() => {
@@ -64,9 +62,13 @@ const getTrackWidth = (retry = 0) =>
           if (res && res.width > 0) {
             trackWidth.value = res.width;
             resolve(res.width);
-          } else if (retry < 5) {
+          } else if (retry < 3) {
             getTrackWidth(retry + 1).then(resolve);
           } else {
+            // 降级估算，保证可用
+            // const parentWidth = instance.proxy.$el?.offsetWidth || 300;
+            // trackWidth.value = parentWidth - 20; // 减去 padding
+            // resolve(trackWidth.value);
              resolve(0);
           }
         })
@@ -74,107 +76,98 @@ const getTrackWidth = (retry = 0) =>
     }, 50);
   });
 
-// ---------- 更新 UI (纯内部驱动) ----------
-const updateSliderUI = (percent) => {
-  if (trackWidth.value === 0) return;
-  percent = Math.max(0, Math.min(1, percent));
-  
+// ---------- 更新 UI（逻辑完全不变） ----------
+const updateSliderUI = () => {
+  if (trackWidth.value === 0) {
+    getTrackWidth().then(() => updateSliderUI());
+    return;
+  }
+  const percent = Math.max(
+    0,
+    Math.min(1, (props.modelValue - props.min) / (props.max - props.min))
+  );
   const maxLeft = trackWidth.value - THUMB_SIZE;
-  // 直接更新响应式变量，驱动 cover-view 渲染
   thumbLeft.value = percent * maxLeft;
-  progressWidth.value = percent * 100;
+  progressWidth.value = (thumbLeft.value / trackWidth.value) * 100;
 };
 
 // ---------- 触摸事件 ----------
-const onTouchStart = async (e) => {
+const onTouchStart = (e) => {
   if (props.disabled) return;
-  
   if (trackWidth.value === 0) {
-    await getTrackWidth();
+    getTrackWidth().then(() => {
+      if (trackWidth.value > 0) {
+        startX.value = e.touches[0].pageX || e.touches[0].clientX;
+        startValue.value = props.modelValue;
+      }
+    });
+    return;
   }
-  
-  // 1. 上锁：拒绝父组件传入的值改变UI
-  isDragging.value = true;
-  
-  // 2. 记录起点坐标（优先使用 clientX 防滚动干扰）
-  startX = e.touches[0].clientX || e.touches[0].pageX;
-  
-  // 3. 锁定按下瞬间的进度基准
-  startPercent = localPercent; 
+  startX.value = e.touches[0].pageX || e.touches[0].clientX;
+  startValue.value = props.modelValue;
 };
 
 const onTouchMove = (e) => {
   if (props.disabled || !props.disabledSlider || trackWidth.value === 0) return;
-  
-  const currentX = e.touches[0].clientX || e.touches[0].pageX;
-  const diff = currentX - startX;
+  const currentX = e.touches[0].pageX || e.touches[0].clientX;
+  const diff = currentX - startX.value;
   const maxLeft = trackWidth.value - THUMB_SIZE;
 
-  // 纯内部数学推算：起始比例 + 移动增量比例
-  let p = startPercent + (diff / maxLeft);
-  p = Math.max(0, Math.min(1, p));
-  
-  // 记录到内部变量并立即更新UI
-  localPercent = p;
-  updateSliderUI(p); 
+  // 计算新比例（与原来完全一致）
+  const percent = Math.max(
+    0,
+    Math.min(
+      1,
+      (startValue.value - props.min) / (props.max - props.min) + diff / maxLeft
+    )
+  );
+  const newValue = props.min + percent * (props.max - props.min);
+  const rounded = Math.round(newValue);
 
-  // 节流向父组件上报数据（哪怕外面卡顿，内部 UI 依然由 diff 控制，绝不乱跳）
-  const newValue = props.min + p * (props.max - props.min);
-  pendingValue = Math.round(newValue);
+  // 立即更新 UI（无延迟，无过渡）
+  thumbLeft.value = percent * maxLeft;
+  progressWidth.value = (thumbLeft.value / trackWidth.value) * 100;
 
+  // 节流 emit（减少父组件更新频率）
+  pendingValue = rounded;
   if (!emitTimer) {
     emitTimer = setTimeout(() => {
       if (pendingValue !== null) {
         emit("update:modelValue", pendingValue);
+        pendingValue = null;
       }
       emitTimer = null;
-    }, 100); 
+    }, 100); // 30ms 约 33fps，平衡流畅与性能
   }
 };
 
 const onTouchEnd = () => {
   if (props.disabled) return;
-  
+  // 清除定时器，立即发出最终值
   if (emitTimer) {
     clearTimeout(emitTimer);
     emitTimer = null;
+    if (pendingValue !== null) {
+      emit("update:modelValue", pendingValue);
+      pendingValue = null;
+    }
   }
-  
-  let finalValue = props.modelValue;
-  if (pendingValue !== null) {
-    finalValue = pendingValue;
-    emit("update:modelValue", finalValue);
-    pendingValue = null;
-  }
-
-  emit("change", finalValue);
-
-  // 核心延迟解锁：给小程序双线程通信（你的 update 传到父组件，父组件再传回 props）留出足够的缓冲时间
-  // 防止刚松手时，旧的 props 刚好传回来把滑块拽回去
-  setTimeout(() => {
-    isDragging.value = false;
-  }, 300);
+  emit("change", props.modelValue);
 };
 
-// ---------- 初始化与 Props 监听 ----------
-onMounted(async () => {
-  await getTrackWidth();
-  localPercent = (props.modelValue - props.min) / (props.max - props.min);
-  updateSliderUI(localPercent);
+// ---------- 生命周期 ----------
+onMounted(() => {
+  // 延迟确保 DOM 渲染完成
+  setTimeout(initSlider, 100);
 });
 
-// 核心防御：只有在手指完全离开，且缓冲期结束（isDragging 为 false）后，才允许外部数据改变滑块位置
-watch(() => props.modelValue, (newVal) => {
-  if (!isDragging.value) {
-    localPercent = (newVal - props.min) / (props.max - props.min);
-    updateSliderUI(localPercent);
-  }
-});
-
-watch(() => props.width, async () => {
+const initSlider = async () => {
   await getTrackWidth();
-  updateSliderUI(localPercent);
-});
+  updateSliderUI();
+};
+
+watch(() => props.modelValue, updateSliderUI);
+watch(() => props.width, () => setTimeout(initSlider, 100));
 </script>
 
 <style scoped>
@@ -185,6 +178,8 @@ watch(() => props.width, async () => {
   align-items: center;
   padding: 0 10px;
   box-sizing: border-box;
+  touch-action: none;
+  user-select: none;
 }
 
 .cover-slider-disabled {
@@ -211,15 +206,21 @@ watch(() => props.width, async () => {
 .slider-thumb {
   position: absolute;
   top: 50%;
-  left: 10px;
+  left: 10px; /* 与父容器padding-left对齐 —— 保持不变 */
   width: 15px;
   height: 15px;
   border: 2px solid #ffffff;
   background-color: #ffffff;
   border-radius: 50%;
   margin-top: -10px;
-  z-index: 9999;
-  /* 原生组件强制取消过渡动画，否则会被小程序的底层渲染拖慢导致视觉乱跳 */
+  /* 关键优化：移除过渡动画，避免拖拽延迟 */
+  /* transition: transform 0.1s ease; */
+  /* 关键优化：启用硬件加速 */
+  will-change: transform;
+  z-index: 199999;
+  touch-action: none;
+  pointer-events: none; /* 避免图片干扰触摸，由父容器统一处理 */
+  /* 关键：确保无过渡动画 */
   transition: none !important;
 }
 </style>
