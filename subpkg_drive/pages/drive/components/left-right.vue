@@ -1,6 +1,6 @@
 <template>
   <cover-view class="control-wrapper" @touchstart.prevent="handleStart" @touchmove.prevent="handleMove"
-      @touchend.prevent="handleEnd" ref="wrapperRef" :style="wrapperStyle">
+      @touchend.prevent="handleEnd"   ref="wrapperRef" :style="wrapperStyle">
     <cover-view class="control-box" >
       <cover-view class="cont">
         <!-- 轨迹背景圈 -->
@@ -60,7 +60,7 @@ watch(() => props.isLeft, (val) => {
 
 
 // --- 配置参数 ---
-const IDLE_DELAY = 500; // 进入待命模式的延迟时间(ms)
+const IDLE_DELAY = 100; // 进入待命模式的延迟时间(ms)
 const MAX_RADIUS = 65; // 圆点滑动的最大半径(px)
 const SWIPE_THRESHOLD = 15; // 触发箭头的阈值
 
@@ -164,20 +164,46 @@ const enterReadyMode = () => {
 };
 
 
+let emitInterval = null;
 let lastEmitTime = 0;
 
 const updateArrows = (dx, dy) => {
- 
-  isUpActive.value = dy < -SWIPE_THRESHOLD;
-  isDownActive.value = dy > SWIPE_THRESHOLD;
+  // isUpActive.value = dy < -SWIPE_THRESHOLD;
+  // isDownActive.value = dy > SWIPE_THRESHOLD;
   isLeftActive.value = dx < -SWIPE_THRESHOLD;
   isRightActive.value = dx > SWIPE_THRESHOLD;
 
-  if (isLeftActive.value == false && isRightActive.value == false) {
-    return;
+  // 清除旧定时器
+  if (emitInterval) {
+    clearInterval(emitInterval);
+    emitInterval = null;
   }
-  console.log(123)
-  emit("action", { lr: dx < 0, value: dx });
+
+  const hasActive = isLeftActive.value || isRightActive.value;
+  // console.log(isLeftActive.value,"isLeftActive.value")
+  // console.log(isRightActive.value,"isRightActive.value")
+  console.log(hasActive,"hasActive")
+  if (hasActive && isDragging.value) {
+    // 立即发送一次（保证即时响应）
+		console.log("发送的值",currentDotX.value);
+    emit("action", { lr: dx < 0, value: dx });
+    // 启动定时器持续发送（每 50ms）
+    emitInterval = setInterval(() => {
+      console.log(12)
+      // 若方向已取消或已松开，则停止
+      if (!isDragging.value || !(isLeftActive.value || isRightActive.value)) {
+        clearInterval(emitInterval);
+        emitInterval = null;
+        return;
+      }
+      // 使用当前实时坐标发送
+      console.log("发送的值",currentDotX.value);
+      emit("action", { lr: currentDotX.value < 0, value: currentDotX.value });
+    }, 1500);
+  } else {
+    // 无激活方向，发送停止信号
+    emit("action", { lr: false, value: 0 });
+  }
 };
 
 const resetArrows = () => {
@@ -185,6 +211,10 @@ const resetArrows = () => {
   isDownActive.value = false;
   isLeftActive.value = false;
   isRightActive.value = false;
+  if (emitInterval) {
+    clearInterval(emitInterval);
+    emitInterval = null;
+  }
   emit("action", { lr: false, value: 0 });
 };
 
@@ -219,7 +249,7 @@ const handleMove = (e) => {
   let dx = clientX - readyBaseX;
   let dy = clientY - readyBaseY;
   
-
+	console.log(dx, dy)
   // 计算距离并限制在圆内
   const distance = Math.sqrt(dx * dx + dy * dy);
   if (distance > MAX_RADIUS) {
@@ -230,21 +260,29 @@ const handleMove = (e) => {
 
   currentDotX.value = dx;
   currentDotY.value = dy;
+  console.log('mopve',currentDotX.value )
   updateArrows(dx, dy);
 };
 
 const handleEnd = () => {
+  console.log("handleEnd")
   if (!isDragging.value) return;
-
   isDragging.value = false;
   isReadyMode.value = false;
   clearTimeout(idleTimer);
-
-  // 圆点回弹复位
   currentDotX.value = 0;
   currentDotY.value = 0;
-  resetArrows();
+  // 清除定时器并重置箭头状态
+  if (emitInterval) {
+    clearInterval(emitInterval);
+    emitInterval = null;
+  }
+  resetArrows(); // 或直接发送停止信号
 };
+
+const handleCancel = () => {
+  console.log("handleCancel")
+}
 
 const handleClick = (val) => {
   emit("action2", {

@@ -1178,7 +1178,7 @@ const initRouteData = (options) => {
       carType.value= "5"
     }
 
-    carType.value = "3";
+ 
 
   } else {
     console.log("carDetails 空");
@@ -1350,6 +1350,12 @@ const initSendLoop = () => {
 // 四驱车 前进后退
 const handleFBDrive = (item) => {
   console.log(item);
+  // 如果开启定速 消失掉
+  const index = activeKey.value.indexOf('speed');
+  if (index > -1) {
+    activeKey.value.splice(index, 1);
+    showSpeed.value = false;
+  }
 
   let type = "";
   let ratioValue = 0;

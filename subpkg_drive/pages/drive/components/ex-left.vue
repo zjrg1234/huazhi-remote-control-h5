@@ -162,6 +162,7 @@ const handleMove = (e) => {
 
   currentDotX.value = dx;
   currentDotY.value = dy;
+  console.log("dx,dy",dx, dy)
   updateArrows(dx, dy);
 };
 
