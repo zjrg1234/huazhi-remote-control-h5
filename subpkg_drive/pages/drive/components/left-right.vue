@@ -199,7 +199,7 @@ const updateArrows = (dx, dy) => {
       // 使用当前实时坐标发送
       console.log("发送的值",currentDotX.value);
       emit("action", { lr: currentDotX.value < 0, value: currentDotX.value });
-    }, 1500);
+    }, 50);
   } else {
     // 无激活方向，发送停止信号
     emit("action", { lr: false, value: 0 });
