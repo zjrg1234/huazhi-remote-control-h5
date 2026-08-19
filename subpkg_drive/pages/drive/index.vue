@@ -121,6 +121,21 @@
         <!-- <cover-view class="fe"> -->
         <cover-view class="custom-popup-right" @click.stop>
           <cover-view class="cont">
+               <cover-view class="right">
+              <cover-view class="settings-bar"> 
+                <cover-view class="text-area">设置</cover-view>
+                <cover-view class="close-btn" @click="close">
+                  <cover-image class="image" src="./static/icon_close@2x.png" mode="widthFix"></cover-image>
+                </cover-view>
+              </cover-view>
+              <cover-view class="setting-group" v-for="(item, index) in setGroup" :key="index">
+                <cover-view class="setting-item" :class="{ active: selectedIndex == item.key }"
+                  @click="handleItem(index)">
+                  {{ item.name }}
+                </cover-view>
+                <cover-view class="gradient-line" v-show="selectedIndex == item.key"></cover-view>
+              </cover-view>
+            </cover-view>
             <cover-view class="left">
               <!-- type 1 是遥控车 -->
               <cover-view class="group" v-show="selectedIndex == 0 && carType == '1'">
@@ -333,21 +348,7 @@
                 </cover-view>
               </cover-view>
             </cover-view>
-            <cover-view class="right">
-              <cover-view class="settings-bar">
-                <cover-view class="text-area" @click="close">设置</cover-view>
-                <cover-view class="close-btn" @click="close">
-                  <cover-image class="image" src="./static/icon_close@2x.png" mode="widthFix"></cover-image>
-                </cover-view>
-              </cover-view>
-              <cover-view class="setting-group" v-for="(item, index) in setGroup" :key="index">
-                <cover-view class="setting-item" :class="{ active: selectedIndex == item.key }"
-                  @click="handleItem(index)">
-                  {{ item.name }}
-                </cover-view>
-                <cover-view class="gradient-line" v-show="selectedIndex == item.key"></cover-view>
-              </cover-view>
-            </cover-view>
+         
           </cover-view>
         </cover-view>
         <!-- </cover-view> -->
@@ -2134,7 +2135,7 @@ const report = (text) => {
     height: 100vh;
     box-sizing: border-box;
     background: rgba(0, 0, 0, 0.8);
-    padding-top: 40px;
+   
 
     .settings-bar {
       display: flex;
@@ -2215,7 +2216,7 @@ const report = (text) => {
   }
 
   .left {
-    padding: 10px;
+    padding: 10px 30px 10px 10px;
 
     .group-item {
       margin-bottom: 4px;
