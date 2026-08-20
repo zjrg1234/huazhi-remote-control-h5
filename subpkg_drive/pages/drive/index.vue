@@ -60,13 +60,7 @@
         </cover-view>
       </cover-view>
 
-      <cover-view class="side-menu-oil" @click="handleOil" v-show="carType == 3"
-        :style="{ display: carType == 3 ? 'block' : 'none' }">
-        <cover-image class="image" mode="aspectFit" v-show="!showOil" :style="{ display: !showOil ? 'block' : 'none' }"
-          src="./static/icon_oil_close.png" />
-        <cover-image class="image" mode="aspectFit" v-show="showOil" :style="{ display: showOil ? 'block' : 'none' }"
-          src="./static/icon_oil_open.png" />
-      </cover-view>
+  
 
       <!-- 定速巡航 滑块 -->
       <cover-view class="slider" v-show="showSpeed">
@@ -884,16 +878,8 @@ const reportModal = () => {
   });
 };
 
-const showOil = ref(false)
-const handleOil = () => {
-  onUserActivity()
-  showOil.value = !showOil.value;
-  if (showOil.value) {
-    chValue.value.ch7 = carDetails.value.vehicle_config_detail.ch7.open_value.current_value
-  } else {
-    chValue.value.ch7 = carDetails.value.vehicle_config_detail.ch7.close_value.current_value
-  }
-}
+
+
 // 图标点击处理
 const handleIcon = (item) => {
   onUserActivity()
@@ -1186,6 +1172,8 @@ const initRouteData = (options) => {
   }
 };
 
+let ch7Open;
+let ch7Close;
 const initVehicleConfig = () => {
   const details = carDetails.value;
   if (!details) return;
@@ -1203,6 +1191,9 @@ const initVehicleConfig = () => {
     dirMiddle.value = directionCenter.value.current_value
     dirTurn.value = directionDynamics.value.current_value
     throttle.value = acceleratorDynamics.value.current_value
+
+    ch7Open = carDetails.value.vehicle_config_detail.ch7.open_value.current_value;
+    ch7Close = carDetails.value.vehicle_config_detail.ch7.close_value.current_value;
 
     saveVal.value = {
       1: dirMiddle.value,
@@ -1245,11 +1236,9 @@ const initVehicleConfig = () => {
     if (carType.value == 3) {
 
       if (carDetails.value.mixed_control == 1) {
-        showOil.value = true
         chValue.value.ch7 = config['ch7'].open_value.current_value;
       } else {
         chValue.value.ch7 = config['ch7'].close_value.current_value;
-        showOil.value = false
       }
       chValue.value.ch1 = config['ch1'].center_value.current_value;
       chValue.value.ch2 = config['ch2'].center_value.current_value;
@@ -1494,8 +1483,18 @@ const handleComDrive = (type, param) => {
   ) {
     carHandler.value.resetChValue();
    
-
   } else {
+    // 解决舵机先响的问题，应该油泵先响
+    if (type == 'left') {
+       if (param.up || param.down) {
+        chValue.value.ch7 = Math.max(ch7Open, ch7Close);
+      } else {
+        chValue.value.ch7 = Math.min(ch7Open, ch7Close);
+      }
+    }
+    if (type == 'right') {
+      chValue.value.ch7 = Math.max(ch7Open, ch7Close);
+    }
     carHandler.value.handleRemoteControlChannel(
       type,
       param.left,
@@ -1510,7 +1509,7 @@ const handleComDrive = (type, param) => {
   chValue.value.ch4 = ch.ch4;
   chValue.value.ch5 = ch.ch5;
   chValue.value.ch6 = ch.ch6;
-  chValue.value.ch7 = ch.ch7;
+
   console.log("圆盘", chValue.value)
 };
 
