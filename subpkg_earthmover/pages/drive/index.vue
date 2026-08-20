@@ -7,11 +7,6 @@
       </cover-view>
       <!-- #ifdef MP-WEIXIN -->
 
-      <!-- <view class="logout-wrapper" @click="logout">
-         内层依然是 cover-view 保证能悬浮在 web-view 上 
-       
-      </view> -->
-
       <web-view :src="videoUrl" ref="iframeView"></web-view>
 
       <!-- #endif -->
