@@ -40,6 +40,11 @@ export class ExcavatorControlHandler {
     return this.config[index];
   }
 
+  setConfigValue() {
+
+  }
+
+  
   resetChValue() {
     // ch7 油泵
     this.ch3 = this.config.ch3.center_value.current_value; // 旋转
