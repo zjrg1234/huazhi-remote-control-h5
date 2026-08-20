@@ -27,6 +27,8 @@
       </cover-view>
     </cover-view>
 
+
+    <!-- 代表ch2 油门 -->
     <cover-view class="up-down-arrow" v-show="!mode" :style="{ display: !mode ? 'block' : 'none' }">
       <cover-view class="arrow1 up" :class="{ active: isUpActive }">
         <cover-image class="image" src="../static/btn_up_ex@2x.png" @touchstart.stop="handleClickUp"

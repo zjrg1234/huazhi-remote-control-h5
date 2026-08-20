@@ -1,9 +1,17 @@
 <template>
   <view class="landscape-page">
-    <view class="page-content" @touchstart="onUserActivity" @touchmove="onUserActivity">
+    <view
+      class="page-content"
+      @touchstart="onUserActivity"
+      @touchmove="onUserActivity"
+    >
       <!-- @touchstart="onUserActivity" @touchmove="onUserActivity" -->
       <cover-view class="logout" @click="logout">
-        <cover-image src="./static/icon_exit@2x.png" class="image" mode="aspectFit" />
+        <cover-image
+          src="./static/icon_exit@2x.png"
+          class="image"
+          mode="aspectFit"
+        />
       </cover-view>
       <!-- #ifdef MP-WEIXIN -->
 
@@ -21,16 +29,25 @@
       <cover-view class="status-bar-capsule">
         <cover-view class="flex">
           <cover-view class="fl">
-            <cover-view class="dot" :class="{ 'dot-red': !carStatus }"></cover-view>
+            <cover-view
+              class="dot"
+              :class="{ 'dot-red': !carStatus }"
+            ></cover-view>
             <cover-view class="car">
-              <cover-image class="image" src="./static/icon_car@2x.png" mode="aspectFit" />
-              <cover-view class="mini-forbidden" :style="{ display: !carStatus ? 'block' : 'none' }"
-                v-show="!carStatus"></cover-view>
+              <cover-image
+                class="image"
+                src="./static/icon_car@2x.png"
+                mode="aspectFit"
+              />
+              <cover-view
+                class="mini-forbidden"
+                :style="{ display: !carStatus ? 'block' : 'none' }"
+                v-show="!carStatus"
+              ></cover-view>
             </cover-view>
           </cover-view>
           <cover-view>
             <battery :percent="batteryPer"></battery>
-
           </cover-view>
           <cover-view class="vlot-text">{{ vlot }}</cover-view>
           <cover-view class="split-vertical"></cover-view>
@@ -41,26 +58,40 @@
       </cover-view>
 
       <!-- 剩余时间提示 -->
-      <cover-view class="tip" v-show="numTip > 0" :style="{ display: numTip > 0 ? 'block' : 'none' }">
+      <cover-view
+        class="tip"
+        v-show="numTip > 0"
+        :style="{ display: numTip > 0 ? 'block' : 'none' }"
+      >
         <cover-view>距离本次结束驾驶还有{{ 31 - numTip }}s</cover-view>
       </cover-view>
 
       <!-- 设置按钮 -->
       <cover-view class="right-cont" @click="set">
-        <cover-image class="image" src="./static/icon_set@2x.png" mode="aspectFit" />
+        <cover-image
+          class="image"
+          src="./static/icon_set@2x.png"
+          mode="aspectFit"
+        />
       </cover-view>
-
 
       <!-- 右侧菜单 -->
       <!-- 右侧菜单 -->
       <cover-view class="side-menu">
-        <cover-view class="menu-item" v-for="(item, index) in menuList" :key="index" @click="handleIcon(item)">
-          <cover-image class="img" mode="aspectFit" :src="activeKey.includes(item.key) ? item.iconSelect : item.icon" />
+        <cover-view
+          class="menu-item"
+          v-for="(item, index) in menuList"
+          :key="index"
+          @click="handleIcon(item)"
+        >
+          <cover-image
+            class="img"
+            mode="aspectFit"
+            :src="activeKey.includes(item.key) ? item.iconSelect : item.icon"
+          />
           <cover-view class="label">{{ item.name }}</cover-view>
         </cover-view>
       </cover-view>
-
-  
 
       <!-- 定速巡航 滑块 -->
       <cover-view class="slider" v-show="showSpeed">
@@ -74,8 +105,14 @@
             <!-- <slider :value="constSpeed" :min="1" :max="100" :step="1" activeColor="#f5c542" backgroundColor="#e9e9e9"
               block-size="6" @change="changeConstSpeed" /> -->
 
-            <SliderComp :disabledSlider="true" v-model="constSpeed" :min="1" :max="100" height="30px"
-              @change="changeConstSpeed">
+            <SliderComp
+              :disabledSlider="true"
+              v-model="constSpeed"
+              :min="1"
+              :max="100"
+              height="30px"
+              @change="changeConstSpeed"
+            >
             </SliderComp>
 
             <cover-view class="slider-label-bottom">
@@ -86,11 +123,30 @@
         </cover-view>
       </cover-view>
 
-      <LeftRight @action="handleLRDrive" v-show="carType == 1" :isLeft="operMode"></LeftRight>
-      <UpDown @action="handleFBDrive" v-show="carType == 1" :isLeft="!operMode"></UpDown>
+      <LeftRight
+        @action="handleLRDrive"
+        v-show="carType == 1"
+        :isLeft="operMode"
+      ></LeftRight>
+      <UpDown
+        @action="handleFBDrive"
+        v-show="carType == 1"
+        :isLeft="!operMode"
+      ></UpDown>
 
-      <ExLeft @action="handleLeftDrive" @action2="handleUpDownDrive" v-show="carType == 3" @reset="onUserActivity"></ExLeft>
-      <ExRight @action="handleRightDrive" @action2="handleUpDownDrive" v-show="carType == 3" :mode="operMode" @reset="onUserActivity"></ExRight>
+      <ExLeft
+        @action="handleLeftDrive"
+        @action2="handleUpDownDrive"
+        v-show="carType == 3"
+        @reset="onUserActivity"
+      ></ExLeft>
+      <ExRight
+        @action="handleRightDrive"
+        @action2="handleUpDownDrive"
+        v-show="carType == 3"
+        :mode="operMode"
+        @reset="onUserActivity"
+      ></ExRight>
       <!-- <pointOprea1 @action="handleLeftDrive" v-if="carType == 3"></pointOprea1> -->
       <!-- <pointOprea2 @action="handleRightDrive" v-if="carType == 3"></pointOprea2> -->
 
@@ -110,29 +166,50 @@
         :directionDynamics="directionDynamics" :operDir="operDir" :type="carType" @action="handleOper"
         @operAction="handleFBDir" @changeValue="changeVal" /> -->
 
-      <cover-view v-show="setVisible" :style="{ display: setVisible ? 'block' : 'none' }" class="custom-popup-mask"
-        @click="close">
+      <cover-view
+        v-show="setVisible"
+        :style="{ display: setVisible ? 'block' : 'none' }"
+        class="custom-popup-mask"
+        @click="close"
+      >
         <!-- <cover-view class="fe"> -->
         <cover-view class="custom-popup-right" @click.stop>
           <cover-view class="cont">
-               <cover-view class="right">
-              <cover-view class="settings-bar"> 
+            <cover-view class="right">
+              <cover-view class="settings-bar">
                 <cover-view class="text-area">设置</cover-view>
                 <cover-view class="close-btn" @click="close">
-                  <cover-image class="image" src="./static/icon_close@2x.png" mode="widthFix"></cover-image>
+                  <cover-image
+                    class="image"
+                    src="./static/icon_close@2x.png"
+                    mode="widthFix"
+                  ></cover-image>
                 </cover-view>
               </cover-view>
-              <cover-view class="setting-group" v-for="(item, index) in setGroup" :key="index">
-                <cover-view class="setting-item" :class="{ active: selectedIndex == item.key }"
-                  @click="handleItem(index)">
+              <cover-view
+                class="setting-group"
+                v-for="(item, index) in setGroup"
+                :key="index"
+              >
+                <cover-view
+                  class="setting-item"
+                  :class="{ active: selectedIndex == item.key }"
+                  @click="handleItem(index)"
+                >
                   {{ item.name }}
                 </cover-view>
-                <cover-view class="gradient-line" v-show="selectedIndex == item.key"></cover-view>
+                <cover-view
+                  class="gradient-line"
+                  v-show="selectedIndex == item.key"
+                ></cover-view>
               </cover-view>
             </cover-view>
             <cover-view class="left">
               <!-- type 1 是遥控车 -->
-              <cover-view class="group" v-show="selectedIndex == 0 && carType == '1'">
+              <cover-view
+                class="group"
+                v-show="selectedIndex == 0 && carType == '1'"
+              >
                 <!-- <cover-view class="group-item">
                   <cover-view class="tit">视频清晰度</cover-view>
                   <cover-view class="flex">
@@ -145,30 +222,58 @@
                 <cover-view class="group-item">
                   <cover-view class="tit">操作设置</cover-view>
                   <cover-view class="flex">
-                    <cover-view v-for="(mode, index) in steeringModes" :key="index" class="option-card"
-                      :class="{ 'is-active': selectedMode === mode.id }" @click="handleSetSelect(mode.id)">
+                    <cover-view
+                      v-for="(mode, index) in steeringModes"
+                      :key="index"
+                      class="option-card"
+                      :class="{ 'is-active': selectedMode === mode.id }"
+                      @click="handleSetSelect(mode.id)"
+                    >
                       <!-- 右上角的黄色对勾 (仅当选中时显示) -->
 
-                      <cover-view v-show="selectedMode === mode.id" class="check-mark" :style="{
-                        display: selectedMode === mode.id ? 'block' : 'none',
-                      }">
-                        <cover-image class="image" src="./static/icon_selected@2x.png" mode="widthFix"></cover-image>
+                      <cover-view
+                        v-show="selectedMode === mode.id"
+                        class="check-mark"
+                        :style="{
+                          display: selectedMode === mode.id ? 'block' : 'none',
+                        }"
+                      >
+                        <cover-image
+                          class="image"
+                          src="./static/icon_selected@2x.png"
+                          mode="widthFix"
+                        ></cover-image>
                       </cover-view>
                       <!-- 布局区域：根据配置交换左右顺序 -->
-                      <cover-view class="content-layout" :class="{ 'reverse-layout': mode.isReverse }">
+                      <cover-view
+                        class="content-layout"
+                        :class="{ 'reverse-layout': mode.isReverse }"
+                      >
                         <!-- 左侧/第一组图标 -->
                         <cover-view class="icon-group">
                           <cover-view class="icon-row vertical">
-                            <cover-image src="./static/arrow_up@2x.png" class="icon-img"></cover-image>
-                            <cover-image src="./static/arrow_down@2x.png" class="icon-img"></cover-image>
+                            <cover-image
+                              src="./static/arrow_up@2x.png"
+                              class="icon-img"
+                            ></cover-image>
+                            <cover-image
+                              src="./static/arrow_down@2x.png"
+                              class="icon-img"
+                            ></cover-image>
                           </cover-view>
                           <cover-view class="label">前进/后退</cover-view>
                         </cover-view>
                         <!-- 右侧/第二组图标 -->
                         <cover-view class="icon-group">
                           <cover-view class="icon-row horizontal">
-                            <cover-image src="./static/arrow_left@2x.png" class="icon-img"></cover-image>
-                            <cover-image src="./static/arrow_right@2x.png" class="icon-img"></cover-image>
+                            <cover-image
+                              src="./static/arrow_left@2x.png"
+                              class="icon-img"
+                            ></cover-image>
+                            <cover-image
+                              src="./static/arrow_right@2x.png"
+                              class="icon-img"
+                            ></cover-image>
                           </cover-view>
                           <cover-view class="label">左转/右转</cover-view>
                         </cover-view>
@@ -180,18 +285,28 @@
                   <cover-view class="flex fj">
                     <cover-view class="tit">方向反向操作</cover-view>
 
-                    <SwitchComp v-model="operDir" @change="setHandleOper(2, $event)"></SwitchComp>
+                    <SwitchComp
+                      v-model="operDir"
+                      @change="setHandleOper(2, $event)"
+                    ></SwitchComp>
                   </cover-view>
                   <cover-view class="flex fj">
                     <cover-view class="tit">进退反向操作</cover-view>
 
-                    <SwitchComp v-model="operFB" @change="setHandleOper(1, $event)"></SwitchComp>
+                    <SwitchComp
+                      v-model="operFB"
+                      @change="setHandleOper(1, $event)"
+                    ></SwitchComp>
                   </cover-view>
                 </cover-view>
               </cover-view>
 
-              <cover-view class="group" v-show="selectedIndex == 0 && (carType == '2' || carType == '3')
-                ">
+              <cover-view
+                class="group"
+                v-show="
+                  selectedIndex == 0 && (carType == '2' || carType == '3')
+                "
+              >
                 <!-- <cover-view class="group-item">
                   <cover-view class="tit">视频清晰度</cover-view>
                   <cover-view class="flex">
@@ -204,27 +319,54 @@
                 <cover-view class="group-item">
                   <cover-view class="tit">操作设置</cover-view>
                   <cover-view class="flex">
-                    <cover-view v-for="(mode, index) in steeringModes" :key="index" class="option-card"
-                      :class="{ 'is-active': selectedMode === mode.id }" @click="handleSetSelect(mode.id)">
-                      <cover-image class="image" v-show="selectedMode === mode.id && index == 0"
-                        src="./static/icon_ev_dir1_selected@2x.png" mode="widthFix"></cover-image>
-                      <cover-image class="image" v-show="selectedMode !== mode.id && index == 0"
-                        src="./static/icon_ev_dir1@2x.png" mode="widthFix"></cover-image>
-                      <cover-image class="image" v-show="selectedMode === mode.id && index == 1"
-                        src="./static/icon_ev_dir2_selected@2x.png" mode="widthFix"></cover-image>
-                      <cover-image class="image" v-show="selectedMode !== mode.id && index == 1"
-                        src="./static/icon_ev_dir2@2x.png" mode="widthFix"></cover-image>
+                    <cover-view
+                      v-for="(mode, index) in steeringModes"
+                      :key="index"
+                      class="option-card"
+                      :class="{ 'is-active': selectedMode === mode.id }"
+                      @click="handleSetSelect(mode.id)"
+                    >
+                      <cover-image
+                        class="image"
+                        v-show="selectedMode === mode.id && index == 0"
+                        src="./static/icon_ev_dir1_selected@2x.png"
+                        mode="widthFix"
+                      ></cover-image>
+                      <cover-image
+                        class="image"
+                        v-show="selectedMode !== mode.id && index == 0"
+                        src="./static/icon_ev_dir1@2x.png"
+                        mode="widthFix"
+                      ></cover-image>
+                      <cover-image
+                        class="image"
+                        v-show="selectedMode === mode.id && index == 1"
+                        src="./static/icon_ev_dir2_selected@2x.png"
+                        mode="widthFix"
+                      ></cover-image>
+                      <cover-image
+                        class="image"
+                        v-show="selectedMode !== mode.id && index == 1"
+                        src="./static/icon_ev_dir2@2x.png"
+                        mode="widthFix"
+                      ></cover-image>
                     </cover-view>
                   </cover-view>
                 </cover-view>
                 <cover-view class="group-item pr">
                   <cover-view class="flex fj">
                     <cover-view class="tit">进退反向操作</cover-view>
-                    <SwitchComp v-model="operFB" @change="setHandleOper(1, $event)"></SwitchComp>
+                    <SwitchComp
+                      v-model="operFB"
+                      @change="setHandleOper(1, $event)"
+                    ></SwitchComp>
                   </cover-view>
                   <cover-view class="flex fj">
                     <cover-view class="tit">旋转反向操作</cover-view>
-                    <SwitchComp v-model="operDir" @change="setHandleOper(2, $event)"></SwitchComp>
+                    <SwitchComp
+                      v-model="operDir"
+                      @change="setHandleOper(2, $event)"
+                    ></SwitchComp>
                   </cover-view>
                 </cover-view>
               </cover-view>
@@ -234,9 +376,17 @@
                   <cover-view class="tit">方向中位微调</cover-view>
                   <cover-view class="section">
                     <!-- 减少按钮 -->
-                    <cover-view class="reduce" @touchstart.prevent="onTouchStart(1, -1)" @touchend.stop="onTouchEnd"
-                      @touchcancel.stop="onTouchEnd">
-                      <cover-image class="image" src="./static/icon_reduce@2x.png" mode="widthFix"></cover-image>
+                    <cover-view
+                      class="reduce"
+                      @touchstart.prevent="onTouchStart(1, -1)"
+                      @touchend.stop="onTouchEnd"
+                      @touchcancel.stop="onTouchEnd"
+                    >
+                      <cover-image
+                        class="image"
+                        src="./static/icon_reduce@2x.png"
+                        mode="widthFix"
+                      ></cover-image>
                     </cover-view>
                     <!-- 滑块区域（占据主要空间） -->
                     <cover-view class="slider-wrapper">
@@ -247,7 +397,12 @@
                       </cover-view>
                       <!-- <slider :min="1" :max="100" :value="dirMiddle" @change="setChangeVal(1, $event)"
                         activeColor="#f5c542" backgroundColor="#e5e5e5" block-size="20" /> -->
-                      <SliderComp v-model="dirMiddle" :min="1" :max="100" @change="setChangeVal(1, $event)">
+                      <SliderComp
+                        v-model="dirMiddle"
+                        :min="1"
+                        :max="100"
+                        @change="setChangeVal(1, $event)"
+                      >
                       </SliderComp>
                       <cover-view class="slider-label-bottom">
                         <cover-view class="num-text">
@@ -259,9 +414,17 @@
                       </cover-view>
                     </cover-view>
                     <!-- 增加按钮 -->
-                    <cover-view class="add" @touchstart.prevent="onTouchStart(1, 1)" @touchend.stop="onTouchEnd"
-                      @touchcancel.stop="onTouchEnd">
-                      <cover-image class="image" src="./static/icon_add@2x.png" mode="widthFix"></cover-image>
+                    <cover-view
+                      class="add"
+                      @touchstart.prevent="onTouchStart(1, 1)"
+                      @touchend.stop="onTouchEnd"
+                      @touchcancel.stop="onTouchEnd"
+                    >
+                      <cover-image
+                        class="image"
+                        src="./static/icon_add@2x.png"
+                        mode="widthFix"
+                      ></cover-image>
                     </cover-view>
                     <!-- 保存按钮 -->
                     <cover-view class="btn" @click="save(1)">保存</cover-view>
@@ -271,9 +434,17 @@
                   <cover-view class="tit">方向力度微调</cover-view>
                   <cover-view class="section">
                     <!-- 减少按钮 -->
-                    <cover-view class="reduce" @touchstart.prevent="onTouchStart(2, -1)" @touchend.stop="onTouchEnd"
-                      @touchcancel.stop="onTouchEnd">
-                      <cover-image class="image" src="./static/icon_reduce@2x.png" mode="widthFix"></cover-image>
+                    <cover-view
+                      class="reduce"
+                      @touchstart.prevent="onTouchStart(2, -1)"
+                      @touchend.stop="onTouchEnd"
+                      @touchcancel.stop="onTouchEnd"
+                    >
+                      <cover-image
+                        class="image"
+                        src="./static/icon_reduce@2x.png"
+                        mode="widthFix"
+                      ></cover-image>
                     </cover-view>
                     <!-- 滑块区域（占据主要空间） -->
                     <cover-view class="slider-wrapper">
@@ -283,8 +454,12 @@
                         </cover-view>
                       </cover-view>
 
-                      <SliderComp v-model="dirTurn" :min="1" :max="directionDynamics.current_value"
-                        @change="setChangeVal(2, $event)"></SliderComp>
+                      <SliderComp
+                        v-model="dirTurn"
+                        :min="1"
+                        :max="directionDynamics.current_value"
+                        @change="setChangeVal(2, $event)"
+                      ></SliderComp>
                       <cover-view class="slider-label-bottom">
                         <cover-view class="num-text">
                           {{ directionDynamics.mini_value }}
@@ -295,9 +470,17 @@
                       </cover-view>
                     </cover-view>
                     <!-- 增加按钮 -->
-                    <cover-view class="add" @touchstart.prevent="onTouchStart(2, 1)" @touchend.stop="onTouchEnd"
-                      @touchcancel.stop="onTouchEnd">
-                      <cover-image class="image" src="./static/icon_add@2x.png" mode="widthFix"></cover-image>
+                    <cover-view
+                      class="add"
+                      @touchstart.prevent="onTouchStart(2, 1)"
+                      @touchend.stop="onTouchEnd"
+                      @touchcancel.stop="onTouchEnd"
+                    >
+                      <cover-image
+                        class="image"
+                        src="./static/icon_add@2x.png"
+                        mode="widthFix"
+                      ></cover-image>
                     </cover-view>
                     <!-- 保存按钮 -->
                     <cover-view class="btn" @click="save(2)">保存</cover-view>
@@ -307,9 +490,17 @@
                   <cover-view class="tit">油门力度微调</cover-view>
                   <cover-view class="section">
                     <!-- 减少按钮 -->
-                    <cover-view class="reduce" @touchstart.prevent="onTouchStart(3, -1)" @touchend.stop="onTouchEnd"
-                      @touchcancel.stop="onTouchEnd">
-                      <cover-image class="image" src="./static/icon_reduce@2x.png" mode="widthFix"></cover-image>
+                    <cover-view
+                      class="reduce"
+                      @touchstart.prevent="onTouchStart(3, -1)"
+                      @touchend.stop="onTouchEnd"
+                      @touchcancel.stop="onTouchEnd"
+                    >
+                      <cover-image
+                        class="image"
+                        src="./static/icon_reduce@2x.png"
+                        mode="widthFix"
+                      ></cover-image>
                     </cover-view>
                     <!-- 滑块区域（占据主要空间） -->
                     <cover-view class="slider-wrapper">
@@ -319,8 +510,12 @@
                         </cover-view>
                       </cover-view>
 
-                      <SliderComp v-model="throttle" :min="1" :max="acceleratorDynamics.current_value"
-                        @change="setChangeVal(3, $event)"></SliderComp>
+                      <SliderComp
+                        v-model="throttle"
+                        :min="1"
+                        :max="acceleratorDynamics.current_value"
+                        @change="setChangeVal(3, $event)"
+                      ></SliderComp>
 
                       <cover-view class="slider-label-bottom">
                         <cover-view class="num-text num-left">
@@ -332,9 +527,17 @@
                       </cover-view>
                     </cover-view>
                     <!-- 增加按钮 -->
-                    <cover-view class="add" @touchstart.prevent="onTouchStart(3, 1)" @touchend.stop="onTouchEnd"
-                      @touchcancel.stop="onTouchEnd">
-                      <cover-image class="image" src="./static/icon_add@2x.png" mode="widthFix"></cover-image>
+                    <cover-view
+                      class="add"
+                      @touchstart.prevent="onTouchStart(3, 1)"
+                      @touchend.stop="onTouchEnd"
+                      @touchcancel.stop="onTouchEnd"
+                    >
+                      <cover-image
+                        class="image"
+                        src="./static/icon_add@2x.png"
+                        mode="widthFix"
+                      ></cover-image>
                     </cover-view>
                     <!-- 保存按钮 -->
                     <cover-view class="btn" @click="save(3)">保存</cover-view>
@@ -342,7 +545,6 @@
                 </cover-view>
               </cover-view>
             </cover-view>
-         
           </cover-view>
         </cover-view>
         <!-- </cover-view> -->
@@ -351,18 +553,28 @@
       <!-- <input v-show="type === 'repair'" :style="{ display: allPopupVisible ? 'block' : 'none' }" v-model="message"
         class="repair-input" type="text" maxlength="20" placeholder="请输入故障原因，最多20字（选填）" /> -->
 
-      <cover-view class="tip-popup-mask" v-show="allPopupVisible"
-        :style="{ display: allPopupVisible ? 'block' : 'none' }" @tap.stop="handleMaskClick">
+      <cover-view
+        class="tip-popup-mask"
+        v-show="allPopupVisible"
+        :style="{ display: allPopupVisible ? 'block' : 'none' }"
+        @tap.stop="handleMaskClick"
+      >
         <cover-view class="fcenter">
           <!-- 弹窗主体内容 -->
-          <cover-view class="popup-container" :class="{ contmax: type === 'repair' }" @tap.stop>
+          <cover-view
+            class="popup-container"
+            :class="{ contmax: type === 'repair' }"
+            @tap.stop
+          >
             <!-- 场景1：黑屏提示 -->
             <cover-view v-show="type === 'tip'">
               <cover-view class="tip-content">
                 <cover-view class="time">倒计时{{ count }}s</cover-view>
                 <cover-view class="tit">是否黑屏？</cover-view>
                 <cover-view class="text">
-                  <cover-view class="text1">开始驾驶前如遇黑屏或者车辆故障上报不扣费，开始驾驶后开始计费。</cover-view>
+                  <cover-view class="text1"
+                    >开始驾驶前如遇黑屏或者车辆故障上报不扣费，开始驾驶后开始计费。</cover-view
+                  >
                   <cover-view>如果一切正常，请点击“开始驾驶”</cover-view>
                 </cover-view>
               </cover-view>
@@ -372,12 +584,18 @@
                   <cover-view class="btn left" @tap.stop="logoutOne('logout')">
                     退出驾驶
                   </cover-view>
-                  <cover-view class="btn left ml" @tap.stop="handlePopupAction('report')">
+                  <cover-view
+                    class="btn left ml"
+                    @tap.stop="handlePopupAction('report')"
+                  >
                     上报故障
                   </cover-view>
                 </cover-view>
                 <cover-view class="flex mt">
-                  <cover-view class="btn right" @tap.stop="handlePopupAction('driving')">
+                  <cover-view
+                    class="btn right"
+                    @tap.stop="handlePopupAction('driving')"
+                  >
                     开始驾驶
                   </cover-view>
                 </cover-view>
@@ -397,12 +615,18 @@
                   <cover-view class="btn left" @tap.stop="cancel">
                     取消
                   </cover-view>
-                  <cover-view class="btn left ml" @tap.stop="handlePopupAction('report')">
+                  <cover-view
+                    class="btn left ml"
+                    @tap.stop="handlePopupAction('report')"
+                  >
                     上报故障
                   </cover-view>
                 </cover-view>
                 <cover-view class="flex mt">
-                  <cover-view class="btn right" @tap.stop="handlePopupAction('logout')">
+                  <cover-view
+                    class="btn right"
+                    @tap.stop="handlePopupAction('logout')"
+                  >
                     退出驾驶
                   </cover-view>
                 </cover-view>
@@ -414,10 +638,16 @@
               <cover-view class="tip-content repair">
                 <cover-view class="tit">设备报修</cover-view>
                 <cover-view v-if="showRepairReason" class="reason">
-                  <cover-view v-for="(item, index) in list" :key="index" @tap="selectReason(index, item)" :class="[
-                    'reason-item',
-                    { active: selectedReasonIndex === index },
-                  ]">{{ item }}</cover-view>
+                  <cover-view
+                    v-for="(item, index) in list"
+                    :key="index"
+                    @tap="selectReason(index, item)"
+                    :class="[
+                      'reason-item',
+                      { active: selectedReasonIndex === index },
+                    ]"
+                    >{{ item }}</cover-view
+                  >
                 </cover-view>
                 <!-- 替换 Vant 的 textarea 为原生 input -->
                 <cover-view class="ttarea">
@@ -438,8 +668,12 @@
               </cover-view>
               <cover-view class="footer">
                 <cover-view class="flex">
-                  <cover-view class="btn left" @tap.stop="cancel">取消</cover-view>
-                  <cover-view class="btn right ml" @tap.stop="report">上报</cover-view>
+                  <cover-view class="btn left" @tap.stop="cancel"
+                    >取消</cover-view
+                  >
+                  <cover-view class="btn right ml" @tap.stop="report"
+                    >上报</cover-view
+                  >
                 </cover-view>
               </cover-view>
             </cover-view>
@@ -455,7 +689,11 @@
               </cover-view>
               <cover-view class="footer">
                 <cover-view class="flex mt">
-                  <cover-view class="btn right" @tap.stop="handlePopupAction('logout')">退出驾驶</cover-view>
+                  <cover-view
+                    class="btn right"
+                    @tap.stop="handlePopupAction('logout')"
+                    >退出驾驶</cover-view
+                  >
                 </cover-view>
               </cover-view>
             </cover-view>
@@ -467,17 +705,20 @@
                 <cover-view class="time"> {{ logoutCont }}s</cover-view>
                 <cover-view class="tit">【警告】您180秒无操作！</cover-view>
                 <cover-view class="text">
-                  <cover-view class="text1">三分钟未操作,请立即驾驶。
-                    为防止您的电池被浪费，即将结束本次驾驶，欢迎您下次再来!</cover-view>
+                  <cover-view class="text1"
+                    >三分钟未操作,请立即驾驶。
+                    为防止您的电池被浪费，即将结束本次驾驶，欢迎您下次再来!</cover-view
+                  >
                 </cover-view>
               </cover-view>
               <cover-view class="footer">
                 <cover-view class="flex mt">
-                  <cover-view class="btn right" @tap.stop="continueDrive">继续驾驶</cover-view>
+                  <cover-view class="btn right" @tap.stop="continueDrive"
+                    >继续驾驶</cover-view
+                  >
                 </cover-view>
               </cover-view>
             </cover-view>
-
 
             <cover-view v-show="type === 'offLineTip'">
               <!-- 场景5：长时间无操作 -->
@@ -485,15 +726,22 @@
               <cover-view class="tip-content">
                 <cover-view class="tit">提示</cover-view>
                 <cover-view class="text">
-                  <cover-view class="text1">当前车辆已离线，是否退出驾驶？或继续等待车辆恢复链接</cover-view>
+                  <cover-view class="text1"
+                    >当前车辆已离线，是否退出驾驶？或继续等待车辆恢复链接</cover-view
+                  >
                 </cover-view>
               </cover-view>
               <cover-view class="footer">
-                <cover-view class="btn left mr" @tap.stop="handlePopupAction('logout')">退出驾驶</cover-view>
-                <cover-view class="btn right" @tap.stop="handleContinueDrive">继续驾驶</cover-view>
+                <cover-view
+                  class="btn left mr"
+                  @tap.stop="handlePopupAction('logout')"
+                  >退出驾驶</cover-view
+                >
+                <cover-view class="btn right" @tap.stop="handleContinueDrive"
+                  >继续驾驶</cover-view
+                >
               </cover-view>
             </cover-view>
-
           </cover-view>
         </cover-view>
       </cover-view>
@@ -559,7 +807,7 @@ import {
 
 const videoUrl = ref(""); // 视频地址
 const allPopupVisible = ref(false);
-const type = ref('tip')
+const type = ref("tip");
 const carStatus = ref(false);
 const currentTime = ref("");
 const showSpeed = ref(false);
@@ -596,7 +844,7 @@ const UDPSocket = ref(null);
 const numTip = ref(0);
 const { handleReceive, model } = useHESbus();
 const batteryPer = ref(100);
-const vlot = ref('')
+const vlot = ref("");
 // 菜单配置
 const menuList = computed(() => {
   if (carType.value == 1) {
@@ -676,14 +924,12 @@ const menuList = computed(() => {
   ];
 });
 
-
 const videoUrlVal = ref();
 // 计费定时器
 let sendMsgTimer = null;
 let billingTimer = null;
 let tipTimer = null;
 let isRequesting = false;
-
 
 const userStore = useUserStore();
 
@@ -696,8 +942,8 @@ const energy = computed(() => {
 });
 
 onHide(() => {
-  console.log("离开页面了")
-})
+  console.log("离开页面了");
+});
 
 // ------------------- 工具函数 -------------------
 const clearSendTimer = () => {
@@ -718,16 +964,12 @@ const clearAllTimers = () => {
   }
 };
 
-
-
-
 // 结束驾驶逻辑
 const handleDriveEnd = () => {
   uni.removeStorageSync("sendNum");
   clearAllTimers();
   handlePopupAction("logout");
 };
-
 
 const daojishiTip = () => {
   const carInfo = JSON.parse(uni.getStorageSync("carInfo"));
@@ -751,27 +993,24 @@ const daojishiTip = () => {
   let num = Number(uni.getStorageSync("sendNum") || 0);
   let hasTriggeredTip = false;
 
-
-
   // 30S 之后若提示  5s 之后弹窗
   billingTimer = setInterval(async () => {
     if (isRequesting) return;
     num++;
     uni.setStorageSync("sendNum", num);
     isRequesting = true;
-    console.log(num, "num")
+    console.log(num, "num");
     if (num == countNum - 1) {
       clearInterval(billingTimer);
       billingTimer = null;
       numTip.value = 0;
       tipTimer = setInterval(() => {
-
         numTip.value++;
         if (numTip.value === 25 && !hasTriggeredTip) {
           hasTriggeredTip = true;
           allPopupVisible.value = true;
           type.value = "countTip";
-          count.value = 6
+          count.value = 6;
         }
         count.value--;
 
@@ -784,23 +1023,23 @@ const daojishiTip = () => {
     }
 
     if (num <= countNum - 1) {
-      continueDrive()
+      continueDrive();
     }
     isRequesting = false;
   }, 30 * 1000);
-}
+};
 
 // 发送继续驾驶请求
 const sendConDrive = async () => {
   console.log("开始发送继续驾驶请求");
-  await continueDrive()
+  await continueDrive();
 };
 
 const handleContinueDrive = () => {
-  allPopupVisible.value = false
-}
+  allPopupVisible.value = false;
+};
 const continueDrive = async () => {
-  onUserActivity()
+  onUserActivity();
   try {
     const res = await StartDrive({
       order_no: orderNo.value,
@@ -810,13 +1049,13 @@ const continueDrive = async () => {
     console.log("继续驾驶返回", res);
     if (res.code != 200 && res.code != 2000) {
       uni.showToast({ title: res.msg, icon: "none" });
-    } 
+    }
   } catch (e) {
     console.error("继续驾驶请求失败", e);
   } finally {
     isRequesting = false;
   }
-}
+};
 // 获取视频设备信息
 
 //video_only:自动打开视频
@@ -825,16 +1064,15 @@ const GetDeviceInfo = (data) => {
   DeviceDetails({ ...data })
     .then((res) => {
       if (res.data?.rows?.length) {
-
-        const base = 'https://vedioafz.fzbkapp.com/';
+        const base = "https://vedioafz.fzbkapp.com/";
         const query = `?device_id=${encodeURIComponent(carDetails.value.front_camera)}&token=${encodeURIComponent(data.token)}&initAction=video_only&videoDefinition=${carDetails.value.video_definition}&defaultCameraClarity=${carDetails.value.default_camera_clarity}&orderNo=${orderNo.value}&_t=${Date.now()}`;
         // const query = `?device_id=${encodeURIComponent('1002211')}&token=${encodeURIComponent(data.token)}&initAction=video_only&videoDefinition=${carDetails.value.video_definition}&defaultCameraClarity=${carDetails.value.default_camera_clarity}&closeFlag=0&_t=${Date.now()}`;
         videoUrl.value = base + query;
 
-        console.log("请求接口之后的url:", videoUrl.value)
+        console.log("请求接口之后的url:", videoUrl.value);
       }
     })
-    .catch(() => { });
+    .catch(() => {});
 };
 
 // 初始化摄像头播放
@@ -848,7 +1086,7 @@ const initTopVideo = () => {
     .then((res) => {
       if (res.code == 200) GetDeviceInfo(res.data);
     })
-    .catch(() => { });
+    .catch(() => {});
 };
 
 const reportModal = () => {
@@ -861,7 +1099,6 @@ const reportModal = () => {
     cancelText: "取消",
     success(res) {
       if (res.confirm) {
-
         if (res.content) {
           // 调用上报接口
           report(res.content);
@@ -878,16 +1115,13 @@ const reportModal = () => {
   });
 };
 
-
-
 // 图标点击处理
 const handleIcon = (item) => {
-  onUserActivity()
+  onUserActivity();
   if (item.key === "repairs") {
     reportModal();
     return;
   }
-
 
   const updateChannel = (key, chKey) => {
     if (item.key === key) {
@@ -915,7 +1149,6 @@ const handleIcon = (item) => {
 };
 
 const logoutOne = () => {
-
   clearAllTimers();
   clearInterval(timerNum.value);
   clearInterval(countdownTimer);
@@ -926,8 +1159,7 @@ const logoutOne = () => {
   uni.reLaunch({
     url: "/subpkg_mine/pages/mine/reservation", // 你的首页路径
   });
-
-}
+};
 // 弹窗动作处理
 const handlePopupAction = (val) => {
   // 维修显示 各种原因   上报故障不显示原因
@@ -940,7 +1172,7 @@ const handlePopupAction = (val) => {
     type.value = "repair";
     allPopupVisible.value = false;
     reportModal();
-    onUserActivity()
+    onUserActivity();
     return;
   }
   if (val == "driving") {
@@ -955,13 +1187,12 @@ const handlePopupAction = (val) => {
         allPopupVisible.value = false;
         if (res.code != 200) {
           uni.showToast({ title: res.msg, icon: "none" });
-        }
-        else {
+        } else {
           SetKey({
             order_no: orderNo.value,
-            type: 0
-          })
-          daojishiTip()
+            type: 0,
+          });
+          daojishiTip();
         }
       })
       .catch(() => {
@@ -975,48 +1206,48 @@ const handlePopupAction = (val) => {
   if (val == "logout") {
     console.log("退出驾驶");
     clearInterval(billingTimer);
-    StartDrive({
-      order_no: orderNo.value,
-      type: 3,
-      vehicle_id: vehicleId.value,
-    }, true)
+    StartDrive(
+      {
+        order_no: orderNo.value,
+        type: 3,
+        vehicle_id: vehicleId.value,
+      },
+      true,
+    )
       .then((res) => {
-
         if (res.code == 2000 || res.code == 200) {
-
           SetKey({
             order_no: orderNo.value,
-            type: 1
-          }).then(res1 => {
-            uni.showToast({ title: "退出驾驶成功", icon: "none" });
-            console.log("电池电量", batteryPer.value)
-            UpdateBattery({
-              vehicle_id: vehicleId.value,
-              vehicle_battery: batteryPer.value
-            })
-            const timer = setTimeout(() => {
-              clearInterval(sendMsgTimer);
-              if (UDPSocket.value) {
-                UDPSocket.value.close();
-              }
-              clearTimeout(timer);
-
-              uni.reLaunch({
-                url: "/subpkg_mine/pages/mine/reservation", // 你的首页路径
+            type: 1,
+          })
+            .then((res1) => {
+              uni.showToast({ title: "退出驾驶成功", icon: "none" });
+              console.log("电池电量", batteryPer.value);
+              UpdateBattery({
+                vehicle_id: vehicleId.value,
+                vehicle_battery: batteryPer.value,
               });
-            }, 2100);
+              const timer = setTimeout(() => {
+                clearInterval(sendMsgTimer);
+                if (UDPSocket.value) {
+                  UDPSocket.value.close();
+                }
+                clearTimeout(timer);
 
-          }).catch()
-
+                uni.reLaunch({
+                  url: "/subpkg_mine/pages/mine/reservation", // 你的首页路径
+                });
+              }, 2100);
+            })
+            .catch();
         } else {
           uni.showToast({ title: res.msg, icon: "none" });
         }
       })
       .catch((e) => {
         console.log("catch", e);
-      }).finally(() => {
-
-      });
+      })
+      .finally(() => {});
   }
 };
 
@@ -1024,11 +1255,9 @@ const handleOper = (type) => {
   operMode.value = type == "mode2";
 };
 
-
-
 const set = () => {
-  onUserActivity()
-  saveFlag.value = { 1: false, 2: false, 3: false }
+  onUserActivity();
+  saveFlag.value = { 1: false, 2: false, 3: false };
   setVisible.value = true;
   showSpeed.value = false;
   handleFBDrive({ fb: false, value: 0 });
@@ -1038,15 +1267,15 @@ const set = () => {
     directionCenter.value.mini_value,
     directionCenter.value.max_value,
   );
-  console.log("点击设置， 当前中位值", saveVal.value[1])
+  console.log("点击设置， 当前中位值", saveVal.value[1]);
   dirMiddle.value = mapNum(saveVal.value[1]);
   dirMiddleValFunc(dirMiddle.value);
-  dirTurn.value = saveVal.value[2]
-  throttle.value = saveVal.value[3]
+  dirTurn.value = saveVal.value[2];
+  throttle.value = saveVal.value[3];
 };
 
 const logout = () => {
-  onUserActivity()
+  onUserActivity();
   allPopupVisible.value = true;
   type.value = "logout";
   showSpeed.value = false;
@@ -1076,7 +1305,6 @@ const { resetTimer, startListening } = useInactivityAlarm(
 const onUserActivity = () => {
   resetTimer();
 };
-
 
 // ------------------- 生命周期 -------------------
 // 先onload 再onMounted
@@ -1145,28 +1373,23 @@ const initRouteData = (options) => {
     videoDefinition.value = carDetails.value.video_definition || "1";
     const type = carDetails.value.vehicle_type;
 
-
-// case fourWheelVehicle = 10 //遥控车 - 四驱车
-// excavatorGeneralVehicle = 20 //挖机- 普通挖机case
-// caseexcavatorHydraulicVehicle = 21 //挖机- 液压挖机
-// bulldozerGeneralVehicle = 30 //铲车 (推土机) - 普通铲车case
-// bulldozerHydraulicVehicle = 31//铲车(推土机) - 液压铲车case
-// case otherVehicle = 40 
+    // case fourWheelVehicle = 10 //遥控车 - 四驱车
+    // excavatorGeneralVehicle = 20 //挖机- 普通挖机case
+    // caseexcavatorHydraulicVehicle = 21 //挖机- 液压挖机
+    // bulldozerGeneralVehicle = 30 //铲车 (推土机) - 普通铲车case
+    // bulldozerHydraulicVehicle = 31//铲车(推土机) - 液压铲车case
+    // case otherVehicle = 40
 
     if (type >= 10 && type <= 19) carType.value = "1";
     else if (type >= 20 && type <= 29 && type != 21) carType.value = "2";
     else if (type == 21) {
       carType.value = "3";
+    } else if (type == 30) {
+      carType.value = "4";
+    } else if (type == 31) {
+      carType.value = "5";
     }
-    else if (type == 30) {
-      carType.value= "4"
-    }
-    else if (type == 31) {
-      carType.value= "5"
-    }
-
- 
-
+    carType.value = "3";
   } else {
     console.log("carDetails 空");
   }
@@ -1188,18 +1411,20 @@ const initVehicleConfig = () => {
     acceleratorCenter.value = carDetails.value.accelerator_center || {};
     acceleratorDynamics.value = carDetails.value.accelerator_dynamics || {};
 
-    dirMiddle.value = directionCenter.value.current_value
-    dirTurn.value = directionDynamics.value.current_value
-    throttle.value = acceleratorDynamics.value.current_value
+    dirMiddle.value = directionCenter.value.current_value;
+    dirTurn.value = directionDynamics.value.current_value;
+    throttle.value = acceleratorDynamics.value.current_value;
 
-    ch7Open = carDetails.value.vehicle_config_detail.ch7.open_value.current_value;
-    ch7Close = carDetails.value.vehicle_config_detail.ch7.close_value.current_value;
+    ch7Open =
+      carDetails.value.vehicle_config_detail.ch7.open_value.current_value;
+    ch7Close =
+      carDetails.value.vehicle_config_detail.ch7.close_value.current_value;
 
     saveVal.value = {
       1: dirMiddle.value,
       2: dirTurn.value,
-      3: throttle.value
-    }
+      3: throttle.value,
+    };
     // 液压挖机ch1～ch6 全部都是中位值的current_value
     // mixed_control 为1 油泵一直开着 为0时，ch5 ch4 ch6 需要开油泵 就是ch7 需要open_values
     const config = carDetails.value.vehicle_config_detail || {};
@@ -1207,7 +1432,6 @@ const initVehicleConfig = () => {
       if (config[key])
         chValue.value[key] = config[key].center_value.current_value;
     });
-
 
     // 走设置清晰度 以及 转换switch 数值
     setQualityList();
@@ -1229,22 +1453,18 @@ const initVehicleConfig = () => {
         2: { ...directionDynamics.value },
         3: { ...acceleratorDynamics.value },
       });
-
-
     }
     // 液压挖机
     if (carType.value == 3) {
-
       if (carDetails.value.mixed_control == 1) {
-        chValue.value.ch7 = config['ch7'].open_value.current_value;
+        chValue.value.ch7 = config["ch7"].open_value.current_value;
       } else {
-        chValue.value.ch7 = config['ch7'].close_value.current_value;
+        chValue.value.ch7 = config["ch7"].close_value.current_value;
       }
-      chValue.value.ch1 = config['ch1'].center_value.current_value;
-      chValue.value.ch2 = config['ch2'].center_value.current_value;
-      chValue.value.ch8 = config['ch8'].close_value.current_value;
+      chValue.value.ch1 = config["ch1"].center_value.current_value;
+      chValue.value.ch2 = config["ch2"].center_value.current_value;
+      chValue.value.ch8 = config["ch8"].close_value.current_value;
 
-      
       carHandler.value = new ExcavatorControlHandler({
         reverseUpDownState: operFB.value,
         reverseLeftRightState: operDir.value,
@@ -1281,7 +1501,7 @@ const initSocket = () => {
       clearTimeout(messageTimer.value);
       handleReceive(msg);
       // console.log("收到的消息", model)
-      vlot.value = Number(model.volt ?? 0).toFixed(1)
+      vlot.value = Number(model.volt ?? 0).toFixed(1);
       batteryPer.value = handleBattery(model.volt, carDetails.value.battery);
       batteryPer.value = 100;
       // 重新启动超时检测
@@ -1301,7 +1521,7 @@ const initSocket = () => {
       console.warn("10秒内未收到消息");
       carStatus.value = false;
       allPopupVisible.value = true;
-      type.value = 'offLineTip';
+      type.value = "offLineTip";
     }, 20 * 1000);
   }
 
@@ -1341,7 +1561,7 @@ const initSendLoop = () => {
 const handleFBDrive = (item) => {
   console.log(item);
   // 如果开启定速 消失掉
-  const index = activeKey.value.indexOf('speed');
+  const index = activeKey.value.indexOf("speed");
   if (index > -1) {
     activeKey.value.splice(index, 1);
     showSpeed.value = false;
@@ -1364,22 +1584,22 @@ const handleFBDrive = (item) => {
   }
   carHandler.value.handleTwoDirectionControlChannel(true, type, ratioValue);
   chValue.value.ch2 = carHandler.value.ch2;
-  onUserActivity()
+  onUserActivity();
   console.log("ch2:", chValue.value.ch2);
 };
 
 // 速度
 const changeConstSpeed = (value) => {
   // 算速度  1-100 对应1-设置的油门力度  1 + (value - 1) * (45 - 1) / (100 - 1);
-  const zhuanhuanVal = 1 + (value - 1) * (throttle.value - 1) / (100 - 1);
-  console.log("转换值", zhuanhuanVal)
+  const zhuanhuanVal = 1 + ((value - 1) * (throttle.value - 1)) / (100 - 1);
+  console.log("转换值", zhuanhuanVal);
   // constSpeed.value = value;
   carHandler.value.handleTwoDirectionControlChannel(
     true,
     "upType",
     zhuanhuanVal / throttle.value,
   );
-  console.log("定速", zhuanhuanVal / throttle.value)
+  console.log("定速", zhuanhuanVal / throttle.value);
   chValue.value.ch2 = carHandler.value.ch2;
   console.log("定速ch2:", chValue.value.ch2);
 };
@@ -1403,7 +1623,7 @@ const handleLRDrive = (item) => {
 
   carHandler.value.handleTwoDirectionControlChannel(false, type, ratioValue);
   chValue.value.ch1 = carHandler.value.ch1;
-  onUserActivity()
+  onUserActivity();
 };
 
 onUnmounted(() => {
@@ -1419,22 +1639,22 @@ onUnload(() => {
   clearAllTimers();
   clearInterval(timerNum.value);
   clearInterval(countdownTimer);
-})
+});
 
 // 遥杆操作 挖机
 const handleLeftDrive = (param) => {
   handleComDrive("left", param);
-  onUserActivity()
+  onUserActivity();
 };
 
 // 正常左侧遥杆的上下箭头
 const handleUpDownDrive = (param) => {
   let ch;
-  console.log(param)
+  console.log(param);
   if (param.isLeft) {
     // 一直按
     if (param.flag == 1) {
-      console.log(carHandler.value)
+      console.log(carHandler.value);
       carHandler.value.handleArrowControlChannel(
         "left",
         param.type == "up" ? true : false,
@@ -1443,11 +1663,10 @@ const handleUpDownDrive = (param) => {
       ch = carHandler.value.getCh1Ch2Value();
       chValue.value.ch1 = ch.ch1;
     } else {
-      chValue.value.ch1 = carDetails.value.vehicle_config_detail.ch1.center_value.current_value;
+      chValue.value.ch1 =
+        carDetails.value.vehicle_config_detail.ch1.center_value.current_value;
     }
-
   } else {
-
     if (param.flag == 1) {
       // 挖机右
       carHandler.value.handleArrowControlChannel(
@@ -1457,7 +1676,8 @@ const handleUpDownDrive = (param) => {
       ch = carHandler.value.getCh1Ch2Value();
       chValue.value.ch2 = ch.ch2;
     } else {
-      chValue.value.ch2 = carDetails.value.vehicle_config_detail.ch2.center_value.current_value;
+      chValue.value.ch2 =
+        carDetails.value.vehicle_config_detail.ch2.center_value.current_value;
     }
   }
   ch = carHandler.value.getChValue();
@@ -1466,33 +1686,36 @@ const handleUpDownDrive = (param) => {
   chValue.value.ch5 = ch.ch5;
   chValue.value.ch6 = ch.ch6;
   chValue.value.ch7 = ch.ch7;
-  console.log(chValue.value)
+  console.log(chValue.value);
 };
 
 // 遥杆操作
 const handleRightDrive = (param) => {
-  onUserActivity()
+  onUserActivity();
   handleComDrive("right", param);
 };
 const handleComDrive = (type, param) => {
+
   if (
     param.left == false &&
     param.right == false &&
     param.up == false &&
     param.down == false
   ) {
-    carHandler.value.resetChValue();
-   
+      carHandler.value.resetChValue();
+      chValue.value.ch7 = Math.min(ch7Open, ch7Close);
   } else {
     // 解决舵机先响的问题，应该油泵先响
-    if (type == 'left') {
-       if (param.up || param.down) {
+    // 油泵 需要打开的时候 传开值关值的最大值
+    // 关闭的时候 取开值关值的最小值
+    if (type == "left") {
+      if (param.up || param.down) {
         chValue.value.ch7 = Math.max(ch7Open, ch7Close);
       } else {
         chValue.value.ch7 = Math.min(ch7Open, ch7Close);
       }
     }
-    if (type == 'right') {
+    if (type == "right") {
       chValue.value.ch7 = Math.max(ch7Open, ch7Close);
     }
     carHandler.value.handleRemoteControlChannel(
@@ -1504,13 +1727,13 @@ const handleComDrive = (type, param) => {
     );
   }
 
-  const ch = carHandler.value.getChValue();
-  chValue.value.ch3 = ch.ch3;
-  chValue.value.ch4 = ch.ch4;
-  chValue.value.ch5 = ch.ch5;
-  chValue.value.ch6 = ch.ch6;
+    const ch = carHandler.value.getChValue();
+    chValue.value.ch3 = ch.ch3;
+    chValue.value.ch4 = ch.ch4;
+    chValue.value.ch5 = ch.ch5;
+    chValue.value.ch6 = ch.ch6;
 
-  console.log("圆盘", chValue.value)
+
 };
 
 //  set
@@ -1526,9 +1749,8 @@ const dirMiddleVal = ref(0);
 const saveVal = ref({
   1: 0,
   2: 0,
-  3: 0
+  3: 0,
 });
-
 
 const dirMiddleValFunc = (num) => {
   console.log("dirMiddleValFunc", num);
@@ -1541,7 +1763,7 @@ const dirMiddleValFunc = (num) => {
   );
 
   dirMiddleVal.value = mapNum.toFixed(0);
-  console.log("dirMiddleVal.value", dirMiddleVal.value)
+  console.log("dirMiddleVal.value", dirMiddleVal.value);
 };
 
 const setQualityList = () => {
@@ -1555,13 +1777,13 @@ const setQualityList = () => {
   qualityList.value = qualityListMap.filter((item) =>
     targetValues.includes(item.value),
   );
-  currentQuality.value = carDetails.value.default_camera_clarity + '';
+  currentQuality.value = carDetails.value.default_camera_clarity + "";
 };
 
 // 正反 旋转，上下操作
 const setHandleOper = (type, val) => {
   console.log(type, val);
-  onUserActivity()
+  onUserActivity();
   if (type == 1) operFB.value = val;
   if (type == 2) operDir.value = val;
   // 四驱车 液压挖机
@@ -1570,8 +1792,11 @@ const setHandleOper = (type, val) => {
 
 const handleSelect = (value) => {
   currentQuality.value = value;
-  videoUrl.value = videoUrl.value.replace(/resRatio=\d+/, `resRatio=${Number(value) - 1}`);
-  uni.showToast({ title: "切换成功", icon: "none" })
+  videoUrl.value = videoUrl.value.replace(
+    /resRatio=\d+/,
+    `resRatio=${Number(value) - 1}`,
+  );
+  uni.showToast({ title: "切换成功", icon: "none" });
 };
 
 const selectedMode = ref("mode1");
@@ -1584,7 +1809,7 @@ const steeringModes = [
 const handleSetSelect = (id) => {
   selectedMode.value = id;
   operMode.value = selectedMode.value == "mode2";
-  onUserActivity()
+  onUserActivity();
 };
 
 const setGroup = ref([
@@ -1594,7 +1819,7 @@ const setGroup = ref([
 const selectedIndex = ref(0);
 const handleItem = (index) => {
   selectedIndex.value = index;
-  onUserActivity()
+  onUserActivity();
 };
 
 // 改变值
@@ -1604,22 +1829,27 @@ const changeVal = (value) => {
   // acceleratorDynamics.value.current_value = value[3];
   carHandler.value.setConfigValue({
     0: { current_value: value[0], max_value: directionCenter.value.max_value },
-    2: { current_value: value[2], max_value: directionDynamics.value.max_value },
-    3: { current_value: value[3], max_value: acceleratorDynamics.value.max_value },
+    2: {
+      current_value: value[2],
+      max_value: directionDynamics.value.max_value,
+    },
+    3: {
+      current_value: value[3],
+      max_value: acceleratorDynamics.value.max_value,
+    },
   });
-
 };
 
 // 是否点击保存
 const saveFlag = ref({ 1: false, 2: false, 3: false });
 const save = (type) => {
-  onUserActivity()
+  onUserActivity();
   saveFlag.value[type] = true;
-  uni.showToast({ title: "保存成功", icon: "none" })
+  uni.showToast({ title: "保存成功", icon: "none" });
 };
 
 const close = () => {
-  onUserActivity()
+  onUserActivity();
   const val = {
     0: carDetails.value.direction_center.current_value,
     2: carDetails.value.direction_dynamics.current_value,
@@ -1642,23 +1872,24 @@ const close = () => {
   setVisible.value = false;
 
   if (carType.value == 1) {
-    if (activeKey.value.includes['speed']) {
+    if (activeKey.value.includes["speed"]) {
       showSpeed.value = true;
     }
   }
 };
 // 滑动slider
 const setChangeVal = (flag, value) => {
-  onUserActivity()
+  onUserActivity();
   const obj = JSON.parse(uni.getStorageSync("carDetails"));
 
-  let val = Object.assign({}, {
-    0: obj.direction_center.current_value,
-    2: obj.direction_dynamics.current_value,
-    3: obj.accelerator_dynamics.current_value,
-  })
-
-
+  let val = Object.assign(
+    {},
+    {
+      0: obj.direction_center.current_value,
+      2: obj.direction_dynamics.current_value,
+      3: obj.accelerator_dynamics.current_value,
+    },
+  );
 
   if (flag == 1) {
     dirMiddleValFunc(value);
@@ -1668,28 +1899,28 @@ const setChangeVal = (flag, value) => {
     chValue.value.ch1 = dirMiddleVal.value;
   } else if (flag == 2) {
     dirTurn.value = value;
-    val[2] = value
+    val[2] = value;
   } else {
     throttle.value = value;
     val[3] = value;
   }
-  console.log("滑动slider之后,打印当前值", val)
-  changeVal(val)
+  console.log("滑动slider之后,打印当前值", val);
+  changeVal(val);
 };
 
 let longPressTimer = null;
-const INITIAL_DELAY = 300;   // 首次触发前的等待时间(ms)，区分单击和长按
-const REPEAT_INTERVAL = 80;  // 长按后重复触发的间隔(ms)
+const INITIAL_DELAY = 300; // 首次触发前的等待时间(ms)，区分单击和长按
+const REPEAT_INTERVAL = 80; // 长按后重复触发的间隔(ms)
 
 // 触摸开始
 const onTouchStart = (type, step) => {
-  onUserActivity()
+  onUserActivity();
   // 立即执行一次
   handleValueChange(type, step);
 
   // 设置长按定时器
   longPressTimer = setTimeout(() => {
-    clearTimeout(longPressTimer)
+    clearTimeout(longPressTimer);
     // 首次延迟后，切换为快速重复模式
     longPressTimer = setInterval(() => {
       handleValueChange(type, step);
@@ -1704,11 +1935,14 @@ const onTouchEnd = () => {
   longPressTimer = null;
 };
 
-
 const handleAdd = (type) => handleValueChange(type, 1);
 const handleReduce = (type) => handleValueChange(type, -1);
 const valueMap = { 1: dirMiddle, 2: dirTurn, 3: throttle };
-const valueMapMax = { 1: dirMiddle, 2: directionDynamics, 3: acceleratorDynamics };
+const valueMapMax = {
+  1: dirMiddle,
+  2: directionDynamics,
+  3: acceleratorDynamics,
+};
 // 2. 统一的加减处理函数
 const handleValueChange = (type, step) => {
   const target = valueMap[type];
@@ -1716,18 +1950,20 @@ const handleValueChange = (type, step) => {
   // 计算新值
   const newValue = target.value + step;
   if (type == 2 || type == 3) {
-    target.value = Math.max(1, Math.min(valueMapMax[type].value.current_value, newValue));
+    target.value = Math.max(
+      1,
+      Math.min(valueMapMax[type].value.current_value, newValue),
+    );
   } else {
     target.value = Math.max(1, Math.min(100, newValue));
   }
 
   // 第一个滑块
   if (type == 1) {
-    console.log("第一个滑块")
-    dirMiddleValFunc(target.value)
-    dirMiddle.value = target.value
+    console.log("第一个滑块");
+    dirMiddleValFunc(target.value);
+    dirMiddle.value = target.value;
   }
-
 };
 
 // --------------------------tip -----------------------
@@ -1736,7 +1972,6 @@ const handleValueChange = (type, step) => {
 const handleMaskClick = () => {
   // 如果需要点击遮罩关闭，可在此处设置 visible.value = false;
 };
-
 
 const message = ref("");
 const text = ref();
@@ -1761,12 +1996,12 @@ const selectReason = (index, item) => {
 const cancel = () => {
   allPopupVisible.value = false;
   selectedReasonIndex.value = 0;
-  onUserActivity()
+  onUserActivity();
 };
 
 const report = (text) => {
   let msg = "";
-  onUserActivity()
+  onUserActivity();
   // 调用 API 上报 2s 退出回去
   CarReport({ order_no: orderNo.value, id: vehicleId.value, text }).then(
     (res) => {
@@ -1779,7 +2014,7 @@ const report = (text) => {
           });
         }, 2000);
       } else {
-        uni.showToast({ title: res.msg, icon: 'none' })
+        uni.showToast({ title: res.msg, icon: "none" });
       }
     },
   );
@@ -1882,8 +2117,6 @@ const report = (text) => {
       height: 20px;
     }
   }
-
-
 
   .dot {
     width: 5px;
@@ -1989,7 +2222,6 @@ const report = (text) => {
   }
 }
 
-
 .side-menu-oil {
   position: fixed;
   z-index: 99999;
@@ -2016,7 +2248,6 @@ const report = (text) => {
   overflow: visible !important;
 
   padding: 0 15px;
-
 
   .slider-label {
     position: relative;
@@ -2134,7 +2365,6 @@ const report = (text) => {
     height: 100vh;
     box-sizing: border-box;
     background: rgba(0, 0, 0, 0.8);
-   
 
     .settings-bar {
       display: flex;
@@ -2199,17 +2429,16 @@ const report = (text) => {
         /* 线条长度 */
 
         /* 关键代码：创建线性渐变 */
-        background: linear-gradient(to right,
-            transparent,
-            rgba(245, 197, 66, 0.8) 20%,
-            #f5c542 50%,
-            rgba(245, 197, 66, 0.8) 80%,
-            transparent
-            /* 终点：完全透明 */
-          );
+        background: linear-gradient(
+          to right,
+          transparent,
+          rgba(245, 197, 66, 0.8) 20%,
+          #f5c542 50%,
+          rgba(245, 197, 66, 0.8) 80%,
+          transparent /* 终点：完全透明 */
+        );
 
         margin: 0 auto;
-
       }
     }
   }
