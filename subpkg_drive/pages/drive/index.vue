@@ -89,8 +89,6 @@
       </ExLeft>
       <ExRight @action="handleRightDrive" @action2="handleUpDownDrive" v-show="carType == 3" :mode="operMode"
         @reset="onUserActivity"></ExRight>
-      <!-- <pointOprea1 @action="handleLeftDrive" v-if="carType == 3"></pointOprea1> -->
-      <!-- <pointOprea2 @action="handleRightDrive" v-if="carType == 3"></pointOprea2> -->
 
       <!-- 时间显示 -->
       <cover-view class="time-clock">
@@ -98,19 +96,8 @@
         <TimeClock></TimeClock>
       </cover-view>
 
-      <!-- 通用弹窗 -->
-      <!-- <ALLPopup ref="allPopup" v-model:show="allPopupVisible" type="tip" :orderNo="orderNo" :vehicleId="vehicleId"
-        :isShow="showRepairReason" @action="handlePopupAction" /> -->
-
-      <!-- 设置弹窗 -->
-      <!-- <SetPopup v-model:show="setVisible" :videoDefinition="videoDefinition" :operFB="operFB"
-        :directionCenter="directionCenter" :acceleratorDynamics="acceleratorDynamics"
-        :directionDynamics="directionDynamics" :operDir="operDir" :type="carType" @action="handleOper"
-        @operAction="handleFBDir" @changeValue="changeVal" /> -->
-
       <cover-view v-show="setVisible" :style="{ display: setVisible ? 'block' : 'none' }" class="custom-popup-mask"
         @click="close">
-        <!-- <cover-view class="fe"> -->
         <cover-view class="custom-popup-right" @click.stop>
           <cover-view class="cont">
             <cover-view class="right">
@@ -131,15 +118,7 @@
             <cover-view class="left">
               <!-- type 1 是遥控车 -->
               <cover-view class="group" v-show="selectedIndex == 0 && carType == '1'">
-                <!-- <cover-view class="group-item">
-                  <cover-view class="tit">视频清晰度</cover-view>
-                  <cover-view class="flex">
-                    <cover-view v-for="(item, index) in qualityList" :key="index" class="btn-quality"
-                      :class="{ active: currentQuality === item.value }" @click="handleSelect(item.value)">
-                      {{ item.label }}
-                    </cover-view>
-                  </cover-view>
-                </cover-view> -->
+
                 <cover-view class="group-item">
                   <cover-view class="tit">操作设置</cover-view>
                   <cover-view class="flex">
@@ -1388,6 +1367,10 @@ onUnmounted(() => {
   clearAllTimers();
   clearInterval(timerNum.value);
   clearInterval(countdownTimer);
+  SetKey({
+    order_no: orderNo.value,
+    type: 1,
+  })
 });
 onUnload(() => {
   if (UDPSocket.value) {
@@ -1397,6 +1380,12 @@ onUnload(() => {
   clearAllTimers();
   clearInterval(timerNum.value);
   clearInterval(countdownTimer);
+  console.log(123)
+  SetKey({
+    order_no: orderNo.value,
+    type: 1,
+  })
+
 });
 
 // 遥杆操作 挖机
@@ -1408,11 +1397,9 @@ const handleLeftDrive = (param) => {
 // 正常左侧遥杆的上下箭头
 const handleUpDownDrive = (param) => {
   let ch;
-  console.log(param);
   if (param.isLeft) {
     // 一直按
     if (param.flag == 1) {
-      console.log(carHandler.value);
       carHandler.value.handleArrowControlChannel(
         "left",
         param.type == "up" ? true : false,
@@ -1444,7 +1431,7 @@ const handleUpDownDrive = (param) => {
   chValue.value.ch5 = ch.ch5;
   chValue.value.ch6 = ch.ch6;
   chValue.value.ch7 = ch.ch7;
-  console.log(chValue.value);
+  
 };
 
 // 遥杆操作
@@ -1551,14 +1538,7 @@ const setHandleOper = (type, val) => {
   carHandler.value.setReverseStatus(operFB.value, operDir.value);
 };
 
-const handleSelect = (value) => {
-  currentQuality.value = value;
-  videoUrl.value = videoUrl.value.replace(
-    /resRatio=\d+/,
-    `resRatio=${Number(value) - 1}`,
-  );
-  uni.showToast({ title: "切换成功", icon: "none" });
-};
+
 
 const selectedMode = ref("mode1");
 // 定义两种模式的配置数据
@@ -1638,7 +1618,7 @@ const close = () => {
       saveVal.value[3] = throttle.value;
     }
     changeVal(val);
-   
+
 
     if (carType.value == 1) {
       if (activeKey.value.includes["speed"]) {
