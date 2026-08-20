@@ -176,9 +176,9 @@
         <cover-view class="custom-popup-right" @click.stop>
           <cover-view class="cont">
             <cover-view class="right">
-              <cover-view class="settings-bar">
+              <cover-view class="settings-bar" @click="close">
                 <cover-view class="text-area">设置</cover-view>
-                <cover-view class="close-btn" @click="close">
+                <cover-view class="close-btn">
                   <cover-image
                     class="image"
                     src="./static/icon_close@2x.png"
@@ -844,7 +844,7 @@ const carHandler = ref(null);
 const UDPSocket = ref(null);
 const numTip = ref(0);
 const { handleReceive, model } = useHESbus();
-const batteryPer = ref(50);
+const batteryPer = ref(100);
 const vlot = ref("");
 // 菜单配置
 const menuList = computed(() => {
@@ -1515,7 +1515,6 @@ const initSocket = () => {
       // console.log("收到的消息", model)
       vlot.value = Number(model.volt ?? 0).toFixed(1);
       batteryPer.value = handleBattery(model.volt, carDetails.value.battery);
-      batteryPer.value = 100;
       // 重新启动超时检测
       startMessageTimeout();
     },

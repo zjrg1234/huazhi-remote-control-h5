@@ -146,11 +146,11 @@ export class ExcavatorControlHandler {
       this.ch7 = Math.max(ch7Open, ch7Close);
       console.log("右侧", this.ch7)
       if (left) {
-        this.ch6 = ch6Center - (ch6Center - ch6Close) * rateValue;
+        this.ch6 = ch6Center + (ch6Open - ch6Center) * rateValue;
       }
 
       if (right) {
-        this.ch6 = ch6Center + (ch6Open - ch6Center) * rateValue;
+        this.ch6 = ch6Center - (ch6Center - ch6Close) * rateValue;
       }
 
       if (up) {

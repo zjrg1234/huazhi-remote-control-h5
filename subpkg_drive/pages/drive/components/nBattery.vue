@@ -113,44 +113,42 @@ watch(
     border: 1px solid #fff;
     box-sizing: border-box; /* 改为 border-box 更稳定 */
     overflow: hidden; /* 确保内部绿色条不会溢出边框 */
+    background-color: transparent; 
   }
 
    .battery-tip {
     position: absolute;
     right: 0;
-    top: 4px;
+    top: 3px;
     width: 2px;
     height: 6px;
     background-color: #ffffff;
     border-radius: 0 2px 2px 0;
   }
 
-  .slider-progress {
-    height: 100%;
-    background-color: #ffc838;
-    position: absolute;
-    left: 0;
-    top: 0;
-    border-radius: 2px;
-  }
+ 
 
   .battery-fill {
     height: 100%;
+    height: 12px;
     border-radius: 1px; /* 加上圆角，防止真机上直角溢出 */
     background-color: #4caf50;
-    transition:
-      width 0.4s ease,
-      background-color 0.4s ease;
-    border: 1px solid #fff;
-    border-right: none;
+    background: #4caf50;
+    // transition:
+    //   width 0.4s ease,
+    //   background-color 0.4s ease;
+    // border: 1px solid #fff;
+    // border-right: none;
   }
 
   .battery-fill.medium {
     background-color: #ff9800;
+    background: #ff9800;
   }
 
   .battery-fill.low {
     background-color: #f44336;
+    background: #f44336;
   }
 
  
@@ -161,6 +159,7 @@ watch(
     font-size: 10px;
     min-width: 25px;
     color: #ffffff;
+    padding-left: 3px;
   }
 }
 </style>
