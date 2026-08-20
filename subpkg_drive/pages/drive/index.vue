@@ -47,7 +47,7 @@
             </cover-view>
           </cover-view>
           <cover-view>
-            <battery :percent="batteryPer"></battery>
+            <nBattery v-model="batteryPer"></nBattery>
           </cover-view>
           <cover-view class="vlot-text">{{ vlot }}</cover-view>
           <cover-view class="split-vertical"></cover-view>
@@ -758,7 +758,8 @@ import { useUserStore } from "@/store/modules/user";
 // import SetPopup from "./components/set.vue";
 // import microphone from "./components/microphone.vue";
 import TimeClock from "./components/tclock.vue";
-import battery from "./components/battery.vue";
+// import battery from "./components/battery.vue";
+import nBattery from "./components/nBattery.vue";
 import SwitchComp from "./components/switchComp.vue";
 import SliderComp from "./components/sliderComp.vue";
 import UpDown from "./components/up-down.vue";
@@ -843,7 +844,7 @@ const carHandler = ref(null);
 const UDPSocket = ref(null);
 const numTip = ref(0);
 const { handleReceive, model } = useHESbus();
-const batteryPer = ref(100);
+const batteryPer = ref(50);
 const vlot = ref("");
 // 菜单配置
 const menuList = computed(() => {
