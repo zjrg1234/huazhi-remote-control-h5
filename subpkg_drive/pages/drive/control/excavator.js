@@ -106,8 +106,8 @@ export class ExcavatorControlHandler {
   }
 
   // 遥杆操作
-  handleRemoteControlChannel(type, left, right, up, down) {
-    const rateValue = 1;
+  handleRemoteControlChannel(type, left, right, up, down, rateValue) {
+ 
     const ch7Open = this.config.ch7.open_value.current_value;
     const ch7Close = this.config.ch7.close_value.current_value;
     // 左侧遥杆

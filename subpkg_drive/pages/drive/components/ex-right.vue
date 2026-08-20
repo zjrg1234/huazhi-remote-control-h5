@@ -8,25 +8,12 @@
           <cover-image src="../static/btn_bg.png"></cover-image>
         </cover-view>
 
-        <!-- 四个方向箭头 -->
-        <!-- <cover-view class="arrow up" :class="{ active: isUpActive }">
-          <cover-image class="image" src="../static/btn_up1@2x.png"></cover-image>
-        </cover-view>
-        <cover-view class="arrow down" :class="{ active: isDownActive }">
-          <cover-image class="image" src="../static/btn_down1@2x.png"></cover-image>
-        </cover-view>
-        <cover-view class="arrow left" :class="{ active: isLeftActive }">
-          <cover-image class="image" src="../static/btn_bucket_down@2x.png"></cover-image>
-        </cover-view>
-        <cover-view class="arrow right" :class="{ active: isRightActive }">
-          <cover-image class="image" src="../static/btn_bucket_up@2x.png"></cover-image>
-        </cover-view> -->
+        <!-- 四个方向箭头（注释掉，仅保留摇杆） -->
 
         <!-- 摇杆圆点 -->
         <cover-view class="dot" :class="{ ready: isReadyMode }" :style="dotStyle"></cover-view>
       </cover-view>
     </cover-view>
-
 
     <!-- 代表ch2 油门 -->
     <cover-view class="up-down-arrow" v-show="!mode" :style="{ display: !mode ? 'block' : 'none' }">
@@ -42,7 +29,6 @@
     </cover-view>
 
     <cover-view class="up-up-arrow" v-show="mode" :style="{ display: mode ? 'block' : 'none' }">
-
       <cover-view class="flex">
         <cover-view class="arrow1 up" :class="{ active: isUpActive }">
           <cover-image class="image" src="../static/btn_up_ex@2x.png" @touchstart.stop="handleClickUp"
@@ -54,7 +40,6 @@
             @contextmenu.prevent></cover-image>
         </cover-view>
       </cover-view>
-
     </cover-view>
   </cover-view>
 </template>
@@ -90,15 +75,9 @@ let lastPointerX = 0;
 let lastPointerY = 0;
 let readyBaseX = 0;
 let readyBaseY = 0;
+let emitInterval = null; // 定时器句柄
 
 // --- 计算属性 (仅绑定圆点样式) ---
-// const dotStyle = computed(() => ({
-//   transform: `translate3d(${currentDotX.value}px, ${currentDotY.value}px, 0) scale(1)`,
-//   transition: isDragging.value
-//     ? "none"
-//     : "transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease",
-// }));
-
 const dotStyle = computed(() => ({
   transform: `translate(calc(-50% + ${currentDotX.value}px), calc(-50% + ${currentDotY.value}px))`,
   transition: isDragging.value
@@ -127,24 +106,74 @@ const getClientPos = (e) => {
     clientY: e.pageY || e.clientY,
   };
 };
+
 const enterReadyMode = () => {
   isReadyMode.value = true;
-  readyBaseX = lastPointerX;
-  readyBaseY = lastPointerY;
+  // 关键修复：不更新基准点，防止抖动
+  // readyBaseX = lastPointerX;
+  // readyBaseY = lastPointerY;
   uni.vibrateShort({ type: "light" });
 };
 
-const updateArrows = (dx, dy) => {
-  isUpActive.value = dy < -SWIPE_THRESHOLD;
-  isDownActive.value = dy > SWIPE_THRESHOLD;
-  isLeftActive.value = dx < -SWIPE_THRESHOLD;
-  isRightActive.value = dx > SWIPE_THRESHOLD;
+// 发送当前状态（方向 + 速率）
+const emitCurrentState = () => {
+  const dx = currentDotX.value;
+  const dy = currentDotY.value;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+  const speed = Math.min(distance / MAX_RADIUS, 1);
+
+  const up = dy < -SWIPE_THRESHOLD;
+  const down = dy > SWIPE_THRESHOLD;
+  const left = dx < -SWIPE_THRESHOLD;
+  const right = dx > SWIPE_THRESHOLD;
+
+  // 更新箭头活性（用于样式）
+  isUpActive.value = up;
+  isDownActive.value = down;
+  isLeftActive.value = left;
+  isRightActive.value = right;
+  console.log(speed)
   emit("action", {
-    up: isUpActive.value,
-    down: isDownActive.value,
-    left: isLeftActive.value,
-    right: isRightActive.value,
+    up,
+    down,
+    left,
+    right,
+    speed,
   });
+};
+
+const updateArrows = (dx, dy) => {
+  // 清除旧定时器
+  if (emitInterval) {
+    clearInterval(emitInterval);
+    emitInterval = null;
+  }
+
+  // 更新当前偏移量（已在 handleMove 中赋值，但为了安全再设置一次）
+  currentDotX.value = dx;
+  currentDotY.value = dy;
+
+  // 判断是否有激活方向
+  const hasActive = (dy < -SWIPE_THRESHOLD || dy > SWIPE_THRESHOLD || dx < -SWIPE_THRESHOLD || dx > SWIPE_THRESHOLD);
+  
+  if (hasActive && isDragging.value) {
+    // 立即发送一次
+    emitCurrentState();
+
+    // 启动定时器，每 40ms 持续发送
+    emitInterval = setInterval(() => {
+      // 若方向已取消或已松开，则停止
+      if (!isDragging.value || !(isUpActive.value || isDownActive.value || isLeftActive.value || isRightActive.value)) {
+        clearInterval(emitInterval);
+        emitInterval = null;
+        return;
+      }
+      emitCurrentState();
+    }, 40);
+  } else {
+    // 无激活方向，发送停止信号
+    resetArrows();
+  }
 };
 
 const resetArrows = () => {
@@ -152,11 +181,16 @@ const resetArrows = () => {
   isDownActive.value = false;
   isLeftActive.value = false;
   isRightActive.value = false;
+  if (emitInterval) {
+    clearInterval(emitInterval);
+    emitInterval = null;
+  }
   emit("action", {
     up: false,
     down: false,
     left: false,
     right: false,
+    speed: 0,
   });
 };
 
@@ -199,8 +233,11 @@ const handleMove = (e) => {
     dy = Math.sin(angle) * MAX_RADIUS;
   }
 
+  // 更新响应式位置
   currentDotX.value = dx;
   currentDotY.value = dy;
+
+  // 处理方向与定时器
   updateArrows(dx, dy);
 };
 
@@ -217,30 +254,21 @@ const handleEnd = () => {
   resetArrows();
 };
 
-
-
-
+// ---- 外部按钮（上/下）长按重复逻辑 ----
 let longPressTimerUp = null;
 let repeatTimerUp = null;
 let longPressTimerDown = null;
 let repeatTimerDown = null;
 
-const LONG_PRESS_DELAY = 300;   // 长按识别延迟（ms）
-const REPEAT_INTERVAL = 100;    // 重复触发间隔（ms）
+const LONG_PRESS_DELAY = 300;
+const REPEAT_INTERVAL = 100;
 
-// ---- 上按钮 ----
 const handleClickUp = () => {
-  // 通知父组件重置无操作倒计时
   emit("reset");
-
-  // 清除残留定时器
   clearTimeout(longPressTimerUp);
   clearInterval(repeatTimerUp);
-
-  // 立即执行一次（单击效果）
   doUpAction(true);
 
-  // 延迟后启动重复定时器
   longPressTimerUp = setTimeout(() => {
     repeatTimerUp = setInterval(() => {
       doUpAction(true);
@@ -283,31 +311,7 @@ const doDownAction = (flag) => {
 
 const doUpAction = (flag) => {
   emit("action2", { type: "up", isLeft: false, flag: flag ? 1 : 0 });
-  // 如果 flag 为 true 表示持续动作，这里也可以额外发送 reset 事件，但已在 touchstart 中发送
 };
-
-// const handleClick = (val) => {
-//   emit("action2", {
-//     type: val,
-//   });
-// };
-
-// const handleClickUp = (val) => {
-//   emit("action2", { type: "up", isLeft: false, flag: 1 });
-// }
-
-// const handleClickUpLeave = (val) => {
-//   emit("action2", { type: "up", isLeft: false, flag: 0 });
-// }
-
-// const handleClickDown = (val) => {
-//   emit("action2", { type: "down", isLeft: false, flag: 1 });
-// }
-
-// const handleClickDownLeave = (val) => {
-//   emit("action2", { type: "down", isLeft: false, flag: 0 });
-// }
-
 </script>
 
 <style lang="scss" scoped>
@@ -348,7 +352,6 @@ const doUpAction = (flag) => {
       height: 36px;
     }
   }
-
 }
 
 .up-down-arrow {
@@ -393,7 +396,7 @@ const doUpAction = (flag) => {
     pointer-events: none;
   }
 
-  /* 箭头通用 */
+  /* 箭头通用（注释掉未使用） */
   .arrow {
     width: 26px;
     height: 26px;
@@ -419,35 +422,11 @@ const doUpAction = (flag) => {
     }
   }
 
-  /* 箭头位置 */
-  .arrow.up {
-    position: absolute;
-    left: 75px;
-    top: 25px;
-  }
-
-  .arrow.down {
-    position: absolute;
-    left: 75px;
-    bottom: 25px;
-  }
-
-  .arrow.left {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    left: 25px;
-
-
-
-  }
-
-  .arrow.right {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 25px;
-  }
+  /* 箭头位置（注释掉未使用） */
+  .arrow.up { position: absolute; left: 75px; top: 25px; }
+  .arrow.down { position: absolute; left: 75px; bottom: 25px; }
+  .arrow.left { position: absolute; top: 50%; transform: translateY(-50%); left: 25px; }
+  .arrow.right { position: absolute; top: 50%; transform: translateY(-50%); right: 25px; }
 
   /* 摇杆圆点 — 居中 */
   .dot {
@@ -457,7 +436,6 @@ const doUpAction = (flag) => {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-
     z-index: 2;
     border: 2px solid rgba(255, 255, 255, 0.3);
 
@@ -466,7 +444,6 @@ const doUpAction = (flag) => {
     }
   }
 }
-
 
 .flex {
   display: flex;

@@ -1389,7 +1389,7 @@ const initRouteData = (options) => {
     } else if (type == 31) {
       carType.value = "5";
     }
-    carType.value = "1";
+    carType.value = "3";
   } else {
     console.log("carDetails 空");
   }
@@ -1718,12 +1718,15 @@ const handleComDrive = (type, param) => {
     if (type == "right") {
       chValue.value.ch7 = Math.max(ch7Open, ch7Close);
     }
+
+    console.log(param.left, param.right, param.up, param.down)
     carHandler.value.handleRemoteControlChannel(
       type,
       param.left,
       param.right,
       param.up,
       param.down,
+      param.speed
     );
   }
 
