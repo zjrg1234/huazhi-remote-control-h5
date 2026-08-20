@@ -105,3 +105,9 @@ export function GetNotice(data) {
 export function SetKey(data) {
   return post("/api/set/key", data);
 }
+
+
+// 检查车辆的状态
+export function CheckCarStatus(data) {
+  return post("/api/user/check/vehicle/status", data);
+}

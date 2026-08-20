@@ -37,7 +37,7 @@ const emit = defineEmits(["action", "action2", "reset"]);
 // --- 配置 ---
 const IDLE_DELAY = 500;       // 进入待命模式的延迟(ms)
 const MAX_RADIUS = 65;        // 最大偏移半径(px)
-const SWIPE_THRESHOLD = 20;   // 触发方向箭头的阈值
+const SWIPE_THRESHOLD = 15;   // 触发方向箭头的阈值
 
 // --- 响应式状态 ---
 const isDragging = ref(false);

@@ -713,7 +713,7 @@
               </cover-view>
               <cover-view class="footer">
                 <cover-view class="flex mt">
-                  <cover-view class="btn right" @tap.stop="continueDrive"
+                  <cover-view class="btn right" @tap.stop="handleContinueDrive"
                     >继续驾驶</cover-view
                   >
                 </cover-view>
@@ -768,7 +768,7 @@ import LeftRight from "./components/left-right.vue";
 import ExLeft from "./components/ex-left.vue";
 import ExRight from "./components/ex-right.vue";
 
-import { StartDrive, UpdateBattery, SetKey } from "@/axios/index.js";
+import { StartDrive, UpdateBattery, SetKey, CheckCarStatus } from "@/axios/index.js";
 import { LoginTop, DeviceDetails } from "./axios/video.js";
 
 import {
@@ -814,7 +814,7 @@ const showSpeed = ref(false);
 const showRepairReason = ref(false);
 const constSpeed = ref(1);
 const setVisible = ref(false);
-const showSound = ref(false);
+
 const carType = ref("1");
 const orderNo = ref("");
 const vehicleId = ref("");
@@ -825,7 +825,7 @@ const directionCenter = ref({});
 const directionDynamics = ref({});
 const acceleratorCenter = ref({});
 const acceleratorDynamics = ref({});
-const allPopup = ref(null);
+
 const activeKey = ref([]);
 const chValue = ref({
   ch1: "",
@@ -924,7 +924,7 @@ const menuList = computed(() => {
   ];
 });
 
-const videoUrlVal = ref();
+
 // 计费定时器
 let sendMsgTimer = null;
 let billingTimer = null;
@@ -1027,16 +1027,27 @@ const daojishiTip = () => {
     }
     isRequesting = false;
   }, 30 * 1000);
+
+
+
+  const statusTimer = setInterval(async () => {
+    const res = await CheckCarStatus({
+      vehicle_id: vehicleId.value
+    })
+    if (res.code != 200) {
+      clearInterval(statusTimer)
+      uni.showToast({title: "车辆被下架", icon: "none"});
+      handlePopupAction('logout');
+    }
+  }, 5* 1000);
 };
 
-// 发送继续驾驶请求
-const sendConDrive = async () => {
-  console.log("开始发送继续驾驶请求");
-  await continueDrive();
-};
+
 
 const handleContinueDrive = () => {
+  onUserActivity()
   allPopupVisible.value = false;
+  type.value = ''
 };
 const continueDrive = async () => {
   onUserActivity();
@@ -1389,7 +1400,7 @@ const initRouteData = (options) => {
     } else if (type == 31) {
       carType.value = "5";
     }
-    carType.value = "3";
+
   } else {
     console.log("carDetails 空");
   }

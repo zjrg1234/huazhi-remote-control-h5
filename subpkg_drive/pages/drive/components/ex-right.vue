@@ -55,7 +55,7 @@ const props = defineProps({
 // --- 配置参数 ---
 const IDLE_DELAY = 500; // 进入待命模式的延迟时间(ms)
 const MAX_RADIUS = 65; // 圆点滑动的最大半径(px)
-const SWIPE_THRESHOLD = 20; // 触发箭头的阈值
+const SWIPE_THRESHOLD = 15; // 触发箭头的阈值
 
 // --- 响应式状态 ---
 const isDragging = ref(false);
