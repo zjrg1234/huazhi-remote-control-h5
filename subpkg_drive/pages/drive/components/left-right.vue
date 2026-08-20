@@ -158,8 +158,14 @@ const getClientPos = (e) => {
 };
 const enterReadyMode = () => {
   isReadyMode.value = true;
-  readyBaseX = lastPointerX;
-  readyBaseY = lastPointerY;
+  // readyBaseX = lastPointerX;
+  // readyBaseY = lastPointerY;
+
+  // readyBaseX = lastPointerX;
+  // readyBaseY = lastPointerY;
+  // currentDotX.value = 0;
+  // currentDotY.value = 0;
+
   uni.vibrateShort({ type: "light" });
 };
 
@@ -170,6 +176,7 @@ let lastEmitTime = 0;
 const updateArrows = (dx, dy) => {
   // isUpActive.value = dy < -SWIPE_THRESHOLD;
   // isDownActive.value = dy > SWIPE_THRESHOLD;
+
   isLeftActive.value = dx < -SWIPE_THRESHOLD;
   isRightActive.value = dx > SWIPE_THRESHOLD;
 
@@ -185,7 +192,7 @@ const updateArrows = (dx, dy) => {
   console.log(hasActive,"hasActive")
   if (hasActive && isDragging.value) {
     // 立即发送一次（保证即时响应）
-		console.log("发送的值",currentDotX.value);
+		
     emit("action", { lr: dx < 0, value: dx });
     // 启动定时器持续发送（每 50ms）
     emitInterval = setInterval(() => {
@@ -197,9 +204,9 @@ const updateArrows = (dx, dy) => {
         return;
       }
       // 使用当前实时坐标发送
-      console.log("发送的值",currentDotX.value);
-      emit("action", { lr: currentDotX.value < 0, value: currentDotX.value });
-    }, 50);
+    
+      emit("action", { lr: currentDotX.value < 0, value: Math.round(currentDotX.value * 100) / 100 });
+    }, 40);
   } else {
     // 无激活方向，发送停止信号
     emit("action", { lr: false, value: 0 });
@@ -215,6 +222,7 @@ const resetArrows = () => {
     clearInterval(emitInterval);
     emitInterval = null;
   }
+
   emit("action", { lr: false, value: 0 });
 };
 
@@ -249,7 +257,7 @@ const handleMove = (e) => {
   let dx = clientX - readyBaseX;
   let dy = clientY - readyBaseY;
   
-	console.log(dx, dy)
+
   // 计算距离并限制在圆内
   const distance = Math.sqrt(dx * dx + dy * dy);
   if (distance > MAX_RADIUS) {
@@ -260,7 +268,7 @@ const handleMove = (e) => {
 
   currentDotX.value = dx;
   currentDotY.value = dy;
-  console.log('mopve',currentDotX.value )
+ 
   updateArrows(dx, dy);
 };
 

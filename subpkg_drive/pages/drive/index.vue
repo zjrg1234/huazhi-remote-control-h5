@@ -1389,7 +1389,7 @@ const initRouteData = (options) => {
     } else if (type == 31) {
       carType.value = "5";
     }
-    carType.value = "3";
+    carType.value = "1";
   } else {
     console.log("carDetails 空");
   }
