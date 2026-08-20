@@ -86,10 +86,7 @@
         @reset="onUserActivity"></ExRight>
 
       <!-- 时间显示 -->
-      <cover-view class="time-clock">
-        <cover-image class="image" src="./static/icon_time@2x.png" />
-        <TimeClock></TimeClock>
-      </cover-view>
+    
 
       <cover-view v-show="setVisible" :style="{ display: setVisible ? 'block' : 'none' }" class="custom-popup-mask"
         @click="close">
@@ -121,30 +118,7 @@
                       :class="{ 'is-active': selectedMode === mode.id }" @click="handleSetSelect(mode.id)">
                       <!-- 右上角的黄色对勾 (仅当选中时显示) -->
 
-                      <cover-view v-show="selectedMode === mode.id" class="check-mark" :style="{
-                        display: selectedMode === mode.id ? 'block' : 'none',
-                      }">
-                        <cover-image class="image" src="./static/icon_selected@2x.png" mode="widthFix"></cover-image>
-                      </cover-view>
-                      <!-- 布局区域：根据配置交换左右顺序 -->
-                      <cover-view class="content-layout" :class="{ 'reverse-layout': mode.isReverse }">
-                        <!-- 左侧/第一组图标 -->
-                        <cover-view class="icon-group">
-                          <cover-view class="icon-row vertical">
-                            <cover-image src="./static/arrow_up@2x.png" class="icon-img"></cover-image>
-                            <cover-image src="./static/arrow_down@2x.png" class="icon-img"></cover-image>
-                          </cover-view>
-                          <cover-view class="label">前进/后退</cover-view>
-                        </cover-view>
-                        <!-- 右侧/第二组图标 -->
-                        <cover-view class="icon-group">
-                          <cover-view class="icon-row horizontal">
-                            <cover-image src="./static/arrow_left@2x.png" class="icon-img"></cover-image>
-                            <cover-image src="./static/arrow_right@2x.png" class="icon-img"></cover-image>
-                          </cover-view>
-                          <cover-view class="label">左转/右转</cover-view>
-                        </cover-view>
-                      </cover-view>
+                     
                     </cover-view>
                   </cover-view>
                 </cover-view>
@@ -164,31 +138,8 @@
 
               <cover-view class="group" v-show="selectedIndex == 0 && (carType == '2' || carType == '3')
                 ">
-                <!-- <cover-view class="group-item">
-                  <cover-view class="tit">视频清晰度</cover-view>
-                  <cover-view class="flex">
-                    <cover-view v-for="(item, index) in qualityList" :key="index" class="btn-quality"
-                      :class="{ active: currentQuality === item.value }" @click="handleSelect(item.value)">
-                      {{ item.label }}
-                    </cover-view>
-                  </cover-view>
-                </cover-view> -->
-                <cover-view class="group-item">
-                  <cover-view class="tit">操作设置</cover-view>
-                  <cover-view class="flex">
-                    <cover-view v-for="(mode, index) in steeringModes" :key="index" class="option-card"
-                      :class="{ 'is-active': selectedMode === mode.id }" @click="handleSetSelect(mode.id)">
-                      <cover-image class="image" v-show="selectedMode === mode.id && index == 0"
-                        src="./static/icon_ev_dir1_selected@2x.png" mode="widthFix"></cover-image>
-                      <cover-image class="image" v-show="selectedMode !== mode.id && index == 0"
-                        src="./static/icon_ev_dir1@2x.png" mode="widthFix"></cover-image>
-                      <cover-image class="image" v-show="selectedMode === mode.id && index == 1"
-                        src="./static/icon_ev_dir2_selected@2x.png" mode="widthFix"></cover-image>
-                      <cover-image class="image" v-show="selectedMode !== mode.id && index == 1"
-                        src="./static/icon_ev_dir2@2x.png" mode="widthFix"></cover-image>
-                    </cover-view>
-                  </cover-view>
-                </cover-view>
+                
+         
                 <cover-view class="group-item pr">
                   <cover-view class="flex fj">
                     <cover-view class="tit">进退反向操作</cover-view>
@@ -201,127 +152,14 @@
                 </cover-view>
               </cover-view>
 
-              <cover-view class="group" v-show="selectedIndex == 1 && carType == 1">
-                <cover-view class="group-item">
-                  <cover-view class="tit">方向中位微调</cover-view>
-                  <cover-view class="section">
-                    <!-- 减少按钮 -->
-                    <cover-view class="reduce" @touchstart.prevent="onTouchStart(1, -1)" @touchend.stop="onTouchEnd"
-                      @touchcancel.stop="onTouchEnd">
-                      <cover-image class="image" src="./static/icon_reduce@2x.png" mode="widthFix"></cover-image>
-                    </cover-view>
-                    <!-- 滑块区域（占据主要空间） -->
-                    <cover-view class="slider-wrapper">
-                      <cover-view class="slider-label">
-                        <cover-view class="num" :style="{ left: '50%' }">
-                          {{ dirMiddleVal }}
-                        </cover-view>
-                      </cover-view>
-                      <!-- <slider :min="1" :max="100" :value="dirMiddle" @change="setChangeVal(1, $event)"
-                        activeColor="#f5c542" backgroundColor="#e5e5e5" block-size="20" /> -->
-                      <SliderComp v-model="dirMiddle" :min="1" :max="100" @change="setChangeVal(1, $event)">
-                      </SliderComp>
-                      <cover-view class="slider-label-bottom">
-                        <cover-view class="num-text">
-                          {{ directionCenter.mini_value }}
-                        </cover-view>
-                        <cover-view class="num-text">
-                          {{ directionCenter.max_value }}
-                        </cover-view>
-                      </cover-view>
-                    </cover-view>
-                    <!-- 增加按钮 -->
-                    <cover-view class="add" @touchstart.prevent="onTouchStart(1, 1)" @touchend.stop="onTouchEnd"
-                      @touchcancel.stop="onTouchEnd">
-                      <cover-image class="image" src="./static/icon_add@2x.png" mode="widthFix"></cover-image>
-                    </cover-view>
-                    <!-- 保存按钮 -->
-                    <cover-view class="btn" @click="save(1)">保存</cover-view>
-                  </cover-view>
-                </cover-view>
-                <cover-view class="group-item">
-                  <cover-view class="tit">方向力度微调</cover-view>
-                  <cover-view class="section">
-                    <!-- 减少按钮 -->
-                    <cover-view class="reduce" @touchstart.prevent="onTouchStart(2, -1)" @touchend.stop="onTouchEnd"
-                      @touchcancel.stop="onTouchEnd">
-                      <cover-image class="image" src="./static/icon_reduce@2x.png" mode="widthFix"></cover-image>
-                    </cover-view>
-                    <!-- 滑块区域（占据主要空间） -->
-                    <cover-view class="slider-wrapper">
-                      <cover-view class="slider-label">
-                        <cover-view class="num" :style="{ left: '50%' }">
-                          {{ dirTurn }}
-                        </cover-view>
-                      </cover-view>
-
-                      <SliderComp v-model="dirTurn" :min="1" :max="directionDynamics.current_value"
-                        @change="setChangeVal(2, $event)"></SliderComp>
-                      <cover-view class="slider-label-bottom">
-                        <cover-view class="num-text">
-                          {{ directionDynamics.mini_value }}
-                        </cover-view>
-                        <cover-view class="num-text">
-                          {{ directionDynamics.current_value }}
-                        </cover-view>
-                      </cover-view>
-                    </cover-view>
-                    <!-- 增加按钮 -->
-                    <cover-view class="add" @touchstart.prevent="onTouchStart(2, 1)" @touchend.stop="onTouchEnd"
-                      @touchcancel.stop="onTouchEnd">
-                      <cover-image class="image" src="./static/icon_add@2x.png" mode="widthFix"></cover-image>
-                    </cover-view>
-                    <!-- 保存按钮 -->
-                    <cover-view class="btn" @click="save(2)">保存</cover-view>
-                  </cover-view>
-                </cover-view>
-                <cover-view class="group-item">
-                  <cover-view class="tit">油门力度微调</cover-view>
-                  <cover-view class="section">
-                    <!-- 减少按钮 -->
-                    <cover-view class="reduce" @touchstart.prevent="onTouchStart(3, -1)" @touchend.stop="onTouchEnd"
-                      @touchcancel.stop="onTouchEnd">
-                      <cover-image class="image" src="./static/icon_reduce@2x.png" mode="widthFix"></cover-image>
-                    </cover-view>
-                    <!-- 滑块区域（占据主要空间） -->
-                    <cover-view class="slider-wrapper">
-                      <cover-view class="slider-label">
-                        <cover-view class="num" :style="{ left: '50%' }">
-                          {{ throttle }}
-                        </cover-view>
-                      </cover-view>
-
-                      <SliderComp v-model="throttle" :min="1" :max="acceleratorDynamics.current_value"
-                        @change="setChangeVal(3, $event)"></SliderComp>
-
-                      <cover-view class="slider-label-bottom">
-                        <cover-view class="num-text num-left">
-                          {{ acceleratorDynamics.mini_value }}
-                        </cover-view>
-                        <cover-view class="num-text num-right">
-                          {{ acceleratorDynamics.current_value }}
-                        </cover-view>
-                      </cover-view>
-                    </cover-view>
-                    <!-- 增加按钮 -->
-                    <cover-view class="add" @touchstart.prevent="onTouchStart(3, 1)" @touchend.stop="onTouchEnd"
-                      @touchcancel.stop="onTouchEnd">
-                      <cover-image class="image" src="./static/icon_add@2x.png" mode="widthFix"></cover-image>
-                    </cover-view>
-                    <!-- 保存按钮 -->
-                    <cover-view class="btn" @click="save(3)">保存</cover-view>
-                  </cover-view>
-                </cover-view>
-              </cover-view>
+          
             </cover-view>
           </cover-view>
         </cover-view>
         <!-- </cover-view> -->
       </cover-view>
 
-      <!-- <input v-show="type === 'repair'" :style="{ display: allPopupVisible ? 'block' : 'none' }" v-model="message"
-        class="repair-input" type="text" maxlength="20" placeholder="请输入故障原因，最多20字（选填）" /> -->
-
+   
       <cover-view class="tip-popup-mask" v-show="allPopupVisible"
         :style="{ display: allPopupVisible ? 'block' : 'none' }" @tap.stop="handleMaskClick">
         <cover-view class="fcenter">

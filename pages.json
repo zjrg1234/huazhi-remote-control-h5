@@ -50,6 +50,21 @@
       ]
     },
     {
+      "root": "subpkg_earthmover",
+      "pages": [
+        {
+          "path": "pages/drive/index",
+          "style": {
+            "pageOrientation": "landscape",
+            "enablePullDownRefresh": false,
+            "navigationStyle": "custom",
+            "navigationBarTitleText": "",
+            "disableScroll": true
+          }
+        }
+      ]
+    },
+    {
       "root": "subpkg_set",
       "pages": [
         {
