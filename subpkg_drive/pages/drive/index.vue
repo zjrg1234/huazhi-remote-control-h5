@@ -1562,6 +1562,7 @@ const setGroup = computed(() => {
   } else if (carType.value == 3) {
     return setArr
   }
+  return setArr
 });
 
 const selectedIndex = ref(0);

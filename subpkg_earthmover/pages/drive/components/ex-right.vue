@@ -5,42 +5,15 @@
       <cover-view class="cont">
         <!-- 轨迹背景圈 -->
         <cover-view class="track-bg">
-          <cover-image src="../static/btn_bg.png"></cover-image>
+          <cover-image src="../static/btn_bg@2x.png"></cover-image>
         </cover-view>
-
-        <!-- 四个方向箭头（注释掉，仅保留摇杆） -->
 
         <!-- 摇杆圆点 -->
         <cover-view class="dot" :class="{ ready: isReadyMode }" :style="dotStyle"></cover-view>
       </cover-view>
     </cover-view>
 
-    <!-- 代表ch2 油门 -->
-    <cover-view class="up-down-arrow" v-show="!mode" :style="{ display: !mode ? 'block' : 'none' }">
-      <cover-view class="arrow1 up" :class="{ active: isUpActive }">
-        <cover-image class="image" src="../static/btn_up_ex@2x.png" @touchstart.stop="handleClickUp"
-          @touchend.stop="handleClickUpLeave" @touchcancel.stop="handleClickUpLeave" @contextmenu.prevent mode="aspectFit"></cover-image>
-      </cover-view>
-      <cover-view class="arrow1 down" :class="{ active: isUpActive }">
-        <cover-image class="image" src="../static/btn_down_ex@2x.png" mode="aspectFit" @touchstart.stop="handleClickDown"
-          @touchend.stop="handleClickDownLeave" @touchcancel.stop="handleClickDownLeave"
-          @contextmenu.prevent></cover-image>
-      </cover-view>
-    </cover-view>
 
-    <cover-view class="up-up-arrow" v-show="mode" :style="{ display: mode ? 'block' : 'none' }">
-      <cover-view class="flex">
-        <cover-view class="arrow1 up" :class="{ active: isUpActive }">
-          <cover-image class="image" src="../static/btn_up_ex@2x.png" @touchstart.stop="handleClickUp"
-          @touchend.stop="handleClickUpLeave" @touchcancel.stop="handleClickUpLeave" @contextmenu.prevent mode="aspectFit"></cover-image>
-        </cover-view>
-        <cover-view class="arrow1 up" :class="{ active: isUpActive }">
-          <cover-image class="image" src="../static/btn_up_ex@2x.png" mode="aspectFit" @touchstart.stop="handleClickDown"
-          @touchend.stop="handleClickDownLeave" @touchcancel.stop="handleClickDownLeave"
-            @contextmenu.prevent></cover-image>
-        </cover-view>
-      </cover-view>
-    </cover-view>
   </cover-view>
 </template>
 

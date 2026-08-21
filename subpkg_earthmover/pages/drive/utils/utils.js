@@ -8,9 +8,9 @@ export const formatTime = (totalSeconds) => {
   const formattedMinutes = minutes.toString().padStart(2, "0");
   const formattedSeconds = seconds.toString().padStart(2, "0");
 
-  if (formattedHours == "00") {
-    return `${formattedMinutes}:${formattedSeconds}`;
-  }
+  // if (formattedHours == "00") {
+  //   return `${formattedMinutes}:${formattedSeconds}`;
+  // }
   return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 };
 

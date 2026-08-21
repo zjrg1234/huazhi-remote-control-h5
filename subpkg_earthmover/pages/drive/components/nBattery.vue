@@ -1,165 +1,139 @@
 <template>
-  <cover-view class="cover-bat-cont">
-    <cover-view class="battery">
-      <cover-view class="slider-track">
+  <cover-view class="vertical-battery">
+    <!-- 电池主体 -->
+    <cover-view class="battery-body">
+      <cover-view class="battery-track">
+        <!-- 电量填充条：从底部向上 -->
         <cover-view
           class="battery-fill"
           :class="statusClass"
-          :style="{ width: progressWidth + '%' }"
+          :style="{ height: progressHeight + '%' }"
         />
       </cover-view>
-      <cover-view class="battery-tip"></cover-view>
+      <!-- 正极凸起（顶部） -->
+      <cover-view class="battery-tip" />
     </cover-view>
 
-    <cover-view class="battery-text">{{ modelValue }}%</cover-view>
+    <!-- 百分比文字（右侧） -->
+    <cover-view class="battery-text">{{ displayValue }}%</cover-view>
   </cover-view>
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed, getCurrentInstance } from "vue";
+import { computed, ref, watch } from 'vue';
 
+// ---------- Props ----------
 const props = defineProps({
-  modelValue: { type: Number, default: 0 },
+  modelValue: {
+    type: Number,
+    default: 0,
+    validator: (v) => v >= 0 && v <= 100,
+  },
 });
 
-const emit = defineEmits(["update:modelValue", "change"]);
+// ---------- Emits ----------
+const emit = defineEmits(['update:modelValue']);
 
-const progressWidth = ref(0);
-const trackWidth = ref(0);
+// ---------- 填充高度（直接使用数值作为百分比） ----------
+const progressHeight = ref(0);
 
-const instance = getCurrentInstance();
-
-// ---------- 获取轨道宽度（增强版） ----------
-const getTrackWidth = (retry = 0) =>
-  new Promise((resolve) => {
-    setTimeout(() => {
-      const query = uni.createSelectorQuery().in(instance.proxy);
-      query
-        .select(".slider-track")
-        .boundingClientRect((res) => {
-          if (res && res.width > 0) {
-            trackWidth.value = res.width;
-            resolve(res.width);
-          } else if (retry < 3) {
-            getTrackWidth(retry + 1).then(resolve);
-          } else {
-            // 降级估算，保证可用
-            // const parentWidth = instance.proxy.$el?.offsetWidth || 300;
-            // trackWidth.value = parentWidth - 20; // 减去 padding
-            // resolve(trackWidth.value);
-            resolve(0);
-          }
-        })
-        .exec();
-    }, 50);
-  });
-
-// ---------- 更新 UI（逻辑完全不变） ----------
-const updateSliderUI = () => {
-  if (trackWidth.value === 0) {
-    getTrackWidth().then(() => updateSliderUI());
-    return;
-  }
-  progressWidth.value = props.modelValue;
+// ---------- 更新进度 ----------
+const updateUI = () => {
+  progressHeight.value = Math.min(100, Math.max(0, props.modelValue));
 };
 
-// 根据电量返回对应样式类
+// ---------- 颜色状态 ----------
 const statusClass = computed(() => {
-  if (props.modelValue <= 20) return "low";
-  if (props.modelValue <= 60) return "medium";
-  return "";
+  const val = props.modelValue;
+  if (val <= 20) return 'low';
+  if (val <= 60) return 'medium';
+  return '';
 });
 
-// ---------- 生命周期 ----------
-onMounted(() => {
-  // 延迟确保 DOM 渲染完成
-  setTimeout(initSlider, 100);
-});
+// ---------- 显示整数 ----------
+const displayValue = computed(() => Math.round(props.modelValue));
 
-const initSlider = async () => {
-  await getTrackWidth();
-  updateSliderUI();
-};
+// ---------- 监听变化 ----------
+watch(() => props.modelValue, updateUI, { immediate: true });
 
-watch(() => props.modelValue, updateSliderUI);
-watch(
-  () => props.width,
-  () => setTimeout(initSlider, 100),
-);
+// ---------- 暴露内部状态（可选） ----------
+defineExpose({ progressHeight, statusClass });
 </script>
 
-<style lang="scss" scoped>
-.cover-bat-cont {
-  width: 60px;
-  height: 12px;
-  position: relative;
-  display: flex;
+<style scoped>
+/* ---------- 整体容器 ---------- */
+.vertical-battery {
+  display: inline-flex;
   align-items: center;
-
-  box-sizing: border-box;
+  gap: 6px;
   touch-action: none;
   user-select: none;
 
-  .battery {
-    width: 25px;
-    position: relative;
-  }
+  /* 可自定义尺寸，此处固定为演示值 */
+  --bat-width: 13px;
+  --bat-height: 24px;
+}
 
-  .slider-track {
-    position: relative;
-    width: 23px;
-    height: 12px;
-    border-radius: 2px;
-    border: 1px solid #fff;
-    box-sizing: border-box; /* 改为 border-box 更稳定 */
-    overflow: hidden; /* 确保内部绿色条不会溢出边框 */
-    background-color: transparent; 
-  }
+/* ---------- 电池主体 ---------- */
+.battery-body {
+  position: relative;
+  width: var(--bat-width, 12px);
+  height: var(--bat-height, 24px);
+  flex-shrink: 0;
+}
 
-   .battery-tip {
-    position: absolute;
-    right: 0;
-    top: 3px;
-    width: 2px;
-    height: 6px;
-    background-color: #ffffff;
-    border-radius: 0 2px 2px 0;
-  }
+/* 电池外壳（轨道） */
+.battery-track {
+  width: 100%;
+  height: 100%;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  border-radius: 3px;
+  overflow: hidden;
+  background: transparent;
+  box-sizing: border-box;
+  position: relative;
+}
 
- 
+/* 正极凸起（顶部） */
+.battery-tip {
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 2.5px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 2px 2px 0 0;
+}
 
-  .battery-fill {
-    height: 100%;
-    height: 12px;
-    border-radius: 1px; /* 加上圆角，防止真机上直角溢出 */
-    background-color: #4caf50;
-    background: #4caf50;
-    // transition:
-    //   width 0.4s ease,
-    //   background-color 0.4s ease;
-    // border: 1px solid #fff;
-    // border-right: none;
-  }
+/* 电量填充条（从底部向上） */
+.battery-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  border-radius: 1px 1px 2px 2px;
+  background-color: #4caf50; /* 默认绿色 */
+  transition: height 0.3s ease, background-color 0.3s ease;
+  will-change: height;
+}
 
-  .battery-fill.medium {
-    background-color: #ff9800;
-    background: #ff9800;
-  }
+/* 颜色状态 */
+.battery-fill.medium {
+  background-color: #ff9800; /* 橙色 */
+}
+.battery-fill.low {
+  background-color: #f44336; /* 红色 */
+}
 
-  .battery-fill.low {
-    background-color: #f44336;
-    background: #f44336;
-  }
-
- 
-
-  .battery-text {
-    position: absolute;
-    right: 0;
-    font-size: 10px;
-    min-width: 25px;
-    color: #ffffff;
-    padding-left: 3px;
-  }
+/* 百分比文字 */
+.battery-text {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  min-width: 28px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
 }
 </style>

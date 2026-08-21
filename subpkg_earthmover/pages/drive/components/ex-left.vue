@@ -5,7 +5,7 @@
       <cover-view class="cont">
         <!-- 轨迹背景圈 -->
         <cover-view class="track-bg">
-          <cover-image src="../static/btn_directional.png"></cover-image>
+          <cover-image src="../static/btn_directional@2x.png"></cover-image>
         </cover-view>
 
         <!-- 摇杆圆点（居中） -->
@@ -13,19 +13,7 @@
       </cover-view>
     </cover-view>
 
-    <!-- 独立的上下箭头（保留原功能） -->
-    <cover-view class="up-down-arrow">
-      <cover-view class="arrow1 up" :class="{ active: isUpActive }">
-        <cover-image class="image" src="../static/btn_up_ex@2x.png" @touchstart.stop="handleClickUp"
-          @touchend.stop="handleClickUpLeave" @touchcancel.stop="handleClickUpLeave" @contextmenu.prevent
-          mode="aspectFit" />
-      </cover-view>
-      <cover-view class="arrow1 down" :class="{ active: isDownActive }">
-        <cover-image class="image" src="../static/btn_down_ex@2x.png" @touchstart.stop="handleClickDown"
-          @touchend.stop="handleClickDownLeave" @touchcancel.stop="handleClickDownLeave" @contextmenu.prevent
-          mode="aspectFit" />
-      </cover-view>
-    </cover-view>
+
   </cover-view>
 </template>
 
