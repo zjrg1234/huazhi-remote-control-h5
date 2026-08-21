@@ -39,9 +39,8 @@
               <cover-view class="text"> 车辆已连接 </cover-view>
             </cover-view>
           </cover-view>
-          <cover-view>
-            <nBattery v-model="batteryPer"></nBattery>
-          </cover-view>
+
+          <nBattery v-model="batteryPer"></nBattery>
         </cover-view>
       </cover-view>
 
@@ -55,12 +54,25 @@
       </cover-view>
 
       <!-- 设置按钮 -->
-      <cover-view class="right-cont" @click="set">
-        <cover-image
-          class="image"
-          src="./static/icon_set@2x.png"
-          mode="aspectFit"
-        />
+      <cover-view class="right-cont">
+        <cover-view class="flex">
+          <cover-view class="first">
+            <cover-image
+              class="image"
+              @click="set"
+              src="./static/icon_repairs@2x.png"
+              mode="aspectFit"
+            />
+            <cover-view class="text">维修</cover-view>
+          </cover-view>
+
+          <cover-image
+            class="image"
+            @click="set"
+            src="./static/icon_set@2x.png"
+            mode="aspectFit"
+          />
+        </cover-view>
       </cover-view>
 
       <ExLeft
@@ -1499,6 +1511,7 @@ const report = (text) => {
   height: 100vh;
   overflow: hidden;
   position: relative;
+  background: #f1e9e9;
 }
 
 .page-content {
@@ -1575,9 +1588,43 @@ const report = (text) => {
   top: 40px;
   right: 20px;
 
+  display: flex;
+  justify-content: flex-end; // 整体靠右（可根据实际布局调整）
+  align-items: center;
+
+  padding: 0 10px; // 可选
+
+  .flex {
+    display: flex;
+    flex-direction: row; // 水平排列
+    align-items: center; // 垂直居中
+    gap: 26px; // 两组之间的间距
+  }
+
+  // 第一个组（图标+文字，竖向排列）
+  .first {
+    display: flex;
+    flex-direction: row; // 纵向
+    align-items: center; // 水平居中
+    justify-content: center;
+  }
+
   .image {
     width: 27px;
     height: 27px;
+    display: block; // 避免行内间隙
+  }
+
+  // 文字样式
+  .text {
+    font-family:
+      PingFangSC,
+      PingFang SC;
+    font-weight: 400;
+    font-size: 16px;
+    color: #ffffff;
+    margin-left: 9px;
+    margin-right: 26px;
   }
 }
 
@@ -1585,44 +1632,28 @@ const report = (text) => {
 .status-bar-capsule {
   // --- 定位与尺寸 ---
   position: fixed;
-  top: 12px;                // 稍微下移，不与屏幕边缘贴边
+  top: 1px; // 稍微下移，不与屏幕边缘贴边
   left: 50%;
   transform: translateX(-50%);
   z-index: 9999;
 
   // --- 布局 ---
-  display: inline-flex;     // 宽度由内容撑开，避免固定宽度溢出
+  display: inline-flex; // 宽度由内容撑开，避免固定宽度溢出
   align-items: center;
-  padding: 8px 14px;        // 稍紧凑的内边距
-  gap: 12px;                // 左右内容间距
-
+  padding: 8px 10px; // 稍紧凑的内边距
+  gap: 12px; // 左右内容间距
   // --- 视觉风格 ---
-  background: rgba(0, 0, 0, 0.45);          // 加深背景，提高文字可读性
-  backdrop-filter: blur(12px);              // 毛玻璃效果（增强质感）
-  -webkit-backdrop-filter: blur(12px);      // Safari 兼容
-  border-radius: 20px;                      // 更大圆角，更圆润
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); // 柔和阴影，突出层级
+  background: rgba(0, 0, 0, 0.3); // 加深背景，提高文字可读性
+  border-radius: 8px; // 更大圆角，更圆润
 
   // --- 字体与颜色 ---
   color: #ffffff;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.3px;
-
-  // --- 过渡动画（可选） ---
-  transition: background 0.3s ease, box-shadow 0.3s ease;
-
-  // 鼠标悬浮效果（桌面端）
-  &:hover {
-    background: rgba(0, 0, 0, 0.55);
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
-  }
 
   // --- 内部 Flex 容器（左右排列） ---
   .flex {
     display: flex;
     align-items: center;
-    gap: 10px;              // 统一间距，替代 margin-right
+    gap: 10px; // 统一间距，替代 margin-right
     width: 100%;
   }
 
@@ -1638,20 +1669,26 @@ const report = (text) => {
   .car {
     display: flex;
     align-items: center;
-    gap: 6px;
+
+    margin-right: 16px;
 
     .image {
+      margin-right: 10px;
       width: 20px;
       height: 20px;
-      flex-shrink: 0;       // 防止图标被压缩
+      flex-shrink: 0; // 防止图标被压缩
       // 图标已有 mode="aspectFit"，无需额外样式
     }
 
     // 文字“车辆已连接” 已在父级继承字体，可添加微调
     .text {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.9);
-      white-space: nowrap;  // 防止文字换行
+      font-family:
+        PingFangSC,
+        PingFang SC;
+      font-weight: 400;
+      font-size: 20px;
+      color: #ffffff;
+      white-space: nowrap; // 防止文字换行
     }
   }
 
@@ -1696,7 +1733,7 @@ const report = (text) => {
   transform: translateX(-50%);
   padding: 4px 16px;
   color: #ccc;
-  font-size: 10px;
+  font-size: 15px;
 }
 
 .side-menu-icon {
