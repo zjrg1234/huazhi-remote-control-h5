@@ -1086,7 +1086,7 @@ const initSendLoop = () => {
   sendMsgTimer = setInterval(() => {
     if (UDPSocket.value) {
       const app_id = uni.getStorageSync("app_id");
-      // console.log("chValue.ch", chValue.value.ch1,chValue.value.ch2)
+
       const val = handleDriverSocketData(
         app_id,
         chValue.value.ch1,
