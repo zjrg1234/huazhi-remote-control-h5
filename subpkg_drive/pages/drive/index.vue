@@ -107,6 +107,7 @@
                   <cover-image class="image" src="./static/icon_close@2x.png" mode="widthFix"></cover-image>
                 </cover-view>
               </cover-view>
+          
               <cover-view class="setting-group" v-for="(item, index) in setGroup" :key="index">
                 <cover-view class="setting-item" :class="{ active: selectedIndex == item.key }"
                   @click="handleItem(index)">
@@ -1557,8 +1558,9 @@ const setArr = [
   { name: "通用设置", key: 0 },
 ]
 const setGroup = computed(() => {
+
   if (carType.value == 1) {
-    return setArr.push({ name: "车辆微调", key: 1 })
+    setArr.push({ name: "车辆微调", key: 1 })
   } else if (carType.value == 3) {
     return setArr
   }
