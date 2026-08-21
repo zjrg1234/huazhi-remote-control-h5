@@ -386,9 +386,12 @@ const continuePay = async () => {
       if (item.reservation_status == 1 || item.reservation_status == 2) {
         if (item.vehicle_id == selectCar.value.vehicle_id) {
           return item;
+        } else {
+          return item;
         }
       }
     })
+
     // 容错 没找到值 直接预约  找到值 取消再预约
     if (firstData) {
       CancelReservation({
