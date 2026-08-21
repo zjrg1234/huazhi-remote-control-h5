@@ -1411,7 +1411,20 @@ const handleUpDownDrive = (param) => {
 
       ch = carHandler.value.getCh1Ch2Value();
       chValue.value.ch1 = ch.ch1;
+      // 新手模式
+      if (operMode.value) {
+
+        chValue.value.ch2 = ch.ch2;
+      }
+
     } else {
+
+      // 新手模式
+      if (operMode.value) {
+        chValue.value.ch2 =
+          carDetails.value.vehicle_config_detail.ch2.center_value.current_value;
+      }
+
       chValue.value.ch1 =
         carDetails.value.vehicle_config_detail.ch1.center_value.current_value;
     }
@@ -1424,10 +1437,35 @@ const handleUpDownDrive = (param) => {
         operMode.value
       );
       ch = carHandler.value.getCh1Ch2Value();
-      chValue.value.ch2 = ch.ch2;
+      // 新手模式
+      if (operMode.value) {
+        // 挖机右边 up 控制ch1 down 控制 ch2
+        if (param.type == 'up') {
+          chValue.value.ch1 = ch.ch1;
+        } else {
+          chValue.value.ch2 = ch.ch2;
+        }
+
+      } else {
+        chValue.value.ch2 = ch.ch2;
+      }
+
     } else {
-      chValue.value.ch2 =
-        carDetails.value.vehicle_config_detail.ch2.center_value.current_value;
+
+      if (operMode.value) {
+        // 挖机右边 up 控制ch1 down 控制 ch2
+        if (param.type == 'up') {
+          chValue.value.ch1 =
+            carDetails.value.vehicle_config_detail.ch1.center_value.current_value;
+        } else {
+          chValue.value.ch2 =
+            carDetails.value.vehicle_config_detail.ch2.center_value.current_value;
+        }
+
+      } else {
+        chValue.value.ch2 =
+          carDetails.value.vehicle_config_detail.ch2.center_value.current_value;
+      }
     }
   }
   ch = carHandler.value.getChValue();
