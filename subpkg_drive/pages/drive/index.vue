@@ -778,7 +778,6 @@ const handleContinueDrive = () => {
   type.value = ''
 };
 const continueDrive = async () => {
-  onUserActivity();
   try {
     const res = await StartDrive({
       order_no: orderNo.value,
