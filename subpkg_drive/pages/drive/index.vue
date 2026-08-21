@@ -496,7 +496,7 @@ import LeftRight from "./components/left-right.vue";
 import ExLeft from "./components/ex-left.vue";
 import ExRight from "./components/ex-right.vue";
 
-import { StartDrive, UpdateBattery, SetKey, CheckCarStatus } from "@/axios/index.js";
+import { StartDrive, UpdateBattery, SetKey, CheckCarStatus, CarReport } from "@/axios/index.js";
 import { LoginTop, DeviceDetails } from "./axios/video.js";
 
 import {
@@ -1553,17 +1553,21 @@ const handleSetSelect = (id) => {
   onUserActivity();
 };
 
-const setArr = [
-  { name: "通用设置", key: 0 },
-]
+
 const setGroup = computed(() => {
 
   if (carType.value == 1) {
-    setArr.push({ name: "车辆微调", key: 1 })
+   
+    return [
+         { name: "通用设置", key: 0 },
+         { name: "车辆微调", key: 1 }
+    ];
   } else if (carType.value == 3) {
-    return setArr
+    return [
+         { name: "通用设置", key: 0 },
+    ];
   }
-  return setArr
+  return []
 });
 
 const selectedIndex = ref(0);
@@ -1762,7 +1766,9 @@ const report = (text) => {
     (res) => {
       if (res.code == 200) {
         const timer = setTimeout(() => {
-          UDPSocket.value.close();
+          if (UDPSocket.value) {
+             UDPSocket.value.close();
+          }
           clearTimeout(timer);
           uni.reLaunch({
             url: "/subpkg_mine/pages/mine/reservation",

@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, onBeforeUnmount, watch, getCurrentInstance, reactive } from "vue";
+import { ref, onMounted, computed, onBeforeUnmount, watch, getCurrentInstance, reactive, nextTick } from "vue";
 
 const emit = defineEmits(["action", "action2"]);
 
@@ -38,7 +38,7 @@ watch(() => props.isLeft, (val) => {
 }, { deep: true });
 
 // --- 配置参数 ---
-const IDLE_DELAY = 500; // 进入待命模式的延迟时间(ms)
+const IDLE_DELAY = 200; // 进入待命模式的延迟时间(ms)
 const MAX_RADIUS = 65; // 圆点滑动的最大半径(px)
 const SWIPE_THRESHOLD = 15; // 触发箭头的阈值
 
@@ -156,7 +156,7 @@ const updateArrows = (dx, dy) => {
       const valueNow = Math.round(dyNow * 100) / 100;
 
       emit("action", { fb: dyNow < 0, value: valueNow, ratioValue });
-    }, 40);
+    }, 1000);
   } else {
     // 无激活方向，发送停止信号
     emit("action", { fb: false, value: 0 });
@@ -205,7 +205,7 @@ const handleMove = (e) => {
   // 圆点滑动逻辑
   let dx = clientX - readyBaseX;
   let dy = clientY - readyBaseY;
-console.log(dy)
+
   // 计算距离并限制在圆内
   const distance = Math.sqrt(dx * dx + dy * dy);
   if (distance > MAX_RADIUS) {
@@ -221,12 +221,13 @@ console.log(dy)
 
 const handleEnd = () => {
   if (!isDragging.value) return;
+  // 1. 先归零（此时 isDragging 仍为 true，过渡被禁用）
+  currentDotX.value = 0;
+  currentDotY.value = 0;
+  // 2. 再改变状态
   isDragging.value = false;
   isReadyMode.value = false;
   clearTimeout(idleTimer);
-  currentDotX.value = 0;
-  currentDotY.value = 0;
-  // 清除定时器并复位
   if (emitInterval) {
     clearInterval(emitInterval);
     emitInterval = null;

@@ -404,13 +404,8 @@ import SwitchComp from "./components/switchComp.vue";
 
 import ExLeft from "./components/ex-left.vue";
 import ExRight from "./components/ex-right.vue";
+import { StartDrive, UpdateBattery, SetKey, CheckCarStatus, CarReport } from "@/axios/index.js";
 
-import {
-  StartDrive,
-  UpdateBattery,
-  SetKey,
-  CheckCarStatus,
-} from "@/axios/index.js";
 import { LoginTop, DeviceDetails } from "./axios/video.js";
 
 import {

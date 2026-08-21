@@ -208,7 +208,7 @@ const updateArrows = (dx, dy) => {
       // 使用当前实时坐标发送
     
       emit("action", { lr: currentDotX.value < 0, value: Math.round(currentDotX.value * 100) / 100 , ratioValue });
-    }, 40);
+    }, 1000);
   } else {
     // 无激活方向，发送停止信号
     emit("action", { lr: false, value: 0 });
@@ -275,19 +275,19 @@ const handleMove = (e) => {
 };
 
 const handleEnd = () => {
-  console.log("handleEnd")
   if (!isDragging.value) return;
+  // 1. 先归零（此时 isDragging 仍为 true，过渡被禁用）
+  currentDotX.value = 0;
+  currentDotY.value = 0;
+  // 2. 再改变状态
   isDragging.value = false;
   isReadyMode.value = false;
   clearTimeout(idleTimer);
-  currentDotX.value = 0;
-  currentDotY.value = 0;
-  // 清除定时器并重置箭头状态
   if (emitInterval) {
     clearInterval(emitInterval);
     emitInterval = null;
   }
-  resetArrows(); // 或直接发送停止信号
+  resetArrows();
 };
 
 const handleCancel = () => {
