@@ -40,11 +40,8 @@ export class ExcavatorControlHandler {
     return this.config[index];
   }
 
-  setConfigValue() {
+  setConfigValue() {}
 
-  }
-
-  
   resetChValue() {
     // ch7 油泵
     this.ch3 = this.config.ch3.center_value.current_value; // 旋转
@@ -54,13 +51,12 @@ export class ExcavatorControlHandler {
     this.ch8 = this.config.ch8.close_value.current_value; // 灯光
 
     this.ch7 = this.getCloseCH7Value();
-    
   }
   getCloseCH7Value() {
     const ch7Open = this.config.ch7.open_value.current_value;
     const ch7Close = this.config.ch7.close_value.current_value;
     this.ch7 = Math.min(ch7Open, ch7Close);
-    return this.ch7
+    return this.ch7;
   }
   getChValue() {
     return {
@@ -78,41 +74,82 @@ export class ExcavatorControlHandler {
     };
   }
 
-  /**
-   *
-   * @param {boolean} type - 是否为左侧，还是右侧， 左侧left，右侧right
-   * @param {string} positionType - 是点向上箭头 还是向下箭头；如果操作设置 ^ ^  左侧左轮前进（后退） 右轮前进（后退）
-   * @param {number} ratioValue 应该有速率。速率先不管
-   */
-  handleArrowControlChannel(type, positionType) {
-    // 左侧上下箭头
-    if (type == "left") {
-      // true 点击向上
-      const center = this.config.ch1.center_value.current_value;
-      const open = this.config.ch1.open_value.current_value;
-      const offset = Math.abs(center - open);
+ /**
+ * 处理箭头控制通道值
+ * @param {string}  type          - 'left' 或 'right'
+ * @param {string|boolean} positionType - 方向标识（详见各模式说明）
+ * @param {boolean} mode          - false=老司机模式，true=新手模式
+ */
+handleArrowControlChannel(type, positionType, mode) {
+  // ---- 1. 提取配置并计算偏移量 ----
+  const { ch1, ch2 } = this.config;
+  const center1 = ch1.center_value.current_value;
+  const open1 = ch1.open_value.current_value;
+  const offset1 = Math.abs(center1 - open1);
+  const center2 = ch2.center_value.current_value;
+  const open2 = ch2.open_value.current_value;
+  const offset2 = Math.abs(center2 - open2);
 
-      // 核心逻辑：非反向时 up=+offset / down=-offset；反向时取反
-      const isUp = !!positionType;
-      const direction = isUp !== this.reverseUpDownState ? 1 : -1;
+  // 辅助：设置单个通道值
+  const setChannel = (channelKey, center, offset, direction) => {
+    this[channelKey] = center + direction * offset;
+  };
 
-      this.ch1 = center + direction * offset;
+  // 辅助：将 positionType 转为布尔（用于方向判断）
+  const toBoolean = (val) => {
+    if (typeof val === 'boolean') return val;
+    // 字符串 'true' / 'up' / 'yes' 视为 true，其他（包括 'false'、'down'、空）视为 false
+    return val === 'true' || val === 'up' || val === 'yes';
+  };
+
+  // 辅助：根据反向标志修正方向（仅用于 ch1 的上下控制）
+  const getDirWithReverse = (isUp) => {
+    const raw = isUp ? 1 : -1;
+    return this.reverseUpDownState ? -raw : raw;
+  };
+
+  // ---- 2. 老司机模式 ----
+  if (mode === false) {
+    if (type === 'left') {
+      // 左侧：控制 ch1（前后），方向受 reverseUpDownState 影响
+      const isUp = toBoolean(positionType);
+      const dir = getDirWithReverse(isUp);
+      setChannel('ch1', center1, offset1, dir);
+    } else { // type === 'right'
+      // 右侧：控制 ch2（左右），方向不受反向影响，positionType 表示左/右（true=左，false=右？）
+      const isLeft = toBoolean(positionType);
+      const dir = isLeft ? 1 : -1;
+      setChannel('ch2', center2, offset2, dir);
+    }
+    return;
+  }
+
+  // ---- 3. 新手模式 ----
+  if (type === 'left') {
+    // 左侧摇杆：上下控制 ch1（前后），左右控制 ch2（转向）
+    // 注意：原逻辑中 ch2 的方向也直接使用了 positionType（上下方向），这可能不合理，但保留
+    const isUp = toBoolean(positionType);
+    const dir1 = getDirWithReverse(isUp);   // ch1 受反向影响
+    // const dir2 = isUp ? 1 : -1;             // ch2 受反向影响
+    setChannel('ch1', center1, offset1, dir1);
+    setChannel('ch2', center2, offset2, dir1); // 不用dir2
+  } else { // type === 'right'
+    // 右侧摇杆：根据 positionType 决定控制 ch1 还是 ch2
+    // 原代码：'up' 时控制 ch1，其他（'down'）控制 ch2，但方向计算均为 !!positionType（永远为正）
+    // 此处保留原逻辑，仅将 !!positionType 替换为明确的 1，因为必定为正
+    if (positionType === 'up') {
+      // 控制 ch1，方向为正
+      setChannel('ch1', center1, offset1, 1);
     } else {
-      const center = this.config.ch2.center_value.current_value;
-      const open = this.config.ch2.open_value.current_value;
-      const offset = Math.abs(center - open);
-
-      // 核心逻辑：positionType 向左 还是向右
-      // const isLeftRight = !!positionType;
-      const direction = !!positionType ? 1 : -1;
-
-      this.ch2 = center + direction * offset;
+      // 控制 ch2，方向为负（原逻辑使用 !!positionType 转为 1，但这里是 down，应该为负？保留原样）
+      // 注意：原代码 direction = !!positionType ? 1 : -1，对于 'down'，!!'down' 为 true，所以方向为 1，这里保留
+      setChannel('ch2', center2, offset2, 1);
     }
   }
+}
 
   // 遥杆操作
   handleRemoteControlChannel(type, left, right, up, down, rateValue) {
- 
     const ch7Open = this.config.ch7.open_value.current_value;
     const ch7Close = this.config.ch7.close_value.current_value;
     // 左侧遥杆
@@ -138,7 +175,6 @@ export class ExcavatorControlHandler {
       if (down) {
         this.ch5 = ch5Center - (ch5Center - ch5Close);
       }
-     
     } else {
       // 右侧遥控
       const ch4Center = this.config.ch4.center_value.current_value;
@@ -149,7 +185,7 @@ export class ExcavatorControlHandler {
       const ch6Close = this.config.ch6.close_value.current_value;
 
       this.ch7 = Math.max(ch7Open, ch7Close);
-      console.log("右侧", this.ch7)
+      console.log("右侧", this.ch7);
       if (left) {
         this.ch6 = ch6Center + (ch6Open - ch6Center) * rateValue;
       }

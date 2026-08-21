@@ -107,7 +107,7 @@
                   <cover-image class="image" src="./static/icon_close@2x.png" mode="widthFix"></cover-image>
                 </cover-view>
               </cover-view>
-          
+
               <cover-view class="setting-group" v-for="(item, index) in setGroup" :key="index">
                 <cover-view class="setting-item" :class="{ active: selectedIndex == item.key }"
                   @click="handleItem(index)">
@@ -995,21 +995,24 @@ const handleOper = (type) => {
 
 const set = () => {
   onUserActivity();
-  saveFlag.value = { 1: false, 2: false, 3: false };
   setVisible.value = true;
-  showSpeed.value = false;
-  handleFBDrive({ fb: false, value: 0 });
-  const mapNum = createReverseMapper(
-    1,
-    100,
-    directionCenter.value.mini_value,
-    directionCenter.value.max_value,
-  );
-  console.log("点击设置， 当前中位值", saveVal.value[1]);
-  dirMiddle.value = mapNum(saveVal.value[1]);
-  dirMiddleValFunc(dirMiddle.value);
-  dirTurn.value = saveVal.value[2];
-  throttle.value = saveVal.value[3];
+  if (carType.value == 1) {
+    saveFlag.value = { 1: false, 2: false, 3: false };
+    showSpeed.value = false;
+    handleFBDrive({ fb: false, value: 0 });
+    const mapNum = createReverseMapper(
+      1,
+      100,
+      directionCenter.value.mini_value,
+      directionCenter.value.max_value,
+    );
+    console.log("点击设置， 当前中位值", saveVal.value[1]);
+    dirMiddle.value = mapNum(saveVal.value[1]);
+    dirMiddleValFunc(dirMiddle.value);
+    dirTurn.value = saveVal.value[2];
+    throttle.value = saveVal.value[3];
+  }
+
 };
 
 const logout = () => {
@@ -1316,7 +1319,7 @@ const handleFBDrive = (item) => {
       return;
     } else {
       type = "downType";
-      ratioValue =  item.ratioValue;
+      ratioValue = item.ratioValue;
     }
   }
   carHandler.value.handleTwoDirectionControlChannel(true, type, ratioValue);
@@ -1403,6 +1406,7 @@ const handleUpDownDrive = (param) => {
       carHandler.value.handleArrowControlChannel(
         "left",
         param.type == "up" ? true : false,
+        operMode.value
       );
 
       ch = carHandler.value.getCh1Ch2Value();
@@ -1417,6 +1421,7 @@ const handleUpDownDrive = (param) => {
       carHandler.value.handleArrowControlChannel(
         "right",
         param.type == "up" ? true : false,
+        operMode.value
       );
       ch = carHandler.value.getCh1Ch2Value();
       chValue.value.ch2 = ch.ch2;
@@ -1431,7 +1436,7 @@ const handleUpDownDrive = (param) => {
   chValue.value.ch5 = ch.ch5;
   chValue.value.ch6 = ch.ch6;
   chValue.value.ch7 = ch.ch7;
-  
+
 };
 
 // 遥杆操作
@@ -1557,14 +1562,14 @@ const handleSetSelect = (id) => {
 const setGroup = computed(() => {
 
   if (carType.value == 1) {
-   
+
     return [
-         { name: "通用设置", key: 0 },
-         { name: "车辆微调", key: 1 }
+      { name: "通用设置", key: 0 },
+      { name: "车辆微调", key: 1 }
     ];
   } else if (carType.value == 3) {
     return [
-         { name: "通用设置", key: 0 },
+      { name: "通用设置", key: 0 },
     ];
   }
   return []
@@ -1767,7 +1772,7 @@ const report = (text) => {
       if (res.code == 200) {
         const timer = setTimeout(() => {
           if (UDPSocket.value) {
-             UDPSocket.value.close();
+            UDPSocket.value.close();
           }
           clearTimeout(timer);
           uni.reLaunch({
