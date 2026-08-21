@@ -120,6 +120,10 @@ const enterReadyMode = () => {
 };
 
 const updateArrows = (dx, dy) => {
+
+  const distance = Math.sqrt(dx * dx + dy * dy);
+  const ratioValue = Math.min(distance / MAX_RADIUS, 1);
+  
   isUpActive.value = dy < -SWIPE_THRESHOLD;
   isDownActive.value = dy > SWIPE_THRESHOLD;
   // 左右方向保留（若未来需要可启用）
@@ -138,7 +142,7 @@ const updateArrows = (dx, dy) => {
     const value = Math.round(dy * 100) / 100;
       console.log("立马发送的值",value)
 
-    emit("action", { fb: dy < 0, value: value });
+    emit("action", { fb: dy < 0, value: value, ratioValue });
 
     // 启动定时器，每 40ms 持续发送当前偏移量
     emitInterval = setInterval(() => {
@@ -150,8 +154,8 @@ const updateArrows = (dx, dy) => {
       }
       const dyNow = currentDotY.value;
       const valueNow = Math.round(dyNow * 100) / 100;
-      console.log("发送的值",valueNow)
-      emit("action", { fb: dyNow < 0, value: valueNow });
+
+      emit("action", { fb: dyNow < 0, value: valueNow, ratioValue });
     }, 40);
   } else {
     // 无激活方向，发送停止信号

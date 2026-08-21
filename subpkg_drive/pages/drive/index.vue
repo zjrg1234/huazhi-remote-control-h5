@@ -1309,7 +1309,7 @@ const handleFBDrive = (item) => {
   let ratioValue = 0;
   if (item.fb == true) {
     type = "upType";
-    ratioValue = mapToPer(Math.abs(item.value));
+    ratioValue = item.ratioValue;
   } else {
     if (item.value == 0) {
       type = "endType";
@@ -1317,7 +1317,7 @@ const handleFBDrive = (item) => {
       return;
     } else {
       type = "downType";
-      ratioValue = mapToPer(Math.abs(item.value));
+      ratioValue =  item.ratioValue;
     }
   }
   carHandler.value.handleTwoDirectionControlChannel(true, type, ratioValue);
@@ -1348,13 +1348,13 @@ const handleLRDrive = (item) => {
   let ratioValue = 0;
   showSpeed.value = false;
   if (item.lr == true) {
-    ratioValue = mapToPer(Math.abs(item.value));
+    ratioValue = item.ratioValue;
     type = "leftType";
   } else {
     if (item.value == 0) {
       chValue.value.ch1 = directionCenter.value.current_value;
     } else {
-      ratioValue = mapToPer(Math.abs(item.value));
+      ratioValue = item.ratioValue;
       type = "rightType";
     }
   }

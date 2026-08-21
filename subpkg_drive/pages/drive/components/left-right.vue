@@ -171,11 +171,13 @@ const enterReadyMode = () => {
 
 
 let emitInterval = null;
-let lastEmitTime = 0;
+
 
 const updateArrows = (dx, dy) => {
   // isUpActive.value = dy < -SWIPE_THRESHOLD;
   // isDownActive.value = dy > SWIPE_THRESHOLD;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+  const ratioValue = Math.min(distance / MAX_RADIUS, 1);
 
   isLeftActive.value = dx < -SWIPE_THRESHOLD;
   isRightActive.value = dx > SWIPE_THRESHOLD;
@@ -193,7 +195,7 @@ const updateArrows = (dx, dy) => {
   if (hasActive && isDragging.value) {
     // 立即发送一次（保证即时响应）
 		
-    emit("action", { lr: dx < 0, value: dx });
+    emit("action", { lr: dx < 0, value: dx , ratioValue });
     // 启动定时器持续发送（每 50ms）
     emitInterval = setInterval(() => {
       console.log(12)
@@ -205,7 +207,7 @@ const updateArrows = (dx, dy) => {
       }
       // 使用当前实时坐标发送
     
-      emit("action", { lr: currentDotX.value < 0, value: Math.round(currentDotX.value * 100) / 100 });
+      emit("action", { lr: currentDotX.value < 0, value: Math.round(currentDotX.value * 100) / 100 , ratioValue });
     }, 40);
   } else {
     // 无激活方向，发送停止信号
