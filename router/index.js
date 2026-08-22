@@ -2,6 +2,7 @@ import { useUserStore } from '@/store/modules/user'
 
 // 需要登录才能访问的页面
 const needLoginPages = [
+  '/pages/mine/set',
   '/subpkg_mine/pages/mine/changeArea',
   '/subpkg_mine/pages/mine/driveRecord',
   '/subpkg_mine/pages/mine/appeal',

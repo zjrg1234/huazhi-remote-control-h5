@@ -5,7 +5,13 @@ import { useUserStore } from "@/store/modules/user";
 const TIME_OUT = 10000;
 
 // 接口白名单：无需登录
-const whiteList = ["/api/login", "api/wechat/applet/login"];
+const whiteList = ["/api/login", 
+  "api/wechat/applet/login",
+  "/api/user/index",
+  "/api/user/banner",
+  "api/user/get/title",
+  "/api/user/mine"
+];
 
 const request = (options) => {
   return new Promise((resolve, reject) => {
@@ -25,6 +31,7 @@ const request = (options) => {
       uni.reLaunch({
         url: "/subpkg_login/pages/login/index",
       });
+      console.log("接口不是白名单")
       return reject("接口不是白名单,请检查。");
     }
 
@@ -141,7 +148,7 @@ const getParam = () => {
   const id = userStore.id;
   const token = userStore.token;
   return {
-    uid: id,
+    uid: id || 8,
     token,
   };
 };

@@ -339,6 +339,9 @@ const uploadFile = async (filePath) => {
 
 const gotoUrl = () => {
 
+	 uni.reLaunch({
+        url: "/subpkg_login/pages/login/index",
+      });
 }
 </script>
 
