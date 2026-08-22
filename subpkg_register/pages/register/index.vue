@@ -40,7 +40,8 @@
 
 <script setup>
 import { ref } from "vue";
-import { Register, Login } from "@/axios/index.js";
+import { Register, Login, GetUserInfo } from "@/axios/index.js";
+
 import {
 	useUserStore
 } from '@/store/modules/user'
@@ -96,7 +97,7 @@ const handleLogin = () => {
           title: "注册成功",
           icon: "success",
         });
-
+        uni.setStorageSync('new_user', 1)
         Login({
           ...form.value,
           password: form.value.password,

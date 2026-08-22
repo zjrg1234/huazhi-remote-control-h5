@@ -183,7 +183,7 @@ const fetchData = async (isRefresh = false) => {
 
   try {
     const { code, data: { venueList } } = await GetHomeDataList({ type: currentCategory.value, size: 9999 });
-    if (code == 200 && venueList.length) {
+    if (code == 200 && venueList && venueList.length) {
        // 简单的左右分发逻辑
       venueList.forEach((item, index) => {
         if (index % 2 === 0) {

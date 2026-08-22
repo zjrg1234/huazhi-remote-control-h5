@@ -58,10 +58,14 @@ const tipVisible = ref(false)
 const loading = ref(false)
 const noData = ref(false)
 
-
+const newUser = ref('')
 
 // --- 核心逻辑 ---
 onMounted(() => {
+  newUser.value = uni.getStorageSync('new_user')
+  if (newUser.value == 1) {
+    selected.value = ''
+  }
   getSpecialList()
 })
 
@@ -114,6 +118,7 @@ const handleConfirm = async () => {
   try {
     const res = await ChangeSpecialList({ special_id: selected.value })
     if (res.code == 200) {
+      uni.removeStorageSync('new_user')
       tipVisible.value = false;
       userStore.setAreaId(selected.value)
       uni.showToast({ title: '更换专区成功', icon: 'success' })

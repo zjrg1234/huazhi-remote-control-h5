@@ -61,10 +61,18 @@ const form = ref({
 	password: ''
 })
 
-const agree = ref(true)
+const agree = ref(false)
 const userStore = useUserStore()
 // 登录
 const handleLogin = () => {
+	if (!agree.value) {
+		uni.showToast({
+			title: '请先同意用户协议和隐私条款',
+			icon: 'none'
+		})
+		return
+	}
+	
 	if (!form.value.phone) {
 		uni.showToast({
 			title: '请输入手机号',
@@ -79,13 +87,7 @@ const handleLogin = () => {
 		})
 		return
 	}
-	if (!agree.value) {
-		uni.showToast({
-			title: '请先同意用户协议和隐私条款',
-			icon: 'none'
-		})
-		return
-	}
+	
 
 	Login({
 		...form.value,

@@ -38,7 +38,7 @@ import {
 
 const userStore = useUserStore()
 
-const agree = ref(true);
+const agree = ref(false);
 
 // 登录
 const handleLogin = () => {
@@ -55,6 +55,10 @@ const goto = (url) => {
 };
 
 const handleGetPhoneNumber = async (e) => {
+  if (!agree.value) {
+    uni.showToast({ title: "请先同意用户协议和隐私条款", icon: "none" });
+    return;
+  }
   // 1. 判断用户是否同意授权
   if (e.detail.errMsg !== "getPhoneNumber:ok") {
     uni.showToast({ title: "已取消授权", icon: "none" });
@@ -88,7 +92,8 @@ const handleGetPhoneNumber = async (e) => {
         userStore.setUser(res1.data)
 
         if (res.data.new_user == 1) {
-          uni.switchTab({
+          uni.setStorageSync('new_user', 1)
+          uni.navigateTo({
             url: '/subpkg_mine/pages/mine/changeArea'  // 你的首页路径
           })
         } else {

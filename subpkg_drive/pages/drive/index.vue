@@ -543,7 +543,7 @@ const showRepairReason = ref(false);
 const constSpeed = ref(1);
 const setVisible = ref(false);
 
-const carType = ref("1");
+const carType = ref("0");
 const orderNo = ref("");
 const vehicleId = ref("");
 const operMode = ref(false);
@@ -1020,8 +1020,10 @@ const logout = () => {
   allPopupVisible.value = true;
   type.value = "logout";
   showSpeed.value = false;
-  handleFBDrive({ fb: false, value: 0 });
-  handleIcon("speed");
+  if(carType.value == 1) {
+    handleFBDrive({ fb: false, value: 0 });
+    handleIcon("speed");
+  }
 };
 
 const logoutCont = ref(5);
