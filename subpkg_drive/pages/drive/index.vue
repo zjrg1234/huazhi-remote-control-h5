@@ -1415,7 +1415,6 @@ const handleUpDownDrive = (param) => {
       chValue.value.ch1 = ch.ch1;
       // 新手模式
       if (operMode.value) {
-
         chValue.value.ch2 = ch.ch2;
       }
 
@@ -1444,6 +1443,7 @@ const handleUpDownDrive = (param) => {
         // 挖机右边 up 控制ch1 down 控制 ch2
         if (param.type == 'up') {
           chValue.value.ch1 = ch.ch1;
+        
         } else {
           chValue.value.ch2 = ch.ch2;
         }
@@ -1451,6 +1451,7 @@ const handleUpDownDrive = (param) => {
       } else {
         chValue.value.ch2 = ch.ch2;
       }
+
 
     } else {
 
