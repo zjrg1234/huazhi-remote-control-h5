@@ -1,6 +1,6 @@
 <template>
   <view class="page">
-  
+
 
 
     <view class="sticky-content">
@@ -14,9 +14,9 @@
 
 
 
-            <!-- #ifdef MP-WEIXIN -->
-    <custom-nav-bar title="我的电池" url="/subpkg_mine/pages/mine/battery" flag="0"></custom-nav-bar>
-    <!-- #endif -->
+        <!-- #ifdef MP-WEIXIN -->
+        <custom-nav-bar title="我的电池" url="/subpkg_mine/pages/mine/battery" flag="0"></custom-nav-bar>
+        <!-- #endif -->
 
         <!-- #ifndef H5 -->
         <!-- 顶部背景图 小程序-->
@@ -126,7 +126,7 @@
 import { ref, onMounted, computed, watch } from "vue";
 // #ifdef  H5
 import NavBar from "@/components/nav-bar/nav-bar.vue";
-	// #endif
+// #endif
 import {
   GetDepositList,
   GetFirstDepositList,
@@ -337,6 +337,7 @@ page {
       height: 170rpx;
     }
   }
+
   .bg-image-h5 {
     top: -97rpx;
   }
