@@ -1,8 +1,6 @@
 <template>
   <view class="page">
 
-
-
     <view class="sticky-content">
       <view class="wrap-content">
         <!-- #ifdef H5 -->
@@ -11,8 +9,6 @@
           <image class="image" src="/static/images/mine/bg2@2x.png" mode="widthFix"></image>
         </view>
         <!-- #endif -->
-
-
 
         <!-- #ifdef MP-WEIXIN -->
         <custom-nav-bar title="我的电池" url="/subpkg_mine/pages/mine/battery" flag="0"></custom-nav-bar>

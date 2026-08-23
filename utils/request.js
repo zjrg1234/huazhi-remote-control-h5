@@ -11,7 +11,8 @@ const whiteList = ["/api/login",
   "/api/user/banner",
   "api/user/get/title",
   "/api/user/mine",
-  '/api/get/login/code'
+  '/api/get/login/code',
+  '/api/login/save'
 ];
 
 const request = (options) => {
