@@ -102,15 +102,21 @@ const confirm = () => {
   if (!selected.value) {
     return uni.showToast({ title: '请选择一个专区', icon: 'none' })
   }
-  if (userStore.areaId == selected.value) {
-    return uni.showToast({ title: '您已在当前专区', icon: 'none' })
+
+  if (uni.getStorageSync('new_user') != "1") {
+    if (userStore.areaId == selected.value) {
+      return uni.showToast({ title: '您已在当前专区', icon: 'none' })
+    }
+
+    const obj = list.value.find(item => item.id == selected.value)
+    if (obj) {
+      name.value = obj.agent_name
+      tipVisible.value = true
+    }
+  } else {
+    handleConfirm()
   }
 
-  const obj = list.value.find(item => item.id == selected.value)
-  if (obj) {
-    name.value = obj.agent_name
-    tipVisible.value = true
-  }
 }
 
 // 确认变更

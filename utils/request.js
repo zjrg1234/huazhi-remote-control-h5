@@ -65,7 +65,7 @@ const request = (options) => {
         hideLoading(loadingFlag);
 
         const data = res.data;
-        console.log("返回成功", res);
+        console.log("返回成功"+apiUrl, res);
 
          if (data.code === 401) {
           uni.showToast({
