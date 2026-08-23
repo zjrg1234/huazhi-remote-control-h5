@@ -9,8 +9,9 @@
     <!-- #endif -->
 
     <view class="main-cont">
-      <scroll-view class="list-scroll" scroll-y :refresher-enabled="true"  refresher-default-style="none" :refresher-triggered="isRefreshing"
-        :refresher-threshold="60" @refresherpulling="onPulling" @refresherrefresh="onRefresh" @scrolltolower="loadMore">
+      <scroll-view class="list-scroll" scroll-y :refresher-enabled="true" refresher-default-style="none"
+        :refresher-triggered="isRefreshing" :refresher-threshold="60" @refresherpulling="onPulling"
+        @refresherrefresh="onRefresh" @scrolltolower="loadMore">
         <!-- ✅ 自定义下拉刷新插槽（仅汉字，无省略号） -->
         <view slot="refresher" class="custom-refresher">
           <text class="refresh-text">{{ tipText }}</text>
@@ -227,11 +228,20 @@ const handleAction = async (item) => {
         uni.removeStorageSync("sendNum")
         uni.setStorageSync("carInfo", JSON.stringify(item));
         uni.setStorageSync("carDetails", JSON.stringify(res.data));
-        uni.navigateTo({
-          url: `/subpkg_drive/pages/drive/index?order_no=${item.order_no}&vehicle_id=${item.vehicle_id}`,
-          animationType: "none",
-          animationDuration: 0,
-        });
+        if (res.data.vehicle_type == 31) {
+          uni.navigateTo({
+            url: `/subpkg_earthmover/pages/drive/index?order_no=${item.order_no}&vehicle_id=${item.vehicle_id}`,
+            animationType: "none",
+            animationDuration: 0,
+          });
+        } else {
+          uni.navigateTo({
+            url: `/subpkg_drive/pages/drive/index?order_no=${item.order_no}&vehicle_id=${item.vehicle_id}`,
+            animationType: "none",
+            animationDuration: 0,
+          });
+        }
+
       } else {
         uni.showToast({ title: "联系客服，报错原因：" + res.msg, icon: "none" });
       }
@@ -359,7 +369,7 @@ page {
     margin-bottom: 20rpx;
 
     .label {
-     font-family: PingFangSC, PingFang SC;
+      font-family: PingFangSC, PingFang SC;
       font-weight: 400;
       font-size: 24rpx;
       color: #777777;

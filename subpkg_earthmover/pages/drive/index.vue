@@ -128,49 +128,12 @@
               </cover-view>
             </cover-view>
             <cover-view class="left">
-              <!-- type 1 是遥控车 -->
-              <cover-view
-                class="group"
-                v-show="selectedIndex == 0 && carType == '1'"
-              >
-                <cover-view class="group-item">
-                  <cover-view class="tit">操作设置</cover-view>
-                  <cover-view class="flex">
-                    <cover-view
-                      v-for="(mode, index) in steeringModes"
-                      :key="index"
-                      class="option-card"
-                      :class="{ 'is-active': selectedMode === mode.id }"
-                      @click="handleSetSelect(mode.id)"
-                    >
-                      <!-- 右上角的黄色对勾 (仅当选中时显示) -->
-                    </cover-view>
-                  </cover-view>
-                </cover-view>
-                <cover-view class="group-item pr">
-                  <cover-view class="flex fj">
-                    <cover-view class="tit">方向反向操作</cover-view>
-
-                    <SwitchComp
-                      v-model="operDir"
-                      @change="setHandleOper(2, $event)"
-                    ></SwitchComp>
-                  </cover-view>
-                  <cover-view class="flex fj">
-                    <cover-view class="tit">进退反向操作</cover-view>
-
-                    <SwitchComp
-                      v-model="operFB"
-                      @change="setHandleOper(1, $event)"
-                    ></SwitchComp>
-                  </cover-view>
-                </cover-view>
-              </cover-view>
+            
 
               <cover-view
                 class="group"
                 v-show="
-                  selectedIndex == 0 && (carType == '2' || carType == '3')
+                  selectedIndex == 0 
                 "
               >
                 <cover-view class="group-item pr">
@@ -785,21 +748,7 @@ const handleOper = (type) => {
 
 const set = () => {
   onUserActivity();
-  saveFlag.value = { 1: false, 2: false, 3: false };
   setVisible.value = true;
-  showSpeed.value = false;
-
-  const mapNum = createReverseMapper(
-    1,
-    100,
-    directionCenter.value.mini_value,
-    directionCenter.value.max_value,
-  );
-  console.log("点击设置， 当前中位值", saveVal.value[1]);
-  dirMiddle.value = mapNum(saveVal.value[1]);
-  dirMiddleValFunc(dirMiddle.value);
-  dirTurn.value = saveVal.value[2];
-  throttle.value = saveVal.value[3];
 };
 
 const logout = () => {
@@ -932,26 +881,11 @@ const initVehicleConfig = () => {
     // 正反 上下
     operFB.value = carDetails.value.reverse_up_down == 1;
     operDir.value = carDetails.value.reverse_left_right == 1;
-    directionCenter.value = carDetails.value.direction_center || {};
-    directionDynamics.value = carDetails.value.direction_dynamics || {};
-    acceleratorCenter.value = carDetails.value.accelerator_center || {};
-    acceleratorDynamics.value = carDetails.value.accelerator_dynamics || {};
-
-    dirMiddle.value = directionCenter.value.current_value;
-    dirTurn.value = directionDynamics.value.current_value;
-    throttle.value = acceleratorDynamics.value.current_value;
-
-    ch7Open =
-      carDetails.value.vehicle_config_detail.ch7.open_value.current_value;
-    ch7Close =
-      carDetails.value.vehicle_config_detail.ch7.close_value.current_value;
-
-    saveVal.value = {
-      1: dirMiddle.value,
-      2: dirTurn.value,
-      3: throttle.value,
-    };
+    
+    // ch1 左开右关 ch2 前进后退 ch3 //挖斗-左开值-上、右关值-下 
+    //   ch4;//摆臂- 上开值下关值 ch5;// 油泵
     // 液压挖机ch1～ch6 全部都是中位值的current_value
+    // mixed_control 为1 油泵一直开着 为0时，ch5 ch4 ch6 需要开油泵 就是ch7 需要open_values
     // mixed_control 为1 油泵一直开着 为0时，ch5 ch4 ch6 需要开油泵 就是ch7 需要open_values
     const config = carDetails.value.vehicle_config_detail || {};
     ["ch3", "ch4", "ch5", "ch6"].forEach((key) => {
@@ -959,46 +893,8 @@ const initVehicleConfig = () => {
         chValue.value[key] = config[key].center_value.current_value;
     });
 
-    // 走设置清晰度 以及 转换switch 数值
-    // setQualityList();
 
-    // 四驱车
-    if (carType.value == 1) {
-      chValue.value.ch1 = directionCenter.value.current_value;
-      chValue.value.ch2 = acceleratorCenter.value.current_value;
-      chValue.value.ch7 = config["ch7"].close_value.current_value;
-      chValue.value.ch8 = config["ch8"].close_value.current_value;
-
-      carHandler.value = new CarControlHandler({
-        reverseUpDownState: operFB.value,
-        reverseLeftRightState: operDir.value,
-        ch1: directionCenter.value.current_value,
-        ch2: acceleratorDynamics.value.current_value,
-        0: { ...directionCenter.value },
-        1: { ...carDetails.value.accelerator_center },
-        2: { ...directionDynamics.value },
-        3: { ...acceleratorDynamics.value },
-      });
-    }
-    // 液压挖机
-    if (carType.value == 3) {
-      if (carDetails.value.mixed_control == 1) {
-        chValue.value.ch7 = config["ch7"].open_value.current_value;
-      } else {
-        chValue.value.ch7 = config["ch7"].close_value.current_value;
-      }
-      chValue.value.ch1 = config["ch1"].center_value.current_value;
-      chValue.value.ch2 = config["ch2"].center_value.current_value;
-      chValue.value.ch8 = config["ch8"].close_value.current_value;
-
-      carHandler.value = new ExcavatorControlHandler({
-        reverseUpDownState: operFB.value,
-        reverseLeftRightState: operDir.value,
-        ...carDetails.value.vehicle_config_detail,
-        mixedControl: carDetails.value.mixed_control,
-      });
-    }
-
+  
     if (carType.value == 5) {
       if (carDetails.value.mixed_control == 1) {
         chValue.value.ch4 = config["ch4"].open_value.current_value;
@@ -1284,11 +1180,7 @@ const handleSetSelect = (id) => {
 
 const setArr = [{ name: "通用设置", key: 0 }];
 const setGroup = computed(() => {
-  if (carType.value == 1) {
-    return setArr.push({ name: "车辆微调", key: 1 });
-  } else if (carType.value == 3) {
-    return setArr;
-  }
+  return setArr
 });
 
 const selectedIndex = ref(0);
