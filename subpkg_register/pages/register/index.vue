@@ -91,15 +91,10 @@ const handleLogin = () => {
               userStore.setAreaId(res.data.special_area);
               userStore.setId(res.data.id);
 
-              GetUserInfo({ uid: res.data.id })
-                .then((res) => {
-                  userStore.setUser(res.data);
-
-                  uni.reLaunch({
-                    url: "/subpkg_mine/pages/mine/changeArea", // 你的首页路径
-                  });
-                })
-                .catch();
+              uni.reLaunch({
+                url: "/subpkg_mine/pages/mine/changeArea", // 你的首页路径
+              });
+               
             } else {
               uni.showToast({
                 title: res.msg,

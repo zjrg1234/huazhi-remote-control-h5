@@ -47,6 +47,7 @@ import { onLoad, onReachBottom } from "@dcloudio/uni-app"
 import { GetSpecialList, ChangeSpecialList } from "@/axios/mine.js"
 import TipModal from "@/components/tip-modal/tip-modal.vue"
 import { useUserStore } from '@/store/modules/user'
+import { GetUserInfo } from "@/axios/index";
 
 const userStore = useUserStore()
 
@@ -124,7 +125,12 @@ const handleConfirm = async () => {
   try {
     const res = await ChangeSpecialList({ special_id: selected.value })
     if (res.code == 200) {
-      uni.removeStorageSync('new_user')
+      if (uni.getStorageSync('new_user') == 1) {
+        uni.removeStorageSync('new_user')
+        GetUserInfo({
+          
+        }).then().catch()
+      }
       tipVisible.value = false;
       userStore.setAreaId(selected.value)
       uni.showToast({ title: '更换专区成功', icon: 'success' })
