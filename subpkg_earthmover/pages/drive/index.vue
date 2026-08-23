@@ -882,7 +882,7 @@ const initVehicleConfig = () => {
     operFB.value = carDetails.value.reverse_up_down == 1;
     operDir.value = carDetails.value.reverse_left_right == 1;
     
-    // ch1 左开右关 ch2 前进后退 ch3 //挖斗-左开值-上、右关值-下 
+    // ch1 方向左开右关 ch2 前进后退 ch3 //挖斗-左开值-上、右关值-下 
     //   ch4;//摆臂- 上开值下关值 ch5;// 油泵
     // 液压挖机ch1～ch6 全部都是中位值的current_value
     // mixed_control 为1 油泵一直开着 为0时，ch5 ch4 ch6 需要开油泵 就是ch7 需要open_values
