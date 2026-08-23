@@ -1510,7 +1510,6 @@ const handleComDrive = (type, param) => {
       chValue.value.ch7 = Math.max(ch7Open, ch7Close);
     }
 
-    console.log(param.left, param.right, param.up, param.down)
     carHandler.value.handleRemoteControlChannel(
       type,
       param.left,

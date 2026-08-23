@@ -180,10 +180,10 @@ handleArrowControlChannel(type, positionType, mode) {
       }
 
       if (up) {
-        this.ch5 = ch5Center - (ch5Center - ch5Close);
+        this.ch5 = ch5Center - (ch5Center - ch5Close) * rateValue;
       }
       if (down) {
-        this.ch5 = ch5Center + (ch5Open - ch5Center);
+        this.ch5 = ch5Center + (ch5Open - ch5Center)  * rateValue;
       }
     } else {
       // 右侧遥控

@@ -103,6 +103,7 @@ const emitCurrentState = () => {
   const distance = Math.sqrt(dx * dx + dy * dy);
   const speed = Math.min(distance / MAX_RADIUS, 1);
 
+
   // 判断方向（使用阈值）
   const up = dy < -SWIPE_THRESHOLD;
   const down = dy > SWIPE_THRESHOLD;
