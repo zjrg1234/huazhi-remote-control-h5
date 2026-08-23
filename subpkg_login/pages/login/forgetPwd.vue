@@ -237,7 +237,7 @@ page {
 
 .agreement {
 	position: absolute;
-	bottom: env(safe-area-inset-bottom);
+	bottom: 50rpx;
 	left: 50%;
 	width: 100%;
 	transform: translatex(-50%);
