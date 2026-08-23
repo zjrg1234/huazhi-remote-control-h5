@@ -5,33 +5,15 @@
       <!-- 手机号 -->
       <view class="input-item">
         <text class="prefix">+86</text>
-        <input
-          class="input"
-          type="number"
-          maxlength="11"
-          placeholder="请输入手机号"
-          v-model="form.phone"
-        />
+        <input class="input" type="number" maxlength="11" placeholder="请输入手机号" v-model="form.phone" />
       </view>
       <VerifyCodeInput v-model="form.code" :phone="form.phone" />
       <!-- 密码 -->
       <view class="input-item">
-        <input
-          class="input"
-          type="password"
-          maxlength="6"
-          placeholder="请输入密码"
-          v-model="form.password"
-        />
+        <input class="input" type="password" maxlength="6" placeholder="请输入密码" v-model="form.password" />
       </view>
       <view class="input-item">
-        <input
-          class="input"
-          type="password"
-          maxlength="6"
-          placeholder="请再次输入密码"
-          v-model="form.passwordAgain"
-        />
+        <input class="input" type="password" maxlength="6" placeholder="请再次输入密码" v-model="form.passwordAgain" />
       </view>
       <view class="login-btn" @click="handleLogin">完成</view>
     </view>
@@ -43,7 +25,7 @@ import { ref } from "vue";
 import { Register, Login, GetUserInfo } from "@/axios/index.js";
 
 import {
-	useUserStore
+  useUserStore
 } from '@/store/modules/user'
 import VerifyCodeInput from "@/components/verify-code/verify-code.vue";
 const form = ref({
@@ -91,7 +73,7 @@ const handleLogin = () => {
     noteVerify: form.value.code,
   })
     .then((res) => {
-   
+
       if (res.code == 200) {
         uni.showToast({
           title: "注册成功",
@@ -126,6 +108,11 @@ const handleLogin = () => {
             }
           })
           .catch();
+      } else {
+        uni.showToast({
+          title: res.msg,
+          icon: "none",
+        });
       }
     })
     .catch();

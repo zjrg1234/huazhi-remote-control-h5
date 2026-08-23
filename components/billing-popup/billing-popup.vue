@@ -179,7 +179,7 @@ const handleConfirm = () => {
 // 跳转充值
 const goRecharge = () => {
   close(); // 关闭当前弹窗
-  uni.navigateTo({ url: '/subpkg_mine/pages/mine/recharge' });
+  // uni.navigateTo({ url: '/subpkg_mine/pages/mine/recharge' });
 };
 
 // 暴露方法给父组件调用
