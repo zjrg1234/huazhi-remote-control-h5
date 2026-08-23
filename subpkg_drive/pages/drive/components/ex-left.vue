@@ -100,8 +100,10 @@ const enterReadyMode = () => {
 const emitCurrentState = () => {
   const dx = currentDotX.value;
   const dy = currentDotY.value;
+  
   const distance = Math.sqrt(dx * dx + dy * dy);
-  const speed = Math.min(distance / MAX_RADIUS, 1);
+  const speed = Math.min(distance / 47, 1);
+
 
 
   // 判断方向（使用阈值）

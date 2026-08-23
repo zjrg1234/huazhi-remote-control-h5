@@ -120,7 +120,9 @@ const emitCurrentState = () => {
   const dx = currentDotX.value;
   const dy = currentDotY.value;
   const distance = Math.sqrt(dx * dx + dy * dy);
-  const speed = Math.min(distance / MAX_RADIUS, 1);
+  // const speed = Math.min(distance / MAX_RADIUS, 1);
+  const speed = Math.min(distance / 47, 1);
+
 
   const up = dy < -SWIPE_THRESHOLD;
   const down = dy > SWIPE_THRESHOLD;
