@@ -90,8 +90,11 @@ import { ChangeHeadImg } from "@/axios/mine";
 import { GetUserInfo } from "@/axios/index";
 import { useUserStore } from "@/store/modules/user";
 import { onBeforeUnmount } from "vue";
-const userStore = useUserStore();
 
+import { baseUrl } from '@/config/env'
+
+const userStore = useUserStore();
+const imageUrl = ref('')
 const userInfo = computed(() => {
 	return userStore.getUserInfo();
 });
@@ -338,10 +341,9 @@ const uploadFile = async (filePath) => {
 
 
 const gotoUrl = () => {
-
-	 uni.reLaunch({
-        url: "/subpkg_login/pages/login/index",
-      });
+	uni.reLaunch({
+					url: "/subpkg_login/pages/login/index",
+				});
 }
 </script>
 
@@ -498,8 +500,8 @@ const gotoUrl = () => {
 .asset-label {
 	display: flex;
 	align-items: center;
-    justify-items: center;
-    justify-content: center;
+	justify-items: center;
+	justify-content: center;
 }
 
 .text {

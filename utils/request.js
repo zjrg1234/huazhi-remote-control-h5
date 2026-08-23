@@ -149,7 +149,7 @@ const getParam = () => {
   const id = userStore.id;
   const token = userStore.token;
   return {
-    uid: id || 8,
+    uid: id || 38,
     token,
   };
 };

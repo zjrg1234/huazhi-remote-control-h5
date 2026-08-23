@@ -13,6 +13,12 @@
       <!-- #endif -->
 
       <view class="login-btn" @click="handleLogin">手机号码登录/注册</view>
+
+
+      <view class="register-link" @click="goUrl">
+        <text>去首页</text>
+      </view>
+
     </view>
 
     <view class="agreement">
@@ -42,7 +48,7 @@ const agree = ref(false);
 
 // 登录
 const handleLogin = () => {
-  console.log(123)
+ 
   uni.navigateTo({
     url: "/subpkg_login/pages/login/login",
   });
@@ -114,9 +120,13 @@ const handleGetPhoneNumber = async (e) => {
   } catch (e) {
     console.log("e", e)
   }
-
-
 };
+
+const goUrl = () => {
+  uni.switchTab({
+    url: "/pages/index/index"
+  })
+}
 </script>
 
 <style lang="scss" scoped>

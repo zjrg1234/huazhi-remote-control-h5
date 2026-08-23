@@ -131,6 +131,7 @@ const handleLogout = () => {
       if (res.confirm) {
         resetNoticeFlag()
         // 清除登录状态
+        uni.removeStorageSync('id')
         uni.removeStorageSync('token')
         uni.removeStorageSync('userInfo')
         uni.showToast({ title: '已退出' })

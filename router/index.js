@@ -8,7 +8,9 @@ const needLoginPages = [
   '/subpkg_mine/pages/mine/appeal',
   '/subpkg_mine/pages/mine/reservation',
   '/subpkg_mine/pages/user/modifyPwd',
-  '/subpkg_mine/pages/user/modifyPhone'
+  '/subpkg_mine/pages/user/modifyPhone',
+  "/subpkg_mine/pages/mine/set",
+  "/subpkg_mine/pages/mine/battery"
 ]
 
 let userStore = null
