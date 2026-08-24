@@ -14,7 +14,10 @@
 
     <!-- 版本与服务信息组 -->
     <view class="card">
-
+      <view class="item">
+        <text class="label">版本号</text>
+        <text class="text">1.0.7</text>
+      </view>
       <view class="item" @click="handleOpenPrivacy">
         <text class="label">隐私政策</text>
         <image class="arrow" src="/static/images/common/icon_arrows_gray@2x.png" mode="aspectFill" />
@@ -27,11 +30,8 @@
         <text class="label">SDK 共享清单</text>
         <image class="arrow" src="/static/images/common/icon_arrows_gray@2x.png" mode="aspectFill" />
       </view>
-      <!-- <view class="item" @click="handleOpenCompanyIntro">
-        <text class="label">公司介绍</text>
-        <image class="arrow" src="/static/images/common/icon_arrows_gray@2x.png" mode="aspectFill" />
-      </view>
-      <view class="item" @click="handleOpenFAQ">
+    
+      <!-- <view class="item" @click="handleOpenFAQ">
         <text class="label">常见问题</text>
         <image class="arrow" src="/static/images/common/icon_arrows_gray@2x.png" mode="aspectFill" />
       </view> -->
