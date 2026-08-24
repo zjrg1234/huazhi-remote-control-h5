@@ -1,15 +1,9 @@
 <template>
   <view class="landscape-page">
-    <view
-      class="page-content"
-    >
-      
+    <view class="page-content">
+
       <cover-view class="logout" @click="logout">
-        <cover-image
-          src="./static/icon_exit@2x.png"
-          class="image"
-          mode="aspectFit"
-        />
+        <cover-image src="./static/icon_exit@2x.png" class="image" mode="aspectFit" />
         <cover-view class="text">返回</cover-view>
       </cover-view>
 
@@ -29,11 +23,7 @@
         <cover-view class="flex">
           <cover-view class="fl">
             <cover-view class="car">
-              <cover-image
-                class="image"
-                src="./static/icon_car@2x.png"
-                mode="aspectFit"
-              />
+              <cover-image class="image" src="./static/icon_car@2x.png" mode="aspectFit" />
               <cover-view class="text"> 车辆已连接 </cover-view>
             </cover-view>
           </cover-view>
@@ -43,85 +33,45 @@
       </cover-view>
 
       <!-- 剩余时间提示 -->
-      <cover-view
-        class="tip"
-        v-show="numTip > 0"
-        :style="{ display: numTip > 0 ? 'block' : 'none' }"
-      >
+      <cover-view class="tip" v-show="numTip > 0" :style="{ display: numTip > 0 ? 'block' : 'none' }">
         <cover-view>距离本次结束驾驶还有{{ 31 - numTip }}s</cover-view>
       </cover-view>
 
       <!-- 设置按钮 -->
       <cover-view class="right-cont">
         <cover-view class="flex">
-          <cover-view class="first"  @click="handleReport">
-            <cover-image
-              class="image"
-         
-              src="./static/icon_repairs@2x.png"
-              mode="aspectFit"
-            />
+          <cover-view class="first" @click="handleReport">
+            <cover-image class="image" src="./static/icon_repairs@2x.png" mode="aspectFit" />
             <cover-view class="text">维修</cover-view>
           </cover-view>
 
-          <cover-image
-            class="image"
-            @click="set"
-            src="./static/icon_set@2x.png"
-            mode="aspectFit"
-          />
+          <cover-image class="image" @click="set" src="./static/icon_set@2x.png" mode="aspectFit" />
         </cover-view>
       </cover-view>
 
-      <ExLeft
-        @action="handleLeftDrive"
-        @reset="onUserActivity"
-      >
+      <ExLeft @action="handleLeftDrive" @reset="onUserActivity">
       </ExLeft>
-      <ExRight
-        @action="handleRightDrive"
-       
-        :mode="operMode"
-        @reset="onUserActivity"
-      ></ExRight>
+      <ExRight @action="handleRightDrive" :mode="operMode" @reset="onUserActivity"></ExRight>
 
       <!-- 时间显示 -->
 
-      <cover-view
-        v-show="setVisible"
-        :style="{ display: setVisible ? 'block' : 'none' }"
-        class="custom-popup-mask"
-        @click="close"
-      >
+      <cover-view v-show="setVisible" :style="{ display: setVisible ? 'block' : 'none' }" class="custom-popup-mask"
+        @click="close">
         <cover-view class="custom-popup-right" @click.stop>
           <cover-view class="cont">
             <cover-view class="right">
               <cover-view class="settings-bar" @click="close">
                 <cover-view class="text-area">设置</cover-view>
                 <cover-view class="close-btn">
-                  <cover-image
-                    class="image"
-                    src="./static/icon_close@2x.png"
-                    mode="widthFix"
-                  ></cover-image>
+                  <cover-image class="image" src="./static/icon_close@2x.png" mode="widthFix"></cover-image>
                 </cover-view>
               </cover-view>
-              <cover-view
-                class="setting-group"
-                v-for="(item, index) in setGroup"
-                :key="index"
-              >
-                <cover-view
-                  class="setting-item"
-                  :class="{ active: selectedIndex == item.key }"
-                  @click="handleItem(index)"
-                >
+              <cover-view class="setting-group" v-for="(item, index) in setGroup" :key="index">
+                <cover-view class="setting-item" :class="{ active: selectedIndex == item.key }"
+                  @click="handleItem(index)">
                   {{ item.name }}
                 </cover-view>
-                <cover-view
-                  class="gradient-line"
-                  v-show="selectedIndex == item.key"
-                ></cover-view>
+                <cover-view class="gradient-line" v-show="selectedIndex == item.key"></cover-view>
               </cover-view>
             </cover-view>
             <cover-view class="left">
@@ -129,17 +79,11 @@
                 <cover-view class="group-item pr">
                   <cover-view class="flex fj">
                     <cover-view class="tit">进退反向操作</cover-view>
-                    <SwitchComp
-                      v-model="operFB"
-                      @change="setHandleOper(1, $event)"
-                    ></SwitchComp>
+                    <SwitchComp v-model="operFB" @change="setHandleOper(1, $event)"></SwitchComp>
                   </cover-view>
                   <cover-view class="flex fj">
                     <cover-view class="tit">旋转反向操作</cover-view>
-                    <SwitchComp
-                      v-model="operDir"
-                      @change="setHandleOper(2, $event)"
-                    ></SwitchComp>
+                    <SwitchComp v-model="operDir" @change="setHandleOper(2, $event)"></SwitchComp>
                   </cover-view>
                 </cover-view>
               </cover-view>
@@ -149,28 +93,18 @@
         <!-- </cover-view> -->
       </cover-view>
 
-      <cover-view
-        class="tip-popup-mask"
-        v-show="allPopupVisible"
-        :style="{ display: allPopupVisible ? 'block' : 'none' }"
-        @tap.stop="handleMaskClick"
-      >
+      <cover-view class="tip-popup-mask" v-show="allPopupVisible"
+        :style="{ display: allPopupVisible ? 'block' : 'none' }" @tap.stop="handleMaskClick">
         <cover-view class="fcenter">
           <!-- 弹窗主体内容 -->
-          <cover-view
-            class="popup-container"
-            :class="{ contmax: type === 'repair' }"
-            @tap.stop
-          >
+          <cover-view class="popup-container" :class="{ contmax: type === 'repair' }" @tap.stop>
             <!-- 场景1：黑屏提示 -->
             <cover-view v-show="type === 'tip'">
               <cover-view class="tip-content">
                 <cover-view class="time">倒计时{{ count }}s</cover-view>
                 <cover-view class="tit">是否黑屏？</cover-view>
                 <cover-view class="text">
-                  <cover-view class="text1"
-                    >开始驾驶前如遇黑屏或者车辆故障上报不扣费，开始驾驶后开始计费。</cover-view
-                  >
+                  <cover-view class="text1">开始驾驶前如遇黑屏或者车辆故障上报不扣费，开始驾驶后开始计费。</cover-view>
                   <cover-view>如果一切正常，请点击“开始驾驶”</cover-view>
                 </cover-view>
               </cover-view>
@@ -180,18 +114,12 @@
                   <cover-view class="btn left" @tap.stop="logoutOne('logout')">
                     退出驾驶
                   </cover-view>
-                  <cover-view
-                    class="btn left ml"
-                    @tap.stop="handlePopupAction('report')"
-                  >
+                  <cover-view class="btn left ml" @tap.stop="handlePopupAction('report')">
                     上报故障
                   </cover-view>
                 </cover-view>
                 <cover-view class="flex mt">
-                  <cover-view
-                    class="btn right"
-                    @tap.stop="handlePopupAction('driving')"
-                  >
+                  <cover-view class="btn right" @tap.stop="handlePopupAction('driving')">
                     开始驾驶
                   </cover-view>
                 </cover-view>
@@ -211,18 +139,12 @@
                   <cover-view class="btn left" @tap.stop="cancel">
                     取消
                   </cover-view>
-                  <cover-view
-                    class="btn left ml"
-                    @tap.stop="handlePopupAction('report')"
-                  >
+                  <cover-view class="btn left ml" @tap.stop="handlePopupAction('report')">
                     上报故障
                   </cover-view>
                 </cover-view>
                 <cover-view class="flex mt">
-                  <cover-view
-                    class="btn right"
-                    @tap.stop="handlePopupAction('logout')"
-                  >
+                  <cover-view class="btn right" @tap.stop="handlePopupAction('logout')">
                     退出驾驶
                   </cover-view>
                 </cover-view>
@@ -234,16 +156,10 @@
               <cover-view class="tip-content repair">
                 <cover-view class="tit">设备报修</cover-view>
                 <cover-view v-if="showRepairReason" class="reason">
-                  <cover-view
-                    v-for="(item, index) in list"
-                    :key="index"
-                    @tap="selectReason(index, item)"
-                    :class="[
-                      'reason-item',
-                      { active: selectedReasonIndex === index },
-                    ]"
-                    >{{ item }}</cover-view
-                  >
+                  <cover-view v-for="(item, index) in list" :key="index" @tap="selectReason(index, item)" :class="[
+                    'reason-item',
+                    { active: selectedReasonIndex === index },
+                  ]">{{ item }}</cover-view>
                 </cover-view>
                 <!-- 替换 Vant 的 textarea 为原生 input -->
                 <cover-view class="ttarea">
@@ -264,12 +180,8 @@
               </cover-view>
               <cover-view class="footer">
                 <cover-view class="flex">
-                  <cover-view class="btn left" @tap.stop="cancel"
-                    >取消</cover-view
-                  >
-                  <cover-view class="btn right ml" @tap.stop="report"
-                    >上报</cover-view
-                  >
+                  <cover-view class="btn left" @tap.stop="cancel">取消</cover-view>
+                  <cover-view class="btn right ml" @tap.stop="report">上报</cover-view>
                 </cover-view>
               </cover-view>
             </cover-view>
@@ -285,11 +197,7 @@
               </cover-view>
               <cover-view class="footer">
                 <cover-view class="flex mt">
-                  <cover-view
-                    class="btn right"
-                    @tap.stop="handlePopupAction('logout')"
-                    >退出驾驶</cover-view
-                  >
+                  <cover-view class="btn right" @tap.stop="handlePopupAction('logout')">退出驾驶</cover-view>
                 </cover-view>
               </cover-view>
             </cover-view>
@@ -301,17 +209,13 @@
                 <cover-view class="time"> {{ logoutCont }}s</cover-view>
                 <cover-view class="tit">【警告】您180秒无操作！</cover-view>
                 <cover-view class="text">
-                  <cover-view class="text1"
-                    >三分钟未操作,请立即驾驶。
-                    为防止您的电池被浪费，即将结束本次驾驶，欢迎您下次再来!</cover-view
-                  >
+                  <cover-view class="text1">三分钟未操作,请立即驾驶。
+                    为防止您的电池被浪费，即将结束本次驾驶，欢迎您下次再来!</cover-view>
                 </cover-view>
               </cover-view>
               <cover-view class="footer">
                 <cover-view class="flex mt">
-                  <cover-view class="btn right" @tap.stop="handleContinueDrive"
-                    >继续驾驶</cover-view
-                  >
+                  <cover-view class="btn right" @tap.stop="handleContinueDrive">继续驾驶</cover-view>
                 </cover-view>
               </cover-view>
             </cover-view>
@@ -322,20 +226,12 @@
               <cover-view class="tip-content">
                 <cover-view class="tit">提示</cover-view>
                 <cover-view class="text">
-                  <cover-view class="text1"
-                    >当前车辆已离线，是否退出驾驶？或继续等待车辆恢复链接</cover-view
-                  >
+                  <cover-view class="text1">当前车辆已离线，是否退出驾驶？或继续等待车辆恢复链接</cover-view>
                 </cover-view>
               </cover-view>
               <cover-view class="footer">
-                <cover-view
-                  class="btn left mr"
-                  @tap.stop="handlePopupAction('logout')"
-                  >退出驾驶</cover-view
-                >
-                <cover-view class="btn right" @tap.stop="handleContinueDrive"
-                  >继续驾驶</cover-view
-                >
+                <cover-view class="btn left mr" @tap.stop="handlePopupAction('logout')">退出驾驶</cover-view>
+                <cover-view class="btn right" @tap.stop="handleContinueDrive">继续驾驶</cover-view>
               </cover-view>
             </cover-view>
           </cover-view>
@@ -543,7 +439,7 @@ const handleContinueDrive = () => {
   type.value = "";
 };
 const continueDrive = async () => {
- 
+
   try {
     const res = await StartDrive({
       order_no: orderNo.value,
@@ -576,7 +472,7 @@ const GetDeviceInfo = (data) => {
         console.log("请求接口之后的url:", videoUrl.value);
       }
     })
-    .catch(() => {});
+    .catch(() => { });
 };
 
 // 初始化摄像头播放
@@ -590,7 +486,7 @@ const initTopVideo = () => {
     .then((res) => {
       if (res.code == 200) GetDeviceInfo(res.data);
     })
-    .catch(() => {});
+    .catch(() => { });
 };
 
 const reportModal = () => {
@@ -718,7 +614,7 @@ const handlePopupAction = (val) => {
       .catch((e) => {
         console.log("catch", e);
       })
-      .finally(() => {});
+      .finally(() => { });
   }
 };
 
@@ -737,16 +633,24 @@ const logout = () => {
 };
 
 const logoutCont = ref(5);
+let logoutTimer = null
 // 无操作报警
 const handleInactivityAlarm = () => {
   allPopupVisible.value = true;
   type.value = "longTimeTip";
-  const timer = setInterval(() => {
+
+  if (logoutTimer) {
+    clearInterval(logoutTimer);
+    logoutTimer = null;
+    logoutCont.value = 5;
+  }
+
+  logoutTimer = setInterval(() => {
     logoutCont.value -= 1;
     if (logoutCont.value == 0) {
-      logoutCont.value == 0;
+      logoutCont.value = 0;
       handlePopupAction("logout");
-      clearInterval(timer);
+      clearInterval(logoutTimer);
     }
   }, 1000);
 };
@@ -757,6 +661,11 @@ const { resetTimer, startListening } = useInactivityAlarm(
 // 页面触摸事件（小程序主要交互方式）
 const onUserActivity = () => {
   resetTimer();
+  if (logoutTimer) {
+    clearInterval(logoutTimer);
+    logoutTimer = null;
+    logoutCont.value = 5;
+  }
 };
 
 // ------------------- 生命周期 -------------------
@@ -769,6 +678,7 @@ onLoad((options) => {
 
 const count = ref(15);
 onMounted(() => {
+  startListening();
   console.log("onMounted");
   if (!uni.getStorageSync("sendNum")) uni.setStorageSync("sendNum", 0);
   initTimer(); // 时钟
@@ -833,10 +743,10 @@ const initRouteData = (options) => {
     // bulldozerGeneralVehicle = 30 //铲车 (推土机) - 普通铲车case
     // bulldozerHydraulicVehicle = 31//铲车(推土机) - 液压铲车case
     // case otherVehicle = 40
-     carType.value = "5";
-      return
+    carType.value = "5";
+    return
     if (type == 31) {
-     
+
     }
     else if (type >= 10 && type <= 19) carType.value = "1";
     else if (type >= 20 && type <= 29 && type != 21) carType.value = "2";
@@ -871,9 +781,9 @@ const initVehicleConfig = () => {
     //   ch4;//摆臂- 上开值下关值 ch5;// 油泵
     // 液压挖机ch1～ch6 全部都是中位值的current_value
     // mixed_control 为1 油泵一直开着 为0时，ch5 ch4 ch6 需要开油泵 就是ch7 需要open_values
-    // mixed_control 为1 油泵一直开着 为0时，ch5 ch4 ch6 需要开油泵 就是ch7 需要open_values
+
     const config = carDetails.value.vehicle_config_detail || {};
-    ["ch1","ch2","ch3", "ch4"].forEach((key) => {
+    ["ch1", "ch2", "ch3", "ch4"].forEach((key) => {
       if (config[key])
         chValue.value[key] = config[key].center_value.current_value;
     });
@@ -884,7 +794,7 @@ const initVehicleConfig = () => {
       } else {
         chValue.value.ch5 = config["ch5"].close_value.current_value;
       }
-      
+
       carHandler.value = new ExcavatorControlHandler({
         reverseUpDownState: operFB.value,
         reverseLeftRightState: operDir.value,
@@ -956,15 +866,6 @@ const initSendLoop = () => {
   console.log("循环发送数据");
   console.log("发射机ID", uni.getStorageSync("app_id"));
   sendMsgTimer = setInterval(() => {
-
-    console.log(  chValue.value.ch1,
-        chValue.value.ch2,
-        chValue.value.ch3,
-        chValue.value.ch4,
-        chValue.value.ch5,
-        chValue.value.ch6,
-        chValue.value.ch7,
-        chValue.value.ch8);
     if (UDPSocket.value) {
       const app_id = uni.getStorageSync("app_id");
 
@@ -1031,18 +932,13 @@ const handleComDrive = (type, param) => {
   ) {
     carHandler.value.resetChValue();
     chValue.value.ch5 = Math.min(ch5Open, ch5Close);
-    console.log("chValue.value.ch5", chValue.value.ch5)
+
   } else {
     // 解决舵机先响的问题，应该油泵先响
     // 油泵 需要打开的时候 传开值关值的最大值
     // 关闭的时候 取开值关值的最小值
     if (type == "left") {
-      console.log(type)
-      if (param.up || param.down) {
-        chValue.value.ch5 = Math.max(ch5Open, ch5Close);
-      } else {
-        chValue.value.ch5 = Math.min(ch5Open, ch5Close);
-      }
+      chValue.value.ch5 = Math.min(ch5Open, ch5Close);
     }
     if (type == "right") {
       chValue.value.ch5 = Math.max(ch5Open, ch5Close);
@@ -1176,31 +1072,28 @@ const handleReport = () => {
   top: 0;
   left: 0;
 
-  width: 203px;
-  height: 50px;
-  background: linear-gradient(
-    270deg,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0.26) 20.02%,
-    rgba(0, 0, 0, 0.63) 100%
-  );
+  width: 90px;
+  height: 30px;
+  background: rgba(0, 0, 0, 0.3);
+
 
   .image {
     position: absolute;
-    width: 36px;
-    height: 36px;
-    left: 60px;
-    top: 7px;
+    width: 18px;
+    height: 18px;
+    left: 20px;
+    top: 5px;
   }
+
   .text {
     position: absolute;
-    right: 57px;
-    top: 12px;
+    right: 15px;
+    top: 6px;
     font-family:
       PingFangSC,
       PingFang SC;
     font-weight: 500;
-    font-size: 20px;
+    font-size: 16px;
     color: #fff;
     font-style: normal;
   }
@@ -1209,26 +1102,17 @@ const handleReport = () => {
 .time-text {
   position: fixed;
   z-index: 99999;
-  top: 60px;
+  top: 45px;
   left: 0;
-  width: 143px;
-
-  padding: 7px 0;
-
-  padding-left: 60px;
-
-  background: linear-gradient(
-    270deg,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0.26) 20.02%,
-    rgba(0, 0, 0, 0.63) 100%
-  );
-
+  width: 60px;
+  padding: 7px 5px;
+  padding-left: 25px;
+  background: rgba(0, 0, 0, 0.3);
   font-family: YouSheBiaoTiHei;
-  font-size: 28px;
+  font-size: 14px;
   color: #fff;
-
   font-style: normal;
+
 }
 
 .right-cont {
@@ -1281,7 +1165,7 @@ const handleReport = () => {
 .status-bar-capsule {
   // --- 定位与尺寸 ---
   position: fixed;
-  top: 1px; // 稍微下移，不与屏幕边缘贴边
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
   z-index: 9999;
@@ -1335,8 +1219,8 @@ const handleReport = () => {
         PingFangSC,
         PingFang SC;
       font-weight: 400;
-      font-size: 20px;
-      color: #ffffff;
+      font-size: 15px;
+      color: #fff;
       white-space: nowrap; // 防止文字换行
     }
   }
@@ -1645,14 +1529,14 @@ const handleReport = () => {
         /* 线条长度 */
 
         /* 关键代码：创建线性渐变 */
-        background: linear-gradient(
-          to right,
-          transparent,
-          rgba(13, 165, 255, 0.8) 20%,
-          #0da5ff 50%,
-          rgba(13, 165, 255, 0.8) 80%,
-          transparent /* 终点：完全透明 */
-        );
+        background: linear-gradient(to right,
+            transparent,
+            rgba(13, 165, 255, 0.8) 20%,
+            #0da5ff 50%,
+            rgba(13, 165, 255, 0.8) 80%,
+            transparent
+            /* 终点：完全透明 */
+          );
 
         margin: 0 auto;
       }
@@ -1660,7 +1544,7 @@ const handleReport = () => {
   }
 
   .left {
-    padding: 10px 30px 10px 10px;
+    padding: 30px 30px 10px 10px;
 
     .group-item {
       margin-bottom: 4px;
@@ -1688,7 +1572,7 @@ const handleReport = () => {
 
     .pr {
       padding-right: 30px;
-    }  
+    }
 
     .content-layout {
       display: flex;

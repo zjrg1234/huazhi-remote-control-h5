@@ -110,20 +110,21 @@ export class ExcavatorControlHandler {
 
       this.ch5 = Math.max(ch5Open, ch5Close);
 
-      if (right) {
+      if (left) {
         this.ch3 = ch3Center + (ch3Open - ch3Center) * rateValue;
       }
 
-      if (left) {
+      if (right) {
         this.ch3 = ch3Center - (ch3Center - ch3Close) * rateValue;
       }
 
+  
       if (down) {
-        this.ch4 = ch4Center - (ch4Center - ch4Close) * rateValue;
+        this.ch4 = ch4Center + (ch4Open - ch4Center) * rateValue;
       }
 
       if (up) {
-        this.ch4 = ch4Center + (ch4Open - ch4Center) * rateValue;
+        this.ch4 = ch4Center - (ch4Center - ch4Close) * rateValue;
       }
     }
   }

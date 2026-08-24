@@ -1017,23 +1017,33 @@ const logout = () => {
   allPopupVisible.value = true;
   type.value = "logout";
   showSpeed.value = false;
-  if(carType.value == 1) {
+  if (carType.value == 1) {
     handleFBDrive({ fb: false, value: 0 });
     handleIcon("speed");
   }
 };
 
+
+// 无操作报警
 const logoutCont = ref(5);
+let logoutTimer = null
 // 无操作报警
 const handleInactivityAlarm = () => {
   allPopupVisible.value = true;
   type.value = "longTimeTip";
-  const timer = setInterval(() => {
+
+  if (logoutTimer) {
+    clearInterval(logoutTimer);
+    logoutTimer = null;
+    logoutCont.value = 5;
+  }
+
+  logoutTimer = setInterval(() => {
     logoutCont.value -= 1;
     if (logoutCont.value == 0) {
-      logoutCont.value == 0;
+      logoutCont.value = 0;
       handlePopupAction("logout");
-      clearInterval(timer);
+      clearInterval(logoutTimer);
     }
   }, 1000);
 };
@@ -1044,6 +1054,11 @@ const { resetTimer, startListening } = useInactivityAlarm(
 // 页面触摸事件（小程序主要交互方式）
 const onUserActivity = () => {
   resetTimer();
+  if (logoutTimer) {
+    clearInterval(logoutTimer);
+    logoutTimer = null;
+    logoutCont.value = 5;
+  }
 };
 
 // ------------------- 生命周期 -------------------
@@ -1440,7 +1455,7 @@ const handleUpDownDrive = (param) => {
         // 挖机右边 up 控制ch1 down 控制 ch2
         if (param.type == 'up') {
           chValue.value.ch1 = ch.ch1;
-        
+
         } else {
           chValue.value.ch2 = ch.ch2;
         }
