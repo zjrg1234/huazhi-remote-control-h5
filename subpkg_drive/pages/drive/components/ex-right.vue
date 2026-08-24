@@ -54,8 +54,8 @@ const props = defineProps({
 
 // --- 配置参数 ---
 const IDLE_DELAY = 500; // 进入待命模式的延迟时间(ms)
-const MAX_RADIUS = 65; // 圆点滑动的最大半径(px)
-const SWIPE_THRESHOLD = 15; // 触发箭头的阈值
+const MAX_RADIUS = 58; // 圆点滑动的最大半径(px)
+const SWIPE_THRESHOLD = 10; // 触发箭头的阈值
 
 // --- 响应式状态 ---
 const isDragging = ref(false);
@@ -392,8 +392,8 @@ const doUpAction = (flag) => {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 128px;
-    height: 128px;
+    width: 160px;
+    height: 160px;
     border-radius: 50%;
     pointer-events: none;
   }

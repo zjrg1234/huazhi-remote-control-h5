@@ -36,8 +36,8 @@ const emit = defineEmits(["action", "action2", "reset"]);
 
 // --- 配置 ---
 const IDLE_DELAY = 500;       // 进入待命模式的延迟(ms)
-const MAX_RADIUS = 65;        // 最大偏移半径(px)
-const SWIPE_THRESHOLD = 15;   // 触发方向箭头的阈值
+const MAX_RADIUS = 58;        // 最大偏移半径(px)
+const SWIPE_THRESHOLD = 10;   // 触发方向箭头的阈值
 
 // --- 响应式状态 ---
 const isDragging = ref(false);
@@ -336,8 +336,8 @@ const doUpAction = (flag) => {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 128px;
-    height: 128px;
+    width: 160px;
+    height: 160px;
     border-radius: 50%;
     pointer-events: none;
   }

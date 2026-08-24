@@ -1145,6 +1145,8 @@ const initRouteData = (options) => {
       carType.value = "5";
     }
 
+
+
   } else {
     console.log("carDetails 空");
   }
