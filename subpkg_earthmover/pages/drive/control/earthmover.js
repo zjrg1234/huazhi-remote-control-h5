@@ -36,11 +36,8 @@ export class ExcavatorControlHandler {
     this.ch2 = this.config.ch2.center_value.current_value; // 前进后退
     this.ch3 = this.config.ch3.center_value.current_value; // ch3 //挖斗-左开值-上、右关值-下
     this.ch4 = this.config.ch4.center_value.current_value; // ch4;//摆臂- 上开值下关值
-
-    this.ch6 = this.config.ch6.close_value.current_value;
     this.ch7 = this.config.ch7.close_value.current_value;
     this.ch8 = this.config.ch8.close_value.current_value;
-
     this.ch5 = this.getCloseCH5Value();
   }
   getCloseCH5Value() {

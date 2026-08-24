@@ -95,17 +95,45 @@ const emitCurrentState = () => {
   const distance = Math.sqrt(dx * dx + dy * dy);
   const speed = Math.min(distance / MAX_RADIUS, 1);
 
-  const up = dy < -SWIPE_THRESHOLD;
-  const down = dy > SWIPE_THRESHOLD;
-  const left = dx < -SWIPE_THRESHOLD;
-  const right = dx > SWIPE_THRESHOLD;
+  // 默认无方向
+  let up = false, down = false, left = false, right = false;
 
-  // 更新箭头活性（用于样式）
+  if (distance >= SWIPE_THRESHOLD) {
+    // 计算角度，以左为0度顺时针
+    let angle = Math.atan2(dy, dx) * (180 / Math.PI); // 正右为0
+    angle = (angle + 180) % 360; // 左为0
+    if (angle < 0) angle += 360;
+
+    // 判断区间
+    if ((angle >= 330 && angle < 360) || (angle >= 0 && angle < 30)) {
+      left = true;
+    } else if (angle >= 30 && angle < 60) {
+      left = true;
+      up = true;
+    } else if (angle >= 60 && angle < 120) {
+      up = true;
+    } else if (angle >= 120 && angle < 150) {
+      up = true;
+      right = true;
+    } else if (angle >= 150 && angle < 210) {
+      right = true;
+    } else if (angle >= 210 && angle < 240) {
+      right = true;
+      down = true;
+    } else if (angle >= 240 && angle < 300) {
+      down = true;
+    } else if (angle >= 300 && angle < 330) {
+      down = true;
+      left = true;
+    }
+  }
+
+  // 更新活性（用于样式）
   isUpActive.value = up;
   isDownActive.value = down;
   isLeftActive.value = left;
   isRightActive.value = right;
-  
+
   emit("action", {
     up,
     down,

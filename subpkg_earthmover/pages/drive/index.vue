@@ -49,6 +49,11 @@
         </cover-view>
       </cover-view>
 
+      <cover-view class="menu">
+        <cover-image class="image" v-show="isShowLight" :style="{ display: isShowLight ? 'block' : 'none' }" @click="setCh6" src="./static/icon_lights_open@2x.png" mode="aspectFit" />
+        <cover-image class="image" v-show="!isShowLight" :style="{ display: !isShowLight ? 'block' : 'none' }" @click="setCh6" src="./static/icon_lights_close@2x.png" mode="aspectFit" />
+      </cover-view>
+
       <ExLeft @action="handleLeftDrive" @reset="onUserActivity">
       </ExLeft>
       <ExRight @action="handleRightDrive" :mode="operMode" @reset="onUserActivity"></ExRight>
@@ -433,6 +438,8 @@ const daojishiTip = () => {
   }, 5 * 1000);
 };
 
+
+
 const handleContinueDrive = () => {
   onUserActivity();
   allPopupVisible.value = false;
@@ -794,6 +801,7 @@ const initVehicleConfig = () => {
       } else {
         chValue.value.ch5 = config["ch5"].close_value.current_value;
       }
+      chValue.value.ch6 = config["ch6"].close_value.current_value;
 
       carHandler.value = new ExcavatorControlHandler({
         reverseUpDownState: operFB.value,
@@ -804,6 +812,18 @@ const initVehicleConfig = () => {
     }
   }
 };
+
+
+const isShowLight = ref(false)
+const setCh6 = () => {
+  isShowLight.value = !isShowLight.value;
+  console.log(carDetails.value)
+  if (isShowLight.value) {
+    chValue.value.ch6 = carDetails.value.vehicle_config_detail.ch6.open_value.current_value
+  } else {
+    chValue.value.ch6 = carDetails.value.vehicle_config_detail.ch6.close_value.current_value
+  }
+}
 
 // 使用 ref 存储定时器
 const messageTimer = ref(null);
@@ -959,8 +979,6 @@ const handleComDrive = (type, param) => {
   chValue.value.ch2 = ch.ch2;
   chValue.value.ch3 = ch.ch3;
   chValue.value.ch4 = ch.ch4;
-
-  chValue.value.ch6 = ch.ch6;
   chValue.value.ch7 = ch.ch7;
   chValue.value.ch8 = ch.ch8;
 };
@@ -1158,6 +1176,16 @@ const handleReport = () => {
     color: #ffffff;
     margin-left: 9px;
     margin-right: 26px;
+  }
+}
+.menu {
+  position: fixed;
+  z-index: 9999;
+  top: 80px;
+  right: 30px;
+  .image {
+    width: 27px;
+    height: 27px;
   }
 }
 
