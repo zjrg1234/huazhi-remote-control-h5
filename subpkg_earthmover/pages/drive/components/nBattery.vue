@@ -14,7 +14,7 @@
         <cover-view
           class="battery-fill"
           :class="statusClass"
-          :style="{ height: progressWidth + '%' }"
+           :style="{ top: (100 - progressWidth) + '%' }"
         />
       </cover-view>
     </cover-view>
@@ -113,7 +113,7 @@ watch(() => props.modelValue, updateSliderUI);
 
   /* 正极触点移到顶部 */
   .battery-tip {
-    width: 6px;
+    width: 5px;
     height: 2px;
     background-color: #ffffff;
     border-radius: 2px 2px 0 0;
@@ -137,8 +137,9 @@ watch(() => props.modelValue, updateSliderUI);
   .battery-fill {
     /* ★ 竖向填充核心样式 ★ */
     width: 100%;
+    height: 100%;   
     position: absolute;
-    bottom: 0;       /* 从底部开始填充 */
+    top:0 ;
     left: 0;
     border-radius: 1px;
     background-color: #4caf50;
