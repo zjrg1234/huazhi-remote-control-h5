@@ -1173,16 +1173,15 @@ const handleReport = () => {
   // --- 布局 ---
   display: inline-flex; // 宽度由内容撑开，避免固定宽度溢出
   align-items: center;
-  padding: 8px 10px; // 稍紧凑的内边距
+  padding: 5px 10px; // 稍紧凑的内边距
   gap: 12px; // 左右内容间距
   // --- 视觉风格 ---
-  background: rgba(0, 0, 0, 0.3); // 加深背景，提高文字可读性
-  border-radius: 8px; // 更大圆角，更圆润
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
 
-  // --- 字体与颜色 ---
+
   color: #ffffff;
 
-  // --- 内部 Flex 容器（左右排列） ---
   .flex {
     display: flex;
     align-items: center;
@@ -1203,12 +1202,12 @@ const handleReport = () => {
     display: flex;
     align-items: center;
 
-    margin-right: 16px;
+    margin-right: 8px;
 
     .image {
       margin-right: 10px;
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       flex-shrink: 0; // 防止图标被压缩
       // 图标已有 mode="aspectFit"，无需额外样式
     }
