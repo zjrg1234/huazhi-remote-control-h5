@@ -23,9 +23,9 @@ import { ref, computed } from "vue";
 const emit = defineEmits(["action", "action2", "reset"]);
 
 // --- 配置 ---
-const IDLE_DELAY = 500;       // 进入待命模式的延迟(ms)
-const MAX_RADIUS = 65;        // 最大偏移半径(px)
-const SWIPE_THRESHOLD = 15;   // 触发方向箭头的阈值
+const IDLE_DELAY = 200; // 进入待命模式的延迟时间(ms)
+const MAX_RADIUS = 52; // 圆点滑动的最大半径(px)
+const SWIPE_THRESHOLD = 10; // 触发箭头的阈值
 
 // --- 响应式状态 ---
 const isDragging = ref(false);
@@ -321,96 +321,31 @@ const doUpAction = (flag) => {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 128px;
-    height: 128px;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
     pointer-events: none;
   }
 
-  /* 箭头通用（此处未实际使用，但保留以防万一） */
-  .arrow {
-    width: 26px;
-    height: 26px;
-    opacity: 0.7;
-    transition: all 0.2s ease;
-    z-index: 1;
-    pointer-events: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
 
-    .image {
-      display: block;
-      width: 26px;
-      height: 26px;
-    }
 
-    &.active {
-      opacity: 1;
-      filter: drop-shadow(0 0 4px rgba(255, 167, 38, 0.8));
-      transform: scale(1.2);
-    }
-  }
-
-  .arrow.up {
-    position: absolute;
-    left: 75px;
-    top: 25px;
-  }
-  .arrow.down {
-    position: absolute;
-    left: 75px;
-    bottom: 25px;
-  }
-  .arrow.left {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    left: 25px;
-    width: 0;
-    height: 0;
-    border-top: 12.5px solid transparent;
-    border-bottom: 12.5px solid transparent;
-    border-right: 21.65px solid #ffcc66;
-    background: none;
-    &.active {
-      border-right-color: #ffa726;
-      filter: drop-shadow(0 0 6px rgba(255, 167, 38, 0.9));
-      transform: translateY(-50%) scale(1.2);
-    }
-  }
-  .arrow.right {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 25px;
-    width: 0;
-    height: 0;
-    border-top: 12.5px solid transparent;
-    border-bottom: 12.5px solid transparent;
-    border-left: 21.65px solid #ffcc66;
-    background: none;
-    &.active {
-      border-left-color: #ffa726;
-      filter: drop-shadow(0 0 6px rgba(255, 167, 38, 0.9));
-      transform: translateY(-50%) scale(1.2);
-    }
-  }
 
   /* 摇杆圆点 */
   .dot {
     position: absolute;
     left: 50%;
     top: 50%;
-    width: 36px;
-    height: 36px;
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
     z-index: 2;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+ 
+
+    border: 2px solid rgba(84, 106, 130, 0.3);
+    background-color: rgba(90 ,112, 137 ,50%);
 
     &.ready {
-      box-shadow: 0 0 12px rgba(255, 167, 38, 0.8);
+      box-shadow: 0 0 12px rgba(90 ,112, 137, 0.8);
     }
   }
 }

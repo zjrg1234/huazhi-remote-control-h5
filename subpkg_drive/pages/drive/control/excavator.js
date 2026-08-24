@@ -43,13 +43,13 @@ export class ExcavatorControlHandler {
   setConfigValue() {}
 
   resetChValue() {
-    // ch7 油泵
+
     this.ch3 = this.config.ch3.center_value.current_value; // 旋转
     this.ch4 = this.config.ch4.center_value.current_value; // 大臂
     this.ch5 = this.config.ch5.center_value.current_value; // 小臂
     this.ch6 = this.config.ch6.center_value.current_value; // 挖斗
     this.ch8 = this.config.ch8.close_value.current_value; // 灯光
-
+    // ch7 油泵
     this.ch7 = this.getCloseCH7Value();
   }
   getCloseCH7Value() {

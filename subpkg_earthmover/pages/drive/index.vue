@@ -77,13 +77,12 @@
 
       <ExLeft
         @action="handleLeftDrive"
-        @action2="handleUpDownDrive"
         @reset="onUserActivity"
       >
       </ExLeft>
       <ExRight
         @action="handleRightDrive"
-        @action2="handleUpDownDrive"
+       
         :mode="operMode"
         @reset="onUserActivity"
       ></ExRight>
@@ -128,14 +127,7 @@
               </cover-view>
             </cover-view>
             <cover-view class="left">
-            
-
-              <cover-view
-                class="group"
-                v-show="
-                  selectedIndex == 0 
-                "
-              >
+              <cover-view class="group" v-show="selectedIndex == 0">
                 <cover-view class="group-item pr">
                   <cover-view class="flex fj">
                     <cover-view class="tit">进退反向操作</cover-view>
@@ -367,7 +359,13 @@ import SwitchComp from "./components/switchComp.vue";
 
 import ExLeft from "./components/ex-left.vue";
 import ExRight from "./components/ex-right.vue";
-import { StartDrive, UpdateBattery, SetKey, CheckCarStatus, CarReport } from "@/axios/index.js";
+import {
+  StartDrive,
+  UpdateBattery,
+  SetKey,
+  CheckCarStatus,
+  CarReport,
+} from "@/axios/index.js";
 
 import { LoginTop, DeviceDetails } from "./axios/video.js";
 
@@ -381,7 +379,7 @@ import UDPSocketClient from "./utils/udpSocket.js";
 import { handleDriverSocketData } from "./utils/socketHelper.js";
 import { encryptAES } from "./utils/crypto.js";
 
-import { ExcavatorControlHandler } from "./control/excavator.js";
+import { ExcavatorControlHandler } from "./control/earthmover.js";
 import { useHESbus } from "./composables/useHESbus.js";
 import { useInactivityAlarm } from "./composables/useInactivityAlarm.js";
 import { repairs } from "./utils/img.js";
@@ -405,10 +403,6 @@ const vehicleId = ref("");
 const operMode = ref(false);
 const operFB = ref(false);
 const operDir = ref(false);
-const directionCenter = ref({});
-const directionDynamics = ref({});
-const acceleratorCenter = ref({});
-const acceleratorDynamics = ref({});
 
 const activeKey = ref([]);
 const chValue = ref({
@@ -846,6 +840,7 @@ const initRouteData = (options) => {
   if (details) {
     carDetails.value = JSON.parse(details);
     videoDefinition.value = carDetails.value.video_definition || "1";
+
     const type = carDetails.value.vehicle_type;
 
     // case fourWheelVehicle = 10 //遥控车 - 四驱车
@@ -870,8 +865,8 @@ const initRouteData = (options) => {
   }
 };
 
-let ch7Open;
-let ch7Close;
+let ch5Open;
+let ch5Close;
 const initVehicleConfig = () => {
   const details = carDetails.value;
   if (!details) return;
@@ -881,29 +876,30 @@ const initVehicleConfig = () => {
     // 正反 上下
     operFB.value = carDetails.value.reverse_up_down == 1;
     operDir.value = carDetails.value.reverse_left_right == 1;
-    
-    // ch1 方向左开右关 ch2 前进后退 ch3 //挖斗-左开值-上、右关值-下 
+
+    ch5Open =
+      carDetails.value.vehicle_config_detail.ch5.open_value.current_value;
+    ch5Close =
+      carDetails.value.vehicle_config_detail.ch5.close_value.current_value;
+
+    // ch1 方向左开右关 ch2 前进后退 ch3 //挖斗-左开值-上、右关值-下
     //   ch4;//摆臂- 上开值下关值 ch5;// 油泵
     // 液压挖机ch1～ch6 全部都是中位值的current_value
     // mixed_control 为1 油泵一直开着 为0时，ch5 ch4 ch6 需要开油泵 就是ch7 需要open_values
     // mixed_control 为1 油泵一直开着 为0时，ch5 ch4 ch6 需要开油泵 就是ch7 需要open_values
     const config = carDetails.value.vehicle_config_detail || {};
-    ["ch3", "ch4", "ch5", "ch6"].forEach((key) => {
+    ["ch1","ch2","ch3", "ch4"].forEach((key) => {
       if (config[key])
         chValue.value[key] = config[key].center_value.current_value;
     });
 
-
-  
     if (carType.value == 5) {
       if (carDetails.value.mixed_control == 1) {
-        chValue.value.ch4 = config["ch4"].open_value.current_value;
+        chValue.value.ch5 = config["ch5"].open_value.current_value;
       } else {
-        chValue.value.ch4 = config["ch4"].close_value.current_value;
+        chValue.value.ch5 = config["ch5"].close_value.current_value;
       }
-      chValue.value.ch1 = config["ch1"].center_value.current_value;
-      chValue.value.ch2 = config["ch2"].center_value.current_value;
-
+      
       carHandler.value = new ExcavatorControlHandler({
         reverseUpDownState: operFB.value,
         reverseLeftRightState: operDir.value,
@@ -975,6 +971,15 @@ const initSendLoop = () => {
   console.log("循环发送数据");
   console.log("发射机ID", uni.getStorageSync("app_id"));
   sendMsgTimer = setInterval(() => {
+
+    console.log(  chValue.value.ch1,
+        chValue.value.ch2,
+        chValue.value.ch3,
+        chValue.value.ch4,
+        chValue.value.ch5,
+        chValue.value.ch6,
+        chValue.value.ch7,
+        chValue.value.ch8);
     if (UDPSocket.value) {
       const app_id = uni.getStorageSync("app_id");
 
@@ -992,7 +997,7 @@ const initSendLoop = () => {
 
       UDPSocket.value.send(val);
     }
-  }, 40);
+  }, 500);
 };
 
 onUnmounted(() => {
@@ -1012,7 +1017,7 @@ onUnload(() => {
   clearAllTimers();
   clearInterval(timerNum.value);
   clearInterval(countdownTimer);
-  console.log(123);
+
   SetKey({
     order_no: orderNo.value,
     type: 1,
@@ -1025,44 +1030,7 @@ const handleLeftDrive = (param) => {
   onUserActivity();
 };
 
-// 正常左侧遥杆的上下箭头
-const handleUpDownDrive = (param) => {
-  let ch;
-  if (param.isLeft) {
-    // 一直按
-    if (param.flag == 1) {
-      carHandler.value.handleArrowControlChannel(
-        "left",
-        param.type == "up" ? true : false,
-      );
 
-      ch = carHandler.value.getCh1Ch2Value();
-      chValue.value.ch1 = ch.ch1;
-    } else {
-      chValue.value.ch1 =
-        carDetails.value.vehicle_config_detail.ch1.center_value.current_value;
-    }
-  } else {
-    if (param.flag == 1) {
-      // 挖机右
-      carHandler.value.handleArrowControlChannel(
-        "right",
-        param.type == "up" ? true : false,
-      );
-      ch = carHandler.value.getCh1Ch2Value();
-      chValue.value.ch2 = ch.ch2;
-    } else {
-      chValue.value.ch2 =
-        carDetails.value.vehicle_config_detail.ch2.center_value.current_value;
-    }
-  }
-  ch = carHandler.value.getChValue();
-  chValue.value.ch3 = ch.ch3;
-  chValue.value.ch4 = ch.ch4;
-  chValue.value.ch5 = ch.ch5;
-  chValue.value.ch6 = ch.ch6;
-  chValue.value.ch7 = ch.ch7;
-};
 
 // 遥杆操作
 const handleRightDrive = (param) => {
@@ -1077,23 +1045,24 @@ const handleComDrive = (type, param) => {
     param.down == false
   ) {
     carHandler.value.resetChValue();
-    chValue.value.ch7 = Math.min(ch7Open, ch7Close);
+    chValue.value.ch5 = Math.min(ch5Open, ch5Close);
+    console.log("chValue.value.ch5", chValue.value.ch5)
   } else {
     // 解决舵机先响的问题，应该油泵先响
     // 油泵 需要打开的时候 传开值关值的最大值
     // 关闭的时候 取开值关值的最小值
     if (type == "left") {
+      console.log(type)
       if (param.up || param.down) {
-        chValue.value.ch7 = Math.max(ch7Open, ch7Close);
+        chValue.value.ch5 = Math.max(ch5Open, ch5Close);
       } else {
-        chValue.value.ch7 = Math.min(ch7Open, ch7Close);
+        chValue.value.ch5 = Math.min(ch5Open, ch5Close);
       }
     }
     if (type == "right") {
-      chValue.value.ch7 = Math.max(ch7Open, ch7Close);
+      chValue.value.ch5 = Math.max(ch5Open, ch5Close);
     }
 
-    console.log(param.left, param.right, param.up, param.down);
     carHandler.value.handleRemoteControlChannel(
       type,
       param.left,
@@ -1105,54 +1074,14 @@ const handleComDrive = (type, param) => {
   }
 
   const ch = carHandler.value.getChValue();
+  chValue.value.ch1 = ch.ch1;
+  chValue.value.ch2 = ch.ch2;
   chValue.value.ch3 = ch.ch3;
   chValue.value.ch4 = ch.ch4;
-  chValue.value.ch5 = ch.ch5;
+
   chValue.value.ch6 = ch.ch6;
-};
-
-//  set
-const qualityList = ref([]);
-const currentQuality = ref("1");
-
-const dirMiddle = ref(1);
-const dirTurn = ref(1);
-const throttle = ref(1);
-const dirMiddleVal = ref(0);
-
-// 当前保存的值
-const saveVal = ref({
-  1: 0,
-  2: 0,
-  3: 0,
-});
-
-const dirMiddleValFunc = (num) => {
-  console.log("dirMiddleValFunc", num);
-  const mapNum = createMapperNew(
-    1,
-    100,
-    directionCenter.value.mini_value ?? 500,
-    directionCenter.value.max_value ?? 1500,
-    num,
-  );
-
-  dirMiddleVal.value = mapNum.toFixed(0);
-  console.log("dirMiddleVal.value", dirMiddleVal.value);
-};
-
-const setQualityList = () => {
-  const qualityListMap = [
-    { label: "户外", value: "1" },
-    { label: "超清", value: "2" },
-    { label: "高清", value: "3" },
-    { label: "标清", value: "4" },
-  ];
-  const targetValues = videoDefinition.value.split(",");
-  qualityList.value = qualityListMap.filter((item) =>
-    targetValues.includes(item.value),
-  );
-  currentQuality.value = carDetails.value.default_camera_clarity + "";
+  chValue.value.ch7 = ch.ch7;
+  chValue.value.ch8 = ch.ch8;
 };
 
 // 正反 旋转，上下操作
@@ -1165,22 +1094,9 @@ const setHandleOper = (type, val) => {
   carHandler.value.setReverseStatus(operFB.value, operDir.value);
 };
 
-const selectedMode = ref("mode1");
-// 定义两种模式的配置数据
-const steeringModes = [
-  { id: "mode1", isReverse: false }, // 正常布局
-  { id: "mode2", isReverse: true }, // 反转布局
-];
-// 点击切换左右操作
-const handleSetSelect = (id) => {
-  selectedMode.value = id;
-  operMode.value = selectedMode.value == "mode2";
-  onUserActivity();
-};
-
 const setArr = [{ name: "通用设置", key: 0 }];
 const setGroup = computed(() => {
-  return setArr
+  return setArr;
 });
 
 const selectedIndex = ref(0);
@@ -1189,151 +1105,9 @@ const handleItem = (index) => {
   onUserActivity();
 };
 
-// 改变值
-const changeVal = (value) => {
-  // directionCenter.value.current_value = value[1];
-  // directionDynamics.value.current_value = value[2];
-  // acceleratorDynamics.value.current_value = value[3];
-  carHandler.value.setConfigValue({
-    0: { current_value: value[0], max_value: directionCenter.value.max_value },
-    2: {
-      current_value: value[2],
-      max_value: directionDynamics.value.max_value,
-    },
-    3: {
-      current_value: value[3],
-      max_value: acceleratorDynamics.value.max_value,
-    },
-  });
-};
-
-// 是否点击保存
-const saveFlag = ref({ 1: false, 2: false, 3: false });
-const save = (type) => {
-  onUserActivity();
-  saveFlag.value[type] = true;
-  uni.showToast({ title: "保存成功", icon: "none" });
-};
-
 const close = () => {
   onUserActivity();
-  if (carType.value == 1) {
-    const val = {
-      0: carDetails.value.direction_center.current_value,
-      2: carDetails.value.direction_dynamics.current_value,
-      3: carDetails.value.accelerator_dynamics.current_value,
-    };
-
-    if (saveFlag.value[1]) {
-      val[0] = dirMiddleVal.value;
-      saveVal.value[1] = dirMiddleVal.value;
-    }
-    if (saveFlag.value[2]) {
-      val[2] = dirTurn.value;
-      saveVal.value[2] = dirTurn.value;
-    }
-    if (saveFlag.value[3]) {
-      val[3] = throttle.value;
-      saveVal.value[3] = throttle.value;
-    }
-    changeVal(val);
-
-    if (carType.value == 1) {
-      if (activeKey.value.includes["speed"]) {
-        showSpeed.value = true;
-      }
-    }
-  }
-
   setVisible.value = false;
-};
-// 滑动slider
-const setChangeVal = (flag, value) => {
-  onUserActivity();
-  const obj = JSON.parse(uni.getStorageSync("carDetails"));
-
-  let val = Object.assign(
-    {},
-    {
-      0: obj.direction_center.current_value,
-      2: obj.direction_dynamics.current_value,
-      3: obj.accelerator_dynamics.current_value,
-    },
-  );
-
-  if (flag == 1) {
-    dirMiddleValFunc(value);
-    dirMiddle.value = value;
-    val[0] = dirMiddleVal.value;
-    // 改变方向的中位值
-    chValue.value.ch1 = dirMiddleVal.value;
-  } else if (flag == 2) {
-    dirTurn.value = value;
-    val[2] = value;
-  } else {
-    throttle.value = value;
-    val[3] = value;
-  }
-  console.log("滑动slider之后,打印当前值", val);
-  changeVal(val);
-};
-
-let longPressTimer = null;
-const INITIAL_DELAY = 300; // 首次触发前的等待时间(ms)，区分单击和长按
-const REPEAT_INTERVAL = 80; // 长按后重复触发的间隔(ms)
-
-// 触摸开始
-const onTouchStart = (type, step) => {
-  onUserActivity();
-  // 立即执行一次
-  handleValueChange(type, step);
-
-  // 设置长按定时器
-  longPressTimer = setTimeout(() => {
-    clearTimeout(longPressTimer);
-    // 首次延迟后，切换为快速重复模式
-    longPressTimer = setInterval(() => {
-      handleValueChange(type, step);
-    }, REPEAT_INTERVAL);
-  }, INITIAL_DELAY);
-};
-
-// 触摸结束 / 取消
-const onTouchEnd = () => {
-  longPressTimer && clearTimeout(longPressTimer);
-  longPressTimer && clearInterval(longPressTimer);
-  longPressTimer = null;
-};
-
-const handleAdd = (type) => handleValueChange(type, 1);
-const handleReduce = (type) => handleValueChange(type, -1);
-const valueMap = { 1: dirMiddle, 2: dirTurn, 3: throttle };
-const valueMapMax = {
-  1: dirMiddle,
-  2: directionDynamics,
-  3: acceleratorDynamics,
-};
-// 2. 统一的加减处理函数
-const handleValueChange = (type, step) => {
-  const target = valueMap[type];
-  if (!target) return; // 如果 type 不匹配，直接返回
-  // 计算新值
-  const newValue = target.value + step;
-  if (type == 2 || type == 3) {
-    target.value = Math.max(
-      1,
-      Math.min(valueMapMax[type].value.current_value, newValue),
-    );
-  } else {
-    target.value = Math.max(1, Math.min(100, newValue));
-  }
-
-  // 第一个滑块
-  if (type == 1) {
-    console.log("第一个滑块");
-    dirMiddleValFunc(target.value);
-    dirMiddle.value = target.value;
-  }
 };
 
 // --------------------------tip -----------------------
@@ -1343,7 +1117,6 @@ const handleMaskClick = () => {
   // 如果需要点击遮罩关闭，可在此处设置 visible.value = false;
 };
 
-const message = ref("");
 const text = ref();
 let countdownTimer = null;
 

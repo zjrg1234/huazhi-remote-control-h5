@@ -26,9 +26,9 @@ const props = defineProps({
 });
 
 // --- 配置参数 ---
-const IDLE_DELAY = 500; // 进入待命模式的延迟时间(ms)
-const MAX_RADIUS = 65; // 圆点滑动的最大半径(px)
-const SWIPE_THRESHOLD = 15; // 触发箭头的阈值
+const IDLE_DELAY = 200; // 进入待命模式的延迟时间(ms)
+const MAX_RADIUS = 52; // 圆点滑动的最大半径(px)
+const SWIPE_THRESHOLD = 10; // 触发箭头的阈值
 
 // --- 响应式状态 ---
 const isDragging = ref(false);
@@ -105,7 +105,7 @@ const emitCurrentState = () => {
   isDownActive.value = down;
   isLeftActive.value = left;
   isRightActive.value = right;
-  console.log(speed)
+  
   emit("action", {
     up,
     down,
@@ -197,6 +197,7 @@ const handleMove = (e) => {
   // 圆点滑动逻辑
   let dx = clientX - readyBaseX;
   let dy = clientY - readyBaseY;
+ 
 
   // 计算距离并限制在圆内
   const distance = Math.sqrt(dx * dx + dy * dy);
@@ -227,64 +228,6 @@ const handleEnd = () => {
   resetArrows();
 };
 
-// ---- 外部按钮（上/下）长按重复逻辑 ----
-let longPressTimerUp = null;
-let repeatTimerUp = null;
-let longPressTimerDown = null;
-let repeatTimerDown = null;
-
-const LONG_PRESS_DELAY = 300;
-const REPEAT_INTERVAL = 100;
-
-const handleClickUp = () => {
-  emit("reset");
-  clearTimeout(longPressTimerUp);
-  clearInterval(repeatTimerUp);
-  doUpAction(true);
-
-  longPressTimerUp = setTimeout(() => {
-    repeatTimerUp = setInterval(() => {
-      doUpAction(true);
-    }, REPEAT_INTERVAL);
-  }, LONG_PRESS_DELAY);
-};
-
-const handleClickUpLeave = () => {
-  clearTimeout(longPressTimerUp);
-  clearInterval(repeatTimerUp);
-  longPressTimerUp = null;
-  repeatTimerUp = null;
-  doUpAction(false);
-};
-
-const handleClickDown = () => {
-  emit("reset");
-  clearTimeout(longPressTimerDown);
-  clearInterval(repeatTimerDown);
-  doDownAction(true);
-
-  longPressTimerDown = setTimeout(() => {
-    repeatTimerDown = setInterval(() => {
-      doDownAction(true);
-    }, REPEAT_INTERVAL);
-  }, LONG_PRESS_DELAY);
-};
-
-const handleClickDownLeave = () => {
-  clearTimeout(longPressTimerDown);
-  clearInterval(repeatTimerDown);
-  longPressTimerDown = null;
-  repeatTimerDown = null;
-  doDownAction(false);
-};
-
-const doDownAction = (flag) => {
-  emit("action2", { type: "down", isLeft: false, flag: flag ? 1 : 0 });
-};
-
-const doUpAction = (flag) => {
-  emit("action2", { type: "up", isLeft: false, flag: flag ? 1 : 0 });
-};
 </script>
 
 <style lang="scss" scoped>
@@ -306,51 +249,8 @@ const doUpAction = (flag) => {
   touch-action: none;
 }
 
-.up-up-arrow {
-  position: absolute;
-  left: 0;
-  top: 70px;
-  z-index: 9999;
-  height: 175px;
-  text-align: center;
-  width: 90px;
 
-  .arrow1 {
-    width: 36px;
-    height: 36px;
 
-    .image {
-      display: block;
-      width: 36px;
-      height: 36px;
-    }
-  }
-}
-
-.up-down-arrow {
-  position: absolute;
-  left: 40px;
-  top: 45px;
-  z-index: 9999;
-  height: 175px;
-  text-align: center;
-  width: 90px;
-
-  .arrow1 {
-    width: 36px;
-    height: 36px;
-
-    .image {
-      display: block;
-      width: 36px;
-      height: 36px;
-    }
-  }
-
-  .down {
-    margin-top: 20px;
-  }
-}
 
 .cont {
   position: relative;
@@ -363,57 +263,29 @@ const doUpAction = (flag) => {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 128px;
-    height: 128px;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
     pointer-events: none;
   }
 
-  /* 箭头通用（注释掉未使用） */
-  .arrow {
-    width: 26px;
-    height: 26px;
-    opacity: 0.7;
-    transition: all 0.2s ease;
-    z-index: 1;
-    pointer-events: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-
-    .image {
-      display: block;
-      width: 26px;
-      height: 26px;
-    }
-
-    &.active {
-      opacity: 1;
-      filter: drop-shadow(0 0 4px rgba(255, 167, 38, 0.8));
-      transform: scale(1.2);
-    }
-  }
-
-  /* 箭头位置（注释掉未使用） */
-  .arrow.up { position: absolute; left: 75px; top: 25px; }
-  .arrow.down { position: absolute; left: 75px; bottom: 25px; }
-  .arrow.left { position: absolute; top: 50%; transform: translateY(-50%); left: 25px; }
-  .arrow.right { position: absolute; top: 50%; transform: translateY(-50%); right: 25px; }
 
   /* 摇杆圆点 — 居中 */
   .dot {
     position: absolute;
     left: 50%;
     top: 50%;
-    width: 36px;
-    height: 36px;
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
     z-index: 2;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+
+
+    border: 2px solid rgba(84, 106, 130, 0.3);
+    background-color: rgba(90 ,112, 137 ,50%);
 
     &.ready {
-      box-shadow: 0 0 12px rgba(255, 167, 38, 0.8);
+      box-shadow: 0 0 12px rgba(90 ,112, 137, 0.8);
     }
   }
 }
