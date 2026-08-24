@@ -2,10 +2,8 @@
   <view class="landscape-page">
     <view
       class="page-content"
-      @touchstart="onUserActivity"
-      @touchmove="onUserActivity"
     >
-      <!-- @touchstart="onUserActivity" @touchmove="onUserActivity" -->
+      
       <cover-view class="logout" @click="logout">
         <cover-image
           src="./static/icon_exit@2x.png"
@@ -56,10 +54,10 @@
       <!-- 设置按钮 -->
       <cover-view class="right-cont">
         <cover-view class="flex">
-          <cover-view class="first">
+          <cover-view class="first"  @click="handleReport">
             <cover-image
               class="image"
-              @click="set"
+         
               src="./static/icon_repairs@2x.png"
               mode="aspectFit"
             />
@@ -352,13 +350,6 @@ import { ref, onMounted, onUnmounted, computed } from "vue";
 import { onLoad, onUnload, onHide } from "@dcloudio/uni-app";
 import { useUserStore } from "@/store/modules/user";
 
-import TimeClock from "./components/tclock.vue";
-
-import nBattery from "./components/nBattery.vue";
-import SwitchComp from "./components/switchComp.vue";
-
-import ExLeft from "./components/ex-left.vue";
-import ExRight from "./components/ex-right.vue";
 import {
   StartDrive,
   UpdateBattery,
@@ -369,11 +360,17 @@ import {
 
 import { LoginTop, DeviceDetails } from "./axios/video.js";
 
+import nBattery from "./components/nBattery.vue";
+import SwitchComp from "./components/switchComp.vue";
+import ExLeft from "./components/ex-left.vue";
+import ExRight from "./components/ex-right.vue";
+
+
+
+
 import {
   formatTime,
   handleBattery,
-  createReverseMapper,
-  createMapperNew,
 } from "./utils/utils.js";
 import UDPSocketClient from "./utils/udpSocket.js";
 import { handleDriverSocketData } from "./utils/socketHelper.js";
@@ -382,8 +379,7 @@ import { encryptAES } from "./utils/crypto.js";
 import { ExcavatorControlHandler } from "./control/earthmover.js";
 import { useHESbus } from "./composables/useHESbus.js";
 import { useInactivityAlarm } from "./composables/useInactivityAlarm.js";
-import { repairs } from "./utils/img.js";
-// import { reactive } from "vue";
+
 
 // ------------------- 状态 -------------------
 
@@ -391,7 +387,7 @@ const videoUrl = ref(""); // 视频地址
 const allPopupVisible = ref(false);
 const type = ref("tip");
 const carStatus = ref(false);
-const currentTime = ref("");
+const currentTime = ref("00:00:00");
 const showSpeed = ref(false);
 const showRepairReason = ref(false);
 
@@ -423,18 +419,8 @@ const numTip = ref(0);
 const { handleReceive, model } = useHESbus();
 const batteryPer = ref(100);
 const vlot = ref("");
-// 菜单配置
-const menuList = computed(() => {
-  return [
-    {
-      name: "报修",
-      icon: repairs,
-      key: "repairs",
-      iconSelect: repairs,
-      type: 1,
-    },
-  ];
-});
+
+
 
 // 计费定时器
 let sendMsgTimer = null;
@@ -557,7 +543,7 @@ const handleContinueDrive = () => {
   type.value = "";
 };
 const continueDrive = async () => {
-  onUserActivity();
+ 
   try {
     const res = await StartDrive({
       order_no: orderNo.value,
@@ -736,9 +722,7 @@ const handlePopupAction = (val) => {
   }
 };
 
-const handleOper = (type) => {
-  operMode.value = type == "mode2";
-};
+
 
 const set = () => {
   onUserActivity();
@@ -849,17 +833,18 @@ const initRouteData = (options) => {
     // bulldozerGeneralVehicle = 30 //铲车 (推土机) - 普通铲车case
     // bulldozerHydraulicVehicle = 31//铲车(推土机) - 液压铲车case
     // case otherVehicle = 40
-
-    if (type >= 10 && type <= 19) carType.value = "1";
+     carType.value = "5";
+      return
+    if (type == 31) {
+     
+    }
+    else if (type >= 10 && type <= 19) carType.value = "1";
     else if (type >= 20 && type <= 29 && type != 21) carType.value = "2";
     else if (type == 21) {
       carType.value = "3";
     } else if (type == 30) {
       carType.value = "4";
-    } else if (type == 31) {
-      carType.value = "5";
     }
-    carType.value = "5";
   } else {
     console.log("carDetails 空");
   }
@@ -893,7 +878,7 @@ const initVehicleConfig = () => {
         chValue.value[key] = config[key].center_value.current_value;
     });
 
-    if (carType.value == 5) {
+    if (carType.value == "5") {
       if (carDetails.value.mixed_control == 1) {
         chValue.value.ch5 = config["ch5"].open_value.current_value;
       } else {
@@ -1162,6 +1147,10 @@ const report = (text) => {
     },
   );
 };
+
+const handleReport = () => {
+  reportModal()
+}
 </script>
 
 <style lang="scss" scoped>
@@ -1646,7 +1635,7 @@ const report = (text) => {
       }
 
       .active {
-        color: #ffc838;
+        color: #0da5ff;
       }
 
       .gradient-line {
@@ -1659,9 +1648,9 @@ const report = (text) => {
         background: linear-gradient(
           to right,
           transparent,
-          rgba(245, 197, 66, 0.8) 20%,
-          #f5c542 50%,
-          rgba(245, 197, 66, 0.8) 80%,
+          rgba(13, 165, 255, 0.8) 20%,
+          #0da5ff 50%,
+          rgba(13, 165, 255, 0.8) 80%,
           transparent /* 终点：完全透明 */
         );
 
@@ -1699,76 +1688,7 @@ const report = (text) => {
 
     .pr {
       padding-right: 30px;
-    }
-
-    .btn-quality {
-      background: transparent;
-      border: 1px solid #f5c542;
-      color: #f5c542;
-      padding: 7px 10px 3px 10px;
-      border-radius: 4px;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      outline: none;
-      margin-right: 5px;
-      height: 15px;
-      line-height: 15px;
-    }
-
-    .btn-quality.active {
-      background-color: #f5c542;
-      color: #000000;
-      font-weight: bold;
-      border-color: #f5c542;
-    }
-
-    .option-card {
-      position: relative;
-      width: 150px;
-      height: 80px;
-      border: 0.5px solid rgba(255, 255, 255, 0.3);
-      border-radius: 6px;
-      background-color: rgba(0, 0, 0, 0.4);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 10px;
-    }
-
-    .option-card:hover {
-      border-color: rgba(255, 255, 255, 0.6);
-    }
-
-    .option-card.is-active {
-      border: 1px solid #f5c542;
-      background-color: rgba(245, 197, 66, 0.05);
-    }
-
-    .check-mark {
-      position: absolute;
-      top: -0.5px;
-      right: -0.5px;
-      width: 20px;
-      height: 20px;
-
-      display: flex;
-      align-items: flex-start;
-      justify-content: flex-end;
-      overflow: hidden;
-    }
-
-    .check-mark img {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 16px;
-      height: 16px;
-      transform: rotate(0deg);
-      display: block;
-    }
+    }  
 
     .content-layout {
       display: flex;
@@ -1901,7 +1821,7 @@ const report = (text) => {
     font-size: 12px;
     color: #1a1a1a;
     padding: 4px 8px;
-    background: #ffc838;
+    background: #0DA5FF;
     margin-left: 5px;
   }
 
@@ -2042,7 +1962,7 @@ const report = (text) => {
   }
 
   .right {
-    background: #ffc838;
+    background: #0DA5FF;
   }
 
   .mt {
@@ -2075,8 +1995,8 @@ const report = (text) => {
   }
 
   .reason-item.active {
-    border: 1px solid #ffc838;
-    background-color: #ffc838;
+    border: 1px solid #0DA5FF;
+    background-color: #0DA5FF;
     color: #1a1a1a;
   }
 

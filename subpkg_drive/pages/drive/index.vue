@@ -477,22 +477,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed, getCurrentInstance } from "vue";
+import { ref, onMounted, onUnmounted, computed } from "vue";
 import { onLoad, onUnload, onHide } from "@dcloudio/uni-app";
 import { useUserStore } from "@/store/modules/user";
 
-// import ALLPopup from "./components/tip.vue";
-// import SetPopup from "./components/set.vue";
-// import microphone from "./components/microphone.vue";
+
 import TimeClock from "./components/tclock.vue";
-// import battery from "./components/battery.vue";
+
 import nBattery from "./components/nBattery.vue";
 import SwitchComp from "./components/switchComp.vue";
 import SliderComp from "./components/sliderComp.vue";
 import UpDown from "./components/up-down.vue";
 import LeftRight from "./components/left-right.vue";
-// import pointOprea1 from "./components/digger-opera1.vue";
-// import pointOprea2 from "./components/digger-opera2.vue";
+
 import ExLeft from "./components/ex-left.vue";
 import ExRight from "./components/ex-right.vue";
 

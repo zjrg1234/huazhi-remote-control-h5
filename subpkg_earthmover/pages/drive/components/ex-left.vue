@@ -209,65 +209,7 @@ const handleEnd = () => {
   resetArrows();
 };
 
-//  ========== 上下按钮长按（连续触发） ==========
-let longPressTimerUp = null;
-let repeatTimerUp = null;
-let longPressTimerDown = null;
-let repeatTimerDown = null;
 
-const LONG_PRESS_DELAY = 300;   // 长按识别延迟（ms）
-const REPEAT_INTERVAL = 100;    // 重复触发间隔（ms）
-
-// ---- 上按钮 ----
-const handleClickUp = () => {
-  emit("reset");
-  clearTimeout(longPressTimerUp);
-  clearInterval(repeatTimerUp);
-  doUpAction(true);
-
-  longPressTimerUp = setTimeout(() => {
-    repeatTimerUp = setInterval(() => {
-      doUpAction(true);
-    }, REPEAT_INTERVAL);
-  }, LONG_PRESS_DELAY);
-};
-
-const handleClickUpLeave = () => {
-  clearTimeout(longPressTimerUp);
-  clearInterval(repeatTimerUp);
-  longPressTimerUp = null;
-  repeatTimerUp = null;
-  doUpAction(false);
-};
-
-const handleClickDown = () => {
-  emit("reset");
-  clearTimeout(longPressTimerDown);
-  clearInterval(repeatTimerDown);
-  doDownAction(true);
-
-  longPressTimerDown = setTimeout(() => {
-    repeatTimerDown = setInterval(() => {
-      doDownAction(true);
-    }, REPEAT_INTERVAL);
-  }, LONG_PRESS_DELAY);
-};
-
-const handleClickDownLeave = () => {
-  clearTimeout(longPressTimerDown);
-  clearInterval(repeatTimerDown);
-  longPressTimerDown = null;
-  repeatTimerDown = null;
-  doDownAction(false);
-};
-
-const doDownAction = (flag) => {
-  emit("action2", { type: "down", isLeft: true, flag: flag ? 1 : 0 });
-};
-
-const doUpAction = (flag) => {
-  emit("action2", { type: "up", isLeft: true, flag: flag ? 1 : 0 });
-};
 </script>
 
 <style lang="scss" scoped>

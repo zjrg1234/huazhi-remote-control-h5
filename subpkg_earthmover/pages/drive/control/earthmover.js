@@ -1,4 +1,3 @@
-
 // 2. 将核心逻辑封装为类
 export class ExcavatorControlHandler {
   /**
@@ -11,17 +10,16 @@ export class ExcavatorControlHandler {
 
     this.mixedControl = config.mixedControl;
     this.reverseUpDownState = config.reverseUpDownState;
-    this.reverseRotateState = config.reverseRotateState;
+    this.reverseLeftRightState = config.reverseLeftRightState;
 
     this.ch1 = config.ch1.center_value.current_value; // 方向左开右关
-    this.ch2 = config.ch2.center_value.current_value; //  前进后退 
-    this.ch3 = config.ch3.center_value.current_value; // ch3 //挖斗-左开值-上、右关值-下 
+    this.ch2 = config.ch2.center_value.current_value; //  前进后退
+    this.ch3 = config.ch3.center_value.current_value; // ch3 //挖斗-左开值-上、右关值-下
     this.ch4 = config.ch4.center_value.current_value; // ch4;//摆臂- 上开值下关值
     this.ch5 = config.ch5.center_value.current_value; // ch5;// 油泵
     this.ch6 = config.ch6.close_value.current_value;
-    this.ch7 = config.ch7.close_value.current_value; 
+    this.ch7 = config.ch7.close_value.current_value;
     this.ch8 = config.ch8.close_value.current_value;
-
   } // 模拟获取配置参数的方法
 
   setReverseStatus(type1, type2) {
@@ -33,25 +31,23 @@ export class ExcavatorControlHandler {
     return this.config[index];
   }
 
-
   resetChValue() {
-    this.ch1 = this.config.ch1.center_value.current_value;  // 方向左开右关
-    this.ch2 = this.config.ch2.center_value.current_value; // 前进后退 
-    this.ch3 = this.config.ch3.center_value.current_value; // ch3 //挖斗-左开值-上、右关值-下 
+    this.ch1 = this.config.ch1.center_value.current_value; // 方向左开右关
+    this.ch2 = this.config.ch2.center_value.current_value; // 前进后退
+    this.ch3 = this.config.ch3.center_value.current_value; // ch3 //挖斗-左开值-上、右关值-下
     this.ch4 = this.config.ch4.center_value.current_value; // ch4;//摆臂- 上开值下关值
 
     this.ch6 = this.config.ch6.close_value.current_value;
-    this.ch7 = this.config.ch7.close_value.current_value; 
+    this.ch7 = this.config.ch7.close_value.current_value;
     this.ch8 = this.config.ch8.close_value.current_value;
 
     this.ch5 = this.getCloseCH5Value();
-    
   }
   getCloseCH5Value() {
     const ch5Open = this.config.ch5.open_value.current_value;
     const ch5Close = this.config.ch5.close_value.current_value;
     this.ch5 = Math.min(ch5Open, ch5Close);
-    return this.ch5
+    return this.ch5;
   }
   getChValue() {
     return {
@@ -73,11 +69,8 @@ export class ExcavatorControlHandler {
     };
   }
 
-
-
   // 遥杆操作
   handleRemoteControlChannel(type, left, right, up, down, rateValue) {
- 
     const ch5Open = this.config.ch5.open_value.current_value;
     const ch5Close = this.config.ch5.close_value.current_value;
     // 左侧遥杆
@@ -89,21 +82,23 @@ export class ExcavatorControlHandler {
       const ch2Open = this.config.ch2.open_value.current_value;
       const ch2Close = this.config.ch2.close_value.current_value;
 
-      // 向左旋转 或者 开启旋转反向
-      if (left || (right && this.reverseRotateState)) {
-        this.ch1 = ch1Center + (ch1Open - ch1Center) * rateValue;
-      }
-      if (right || (left && this.reverseRotateState)) {
-        this.ch1 = ch1Center - (ch1Center - ch1Close) * rateValue;
+     
+
+      if (left || right) {
+        const useOpen = left !== this.reverseLeftRightState;
+        this.ch1 = useOpen
+          ? ch1Center + (ch1Open - ch1Center) * rateValue
+          : ch1Center - (ch1Center - ch1Close) * rateValue;
       }
 
-      if (up || (down && this.reverseUpDownState)) {
-        this.ch2 = ch2Center + (ch2Open - ch2Center) * rateValue;
+      if (up || down) {
+        // 当“向上”与“反转状态”状态不同时，使用 openValue
+        const useOpen = up !== this.reverseUpDownState;
+        this.ch2 = useOpen
+          ? ch2Center + (ch2Open - ch2Center) * rateValue
+          : ch2Center - (ch2Center - ch2Close) * rateValue;
       }
-      if (down || (up && this.reverseUpDownState)) {
-        this.ch2 = ch2Center - (ch2Center - ch2Close) * rateValue;
-      }
-     
+
     } else {
       // 右侧遥控 ch3挖斗-左开值-上、右关值-下  ch4摆臂- 上开值下关值
       const ch3Center = this.config.ch3.center_value.current_value;
@@ -128,7 +123,7 @@ export class ExcavatorControlHandler {
       }
 
       if (up) {
-        this.ch4 = ch4Center + (ch4Open - ch4Center) * rateValue; 
+        this.ch4 = ch4Center + (ch4Open - ch4Center) * rateValue;
       }
     }
   }

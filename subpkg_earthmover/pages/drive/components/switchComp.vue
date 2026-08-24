@@ -102,6 +102,6 @@ export default {
   border-radius: 50%;
 }
 .active {
-  background: #FFC838;
+  background: #0DA5FF;
 }
 </style>
