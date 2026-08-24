@@ -173,7 +173,7 @@ export class ExcavatorControlHandler {
 
       if (left || right) {
         const useOpen = left !== this.reverseLeftRightState;
-        this.ch1 = useOpen
+        this.ch3 = useOpen
           ? ch3Center + (ch3Open - ch3Center) * rateValue
           : ch3Center - (ch3Center - ch3Close) * rateValue;
       }
