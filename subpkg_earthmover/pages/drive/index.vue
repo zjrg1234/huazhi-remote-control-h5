@@ -982,7 +982,7 @@ const initSendLoop = () => {
 
       UDPSocket.value.send(val);
     }
-  }, 500);
+  }, 40);
 };
 
 onUnmounted(() => {
