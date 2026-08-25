@@ -1019,6 +1019,7 @@ const logout = () => {
   showSpeed.value = false;
   if (carType.value == 1) {
     handleFBDrive({ fb: false, value: 0 });
+    handleLRDrive({ lr: false, value: 0 });
     handleIcon("speed");
   }
 };
@@ -1371,6 +1372,7 @@ const handleLRDrive = (item) => {
   } else {
     if (item.value == 0) {
       chValue.value.ch1 = directionCenter.value.current_value;
+      return;
     } else {
       ratioValue = item.ratioValue;
       type = "rightType";
