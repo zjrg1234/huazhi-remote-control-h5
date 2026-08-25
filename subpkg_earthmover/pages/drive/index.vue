@@ -801,7 +801,8 @@ const initVehicleConfig = () => {
       } else {
         chValue.value.ch5 = config["ch5"].close_value.current_value;
       }
-      chValue.value.ch6 = config["ch6"].close_value.current_value;
+      // 开值 灯光是关闭的
+      chValue.value.ch6 = config["ch6"].open_value.current_value;
 
       carHandler.value = new ExcavatorControlHandler({
         reverseUpDownState: operFB.value,
@@ -817,11 +818,11 @@ const initVehicleConfig = () => {
 const isShowLight = ref(false)
 const setCh6 = () => {
   isShowLight.value = !isShowLight.value;
-  console.log(carDetails.value)
+  // 灯光开 ch6 用关值
   if (isShowLight.value) {
-    chValue.value.ch6 = carDetails.value.vehicle_config_detail.ch6.open_value.current_value
-  } else {
     chValue.value.ch6 = carDetails.value.vehicle_config_detail.ch6.close_value.current_value
+  } else {
+    chValue.value.ch6 = carDetails.value.vehicle_config_detail.ch6.open_value.current_value
   }
 }
 
