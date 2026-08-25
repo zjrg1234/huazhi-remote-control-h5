@@ -254,6 +254,7 @@ const handleDrive = (item) => {
 const handlePwd = () => {
   if (password.value === currentCar.value.password) {
     pwdVisible.value = false;
+    password.value = '';
     selectCar.value.vehicle_id = currentCar.value.id;
     selectCar.value.vehicle_name = currentCar.value.vehicle_name;
     selectCar.value.vehicle_image = currentCar.value.vehicle_image;
