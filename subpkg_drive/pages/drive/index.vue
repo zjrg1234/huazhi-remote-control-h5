@@ -1651,6 +1651,7 @@ const changeVal = (value) => {
       max_value: acceleratorDynamics.value.max_value,
     },
   });
+  console.log(1)
 };
 
 // 是否点击保存
@@ -1722,7 +1723,6 @@ const setChangeVal = (flag, value) => {
     throttle.value = value;
     val[3] = value;
   }
-  console.log("滑动slider之后,打印当前值", val);
   changeVal(val);
 };
 
@@ -1781,6 +1781,7 @@ const handleValueChange = (type, step) => {
     console.log("第一个滑块");
     dirMiddleValFunc(target.value);
     dirMiddle.value = target.value;
+    chValue.value.ch1 = dirMiddleVal.value
   }
 };
 
