@@ -27,11 +27,9 @@ export class CarControlHandler {
   }
 
   setConfigValue(obj) {
-    console.log("setConfigValue", obj);
     this.config[0] = obj[0];
     this.config[2] = obj[2];
     this.config[3] = obj[3];
-
   }
 
   setReverseStatus(type1, type2) {

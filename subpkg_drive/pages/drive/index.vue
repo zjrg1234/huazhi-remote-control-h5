@@ -1651,7 +1651,7 @@ const changeVal = (value) => {
       max_value: acceleratorDynamics.value.max_value,
     },
   });
-  console.log(1)
+ 
 };
 
 // 是否点击保存
@@ -1674,6 +1674,8 @@ const close = () => {
     if (saveFlag.value[1]) {
       val[0] = dirMiddleVal.value;
       saveVal.value[1] = dirMiddleVal.value;
+    } else {
+      chValue.value.ch1 = carDetails.value.direction_center.current_value;
     }
     if (saveFlag.value[2]) {
       val[2] = dirTurn.value;
