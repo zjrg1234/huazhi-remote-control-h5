@@ -225,7 +225,7 @@
                       </cover-view>
                       <!-- <slider :min="1" :max="100" :value="dirMiddle" @change="setChangeVal(1, $event)"
                         activeColor="#f5c542" backgroundColor="#e5e5e5" block-size="20" /> -->
-                      <SliderComp v-model="dirMiddle" :min="1" :max="100" @change="setChangeVal(1, $event)">
+                      <SliderComp v-model="dirMiddle" :min="1" :max="100">
                       </SliderComp>
                       <cover-view class="slider-label-bottom">
                         <cover-view class="num-text">
@@ -262,7 +262,7 @@
                       </cover-view>
 
                       <SliderComp v-model="dirTurn" :min="1" :max="directionDynamics.current_value"
-                        @change="setChangeVal(2, $event)"></SliderComp>
+                       ></SliderComp>
                       <cover-view class="slider-label-bottom">
                         <cover-view class="num-text">
                           {{ directionDynamics.mini_value }}
@@ -297,8 +297,7 @@
                         </cover-view>
                       </cover-view>
 
-                      <SliderComp v-model="throttle" :min="1" :max="acceleratorDynamics.current_value"
-                        @change="setChangeVal(3, $event)"></SliderComp>
+                      <SliderComp v-model="throttle" :min="1" :max="acceleratorDynamics.current_value"></SliderComp>
 
                       <cover-view class="slider-label-bottom">
                         <cover-view class="num-text num-left">
@@ -480,16 +479,12 @@
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import { onLoad, onUnload, onHide } from "@dcloudio/uni-app";
 import { useUserStore } from "@/store/modules/user";
-
-
 import TimeClock from "./components/tclock.vue";
-
 import nBattery from "./components/nBattery.vue";
 import SwitchComp from "./components/switchComp.vue";
 import SliderComp from "./components/sliderComp.vue";
 import UpDown from "./components/up-down.vue";
 import LeftRight from "./components/left-right.vue";
-
 import ExLeft from "./components/ex-left.vue";
 import ExRight from "./components/ex-right.vue";
 
@@ -498,7 +493,6 @@ import { LoginTop, DeviceDetails } from "./axios/video.js";
 
 import {
   formatTime,
-  mapToPer,
   handleBattery,
   createReverseMapper,
   createMapperNew,
@@ -506,7 +500,6 @@ import {
 import UDPSocketClient from "./utils/udpSocket.js";
 import { handleDriverSocketData } from "./utils/socketHelper.js";
 import { encryptAES } from "./utils/crypto.js";
-
 import { CarControlHandler } from "./control/siqu.js";
 import { ExcavatorControlHandler } from "./control/excavator.js";
 import { useHESbus } from "./composables/useHESbus.js";
@@ -526,7 +519,7 @@ import {
   light,
   light_selected,
 } from "./utils/img.js";
-// import { reactive } from "vue";
+
 
 // ------------------- 状态 -------------------
 
@@ -679,6 +672,7 @@ const clearSendTimer = () => {
 };
 
 const clearAllTimers = () => {
+
   if (billingTimer) {
     clearInterval(billingTimer);
     billingTimer = null;
@@ -997,17 +991,19 @@ const set = () => {
     saveFlag.value = { 1: false, 2: false, 3: false };
     showSpeed.value = false;
     handleFBDrive({ fb: false, value: 0 });
+    handleLRDrive({ lr: false, value: 0 });
     const mapNum = createReverseMapper(
       1,
       100,
       directionCenter.value.mini_value,
       directionCenter.value.max_value,
     );
-    console.log("点击设置， 当前中位值", saveVal.value[1]);
-    dirMiddle.value = mapNum(saveVal.value[1]);
+    // console.log("点击设置， 当前中位值", saveVal.value[1]);
+    dirMiddle.value = mapNum(uni.getStorageSync('ch1'));
     dirMiddleValFunc(dirMiddle.value);
-    dirTurn.value = saveVal.value[2];
-    throttle.value = saveVal.value[3];
+    dirTurn.value = uni.getStorageSync('ch1dir');
+    throttle.value = uni.getStorageSync('ch2Acc');
+    
   }
 
 };
@@ -1200,6 +1196,9 @@ const initVehicleConfig = () => {
       chValue.value.ch2 = acceleratorCenter.value.current_value;
       chValue.value.ch7 = config["ch7"].close_value.current_value;
       chValue.value.ch8 = config["ch8"].close_value.current_value;
+      uni.setStorageSync('ch1', directionCenter.value.current_value)
+      uni.setStorageSync('ch1dir', directionDynamics.value.current_value)
+      uni.setStorageSync('ch2Acc', acceleratorDynamics.value.current_value)
 
       carHandler.value = new CarControlHandler({
         reverseUpDownState: operFB.value,
@@ -1295,6 +1294,7 @@ const initSendLoop = () => {
   console.log("发射机ID", uni.getStorageSync("app_id"));
 
   sendMsgTimer = setInterval(() => {
+    console.log("chValue.value.ch2", chValue.value.ch2)
     if (UDPSocket.value) {
       const app_id = uni.getStorageSync("app_id");
       const val = handleDriverSocketData(
@@ -1371,7 +1371,7 @@ const handleLRDrive = (item) => {
     type = "leftType";
   } else {
     if (item.value == 0) {
-      chValue.value.ch1 = directionCenter.value.current_value;
+      chValue.value.ch1 = uni.getStorageSync("ch1");
       return;
     } else {
       ratioValue = item.ratioValue;
@@ -1385,6 +1385,7 @@ const handleLRDrive = (item) => {
 };
 
 onUnmounted(() => {
+  clearSendTimer()
   clearAllTimers();
   clearInterval(timerNum.value);
   clearInterval(countdownTimer);
@@ -1398,10 +1399,11 @@ onUnload(() => {
     UDPSocket.value.close();
     UDPSocket.value = null;
   }
+  clearSendTimer()
   clearAllTimers();
   clearInterval(timerNum.value);
   clearInterval(countdownTimer);
-  console.log(123)
+
   SetKey({
     order_no: orderNo.value,
     type: 1,
@@ -1545,9 +1547,6 @@ const handleComDrive = (type, param) => {
 
 };
 
-//  set
-const qualityList = ref([]);
-const currentQuality = ref("1");
 
 const dirMiddle = ref(1);
 const dirTurn = ref(1);
@@ -1562,7 +1561,7 @@ const saveVal = ref({
 });
 
 const dirMiddleValFunc = (num) => {
-  console.log("dirMiddleValFunc", num);
+
   const mapNum = createMapperNew(
     1,
     100,
@@ -1572,26 +1571,13 @@ const dirMiddleValFunc = (num) => {
   );
 
   dirMiddleVal.value = mapNum.toFixed(0);
-  console.log("dirMiddleVal.value", dirMiddleVal.value);
+  console.log("滑动转换之后对应的ch1的值", dirMiddleVal.value);
 };
 
-const setQualityList = () => {
-  const qualityListMap = [
-    { label: "户外", value: "1" },
-    { label: "超清", value: "2" },
-    { label: "高清", value: "3" },
-    { label: "标清", value: "4" },
-  ];
-  const targetValues = videoDefinition.value.split(",");
-  qualityList.value = qualityListMap.filter((item) =>
-    targetValues.includes(item.value),
-  );
-  currentQuality.value = carDetails.value.default_camera_clarity + "";
-};
 
 // 正反 旋转，上下操作
 const setHandleOper = (type, val) => {
-  console.log(type, val);
+
   onUserActivity();
   if (type == 1) operFB.value = val;
   if (type == 2) operDir.value = val;
@@ -1642,6 +1628,7 @@ const changeVal = (value) => {
   // directionCenter.value.current_value = value[1];
   // directionDynamics.value.current_value = value[2];
   // acceleratorDynamics.value.current_value = value[3];
+  console.log("changeVal", value[0], value[2], value[3])
   carHandler.value.setConfigValue({
     0: { current_value: value[0], max_value: directionCenter.value.max_value },
     2: {
@@ -1662,34 +1649,38 @@ const save = (type) => {
   onUserActivity();
   saveFlag.value[type] = true;
   uni.showToast({ title: "保存成功", icon: "none" });
+ 
 };
 
 const close = () => {
   onUserActivity();
   if (carType.value == 1) {
     const val = {
-      0: carDetails.value.direction_center.current_value,
-      2: carDetails.value.direction_dynamics.current_value,
-      3: carDetails.value.accelerator_dynamics.current_value,
+      0: uni.getStorageSync("ch1"),
+      2: uni.getStorageSync('ch1dir'),
+      3: uni.getStorageSync('ch2Acc'),
     };
 
     if (saveFlag.value[1]) {
       val[0] = dirMiddleVal.value;
       saveVal.value[1] = dirMiddleVal.value;
+      uni.setStorageSync("ch1", dirMiddleVal.value)
     } else {
-      chValue.value.ch1 = carDetails.value.direction_center.current_value;
+      chValue.value.ch1 = uni.getStorageSync("ch1");
     }
     if (saveFlag.value[2]) {
       val[2] = dirTurn.value;
       saveVal.value[2] = dirTurn.value;
-    }
+      uni.setStorageSync("ch1dir", dirTurn.value)
+    } 
+
     if (saveFlag.value[3]) {
       val[3] = throttle.value;
       saveVal.value[3] = throttle.value;
+      uni.setStorageSync("ch2Acc", throttle.value)
+
     }
     changeVal(val);
-
-
     if (carType.value == 1) {
       if (activeKey.value.includes["speed"]) {
         showSpeed.value = true;
@@ -1701,34 +1692,34 @@ const close = () => {
 
 };
 // 滑动slider
-const setChangeVal = (flag, value) => {
-  onUserActivity();
-  const obj = JSON.parse(uni.getStorageSync("carDetails"));
+// const setChangeVal = (flag, value) => {
+//   onUserActivity();
+//   const obj = JSON.parse(uni.getStorageSync("carDetails"));
 
-  let val = Object.assign(
-    {},
-    {
-      0: obj.direction_center.current_value,
-      2: obj.direction_dynamics.current_value,
-      3: obj.accelerator_dynamics.current_value,
-    },
-  );
+//   let val = Object.assign(
+//     {},
+//     {
+//       0: obj.direction_center.current_value,
+//       2: obj.direction_dynamics.current_value,
+//       3: obj.accelerator_dynamics.current_value,
+//     },
+//   );
 
-  if (flag == 1) {
-    dirMiddleValFunc(value);
-    dirMiddle.value = value;
-    val[0] = dirMiddleVal.value;
-    // 改变方向的中位值
-    chValue.value.ch1 = dirMiddleVal.value;
-  } else if (flag == 2) {
-    dirTurn.value = value;
-    val[2] = value;
-  } else {
-    throttle.value = value;
-    val[3] = value;
-  }
-  changeVal(val);
-};
+//   if (flag == 1) {
+//     dirMiddleValFunc(value);
+//     dirMiddle.value = value;
+//     val[0] = dirMiddleVal.value;
+//     // 改变方向的中位值
+//     chValue.value.ch1 = dirMiddleVal.value;
+//   } else if (flag == 2) {
+//     dirTurn.value = value;
+//     val[2] = value;
+//   } else {
+//     throttle.value = value;
+//     val[3] = value;
+//   }
+//   changeVal(val);
+// };
 
 let longPressTimer = null;
 const INITIAL_DELAY = 300; // 首次触发前的等待时间(ms)，区分单击和长按
@@ -1757,8 +1748,8 @@ const onTouchEnd = () => {
   longPressTimer = null;
 };
 
-const handleAdd = (type) => handleValueChange(type, 1);
-const handleReduce = (type) => handleValueChange(type, -1);
+// const handleAdd = (type) => handleValueChange(type, 1);
+// const handleReduce = (type) => handleValueChange(type, -1);
 const valueMap = { 1: dirMiddle, 2: dirTurn, 3: throttle };
 const valueMapMax = {
   1: dirMiddle,

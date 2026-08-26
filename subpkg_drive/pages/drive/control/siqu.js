@@ -46,9 +46,9 @@ export class CarControlHandler {
 
   handleTwoDirectionControlChannel(isUpDown, positionType, ratioValue) {
     // 如果输出 false，就是 this 丢失
-    let maxValue = 0.0;
+
     let centerValue = 0.0;
-    let minValue = 0.0;
+
     let rateValue = 0.0;
 
     // 1,3 进退油门
@@ -83,8 +83,8 @@ export class CarControlHandler {
         }
       }
     } else {
-      // ==========0,2 左右控制 (方向) ==========
-
+      // ==========0,2 左右控制 (方向)  方向力度控制转向快速==========
+      
       centerValue = this.getConfigValue(0)?.current_value;
 
       const directionDynamicsValue = this.getConfigValue(2)?.current_value;
