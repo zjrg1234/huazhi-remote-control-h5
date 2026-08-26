@@ -53,15 +53,16 @@ export class CarControlHandler {
 
     // 1,3 进退油门
     if (isUpDown === true) {
-      //maxValue = this.getConfigValue(1)?.max_value;
-      centerValue = this.getConfigValue(1)?.current_value; // accelerator_center
-      //minValue = this.getConfigValue(1)?.min_value ; // 计算油门力度比例
-      console.log("中位值：", centerValue);
+
+      centerValue = Number(this.getConfigValue(1)?.current_value); // accelerator_center
+
+
       const acceleratorDynamicsValue = this.getConfigValue(3)?.current_value;
       const acceleratorDynamicsMaxValue = this.getConfigValue(3)?.max_value;
       rateValue = acceleratorDynamicsValue / acceleratorDynamicsMaxValue;
 
-      console.log("rateValue", rateValue, "ratioValue", ratioValue);
+      console.log("acceleratorDynamicsValue", acceleratorDynamicsValue, "acceleratorDynamicsMaxValue", acceleratorDynamicsMaxValue);
+
       if (positionType === MoveDirectionControlType.endType) {
         // 摇杆回中
         this.ch2 = Math.round(centerValue);
@@ -85,11 +86,12 @@ export class CarControlHandler {
     } else {
       // ==========0,2 左右控制 (方向)  方向力度控制转向快速==========
       
-      centerValue = this.getConfigValue(0)?.current_value;
+      centerValue = Number(this.getConfigValue(0)?.current_value);
 
       const directionDynamicsValue = this.getConfigValue(2)?.current_value;
       const directionDynamicsMaxValue = this.getConfigValue(2)?.max_value;
       rateValue = directionDynamicsValue / directionDynamicsMaxValue;
+     
 
       if (positionType === MoveDirectionControlType.endType) {
         // 摇杆回中

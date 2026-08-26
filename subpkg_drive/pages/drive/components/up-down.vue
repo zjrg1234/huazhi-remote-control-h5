@@ -140,7 +140,7 @@ const updateArrows = (dx, dy) => {
   if (hasActive && isDragging.value) {
     // 立即发送一次，保证即时响应
     const value = Math.round(dy * 100) / 100;
-      console.log("立马发送的值",value)
+
 
     emit("action", { fb: dy < 0, value: value, ratioValue });
 

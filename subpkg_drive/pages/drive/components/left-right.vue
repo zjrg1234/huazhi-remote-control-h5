@@ -191,7 +191,7 @@ const updateArrows = (dx, dy) => {
   const hasActive = isLeftActive.value || isRightActive.value;
   // console.log(isLeftActive.value,"isLeftActive.value")
   // console.log(isRightActive.value,"isRightActive.value")
-  console.log(hasActive,"hasActive")
+
   if (hasActive && isDragging.value) {
     // 立即发送一次（保证即时响应）
 		

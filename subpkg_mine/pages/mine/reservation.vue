@@ -206,12 +206,19 @@ const handleAction = async (item) => {
   if (flag.value) return;
   flag.value = true;
 
-  const { code, msg } = await CheckCar({ vehicle_id: item.vehicle_id });
+  const { code, msg, data } = await CheckCar({ vehicle_id: item.vehicle_id });
+  if (code == 200 ) { 
+      if (data.state == 0) {
+        uni.showToast({ title: msg, icon: "none" });
+        flag.value = false;
+        return;
+      }
+  }
   if (code != 200) {
     uni.showToast({ title: msg, icon: "none" });
     flag.value = false;
     return;
-  }
+  } 
 
   const res = await LockCar({ vehicle_id: item.vehicle_id });
   if (res.code != 200) {
@@ -219,7 +226,7 @@ const handleAction = async (item) => {
     flag.value = false;
     return;
   }
-
+ 
   GetCarDetails({ id: item.vehicle_id })
     .then((res) => {
       if (res.code == 200) {

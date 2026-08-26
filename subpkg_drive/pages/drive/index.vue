@@ -1294,7 +1294,7 @@ const initSendLoop = () => {
   console.log("发射机ID", uni.getStorageSync("app_id"));
 
   sendMsgTimer = setInterval(() => {
-    console.log("chValue.value.ch2", chValue.value.ch2)
+
     if (UDPSocket.value) {
       const app_id = uni.getStorageSync("app_id");
       const val = handleDriverSocketData(
@@ -1316,7 +1316,7 @@ const initSendLoop = () => {
 
 // 四驱车 前进后退
 const handleFBDrive = (item) => {
-  console.log(item);
+
   // 如果开启定速 消失掉
   const index = activeKey.value.indexOf("speed");
   if (index > -1) {
