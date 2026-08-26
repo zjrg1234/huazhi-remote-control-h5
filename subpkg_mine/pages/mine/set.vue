@@ -16,7 +16,7 @@
     <view class="card">
       <view class="item">
         <text class="label">版本号</text>
-        <text class="text">1.0.8</text>
+        <text class="text">1.0.9</text>
       </view>
       <view class="item" @click="handleOpenPrivacy">
         <text class="label">隐私政策</text>

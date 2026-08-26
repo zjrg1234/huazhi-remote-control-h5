@@ -526,7 +526,7 @@ import {
 const videoUrl = ref(""); // 视频地址
 const allPopupVisible = ref(false);
 const type = ref("tip");
-const carStatus = ref(false);
+const carStatus = ref(true);
 const currentTime = ref("");
 const showSpeed = ref(false);
 const showRepairReason = ref(false);
