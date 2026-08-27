@@ -36,12 +36,14 @@ if (typeof cancelAnimationFrame === 'undefined') {
   };
 }
 
+import i18n from '@/locale/index.js'
+
 export function createApp() {
   const app = createSSRApp(App)
   
   // 挂载Pinia
   app.use(pinia)
-  
+   app.use(i18n)
   // 全局挂载请求
   uni.$get = get
   uni.$post = post
