@@ -8,6 +8,7 @@ export const useUserStore = defineStore("user", {
     areaId: uni.getStorageSync("areaId") || "",
     balance: uni.getStorageSync("balance"),
     energy: uni.getStorageSync("energy"),
+    headShot: uni.getStorageSync("headShot")
   }),
   actions: {
     // 登录保存信息
@@ -15,7 +16,7 @@ export const useUserStore = defineStore("user", {
       this.userInfo = data;
       this.id = data.id;
       uni.setStorageSync("id", data.id);
-
+      this.headShot = data.head_shot
       this.balance = data.wallet.balance || 0;
       this.energy = data.wallet.energy || 0;
       if (data.id == 38) {
@@ -26,8 +27,7 @@ export const useUserStore = defineStore("user", {
       }
 
       uni.setStorageSync("userInfo", data);
-
-
+      uni.setStorageSync("headShot", this.headShot);
       uni.setStorageSync("balance", this.balance);
       uni.setStorageSync("energy", this.energy);
     },
@@ -42,6 +42,10 @@ export const useUserStore = defineStore("user", {
     setId(id) {
       this.id = id;
       uni.setStorageSync("id", id);
+    },
+     setHeadImg(headShot) {
+      this.headShot = headShot;
+      uni.setStorageSync("headShot", headShot);
     },
     // 退出登录
     logout() {
