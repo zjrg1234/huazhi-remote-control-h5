@@ -24,7 +24,8 @@
           <cover-view class="fl">
             <cover-view class="car">
               <cover-image class="image" src="./static/icon_car@2x.png" mode="aspectFit" />
-              <cover-view class="text"> 车辆已连接 </cover-view>
+              <cover-view class="text" :style="{display: carStatus ? 'block': 'none' }"> 车辆已连接 </cover-view>
+              <cover-view class="text" :style="{display: !carStatus ? 'block': 'none' }"> 车辆已断开 </cover-view>
             </cover-view>
           </cover-view>
 
@@ -287,7 +288,7 @@ import { useInactivityAlarm } from "./composables/useInactivityAlarm.js";
 const videoUrl = ref(""); // 视频地址
 const allPopupVisible = ref(false);
 const type = ref("tip");
-const carStatus = ref(false);
+const carStatus = ref(true);
 const currentTime = ref("00:00:00");
 const showSpeed = ref(false);
 const showRepairReason = ref(false);

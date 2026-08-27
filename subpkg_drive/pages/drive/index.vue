@@ -261,8 +261,7 @@
                         </cover-view>
                       </cover-view>
 
-                      <SliderComp v-model="dirTurn" :min="1" :max="directionDynamics.current_value"
-                       ></SliderComp>
+                      <SliderComp v-model="dirTurn" :min="1" :max="directionDynamics.current_value"></SliderComp>
                       <cover-view class="slider-label-bottom">
                         <cover-view class="num-text">
                           {{ directionDynamics.mini_value }}
@@ -526,7 +525,7 @@ import {
 const videoUrl = ref(""); // 视频地址
 const allPopupVisible = ref(false);
 const type = ref("tip");
-const carStatus = ref(false);
+const carStatus = ref(true);
 const currentTime = ref("");
 const showSpeed = ref(false);
 const showRepairReason = ref(false);
@@ -935,6 +934,10 @@ const handlePopupAction = (val) => {
   if (val == "logout") {
     console.log("退出驾驶");
     clearInterval(billingTimer);
+
+    if (carType.value == 1) {
+      chValue.value.ch1 = directionCenter.value.current_value;
+    }
     StartDrive(
       {
         order_no: orderNo.value,
@@ -1003,7 +1006,7 @@ const set = () => {
     dirMiddleValFunc(dirMiddle.value);
     dirTurn.value = uni.getStorageSync('ch1dir');
     throttle.value = uni.getStorageSync('ch2Acc');
-    
+
   }
 
 };
@@ -1640,7 +1643,7 @@ const changeVal = (value) => {
       max_value: acceleratorDynamics.value.max_value,
     },
   });
- 
+
 };
 
 // 是否点击保存
@@ -1649,7 +1652,7 @@ const save = (type) => {
   onUserActivity();
   saveFlag.value[type] = true;
   uni.showToast({ title: "保存成功", icon: "none" });
- 
+
 };
 
 const close = () => {
@@ -1672,7 +1675,7 @@ const close = () => {
       val[2] = dirTurn.value;
       saveVal.value[2] = dirTurn.value;
       uni.setStorageSync("ch1dir", dirTurn.value)
-    } 
+    }
 
     if (saveFlag.value[3]) {
       val[3] = throttle.value;
