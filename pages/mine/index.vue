@@ -45,7 +45,7 @@
 
     <!-- 我的资产卡片 -->
     <view class="asset-card">
-      <view class="card-title">我的资产</view>
+      <view class="card-title"> {{ $t('我的资产') }} </view>
       <view class="card-content">
         <view class="asset-item">
           <text class="asset-num">{{ balance }}</text>

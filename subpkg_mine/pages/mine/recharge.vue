@@ -4,7 +4,7 @@
     <view class="sticky-content">
       <view class="wrap-content">
         <!-- #ifdef H5 -->
-        <NavBar title="我的电池" url="/pages/mine/index"></NavBar>
+        <NavBar title="我的电池" url="/subpkg_mine/pages/mine/battery"></NavBar>
         <view class="bg-image bg-image-h5">
           <image class="image" src="/static/images/mine/bg2@2x.png" mode="widthFix"></image>
         </view>

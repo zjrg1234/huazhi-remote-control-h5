@@ -7,7 +7,7 @@
 
 		<view class="wrap-content">
 			<!-- #ifdef H5 -->
-			<NavBar title="我的电池" url="/pages/mine/index"></NavBar>
+			<NavBar title="我的电池" url="/pages/mine/index" flag="1"></NavBar>
 			
 			<view class="bg-image">
 				<image class="image" src="/static/images/mine/bg2@2x.png" mode="widthFix"></image>
