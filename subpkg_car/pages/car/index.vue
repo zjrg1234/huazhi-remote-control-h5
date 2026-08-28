@@ -287,7 +287,7 @@ const handleAgree = () => {
     pwdVisible.value = true;
     return;
   }
-  if (currentCar.value.vehicle_state === "2") {
+  if (currentCar.value.vehicle_state == 2) {
     uni.showToast({
       title: "该车正在排队中",
       icon: "none",
