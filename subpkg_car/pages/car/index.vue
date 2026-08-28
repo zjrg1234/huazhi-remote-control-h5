@@ -247,6 +247,20 @@ onLoad((options) => {
 
 // 交互逻辑
 const handleDrive = (item) => {
+  if (!uni.getStorageSync('token')) {
+    uni.showModal({
+      title: '提示',
+      content: '请您登录/注册，才能驾驶车辆',
+      success: (res) => {
+        if (res.confirm) {
+          uni.reLaunch({
+            url: "/subpkg_login/pages/login/index",
+          });
+        }
+      }
+    })
+    return;
+  }
   currentCar.value = { ...item };
   agree.value = true;
 };
@@ -690,6 +704,7 @@ const continuePay = async () => {
   background: #f8f8f8;
   border-radius: 16rpx;
   margin-bottom: 25rpx;
+
   .input {
     height: 90rpx;
     line-height: 1;

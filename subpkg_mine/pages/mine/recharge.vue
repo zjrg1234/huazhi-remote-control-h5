@@ -140,7 +140,7 @@ import { useUserStore } from "@/store/modules/user";
 const userStore = useUserStore();
 
 const balance = computed(() => {
-  return userStore.getUserInfo().wallet.balance;
+  return userStore.balance;
 });
 // 当前选中标签
 const tab = ref("normal");

@@ -99,7 +99,7 @@
 	// ==================== 数据 ====================
 	
 	const balance = computed(() => {
-		return userStore.getUserInfo().wallet.balance
+		return userStore.balance
 	})
 	const list = ref([])
 	const page = ref(1)
