@@ -116,9 +116,8 @@ import { baseUrl } from "@/config/env";
 
 const userStore = useUserStore();
 const imageUrl = ref("");
-const userInfo = computed(() => {
-  return userStore.getUserInfo();
-});
+
+const userInfo = computed(() => userStore.userInfo);
 
 const headShot = computed(() => {
   return userStore.headShot || 0;
@@ -185,6 +184,7 @@ onPageShow(() => {
   GetUserInfo()
     .then((res) => {
       userStore.setUser(res.data);
+      uni.removeStorageSync('new_user')
     })
     .catch(() => {});
 });

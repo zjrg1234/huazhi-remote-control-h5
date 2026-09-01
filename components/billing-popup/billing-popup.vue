@@ -85,9 +85,8 @@ const isWallet = ref(true); // 余额是否充足
 const unitText = computed(() => (currentUnit.value === 1 ? "电池" : "能量"));
 
 // 纯计算属性：只负责获取用户信息，绝不修改任何状态
-const userInfo = computed(() => {
-  return userStore.getUserInfo();
-});
+// const userInfo = computed(() => userStore.userInfo);
+
 
 const balance = computed(() => {
 	return userStore.balance || 0;

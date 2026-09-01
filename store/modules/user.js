@@ -63,7 +63,7 @@ export const useUserStore = defineStore("user", {
       return uni.getStorageSync("id");
     },
     getUserInfo() {
-      return uni.getStorageSync("userInfo");
+      return  this.userInfo || uni.getStorageSync("userInfo");
     },
   },
 });
