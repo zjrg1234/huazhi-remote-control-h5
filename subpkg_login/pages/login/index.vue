@@ -119,6 +119,11 @@ const handleGetPhoneNumber = async (e) => {
           url: "/subpkg_mine/pages/mine/changeArea", // 你的首页路径
         });
       } else {
+        
+        GetUserInfo().then(res => {
+          userStore.setUser(res.data)
+        }).catch()
+
         uni.switchTab({
           url: "/pages/index/index",
         });

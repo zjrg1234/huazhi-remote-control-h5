@@ -243,6 +243,7 @@ const handleSubmit = async () => {
     activity_id: activityId.value || undefined,
     login_code: uni.getStorageSync("openid" ) || undefined
   };
+  console.log(obj)
   
   if (payType.value == "alipay") {
     const {

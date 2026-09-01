@@ -128,6 +128,7 @@ const handleLogin = async () => {
     ...form.value,
     password: form.value.password,
     type: 1,
+    login_code: loginRes.code,
   })
     .then((res) => {
       if (res.code == 200) {
