@@ -338,7 +338,7 @@
                 <cover-view class="tit">是否黑屏？</cover-view>
                 <cover-view class="text">
                   <cover-view class="text1">开始驾驶前如遇黑屏或者车辆故障上报不扣费，开始驾驶后开始计费。</cover-view>
-                  <cover-view>如果一切正常，请点击“开始驾驶”</cover-view>
+                  <cover-view class="text1">如果一切正常，请点击“开始驾驶”</cover-view>
                 </cover-view>
               </cover-view>
 
@@ -2595,6 +2595,7 @@ const report = (text) => {
     .text1 {
       word-wrap: break-word;
       white-space: break-spaces;
+      line-height: 25px;
     }
 
     .ct {

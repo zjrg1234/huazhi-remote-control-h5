@@ -8,8 +8,10 @@
           <text class="main-title">{{ detailData.venue_name }}</text>
           <text class="tag">{{ detailData.labels }}</text>
         </view>
-        <view class="time-text">营业时间：{{ detailData.start_time }} ~
-          {{ detailData.end_time }}</view>
+        <view class="time-text"
+          >营业时间：{{ detailData.start_time }} ~
+          {{ detailData.end_time }}</view
+        >
       </view>
     </view>
 
@@ -51,7 +53,10 @@
     <view class="car-list">
       <view class="car-card" v-for="car in carList" :key="car.id">
         <!-- 状态标签 -->
-        <view class="status-tag" :class="car.vehicle_state == 1 ? 'tag-green' : 'tag-blue'">
+        <view
+          class="status-tag"
+          :class="car.vehicle_state == 1 ? 'tag-green' : 'tag-blue'"
+        >
           {{
             car.vehicle_state == 1 ? "空闲" : "排队" + car.vehicle_queue + "人"
           }}
@@ -59,7 +64,11 @@
 
         <!-- 左侧图片区域 -->
         <view class="img-wrapper">
-          <image class="car-img" :src="car.vehicle_image" mode="aspectFill"></image>
+          <image
+            class="car-img"
+            :src="car.vehicle_image"
+            mode="aspectFill"
+          ></image>
           <view class="lock-mask" v-if="car.is_password == 1">
             <uni-icons type="locked" size="30" color="#ffffff"></uni-icons>
           </view>
@@ -79,8 +88,13 @@
             <text class="value">{{ car.top_speed }} km/h</text>
           </view>
           <view class="bottom-row">
-            <text class="battery">车辆电量：{{ car.vehicle_battery.includes("%") ? car.vehicle_battery : car.vehicle_battery
-              + "%" }}</text>
+            <text class="battery"
+              >车辆电量：{{
+                car.vehicle_battery.includes("%")
+                  ? car.vehicle_battery
+                  : car.vehicle_battery + "%"
+              }}</text
+            >
             <button class="action-btn" @click="handleDrive(car)">
               我要驾驶
             </button>
@@ -89,8 +103,14 @@
       </view>
     </view>
 
-    <TipModal title="用户驾驶协议" v-model:visible="agree" key="1" :cancelFlag="false" confirmText="已阅读"
-      @confirm="handleAgree">
+    <TipModal
+      title="用户驾驶协议"
+      v-model:visible="agree"
+      key="1"
+      :cancelFlag="false"
+      confirmText="已阅读"
+      @confirm="handleAgree"
+    >
       <template #content>
         <view class="custom-content">
           <view class="cont"> 禁止未成年人充值使用。 </view>
@@ -105,35 +125,64 @@
       </template>
     </TipModal>
 
-    <TipModal title="输入密码" v-model:visible="pwdVisible" key="2" @confirm="handlePwd">
+    <TipModal
+      title="输入密码"
+      v-model:visible="pwdVisible"
+      key="2"
+      @confirm="handlePwd"
+    >
       <template #content>
         <view class="custom-input">
-          <input class="input" type="password" maxlength="6" placeholder="请输入密码" v-model="password" />
+          <input
+            class="input"
+            type="password"
+            maxlength="6"
+            placeholder="请输入密码"
+            v-model="password"
+          />
         </view>
       </template>
     </TipModal>
 
-    <TipModal title="车辆预约" v-model:visible="orderVisible" key="2" cancelText="取消预约" @cancel="cancelOrder"
-      @confirm="gotoUrl">
+    <TipModal
+      title="车辆预约"
+      v-model:visible="orderVisible"
+      key="2"
+      cancelText="取消预约"
+      @cancel="cancelOrder"
+      @confirm="gotoUrl"
+    >
       <template #content>
         <view class="order-cont">
           <view class="img">
-            <image class="car-image" :src="selectCar.vehicle_image" mode="aspectFill" />
+            <image
+              class="car-image"
+              :src="selectCar.vehicle_image"
+              mode="aspectFill"
+            />
           </view>
           <!-- 注意：请将 src 替换为你实际的图片路径或网络地址 -->
 
           <!-- 3. 主要状态文本 -->
-          <text class="main-status">已成功预约 {{ orderCar.vehicle_name }} 车辆</text>
-          <text class="sub-status" v-if="orderCar.people_number > 0">当前还有 {{ orderCar.people_number }} 人排队，请耐心等待</text>
-          <text class="sub-status" v-if="orderCar.people_number == 0">当前排在首位，请尽快去驾驶</text>
+          <text class="main-status"
+            >已成功预约 {{ orderCar.vehicle_name }} 车辆</text
+          >
+          <text class="sub-status" v-if="orderCar.people_number > 0"
+            >当前还有 {{ orderCar.people_number }} 人排队，请耐心等待</text
+          >
+          <text class="sub-status" v-if="orderCar.people_number == 0"
+            >当前排在首位，请尽快去驾驶</text
+          >
 
           <!-- 4. 详情信息卡片 (灰色背景区域) -->
           <view class="info-card">
             <view class="info-item">
               <text class="label">预约类型：</text>
-              <text class="value">按{{
-                orderCar.billing_method == "0" ? "时间" : "次"
-                }}计费</text>
+              <text class="value"
+                >按{{
+                  orderCar.billing_method == "0" ? "时间" : "次"
+                }}计费</text
+              >
             </view>
             <view class="info-item">
               <text class="label">预约时间：</text>
@@ -147,17 +196,29 @@
       </template>
     </TipModal>
 
-
-    <TipModal title="存在已预约的订单" v-model:visible="orderedVisible" key="3" cancelText="驾驶已有" @cancel="gotoUrl"
-      confirmText="继续支付" @confirm="continuePay">
+    <TipModal
+      title="存在已预约的订单"
+      v-model:visible="orderedVisible"
+      key="3"
+      cancelText="驾驶已有"
+      @cancel="gotoUrl"
+      confirmText="继续支付"
+      @confirm="continuePay"
+    >
       <template #content>
         <view class="order-cont">
-          <view class="order-text">您有预约单还未驾驶，如果继续支付，将取消之前的预约单，请选择</view>
+          <view class="order-text"
+            >您有预约单还未驾驶，如果继续支付，将取消之前的预约单，请选择</view
+          >
         </view>
       </template>
     </TipModal>
 
-    <BillingPopup ref="billingPopupRef" :billData="billingMethod" @confirm="onBillingConfirm" />
+    <BillingPopup
+      ref="billingPopupRef"
+      :billData="billingMethod"
+      @confirm="onBillingConfirm"
+    />
   </view>
 </template>
 
@@ -167,7 +228,12 @@ import { onLoad } from "@dcloudio/uni-app";
 
 import TipModal from "@/components/tip-modal/tip-modal.vue";
 import BillingPopup from "@/components/billing-popup/billing-popup.vue";
-import { GetVenueDetail, OrderCar, CancelReservation, StartDrive } from "@/axios/index";
+import {
+  GetVenueDetail,
+  OrderCar,
+  CancelReservation,
+  StartDrive,
+} from "@/axios/index";
 import { GetReservationList } from "@/axios/mine";
 
 const title = ref("");
@@ -176,7 +242,6 @@ const agree = ref(false);
 const pwdVisible = ref(false);
 const orderVisible = ref(false);
 const orderedVisible = ref(false);
-
 
 const password = ref("");
 const billingPopupRef = ref(null);
@@ -208,7 +273,7 @@ const orderCar = ref({
 const currentCar = ref({});
 const carList = ref([]);
 
-const selectParam = ref({})
+const selectParam = ref({});
 
 // 页面加载模拟
 onLoad((options) => {
@@ -247,18 +312,18 @@ onLoad((options) => {
 
 // 交互逻辑
 const handleDrive = (item) => {
-  if (!uni.getStorageSync('token')) {
+  if (!uni.getStorageSync("token")) {
     uni.showModal({
-      title: '提示',
-      content: '请您登录/注册，才能驾驶车辆',
+      title: "提示",
+      content: "请您登录/注册，才能驾驶车辆",
       success: (res) => {
         if (res.confirm) {
           uni.reLaunch({
             url: "/subpkg_login/pages/login/index",
           });
         }
-      }
-    })
+      },
+    });
     return;
   }
   currentCar.value = { ...item };
@@ -268,7 +333,7 @@ const handleDrive = (item) => {
 const handlePwd = () => {
   if (password.value === currentCar.value.password) {
     pwdVisible.value = false;
-    password.value = '';
+    password.value = "";
     selectCar.value.vehicle_id = currentCar.value.id;
     selectCar.value.vehicle_name = currentCar.value.vehicle_name;
     selectCar.value.vehicle_image = currentCar.value.vehicle_image;
@@ -307,25 +372,29 @@ const onBillingConfirm = async (params) => {
   const min = Math.pow(10, 7);
   const max = Math.pow(10, 8) - 1;
   const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
-  selectParam.value = { ...params }
-
+  selectParam.value = { ...params };
 
   // 如果有正在驾驶的车辆，结束驾驶。
-  const res = await GetReservationList({ size: 99 })
+  const res = await GetReservationList({ size: 99 });
   if (res.code == 200 && res.data.content && res.data.content.length) {
-    const firstData = res.data.content.find(item => {
-      if (item.reservation_status == 3 && item.vehicle_id == selectCar.value.vehicle_id) {
+    const firstData = res.data.content.find((item) => {
+      if (
+        item.reservation_status == 3 &&
+        item.vehicle_id == selectCar.value.vehicle_id
+      ) {
         return item;
       }
-    })
-
+    });
 
     if (firstData) {
-      await StartDrive({
-        order_no: firstData.order_no,
-        type: 3,
-        vehicle_id: firstData.vehicle_id,
-      }, false)
+      await StartDrive(
+        {
+          order_no: firstData.order_no,
+          type: 3,
+          vehicle_id: firstData.vehicle_id,
+        },
+        false,
+      );
     }
   }
 
@@ -342,7 +411,7 @@ const onBillingConfirm = async (params) => {
     .then((res) => {
       if (res.code === 200) {
         orderCar.value = { ...res.data };
-        uni.setStorageSync('app_id', res.data.transmitter_id);
+        uni.setStorageSync("app_id", res.data.transmitter_id);
         orderVisible.value = true;
       } else if (res.code === 2000) {
         orderedVisible.value = true;
@@ -361,11 +430,10 @@ const onBillingConfirm = async (params) => {
         });
       } else {
         uni.showToast({
-          title: '预约失败，请稍后预约',
+          title: "预约失败，请稍后预约",
           icon: "none",
         });
       }
-
     })
     .finally(() => {
       flag.value = true;
@@ -382,22 +450,24 @@ const gotoUrl = () => {
 
 const cancelOrder = () => {
   CancelReservation({
-    order_no: orderCar.value.order_no
-  }).then(res => {
-    if (res.code == 200) {
-      orderVisible.value = false;
-      uni.showToast({ title: '取消预约成功', icon: 'none' });
-    } else {
-      uni.showToast({ title: res.msg, icon: 'none' });
-    }
-  }).catch()
-}
+    order_no: orderCar.value.order_no,
+  })
+    .then((res) => {
+      if (res.code == 200) {
+        orderVisible.value = false;
+        uni.showToast({ title: "取消预约成功", icon: "none" });
+      } else {
+        uni.showToast({ title: res.msg, icon: "none" });
+      }
+    })
+    .catch();
+};
 
 // 继续预定同一台车
 const continuePay = async () => {
-  const res = await GetReservationList({ size: 99 })
+  const res = await GetReservationList({ size: 99 });
   if (res.code == 200 && res.data.content && res.data.content.length) {
-    const firstData = res.data.content.find(item => {
+    const firstData = res.data.content.find((item) => {
       if (item.reservation_status == 1 || item.reservation_status == 2) {
         if (item.vehicle_id == selectCar.value.vehicle_id) {
           return item;
@@ -405,31 +475,30 @@ const continuePay = async () => {
           return item;
         }
       }
-    })
+    });
 
     // 容错 没找到值 直接预约  找到值 取消再预约
     if (firstData) {
       CancelReservation({
-        order_no: firstData.order_no
-      }).then(res => {
-        if (res.code == 200) {
-          orderedVisible.value = false;
-          onBillingConfirm(selectParam.value)
-        } else {
-          uni.showToast({ title: res.msg, icon: 'none' });
-        }
-      }).catch()
+        order_no: firstData.order_no,
+      })
+        .then((res) => {
+          if (res.code == 200) {
+            orderedVisible.value = false;
+            onBillingConfirm(selectParam.value);
+          } else {
+            uni.showToast({ title: res.msg, icon: "none" });
+          }
+        })
+        .catch();
     } else {
       orderedVisible.value = false;
-      onBillingConfirm(selectParam.value)
+      onBillingConfirm(selectParam.value);
     }
-
-
-
   } else {
-    uni.showToast({ title: res.msg, icon: 'success' });
+    uni.showToast({ title: res.msg, icon: "success" });
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -464,7 +533,10 @@ const continuePay = async () => {
         font-weight: 500;
         font-size: 28rpx;
         color: #1a1a1a;
+        line-height: 40rpx;
         margin-right: 10rpx;
+        text-align: left;
+        font-style: normal;
       }
 
       .tag {
@@ -487,6 +559,7 @@ const continuePay = async () => {
       font-weight: 400;
       font-size: 20rpx;
       color: #666666;
+      margin-top: 10rpx;
     }
   }
 }
@@ -682,12 +755,14 @@ const continuePay = async () => {
         height: 54rpx;
         line-height: 54rpx;
         margin: 0;
-        font-family: PingFangSC, PingFang SC;
+        font-family:
+          PingFangSC,
+          PingFang SC;
         font-weight: 400;
         font-size: 24rpx;
-        color: #1A1A1A;
+        color: #1a1a1a;
         height: 54rpx;
-        background: #FFC838;
+        background: #ffc838;
         border-radius: 12rpx;
         /* 去除默认外边距 */
 
@@ -719,7 +794,6 @@ const continuePay = async () => {
   font-size: 28rpx;
   color: #333333;
 
-
   .title {
     font-weight: 600;
   }
@@ -727,7 +801,8 @@ const continuePay = async () => {
   .cont {
     display: block;
     text-align: left;
-    padding-bottom: 60rpx;
+    padding-bottom: 55rpx;
+    line-height: 50rpx;
   }
 }
 
@@ -735,7 +810,9 @@ const continuePay = async () => {
   padding-bottom: 20rpx;
 
   .popup-title {
-    font-family: PingFangSC, PingFang SC;
+    font-family:
+      PingFangSC,
+      PingFang SC;
     font-size: 36rpx;
     font-weight: bold;
     color: #333333;
@@ -759,7 +836,9 @@ const continuePay = async () => {
 
   /* 主状态文本 */
   .main-status {
-    font-family: PingFangSC, PingFang SC;
+    font-family:
+      PingFangSC,
+      PingFang SC;
     font-size: 32rpx;
     font-weight: bold;
     color: #333333;
@@ -769,7 +848,9 @@ const continuePay = async () => {
 
   /* 副状态文本 */
   .sub-status {
-    font-family: PingFangSC, PingFang SC;
+    font-family:
+      PingFangSC,
+      PingFang SC;
     font-size: 26rpx;
     color: #999999;
     margin-bottom: 30rpx;
@@ -788,7 +869,9 @@ const continuePay = async () => {
   }
 
   .info-item {
-    font-family: PingFangSC, PingFang SC;
+    font-family:
+      PingFangSC,
+      PingFang SC;
     display: flex;
     font-size: 26rpx;
     margin-bottom: 10rpx;
@@ -809,13 +892,17 @@ const continuePay = async () => {
 
   /* 底部提示语 */
   .tip-text {
-    font-family: PingFangSC, PingFang SC;
+    font-family:
+      PingFangSC,
+      PingFang SC;
     font-size: 24rpx;
     color: #999999;
   }
 
   .order-text {
-    font-family: PingFangSC, PingFang SC;
+    font-family:
+      PingFangSC,
+      PingFang SC;
     font-size: 28rpx;
     color: #666;
     margin-bottom: 10rpx;

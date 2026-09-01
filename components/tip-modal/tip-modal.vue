@@ -101,7 +101,7 @@ const onConfirm = () => {
 
 /* ========== 弹窗容器 ========== */
 .modal-container {
-  width: 560rpx;
+  width: 580rpx;
   background: #fff;
   border-radius: 24rpx;
   overflow: hidden;
@@ -124,7 +124,7 @@ const onConfirm = () => {
 
 /* ========== 内容区 ========== */
 .modal-content {
-  padding: 0 40rpx;
+  padding: 0 32rpx;
   text-align: center;
 }
 

@@ -32,7 +32,7 @@
     <!-- 提示弹窗 -->
     <TipModal title="提示" v-model:visible="tipVisible" key="2" @confirm="handleConfirm">
       <template #content>
-        <view>
+        <view class="content">
           <view class="text">变更专区后您所有的账户数据不会转移到新的专区（您稍后也可自行变更到当前专区）</view>
           <view class="text">确定变更到专区「{{ name }}」吗?</view>
         </view>
@@ -250,6 +250,9 @@ const handleConfirm = async () => {
   }
 }
 
+.content {
+  height: 240rpx;
+}
 /* 底部按钮 */
 .btn-wrap {
   position: fixed;
@@ -279,5 +282,6 @@ const handleConfirm = async () => {
   font-weight: 400;
   font-size: 32rpx;
   padding-bottom: 2rpx;
+  line-height: 50rpx;
 }
 </style>
