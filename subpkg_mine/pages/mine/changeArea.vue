@@ -127,9 +127,9 @@ const handleConfirm = async () => {
     if (res.code == 200) {
       if (uni.getStorageSync('new_user') == 1) {
         uni.removeStorageSync('new_user')
-        GetUserInfo({
-          
-        }).then().catch()
+        GetUserInfo({}).then(res => {
+           userStore.setUser({ ...res.data });
+        }).catch()
       }
       tipVisible.value = false;
       userStore.setAreaId(selected.value)

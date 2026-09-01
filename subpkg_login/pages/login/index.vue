@@ -100,7 +100,6 @@ const handleGetPhoneNumber = async (e) => {
     });
   });
 
-
   uni.setStorageSync("openid", loginRes.code);
 
   try {
@@ -114,9 +113,16 @@ const handleGetPhoneNumber = async (e) => {
       userStore.setAreaId(res.data.special_area);
       userStore.setId(res.data.id);
 
-      uni.reLaunch({
-        url: "/subpkg_mine/pages/mine/changeArea", // 你的首页路径
-      });
+      if (res.data.new_user == 1) {
+        uni.setStorageSync("new_user", 1);
+        uni.reLaunch({
+          url: "/subpkg_mine/pages/mine/changeArea", // 你的首页路径
+        });
+      } else {
+        uni.switchTab({
+          url: "/pages/index/index",
+        });
+      }
     } else {
       uni.showToast({
         title: res.msg,

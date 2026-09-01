@@ -86,9 +86,9 @@
     </view>
 
     <view class="info">
-      <view>八方远控 | 实况赛车热血越野 工程车</view>
-      <view>宿迁战神信息科技有限公司</view>
-      <view>Copyright © 2025-2026 All Rights Reserved</view>
+      <view class="text">八方远控 | 实况赛车热血越野 工程车</view>
+      <view class="text">宿迁战神信息科技有限公司</view>
+      <view class="text">Copyright © 2025-2026 All Rights Reserved</view>
     </view>
   </view>
 
@@ -374,15 +374,19 @@ const gotoUrl = () => {
     position: absolute;
     bottom: 60rpx;
     width: 100%;
-    text-align: center;
-    font-size: 20rpx;
-    color: #999;
-    font-family:
-      Regular,
-      PingFangSC,
-      PingFang SC;
-    font-weight: 400;
-    font-style: normal;
+
+    .text {
+      line-height: 40rpx;
+      font-weight: 400;
+      font-style: normal;
+      text-align: center;
+      font-size: 20rpx;
+      color: #999;
+      font-family:
+        Regular,
+        PingFangSC,
+        PingFang SC;
+    }
   }
 }
 
