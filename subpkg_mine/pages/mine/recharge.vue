@@ -239,7 +239,7 @@ const handleSubmit = async () => {
   let res;
   let obj = {
     uid: userStore.getUserInfo().id,
-    amount: selectedPackage.value || customNum.value,
+    amount,
     activity_id: activityId.value || undefined,
     login_code: uni.getStorageSync("openid" ) || undefined
   };
@@ -275,10 +275,13 @@ const handleSubmit = async () => {
         success: (res) => {
           // 支付成功
           uni.showToast({ title: '支付成功', icon: 'success' })
-
+          selectedPackage.value = -1;
+          customNum.value = ''
         },
         fail: (err) => {
           // 支付失败或取消
+          uni.showToast({ title: '支付失败', icon: 'none' })
+
         }
       });
     } else {
