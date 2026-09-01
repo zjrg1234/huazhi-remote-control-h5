@@ -131,7 +131,9 @@ import {
 } from "../axios/recharge.js";
 import {
   WechatPay,
+  GetUserInfo
 } from "@/axios/index.js";
+
 
 import { useUserStore } from "@/store/modules/user";
 
@@ -229,7 +231,14 @@ const handleSubmit = async () => {
     amount = selectedPackage.value;
   } else if (customNum.value && customNum.value >= 3) {
     amount = customNum.value;
-  } else {
+  } else if (customNum.value && customNum.value < 3) {
+    uni.showToast({
+      title: "充值数量，请输入3个及以上",
+      icon: "none",
+    });
+    return
+  }
+   else {
     uni.showToast({
       title: "请选择或输入充值数量",
       icon: "none",
@@ -243,7 +252,7 @@ const handleSubmit = async () => {
     activity_id: activityId.value || undefined,
     login_code: uni.getStorageSync("openid" ) || undefined
   };
-  console.log(obj)
+
   
   if (payType.value == "alipay") {
     const {
@@ -278,6 +287,10 @@ const handleSubmit = async () => {
           uni.showToast({ title: '支付成功', icon: 'success' })
           selectedPackage.value = -1;
           customNum.value = ''
+
+          GetUserInfo().then(res => {
+            userStore.setUser(res.data)
+          }).catch()
         },
         fail: (err) => {
           // 支付失败或取消

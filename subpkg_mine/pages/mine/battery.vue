@@ -67,18 +67,18 @@
 
 			<!-- 3. 数据列表 -->
 			<view class="item" v-for="(item, index) in list" :key="index">
-				<text class="type">{{  [3,4,5].includes(item.type) ? '收入' : '消费' }}</text>
+				<text class="type">{{  [1,3,4,5].includes(item.type) ? '收入' : '消费' }}</text>
 				<view class="middle">
 					<text class="common-text">{{ item.type_name }}</text>
-					<text class="amount" :class="[3,4,5].includes(item.type) ? 'green': 'red'">
-						{{ [3,4,5].includes(item.type) ? "+" : '-'}}{{ item.amount }}
+					<text class="amount" :class="[1,3,4,5].includes(item.type) ? 'green': 'red'">
+						{{ [1,3,4,5].includes(item.type) ? "+" : '-'}}{{ item.amount }}
 					</text>
 				</view>
 				<text class="common-text time">{{ formatDate(item.time) }}</text>
 			</view>
 			
 			<!-- 4. 没有更多 -->
-			<view class="load-tip" v-if="noMore && list.length > 0">没有更多了</view>
+			<view class="load-tip" v-if="noMore && list.length > 10">没有更多了</view>
 		</view>
 	</view>
 </template>
