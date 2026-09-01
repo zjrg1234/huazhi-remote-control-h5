@@ -7,28 +7,50 @@
     <view class="form">
       <!-- #ifdef MP-WEIXIN -->
       <!-- 必须使用原生 button 组件才能触发手机号授权 -->
-      <button class="login-btn" open-type="getPhoneNumber" @getphonenumber="handleGetPhoneNumber">
+      <button
+        class="login-btn"
+        open-type="getPhoneNumber"
+        @getphonenumber="handleGetPhoneNumber"
+      >
         手机号一键登录
       </button>
       <!-- #endif -->
 
       <view class="login-btn" @click="handleLogin">手机号码登录/注册</view>
 
-
       <view class="register-link" @click="goUrl">
         <text>去首页</text>
       </view>
-
     </view>
 
     <view class="agreement">
-      <view class="checkbox" :class="{ checked: agree }" @click="agree = !agree">
-        <image class="check-icon" src="/static/images/login/checked@2x.png" mode="aspectFill" v-if="agree" />
-        <image class="un-check-icon" src="/static/images/login/circle@2x.png" mode="aspectFill" v-if="!agree" />
+      <view
+        class="checkbox"
+        :class="{ checked: agree }"
+        @click="agree = !agree"
+      >
+        <image
+          class="check-icon"
+          src="/static/images/login/checked@2x.png"
+          mode="aspectFill"
+          v-if="agree"
+        />
+        <image
+          class="un-check-icon"
+          src="/static/images/login/circle@2x.png"
+          mode="aspectFill"
+          v-if="!agree"
+        />
       </view>
       <text class="text">
-        我已同意<text class="highlight" @click="goto('/subpkg_set/pages/set/userPolicy')">用户协议和</text>
-        <text @click="goto('/subpkg_set/pages/set/privacy')" class="highlight">隐私条款</text>
+        我已同意<text
+          class="highlight"
+          @click="goto('/subpkg_set/pages/set/userPolicy')"
+          >用户协议和</text
+        >
+        <text @click="goto('/subpkg_set/pages/set/privacy')" class="highlight"
+          >隐私条款</text
+        >
       </text>
     </view>
   </view>
@@ -37,18 +59,15 @@
 <script setup>
 import { ref } from "vue";
 
-import { WechatLogin, GetUserInfo } from "@/axios/index.js"
-import {
-  useUserStore
-} from '@/store/modules/user'
+import { WechatLogin, GetUserInfo } from "@/axios/index.js";
+import { useUserStore } from "@/store/modules/user";
 
-const userStore = useUserStore()
+const userStore = useUserStore();
 
 const agree = ref(false);
 
 // 登录
 const handleLogin = () => {
- 
   uni.navigateTo({
     url: "/subpkg_login/pages/login/login",
   });
@@ -70,7 +89,7 @@ const handleGetPhoneNumber = async (e) => {
     uni.showToast({ title: "已取消授权", icon: "none" });
     return;
   }
-  console.log("phoneCode", e.detail.code)
+  console.log("phoneCode", e.detail.code);
   // 有手机的
   // 2. 获取微信登录的临时凭证 code
   const loginRes = await new Promise((resolve, reject) => {
@@ -81,36 +100,23 @@ const handleGetPhoneNumber = async (e) => {
     });
   });
 
-  console.log("loginCode", loginRes.code)
+
+  uni.setStorageSync("openid", loginRes.code);
+
   try {
     const res = await WechatLogin({
       phone_code: e.detail.code,
       login_code: loginRes.code,
-    })
+    });
 
     if (res.code == 200) {
-      userStore.setToken(res.data.session_key)
-      userStore.setAreaId(res.data.special_area)
-      userStore.setId(res.data.id)
+      userStore.setToken(res.data.session_key);
+      userStore.setAreaId(res.data.special_area);
+      userStore.setId(res.data.id);
 
-      GetUserInfo({ uid: res.data.id }).then(res1 => {
-
-        userStore.setUser(res1.data)
-
-        if (res.data.new_user == 1) {
-          uni.setStorageSync('new_user', 1)
-          uni.navigateTo({
-            url: '/subpkg_mine/pages/mine/changeArea'  // 你的首页路径
-          })
-        } else {
-          uni.switchTab({
-            url: "/pages/index/index"
-          })
-        }
-
-
-
-      }).catch()
+      uni.reLaunch({
+        url: "/subpkg_mine/pages/mine/changeArea", // 你的首页路径
+      });
     } else {
       uni.showToast({
         title: res.msg,
@@ -118,15 +124,15 @@ const handleGetPhoneNumber = async (e) => {
       });
     }
   } catch (e) {
-    console.log("e", e)
+    console.log("e", e);
   }
 };
 
 const goUrl = () => {
   uni.switchTab({
-    url: "/pages/index/index"
-  })
-}
+    url: "/pages/index/index",
+  });
+};
 </script>
 
 <style lang="scss" scoped>
@@ -315,8 +321,9 @@ page {
   /* 2. 应用你原本的设计样式 */
   background: linear-gradient(90deg, #ffc838 0%, #ffc838 100%);
   border-radius: 24rpx;
-  font-family: PingFangSC,
-  PingFang SC;
+  font-family:
+    PingFangSC,
+    PingFang SC;
   font-weight: 400;
   font-size: 32rpx;
   color: #1a1a1a;

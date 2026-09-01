@@ -133,8 +133,6 @@ import {
   WechatPay,
 } from "@/axios/index.js";
 
-import { getNavBarHeight } from "@/utils/system.js";
-
 import { useUserStore } from "@/store/modules/user";
 
 const userStore = useUserStore();
@@ -243,7 +241,9 @@ const handleSubmit = async () => {
     uid: userStore.getUserInfo().id,
     amount: selectedPackage.value || customNum.value,
     activity_id: activityId.value || undefined,
+    login_code: uni.getStorageSync("openid" ) || undefined
   };
+  
   if (payType.value == "alipay") {
     const {
       code,
