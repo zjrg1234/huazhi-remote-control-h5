@@ -366,13 +366,16 @@ const gotoUrl = () => {
 
 <style lang="scss" scoped>
 .container {
-  position: relative;
-  background-color: #fff;
+ 
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
+  background-color: #fff;
+  position: relative;
 
   .info {
-    position: absolute;
-    bottom: 60rpx;
+    margin-top: auto;
+    padding-bottom: 60rpx;
     width: 100%;
 
     .text {
