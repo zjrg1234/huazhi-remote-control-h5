@@ -112,26 +112,28 @@ const handleLogin = async () => {
     });
     return;
   }
-  let loginRes;
-  
+  let loginRes = null;
   // #ifdef MP-WEIXIN
-  // 2. 获取微信登录的临时凭证 code
-  loginRes = await new Promise((resolve, reject) => {
-    uni.login({
-      provider: "weixin",
-      success: (res) => resolve(res),
-      fail: (err) => reject(err),
+  try {
+    loginRes = await new Promise((resolve, reject) => {
+      uni.login({
+        provider: "weixin",
+        success: resolve,
+        fail: reject,
+      });
     });
-  });
-
-  uni.setStorageSync("openid", loginRes.code);
+    uni.setStorageSync("openid", loginRes.code);
+  } catch (err) {
+    uni.showToast({ title: "授权失败，请重试", icon: "none" });
+    console.error("uni.login error:", err);
+    return;
+  }
   // #endif
 
   Login({
     ...form.value,
     password: form.value.password,
     type: 1,
-    login_code: loginRes?.code || undefined,
   })
     .then((res) => {
       if (res.code == 200) {
@@ -155,8 +157,11 @@ const handleLogin = async () => {
         });
       }
     })
-    .catch();
-  // 这里写你的登录接口
+    .catch(()=>{
+      uni.showToast({ title: "网络异常，请稍后再试", icon: "none" });
+      console.error("登录请求错误:", err);
+    });
+
 };
 
 // 跳转

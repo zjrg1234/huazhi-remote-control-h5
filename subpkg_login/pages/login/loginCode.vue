@@ -84,18 +84,18 @@ const handleLogin = async () => {
 		return
 	}
 
-	const loginRes = await new Promise((resolve, reject) => {
-		uni.login({
-			provider: "weixin",
-			success: (res) => resolve(res),
-			fail: (err) => reject(err),
-		});
-	});
+	// const loginRes = await new Promise((resolve, reject) => {
+	// 	uni.login({
+	// 		provider: "weixin",
+	// 		success: (res) => resolve(res),
+	// 		fail: (err) => reject(err),
+	// 	});
+	// });
 
 	Login({
 		...form.value,
 		type: 1,
-		login_code: loginRes.code
+		// login_code: loginRes.code
 	}).then(res => {
 		console.log(res)
 		if (res.code == 200) {
@@ -110,12 +110,7 @@ const handleLogin = async () => {
 			}).catch()
 		}
 	}).catch()
-	// 这里写你的登录接口
-
-
-
 }
-
 
 
 const goLogin = () => {
