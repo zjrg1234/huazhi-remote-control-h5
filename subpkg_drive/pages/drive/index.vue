@@ -5,7 +5,7 @@
       <cover-view class="logout" @click="logout">
         <cover-image src="./static/icon_exit@2x.png" class="image" mode="aspectFit" />
       </cover-view>
-      <!-- #ifdef MP-WEIXIN -->
+      <!-- #ifdef MP-WEIXIN || MP-KUAISHOU  -->
 
       <!-- <view class="logout-wrapper" @click="logout">
          内层依然是 cover-view 保证能悬浮在 web-view 上 

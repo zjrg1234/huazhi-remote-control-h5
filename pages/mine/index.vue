@@ -160,18 +160,18 @@ const menuList = ref([
     key: "record",
     url: "/subpkg_mine/pages/mine/driveRecord",
   },
-  {
-    name: "在线客服",
-    icon: "/static/images/mine/icon_service@2x.png",
-    key: "service",
-    url: "",
-  },
-  {
-    name: "商务合作",
-    icon: "/static/images/mine/icon_cooperation@2x.png",
-    key: "cooperation",
-    url: "",
-  },
+  // {
+  //   name: "在线客服",
+  //   icon: "/static/images/mine/icon_service@2x.png",
+  //   key: "service",
+  //   url: "",
+  // },
+  // {
+  //   name: "商务合作",
+  //   icon: "/static/images/mine/icon_cooperation@2x.png",
+  //   key: "cooperation",
+  //   url: "",
+  // },
   {
     name: "设置",
     icon: "/static/images/mine/icon_set@2x.png",

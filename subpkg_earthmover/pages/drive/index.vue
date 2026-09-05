@@ -11,7 +11,7 @@
         {{ currentTime }}
       </cover-view>
 
-      <!-- #ifdef MP-WEIXIN -->
+     <!-- #ifdef MP-WEIXIN || MP-KUAISHOU  -->
 
       <web-view :src="videoUrl" ref="iframeView"></web-view>
 
