@@ -86,8 +86,8 @@
     </view>
 
     <!-- <view class="info">
-      <view class="text">八方远控 | 实况赛车热血越野 工程车</view>
-      <view class="text">宿迁战神信息科技有限公司</view>
+      <view class="text">指尖无界 | 实况赛车热血越野 工程车</view>
+      <view class="text">信息科技有限公司</view>
       <view class="text">Copyright © 2025-2026 All Rights Reserved</view>
     </view> -->
 
