@@ -2,16 +2,31 @@
   <view class="container">
     <!-- 顶部 Banner -->
     <view class="banner-section">
-      <image :src="imgUrl" mode="scaleToFill" class="banner-img" lazy-load></image>
+      <image
+        :src="imgUrl"
+        mode="scaleToFill"
+        class="banner-img"
+        lazy-load
+      ></image>
     </view>
 
     <!-- 分类导航栏 (Sticky 吸顶 + 横向滚动) -->
     <view class="nav">
       <view class="sticky-nav-wrapper">
-        <scroll-view scroll-x class="nav-scroll" :show-scrollbar="false" enable-flex>
+        <scroll-view
+          scroll-x
+          class="nav-scroll"
+          :show-scrollbar="false"
+          enable-flex
+        >
           <view class="nav-list">
-            <view v-for="(item, index) in categories" :key="index" class="nav-item"
-              :class="{ active: currentCategory === item.id }" @click="handleCategoryClick(item)">
+            <view
+              v-for="(item, index) in categories"
+              :key="index"
+              class="nav-item"
+              :class="{ active: currentCategory === item.id }"
+              @click="handleCategoryClick(item)"
+            >
               {{ item.name }}
             </view>
           </view>
@@ -19,45 +34,77 @@
       </view>
     </view>
 
-
-
-
-
     <!-- ✅ 核心改动：使用 scroll-view 包裹瀑布流区域 -->
-    <scroll-view scroll-y class="waterfall-scroll" refresher-enabled :refresher-triggered="isRefreshing"
-      refresher-default-style="none" @refresherrefresh="onRefresh">
+    <scroll-view
+      scroll-y
+      class="waterfall-scroll"
+      refresher-enabled
+      :refresher-triggered="isRefreshing"
+      refresher-default-style="none"
+      @refresherrefresh="onRefresh"
+    >
       <!-- 自定义下拉刷新插槽 -->
       <view slot="refresher" class="custom-refresher">
-        <text class="refresh-text">{{ isRefreshing ? '正在刷新...' : '下拉刷新' }}</text>
+        <text class="refresh-text">{{
+          isRefreshing ? $t("正在刷新") + "..." : $t("下拉刷新")
+        }}</text>
       </view>
 
       <!-- 骨架屏 -->
-      <view v-if="loading && leftList.length === 0 && rightList.length === 0" class="skeleton-wrapper">
+      <view
+        v-if="loading && leftList.length === 0 && rightList.length === 0"
+        class="skeleton-wrapper"
+      >
         <view class="column col-left">
           <SkeletonCard :key="'s-left-4'" />
-          <SkeletonCard v-for="i in 3" :key="'s-left-' + i" cardHeight="540rpx" />
+          <SkeletonCard
+            v-for="i in 3"
+            :key="'s-left-' + i"
+            cardHeight="540rpx"
+          />
         </view>
         <view class="column col-right">
-          <SkeletonCard v-for="i in 4" :key="'s-right-' + i" cardHeight="540rpx" />
+          <SkeletonCard
+            v-for="i in 4"
+            :key="'s-right-' + i"
+            cardHeight="540rpx"
+          />
         </view>
       </view>
 
       <!-- 瀑布流列表区域 -->
       <view v-else class="waterfall-container">
-        <view v-if="leftList.length === 0 && rightList.length === 0 && !loading" class="empty-state">
-          <image class="empty-img" src="/static/images/common/car@2x.png" mode="widthFix"></image>
-          <text class="empty-text">暂时没有内容哦～</text>
+        <view
+          v-if="leftList.length === 0 && rightList.length === 0 && !loading"
+          class="empty-state"
+        >
+          <image
+            class="empty-img"
+            src="/static/images/common/car@2x.png"
+            mode="widthFix"
+          ></image>
+          <text class="empty-text">{{ $t("nodata") }}</text>
         </view>
 
         <!-- 左列 -->
         <view class="column col-left">
-          <view v-for="(item, index) in leftList" :key="'left-' + index" class="card-item" @click="handleCar(item)">
-            <image :src="item.venue_image[0]" mode="scaleToFill" class="card-img" lazy-load></image>
+          <view
+            v-for="(item, index) in leftList"
+            :key="'left-' + index"
+            class="card-item"
+            @click="handleCar(item)"
+          >
+            <image
+              :src="item.venue_image[0]"
+              mode="scaleToFill"
+              class="card-img"
+              lazy-load
+            ></image>
             <view class="meta">
               <text class="status online"></text>
-              <text>在线{{ item.online }}</text>
+              <text>{{ $t("在线") }}{{ item.online }}</text>
               <text class="divider">|</text>
-              <text class="drivers">驾驶{{ item.driving }}</text>
+              <text class="drivers">{{ $t("驾驶") }}{{ item.driving }}</text>
             </view>
             <view class="card-info">
               <view class="title-tags">
@@ -65,8 +112,15 @@
                 <text class="tag">{{ item.labels }}</text>
               </view>
               <view class="num">
-                <image src="/static/images/common/icon_queue@2x.png" mode="widthFix" class="icon" lazy-load></image>
-                <text class="text"> {{ item.online }}人排队</text>
+                <image
+                  src="/static/images/common/icon_queue@2x.png"
+                  mode="widthFix"
+                  class="icon"
+                  lazy-load
+                ></image>
+                <text class="text">
+                  {{ $t("排队", { num: item.online }) }}</text
+                >
               </view>
             </view>
           </view>
@@ -74,13 +128,23 @@
 
         <!-- 右列 -->
         <view class="column col-right">
-          <view v-for="(item, index) in rightList" :key="'right-' + index" class="card-item" @click="handleCar(item)">
-            <image :src="item.venue_image[0]" mode="scaleToFill" class="card-img" lazy-load></image>
+          <view
+            v-for="(item, index) in rightList"
+            :key="'right-' + index"
+            class="card-item"
+            @click="handleCar(item)"
+          >
+            <image
+              :src="item.venue_image[0]"
+              mode="scaleToFill"
+              class="card-img"
+              lazy-load
+            ></image>
             <view class="meta">
               <text class="status online"></text>
-              <text>在线{{ item.online }}</text>
+              <text>{{ $t("在线") }}{{ item.online }}</text>
               <text class="divider">|</text>
-              <text class="drivers">驾驶{{ item.driving }}</text>
+              <text class="drivers">{{ $t("驾驶") }}{{ item.driving }}</text>
             </view>
             <view class="card-info">
               <view class="title-tags">
@@ -88,8 +152,15 @@
                 <text class="tag">{{ item.labels }}</text>
               </view>
               <view class="num">
-                <image src="/static/images/common/icon_queue@2x.png" mode="widthFix" class="icon" lazy-load></image>
-                <text class="text">{{ item.queue }}人排队</text>
+                <image
+                  src="/static/images/common/icon_queue@2x.png"
+                  mode="widthFix"
+                  class="icon"
+                  lazy-load
+                ></image>
+                <text class="text">
+                  {{ $t("排队", { num: item.online }) }}</text
+                >
               </view>
             </view>
           </view>
@@ -103,8 +174,12 @@
     </view> -->
     </scroll-view>
 
-
-    <NoticePopup v-model="showNotice" title="公告" :content="noticeContent" :is-rich-text="false" />
+    <NoticePopup
+      v-model="showNotice"
+      title="公告"
+      :content="noticeContent"
+      :is-rich-text="false"
+    />
   </view>
 </template>
 
@@ -112,11 +187,16 @@
 import { ref, nextTick } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
 import { throttle } from "@/utils/system.js"; // 引用封装好的节流函数
-import { GetHomeBanner, GetHomeTabTitle, GetHomeDataList, GetNotice } from "@/axios/index";
+import {
+  GetHomeBanner,
+  GetHomeTabTitle,
+  GetHomeDataList,
+  GetNotice,
+} from "@/axios/index";
 
-import NoticePopup from '@/components/notice-popup/notice-popup.vue';
-import SkeletonCard from '@/components/skeleton-card/skeleton-card.vue'
-import { shouldFetchNotice, resetNoticeFlag } from '@/utils/notice';
+import NoticePopup from "@/components/notice-popup/notice-popup.vue";
+import SkeletonCard from "@/components/skeleton-card/skeleton-card.vue";
+import { shouldFetchNotice, resetNoticeFlag } from "@/utils/notice";
 // --- 数据定义 ---
 const categories = ref([]);
 const currentCategory = ref("");
@@ -131,9 +211,8 @@ const isRefreshing = ref(false); // ✅ 控制刷新状态
 const totalData = ref([]);
 
 const showNotice = ref(false);
-const noticeContent = ref('');
-const isLoggedIn = ref(!!uni.getStorageSync('token'));
-
+const noticeContent = ref("");
+const isLoggedIn = ref(!!uni.getStorageSync("token"));
 
 const fetchData = async (isRefresh = false) => {
   if (loading.value || noMore.value) return;
@@ -149,9 +228,12 @@ const fetchData = async (isRefresh = false) => {
   }
 
   try {
-    const { code, data: { venueList } } = await GetHomeDataList({ type: currentCategory.value, size: 9999 });
-    if (venueList && currentCategory.value == '') {
-      totalData.value = venueList
+    const {
+      code,
+      data: { venueList },
+    } = await GetHomeDataList({ type: currentCategory.value, size: 9999 });
+    if (venueList && currentCategory.value == "") {
+      totalData.value = venueList;
     }
     if (code == 200) {
       if (venueList && venueList.length) {
@@ -164,7 +246,7 @@ const fetchData = async (isRefresh = false) => {
           }
         });
       } else {
-        if (currentCategory.value != '' && venueList.length == 0) {
+        if (currentCategory.value != "" && venueList.length == 0) {
           totalData.value.forEach((item, index) => {
             if (index % 2 === 0) {
               leftList.value.push(item);
@@ -174,11 +256,9 @@ const fetchData = async (isRefresh = false) => {
           });
         }
       }
-    }
-    else if (isRefresh) {
+    } else if (isRefresh) {
       noMore.value = true;
     }
-
   } catch (error) {
     console.error("获取数据失败", error);
   } finally {
@@ -200,7 +280,6 @@ const onRefresh = async () => {
 
 // 分类点击节流 (300ms内只能点一次)
 const handleCategoryClick = throttle((item) => {
-
   if (currentCategory.value === item.id) return;
   currentCategory.value = item.id;
   noMore.value = false;
@@ -209,36 +288,41 @@ const handleCategoryClick = throttle((item) => {
 }, 300);
 
 const handleCar = (item) => {
-  uni.setStorageSync('carTitle', item.venue_name)
-  uni.navigateTo({ url: '/subpkg_car/pages/car/index?id=' + item.id })
-}
+  uni.setStorageSync("carTitle", item.venue_name);
+  uni.navigateTo({ url: "/subpkg_car/pages/car/index?id=" + item.id });
+};
 
 // --- 生命周期 ---
 onLoad(() => {
-  categories.value = [{ name: "全部", id: "" }];
-  GetHomeBanner().then((res) => { imgUrl.value = res.data[0]?.image; }).catch(() => { });
-  GetHomeTabTitle().then((res) => { categories.value = [...categories.value, ...res.data]; }).catch(() => { });
+  categories.value = [{ name: $t("全部"), id: "" }];
+  GetHomeBanner()
+    .then((res) => {
+      imgUrl.value = res.data[0]?.image;
+    })
+    .catch(() => {});
+  GetHomeTabTitle()
+    .then((res) => {
+      categories.value = [...categories.value, ...res.data];
+    })
+    .catch(() => {});
   fetchData();
   if (shouldFetchNotice(isLoggedIn.value)) {
-    getNotice()
-
+    getNotice();
   }
-})
-
+});
 
 const getNotice = () => {
-
-  GetNotice().then(res => {
-    if (res.data && res.data.status == 1) {
-      showNotice.value = true
-      noticeContent.value = res.data.content
-    }
-  }).catch(() => {
-    resetNoticeFlag();
-  })
-}
-
-
+  GetNotice()
+    .then((res) => {
+      if (res.data && res.data.status == 1) {
+        showNotice.value = true;
+        noticeContent.value = res.data.content;
+      }
+    })
+    .catch(() => {
+      resetNoticeFlag();
+    });
+};
 </script>
 
 <style lang="scss" scoped>
@@ -248,7 +332,6 @@ const getNotice = () => {
   flex-direction: column;
   height: 100vh;
   background-color: #fff;
-
 }
 
 /* Banner 区域 */
@@ -284,7 +367,6 @@ const getNotice = () => {
   border-bottom: 1rpx solid #f6f6f6;
 }
 
-
 .nav-scroll {
   width: 100%;
   white-space: nowrap;
@@ -298,7 +380,9 @@ const getNotice = () => {
 }
 
 .nav-item {
-  font-family: PingFangSC, PingFang SC;
+  font-family:
+    PingFangSC,
+    PingFang SC;
   font-weight: 400;
   display: inline-block;
   padding: 0 30rpx;
@@ -309,7 +393,7 @@ const getNotice = () => {
   line-height: 88rpx;
 
   &.active {
-    color: #1A1A1A;
+    color: #1a1a1a;
     font-weight: 500;
     font-size: 30rpx;
 
@@ -411,8 +495,9 @@ const getNotice = () => {
       align-items: center;
 
       .title {
-
-        font-family: PingFangSC, PingFang SC;
+        font-family:
+          PingFangSC,
+          PingFang SC;
         font-weight: 600;
         font-size: 30rpx;
         color: #fff;
@@ -425,7 +510,9 @@ const getNotice = () => {
       }
 
       .tag {
-        font-family: PingFangSC, PingFang SC;
+        font-family:
+          PingFangSC,
+          PingFang SC;
         font-weight: 400;
         font-size: 20rpx;
         color: #1a1a1a;
@@ -448,7 +535,9 @@ const getNotice = () => {
       }
 
       .text {
-        font-family: PingFangSC, PingFang SC;
+        font-family:
+          PingFangSC,
+          PingFang SC;
         font-weight: 400;
         font-size: 22rpx;
         color: #ffc838;
@@ -465,7 +554,9 @@ const getNotice = () => {
     align-items: center;
     background: rgba(0, 0, 0, 0.5);
     border-radius: 20rpx;
-    font-family: PingFangSC, PingFang SC;
+    font-family:
+      PingFangSC,
+      PingFang SC;
     font-weight: 400;
     font-size: 24rpx;
     color: #ffffff;

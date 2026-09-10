@@ -4,7 +4,8 @@ import hant from './zh-hant.json'
 
 const messages = {
   'zh-CN': Hans,
-  'zh-TW': hant
+  'zh-TW': hant,
+  'zh-Hans': Hans
 }
 
 const i18n = createI18n({
