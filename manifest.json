@@ -65,10 +65,18 @@
         "usingComponents" : true
     },
     "mp-toutiao" : {
-        "usingComponents" : true
+        "usingComponents" : true,
+        "appid" : "tt4a423cffd439cf1501",
+        "setting" : {
+            "minified" : true,
+            "postcss" : true
+        }
     },
     "uniStatistics" : {
         "enable" : false
     },
-    "vueVersion" : "3"
+    "vueVersion" : "3",
+    "mp-kuaishou" : {
+        "appid" : "ks706502192396897588"
+    }
 }

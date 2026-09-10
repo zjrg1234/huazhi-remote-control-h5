@@ -37,7 +37,7 @@ const form = ref({
 
 const userStore = useUserStore()
 // 登录
-const handleLogin = () => {
+const handleLogin = async () => {
   if (!form.value.phone || form.value.phone.length !== 11) {
     uni.showToast({
       title: "请输入手机号",
@@ -67,10 +67,20 @@ const handleLogin = () => {
     return;
   }
 
+  const loginRes = await new Promise((resolve, reject) => {
+		uni.login({
+			provider: "weixin",
+			success: (res) => resolve(res),
+			fail: (err) => reject(err),
+		});
+	});
+
+  uni.setStorageSync("openid", loginRes.code);
+
   Register({
     ...form.value,
     type: 1,
-    noteVerify: form.value.code,
+    noteVerify: form.value.code
   })
     .then((res) => {
 
@@ -84,6 +94,7 @@ const handleLogin = () => {
           ...form.value,
           password: form.value.password,
           type: 1,
+          login_code: loginRes.code
         })
           .then((res) => {
             if (res.code == 200) {

@@ -73,7 +73,8 @@ const userStore = useUserStore();
 const popupRef = ref(null);
 const visible = ref(false);
 
-const userInfo = computed(() => userStore.getUserInfo());
+const userInfo = computed(() => userStore.userInfo);
+
 const username = ref("");
 
 const editUsername = () => {

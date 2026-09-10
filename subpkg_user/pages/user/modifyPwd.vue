@@ -47,9 +47,8 @@ import { ChangePwd } from "@/axios/mine.js"
 import { useUserStore } from "@/store/modules/user";
 
 const userStore = useUserStore();
-const userInfo = computed(() => {
-  return userStore.getUserInfo();
-});
+const userInfo = computed(() => userStore.userInfo);
+
 
 // --- 数据定义 ---
 const formData = reactive({
@@ -68,7 +67,7 @@ const handleSubmit = () => {
   if (formData.password1 !== formData.password2)
     return uni.showToast({ title: '两次密码不一致', icon: 'none' });
   console.log(formData)
-  ChangePwd({ code: formData.code, phone: userStore.getUserInfo().phone_number, password: formData.password1 }).then(res => {
+  ChangePwd({ code: formData.code, phone: userInfo.value.phone_number, password: formData.password1 }).then(res => {
     if(res.code  == 200) {
       uni.showToast({ title: '密码重置成功', icon: 'success' });
     } else {

@@ -12,7 +12,8 @@ const whiteList = ["/api/login",
   "api/user/get/title",
   "/api/user/mine",
   '/api/get/login/code',
-  '/api/login/save'
+  '/api/login/save',
+  '/api/user/venue/detail'
 ];
 
 const request = (options) => {
@@ -33,7 +34,7 @@ const request = (options) => {
       uni.reLaunch({
         url: "/subpkg_login/pages/login/index",
       });
-      console.log("接口不是白名单")
+      console.log("接口不是白名单", url)
       return reject("接口不是白名单,请检查。");
     }
 
