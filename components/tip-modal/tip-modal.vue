@@ -21,8 +21,8 @@
         <!-- ✅ 底部按钮插槽 -->
         <view class="btn-group">
           <slot name="footer">
-            <view class="btn refuse" v-if="cancelFlag" @click="onCancel">{{ cancelText || '取消' }}</view>
-            <view class="btn allow" :class="{len: !cancelFlag}" @click="onConfirm">{{ confirmText || '确认' }}</view>
+            <view class="btn refuse" v-if="cancelFlag" @click="onCancel">{{ cancelText || $t('取消') }}</view>
+            <view class="btn allow" :class="{len: !cancelFlag}" @click="onConfirm">{{ confirmText || $t('确认') }}</view>
           </slot>
         </view>
       </view>
@@ -54,11 +54,11 @@ const props = defineProps({
   },
   cancelText: {
     type: String,
-    default: '取消'
+    default: ''
   },
   confirmText: {
     type: String,
-    default: '确认'
+    default: ''
   },
    cancelFlag: {
     type: Boolean,

@@ -214,6 +214,11 @@ const showNotice = ref(false);
 const noticeContent = ref("");
 const isLoggedIn = ref(!!uni.getStorageSync("token"));
 
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
+
+
+
 const fetchData = async (isRefresh = false) => {
   if (loading.value || noMore.value) return;
 
@@ -294,7 +299,7 @@ const handleCar = (item) => {
 
 // --- 生命周期 ---
 onLoad(() => {
-  categories.value = [{ name: $t("全部"), id: "" }];
+  categories.value = [{ name: t("全部"), id: "" }];
   GetHomeBanner()
     .then((res) => {
       imgUrl.value = res.data[0]?.image;

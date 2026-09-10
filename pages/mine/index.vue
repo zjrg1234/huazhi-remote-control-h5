@@ -45,7 +45,7 @@
 
     <!-- 我的资产卡片 -->
     <view class="asset-card">
-      <view class="card-title"> {{ $t('我的资产') }} </view>
+      <view class="card-title"> {{ $t("我的资产") }} </view>
       <view class="card-content">
         <view class="asset-item">
           <text class="asset-num">{{ balance }}</text>
@@ -85,23 +85,23 @@
       </view>
     </view>
 
-    <view class="info">
+    <!-- <view class="info">
       <view class="text">八方远控 | 实况赛车热血越野 工程车</view>
       <view class="text">宿迁战神信息科技有限公司</view>
       <view class="text">Copyright © 2025-2026 All Rights Reserved</view>
-    </view>
+    </view> -->
+
+    <BusinessModal v-model:visible="showModal"></BusinessModal>
+
+    <CustomModal
+      v-model:visible="serviceModal"
+      title="在线客服"
+      :content="serviceTip"
+      cancelText="拒绝"
+      confirmText="允许"
+      @confirm="handleConfirm"
+    ></CustomModal>
   </view>
-
-  <BusinessModal v-model:visible="showModal" />
-
-  <CustomModal
-    v-model:visible="serviceModal"
-    title="在线客服"
-    :content="serviceTip"
-    cancelText="拒绝"
-    confirmText="允许"
-    @confirm="handleConfirm"
-  />
 </template>
 
 <script setup>
@@ -113,6 +113,8 @@ import { ChangeHeadImg } from "@/axios/mine";
 import { GetUserInfo } from "@/axios/index";
 import { useUserStore } from "@/store/modules/user";
 import { baseUrl } from "@/config/env";
+import { useI18n } from "vue-i18n";
+const { t } = useI18n();
 
 const userStore = useUserStore();
 const imageUrl = ref("");
@@ -137,43 +139,43 @@ const serviceModal = ref(false);
 
 const menuList = ref([
   {
-    name: "变更专区",
+    name: t("变更专区"),
     icon: "/static/images/mine/icon_change@2x.png",
     key: "area",
     url: "/subpkg_mine/pages/mine/changeArea",
   },
   {
-    name: "我的预约",
+    name: t("我的预约"),
     icon: "/static/images/mine/icon_book@2x.png",
     key: "order",
     url: "/subpkg_mine/pages/mine/reservation",
   },
   {
-    name: "我的申诉",
+    name: t("我的申诉"),
     icon: "/static/images/mine/icon_appeal@2x.png",
     key: "appeal",
     url: "/subpkg_mine/pages/mine/appeal",
   },
   {
-    name: "驾驶记录",
+    name: t("驾驶记录"),
     icon: "/static/images/mine/icon_record@2x.png",
     key: "record",
     url: "/subpkg_mine/pages/mine/driveRecord",
   },
   {
-    name: "在线客服",
+    name: t("在线客服"),
     icon: "/static/images/mine/icon_service@2x.png",
     key: "service",
     url: "",
   },
   {
-    name: "商务合作",
+    name: t("商务合作"),
     icon: "/static/images/mine/icon_cooperation@2x.png",
     key: "cooperation",
     url: "",
   },
   {
-    name: "设置",
+    name: t("设置"),
     icon: "/static/images/mine/icon_set@2x.png",
     key: "set",
     url: "/subpkg_mine/pages/mine/set",
@@ -184,7 +186,7 @@ onPageShow(() => {
   GetUserInfo()
     .then((res) => {
       userStore.setUser(res.data);
-      uni.removeStorageSync('new_user')
+      uni.removeStorageSync("new_user");
     })
     .catch(() => {});
 });
@@ -263,7 +265,7 @@ const openService = () => {
   // ======================================
   // #ifndef MP-WEIXIN || MP-TOUTIAO
   uni.showModal({
-    title: "联系客服",
+    title: t("联系客服"),
     content: "微信：we1731747901",
     confirmText: "复制微信",
     success: (res) => {
@@ -303,9 +305,9 @@ const changeHeader = () => {
       return uni.getFileInfo({ filePath: tempFilePath }).then((fileInfo) => {
         const sizeMB = fileInfo.size / (1024 * 1024);
         if (sizeMB > 1) {
-          uni.showToast({ title: "图片大小不能超过1M", icon: "none" });
+          uni.showToast({ title: t("图片大小不能超过1M"), icon: "none" });
           // 返回一个被拒绝的 Promise 来中断后续链式调用
-          return Promise.reject("图片过大");
+          return Promise.reject(t("图片过大"));
         }
         // 图片校验通过，继续上传
         return uploadFile(tempFilePath);
@@ -321,7 +323,7 @@ const changeHeader = () => {
 
 // 上传文件（已修复 BUG）
 const uploadFile = async (filePath) => {
-  uni.showLoading({ title: "上传中..." });
+  uni.showLoading({ title: t("上传中") + "..." });
 
   // 上传前先清空旧图，防止显示错误
   imageUrl.value = "";
@@ -341,7 +343,7 @@ const uploadFile = async (filePath) => {
       imageUrl.value = data.data.file[0];
       ChangeHeadImg({ head_shot: imageUrl.value }).then((res) => {
         if (data.code === 200) {
-          uni.showToast({ title: "上传成功", icon: "success" });
+          uni.showToast({ title: t("上传成功"), icon: "success" });
           userStore.setHeadImg(imageUrl.value);
         }
       });
@@ -350,7 +352,7 @@ const uploadFile = async (filePath) => {
     }
   } catch (err) {
     imageUrl.value = ""; // 失败清空
-    uni.showToast({ title: "上传失败", icon: "none" });
+    uni.showToast({ title: t("上传失败"), icon: "none" });
     console.error("上传错误：", err);
   } finally {
     uni.hideLoading();
@@ -366,7 +368,6 @@ const gotoUrl = () => {
 
 <style lang="scss" scoped>
 .container {
- 
   display: flex;
   flex-direction: column;
   min-height: 100vh;
