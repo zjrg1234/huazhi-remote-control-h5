@@ -38,6 +38,8 @@
         <cover-view>距离本次结束驾驶还有{{ 31 - numTip }}s</cover-view>
       </cover-view>
 
+     
+
       <!-- 设置按钮 -->
       <cover-view class="right-cont">
         <cover-view class="flex">
@@ -53,6 +55,10 @@
       <cover-view class="menu">
         <cover-image class="image" v-show="isShowLight" :style="{ display: isShowLight ? 'block' : 'none' }" @click="setCh6" src="./static/icon_lights_open@2x.png" mode="aspectFit" />
         <cover-image class="image" v-show="!isShowLight" :style="{ display: !isShowLight ? 'block' : 'none' }" @click="setCh6" src="./static/icon_lights_close@2x.png" mode="aspectFit" />
+      </cover-view>
+
+       <cover-view class="right-cont-refresh" @click="refresh">
+        <cover-image class="image" src="./static/refresh@2x.png" mode="aspectFit" />
       </cover-view>
 
       <ExLeft @action="handleLeftDrive" @reset="onUserActivity">
@@ -627,6 +633,11 @@ const handlePopupAction = (val) => {
 };
 
 
+const refresh = () => {
+  const newUrl = videoUrl.value.replace(/([?&]_t=)[^&]*/, `$1${Date.now()}`);
+  videoUrl.value = newUrl;  
+  console.log(videoUrl.value)
+}
 
 const set = () => {
   onUserActivity();
@@ -1133,6 +1144,19 @@ const handleReport = () => {
   color: #fff;
   font-style: normal;
 
+}
+
+
+.right-cont-refresh {
+  position: fixed;
+  z-index: 9999;
+  top: 80px;
+  right: 70px;
+
+  .image {
+    width: 27px;
+    height: 27px;
+  }
 }
 
 .right-cont {

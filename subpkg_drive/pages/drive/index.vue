@@ -44,7 +44,11 @@
         <cover-view>距离本次结束驾驶还有{{ 31 - numTip }}s</cover-view>
       </cover-view>
 
-      <!-- 设置按钮 -->
+
+      <cover-view class="right-cont-refresh" @click="refresh">
+        <cover-image class="image" src="./static/refresh@2x.png" mode="aspectFit" />
+      </cover-view>
+
       <cover-view class="right-cont" @click="set">
         <cover-image class="image" src="./static/icon_set@2x.png" mode="aspectFit" />
       </cover-view>
@@ -1011,6 +1015,13 @@ const set = () => {
 
 };
 
+const refresh = () => {
+
+  const newUrl = videoUrl.value.replace(/([?&]_t=)[^&]*/, `$1${Date.now()}`);
+  videoUrl.value = newUrl;  
+  console.log(videoUrl.value)
+}
+
 const logout = () => {
   onUserActivity();
   allPopupVisible.value = true;
@@ -1869,6 +1880,18 @@ const report = (text) => {
   .image {
     width: 27px;
     height: 27px;
+  }
+}
+
+.right-cont-refresh {
+  position: fixed;
+  z-index: 9999;
+  top: 42px;
+  right: 60px;
+
+  .image {
+    width: 23px;
+    height: 23px;
   }
 }
 
