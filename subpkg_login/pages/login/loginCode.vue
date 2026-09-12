@@ -78,13 +78,19 @@ const handleLogin = async () => {
 	}
 	if (!agree.value) {
 		uni.showToast({
-			title: '请先同意用户协议和隐私条款',
+			title: '请同意用户协议、隐私条款',
 			icon: 'none'
 		})
 		return
 	}
 
-	const loginRes = await new Promise((resolve, reject) => {
+
+	let loginRes = {};
+	// #ifdef MP-WEIXIN
+
+
+	// 2. 获取微信登录的临时凭证 code
+	loginRes = await new Promise((resolve, reject) => {
 		uni.login({
 			provider: "weixin",
 			success: (res) => resolve(res),
@@ -92,10 +98,14 @@ const handleLogin = async () => {
 		});
 	});
 
+	uni.setStorageSync("openid", loginRes.code);
+
+	// #endif
+
 	Login({
 		...form.value,
 		type: 1,
-		login_code: loginRes.code
+		login_code: loginRes?.code || undefined
 	}).then(res => {
 		console.log(res)
 		if (res.code == 200) {
@@ -108,6 +118,8 @@ const handleLogin = async () => {
 					url: "/pages/index/index"
 				})
 			}).catch()
+		} else {
+			uni.showToast({title: res.msg, icon: "none"});
 		}
 	}).catch()
 	// 这里写你的登录接口
