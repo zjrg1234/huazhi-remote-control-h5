@@ -104,6 +104,7 @@ const handleLogin = async () => {
 
 	Login({
 		...form.value,
+		noteVerify: form.value.code,
 		type: 1,
 		login_code: loginRes?.code || undefined
 	}).then(res => {
