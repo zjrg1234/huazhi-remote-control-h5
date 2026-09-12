@@ -92,7 +92,7 @@ const userStore = useUserStore();
 const handleLogin = async () => {
   if (!agree.value) {
     uni.showToast({
-      title: "请先同意用户协议和隐私条款",
+      title: "请同意用户协议、隐私条款",
       icon: "none",
     });
     return;
@@ -112,9 +112,12 @@ const handleLogin = async () => {
     });
     return;
   }
+  let loginRes = {};
+  // #ifdef MP-WEIXIN
 
+    
   // 2. 获取微信登录的临时凭证 code
-  const loginRes = await new Promise((resolve, reject) => {
+  loginRes = await new Promise((resolve, reject) => {
     uni.login({
       provider: "weixin",
       success: (res) => resolve(res),
@@ -124,11 +127,14 @@ const handleLogin = async () => {
 
   uni.setStorageSync("openid", loginRes.code);
 
+  // #endif
+
+
   Login({
     ...form.value,
     password: form.value.password,
     type: 1,
-    login_code: loginRes.code,
+    login_code: loginRes?.code || undefined,
   })
     .then((res) => {
       if (res.code == 200) {

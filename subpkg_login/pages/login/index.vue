@@ -81,7 +81,7 @@ const goto = (url) => {
 
 const handleGetPhoneNumber = async (e) => {
   if (!agree.value) {
-    uni.showToast({ title: "请先同意用户协议和隐私条款", icon: "none" });
+    uni.showToast({ title: "请同意用户协议、隐私条款", icon: "none" });
     return;
   }
   // 1. 判断用户是否同意授权
