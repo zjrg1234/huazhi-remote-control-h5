@@ -6,9 +6,9 @@
         <cover-image src="./static/icon_exit@2x.png" class="image" mode="aspectFit" />
       </cover-view>
 
-      <cover-view class="start-drive" v-if="isShowBtn" @click="handleStartDrive">
+      <!-- <cover-view class="start-drive" v-if="isShowBtn" @click="handleStartDrive">
         <cover-view>开始驾驶</cover-view>
-      </cover-view>
+      </cover-view> -->
 
       <!-- #ifdef MP-WEIXIN -->
       <web-view :src="videoUrl" ref="iframeView"></web-view>
@@ -338,12 +338,23 @@
           <cover-view class="popup-container" :class="{ contmax: type === 'repair' }" @tap.stop>
             <!-- 场景1：黑屏提示 -->
             <cover-view v-show="type === 'tip'">
-              <cover-view class="tip-content">
+
+             
+              <cover-view class="tip-content" v-show="!isIosFlag" :style="{ display: !isIosFlag ? 'block' : 'none' }"> 
                 <cover-view class="time">倒计时{{ count }}s</cover-view>
                 <cover-view class="tit">是否黑屏？</cover-view>
                 <cover-view class="text">
                   <cover-view class="text1">开始驾驶前如遇黑屏或者车辆故障上报不扣费，开始驾驶后开始计费。</cover-view>
                   <cover-view class="text1">如果一切正常，请点击“开始驾驶”</cover-view>
+                </cover-view>
+              </cover-view>
+
+              <cover-view class="tip-content" v-show="isIosFlag" :style="{ display: isIosFlag ? 'block' : 'none' }">
+                <cover-view class="time">倒计时{{ count }}s</cover-view>
+                <cover-view class="tit">请您点击屏幕中的播放按钮</cover-view>
+                <cover-view class="text">
+                  <cover-view class="text1">点击开始驾驶之后，继续点击屏幕中的播放按钮，才会出现视频画面</cover-view>
+                  <cover-view class="text1">如果有问题，可退出，可报修</cover-view>
                 </cover-view>
               </cover-view>
 
@@ -363,6 +374,8 @@
                 </cover-view>
               </cover-view>
             </cover-view>
+
+       
 
             <!-- 场景2：退出驾驶 -->
             <cover-view v-show="type === 'logout'">
@@ -472,24 +485,6 @@
                 <cover-view class="btn right" @tap.stop="handleContinueDrive">继续驾驶</cover-view>
               </cover-view>
             </cover-view>
-
-
-            <cover-view v-show="type === 'iosTip'">
-              <!-- 场景5：长时间无操作 -->
-
-              <cover-view class="tip-content">
-                <cover-view class="tit">提示</cover-view>
-                <cover-view class="text">
-                  <cover-view class="text1">请您先点击左上角打开视频再点击开始驾驶</cover-view>
-                </cover-view>
-              </cover-view>
-              <cover-view class="footer">
-                <cover-view class="flex mt">
-                  <cover-view class="btn right" @tap.stop="confirm">确认</cover-view>
-                </cover-view>
-              </cover-view>
-            </cover-view>
-
           </cover-view>
         </cover-view>
       </cover-view>
@@ -824,11 +819,11 @@ const GetDeviceInfo = (data) => {
         // const query = `?device_id=${encodeURIComponent('1002211')}&token=${encodeURIComponent(data.token)}&initAction=video_only&videoDefinition=${carDetails.value.video_definition}&defaultCameraClarity=${carDetails.value.default_camera_clarity}&closeFlag=0&_t=${Date.now()}`;
         videoUrl.value = base + query;
 
-        if (isIos == 'ios') {
-          console.log(0)
-          allPopupVisible.value = true;
-          type.value = "iosTip"
-        }
+        // if (isIos == 'ios') {
+        //   console.log(0)
+        //   allPopupVisible.value = true;
+        //   type.value = "iosTip"
+        // }
         console.log("请求接口之后的url:", videoUrl.value);
       }
     })
@@ -1115,7 +1110,11 @@ onLoad((options) => {
 });
 
 const count = ref(15);
+const isIosFlag = ref(false)
 onMounted(() => {
+
+  isIosFlag.value = getPlatform() == 'ios'
+
   console.log("onMounted");
   if (!uni.getStorageSync("sendNum")) uni.setStorageSync("sendNum", 0);
   initTimer(); // 时钟
@@ -1125,35 +1124,26 @@ onMounted(() => {
   initSendLoop();
   initTopVideo();
   clearCountdown();
-  const isIOS = getPlatform();
-  if (isIOS == 'ios') {
-    // allPopupVisible.value = true;
-    // type.value = "iosTip"
 
-    isShowBtn.value = true;
+
+  if (uni.getStorageSync("loadingOne") !== "1") {
+    allPopupVisible.value = true;
+
+    countdownTimer = setInterval(() => {
+      count.value -= 1;
+      if (count.value == 0) {
+        count.value = 0;
+        clearInterval(countdownTimer);
+        countdownTimer = null;
+        allPopupVisible.value = false;
+        console.log("自动调驾驶接口");
+        // 自动调开始驾驶的接口
+        handlePopupAction("driving");
+        uni.setStorageSync("loadingOne", "1");
+      }
+    }, 1000);
   } else {
-    isShowBtn.value = false;
-
-    if (uni.getStorageSync("loadingOne") !== "1") {
-      allPopupVisible.value = true;
-
-      countdownTimer = setInterval(() => {
-        count.value -= 1;
-        if (count.value == 0) {
-          count.value = 0;
-          clearInterval(countdownTimer);
-          countdownTimer = null;
-          allPopupVisible.value = false;
-          console.log("自动调驾驶接口");
-          // 自动调开始驾驶的接口
-          handlePopupAction("driving");
-          uni.setStorageSync("loadingOne", "1");
-        }
-      }, 1000);
-    } else {
-      allPopupVisible.value = false;
-    }
-    text.value = "车辆翻车";
+    allPopupVisible.value = false;
   }
 
 
