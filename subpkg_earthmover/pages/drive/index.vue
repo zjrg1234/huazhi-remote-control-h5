@@ -112,12 +112,21 @@
           <cover-view class="popup-container" :class="{ contmax: type === 'repair' }" @tap.stop>
             <!-- 场景1：黑屏提示 -->
             <cover-view v-show="type === 'tip'">
-              <cover-view class="tip-content">
+               <cover-view class="tip-content" v-show="!isIosFlag" :style="{ display: !isIosFlag ? 'block' : 'none' }"> 
                 <cover-view class="time">倒计时{{ count }}s</cover-view>
                 <cover-view class="tit">是否黑屏？</cover-view>
                 <cover-view class="text">
                   <cover-view class="text1">开始驾驶前如遇黑屏或者车辆故障上报不扣费，开始驾驶后开始计费。</cover-view>
-                  <cover-view>如果一切正常，请点击“开始驾驶”</cover-view>
+                  <cover-view class="text1">如果一切正常，请点击“开始驾驶”</cover-view>
+                </cover-view>
+              </cover-view>
+
+              <cover-view class="tip-content" v-show="isIosFlag" :style="{ display: isIosFlag ? 'block' : 'none' }">
+                <cover-view class="time">倒计时{{ count }}s</cover-view>
+                <cover-view class="tit">请您点击屏幕中的播放按钮</cover-view>
+                <cover-view class="text">
+                  <cover-view class="text1">点击开始驾驶之后，继续点击屏幕中的播放按钮，才会出现视频画面</cover-view>
+                  <cover-view class="text1">如果有问题，可退出，可报修</cover-view>
                 </cover-view>
               </cover-view>
 
@@ -476,11 +485,12 @@ const continueDrive = async () => {
 //video_only:自动打开视频
 //video_audio:自动打开视频+音频
 const GetDeviceInfo = (data) => {
+  const isIos = getPlatform();
   DeviceDetails({ ...data })
     .then((res) => {
       if (res.data?.rows?.length) {
         const base = "https://vedioafz.fzbkapp.com/";
-        const query = `?device_id=${encodeURIComponent(carDetails.value.front_camera)}&token=${encodeURIComponent(data.token)}&initAction=video_only&videoDefinition=${carDetails.value.video_definition}&defaultCameraClarity=${carDetails.value.default_camera_clarity}&orderNo=${orderNo.value}&_t=${Date.now()}`;
+        const query = `?device_id=${encodeURIComponent(carDetails.value.front_camera)}&token=${encodeURIComponent(data.token)}&initAction=video_only&videoDefinition=${carDetails.value.video_definition}&defaultCameraClarity=${carDetails.value.default_camera_clarity}&orderNo=${orderNo.value}&ios=${isIos}&_t=${Date.now()}`;
         // const query = `?device_id=${encodeURIComponent('1002211')}&token=${encodeURIComponent(data.token)}&initAction=video_only&videoDefinition=${carDetails.value.video_definition}&defaultCameraClarity=${carDetails.value.default_camera_clarity}&closeFlag=0&_t=${Date.now()}`;
         videoUrl.value = base + query;
 
@@ -697,7 +707,11 @@ onLoad((options) => {
 });
 
 const count = ref(15);
+const isIosFlag = ref(false)
 onMounted(() => {
+
+  isIosFlag.value = getPlatform() == 'ios'
+
   startListening();
   console.log("onMounted");
   if (!uni.getStorageSync("sendNum")) uni.setStorageSync("sendNum", 0);
