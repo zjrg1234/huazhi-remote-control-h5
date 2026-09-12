@@ -205,3 +205,10 @@ export const createMapperNew = (inMin, inMax, outMin, outMax, value) => {
     outMin + ((clampedValue - inMin) * (outMax - outMin)) / (inMax - inMin)
   );
 }
+
+export const getPlatform = () => {
+  if (wx.getDeviceInfo) {
+    return wx.getDeviceInfo().platform; // 基础库 2.20.1+ 推荐
+  }
+  return wx.getSystemInfoSync().platform; // 旧 API，已不推荐但兼容
+}
