@@ -279,6 +279,7 @@ import ExRight from "./components/ex-right.vue";
 import {
   formatTime,
   handleBattery,
+  getPlatform
 } from "./utils/utils.js";
 import UDPSocketClient from "./utils/udpSocket.js";
 import { handleDriverSocketData } from "./utils/socketHelper.js";

@@ -14,8 +14,6 @@ export const formatTime = (totalSeconds) => {
   return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 };
 
-
-
 export const formatDate = (time, format = "yyyy-MM-dd hh:mm:ss") => {
   if (!time) return "";
 
@@ -129,7 +127,6 @@ export const compareTimestamp = (startTime, endTime) => {
 
 const formatNum = (n) => (n < 10 ? "0" + n : n);
 
-
 // export const mapValue = (value) => {
 //   // 可选：限制输入值在 0~65 之间，防止越界
 //   const clampedValue = Math.max(0, Math.min(65, Math.abs(value)));
@@ -140,48 +137,43 @@ export const mapToPer = (value) => {
   // 1. 边界保护，防止超出范围
   if (value <= 0) return 0;
   if (value >= 65) return 1;
-  
+
   // 2. 线性映射计算
   const percentage = 1 + (value / 65) * 99;
-  
+
   // 3. 四舍五入取整（根据需求也可以保留小数）
-  return (Math.round(percentage)/ 100).toFixed(2); 
-}
-
-
+  return (Math.round(percentage) / 100).toFixed(2);
+};
 
 // 通过电压计算电量
 export const handleBattery = (voltage, batteryType) => {
+  // 1. 定义单节锂电池的安全工作区间
+  const cellMaxVoltage = 4.2;
+  const cellMinVoltage = 3.5;
+  const cellVoltageRange = cellMaxVoltage - cellMinVoltage; // 0.7V
 
-    // 1. 定义单节锂电池的安全工作区间
-    const cellMaxVoltage = 4.2;
-    const cellMinVoltage = 3.5;
-    const cellVoltageRange = cellMaxVoltage - cellMinVoltage; // 0.7V
+  // 2. 直接将传入的类型转换为数字类型（规避字符串隐式转换）
+  // 假设 batteryType 是 1~5，如果是其他异常值则默认保底为 6 串
+  const cellCount = Number(batteryType) + 1;
 
-    // 2. 直接将传入的类型转换为数字类型（规避字符串隐式转换）
-    // 假设 batteryType 是 1~5，如果是其他异常值则默认保底为 6 串
-    const cellCount = Number(batteryType) + 1;
+  // 3. 计算电池总体的最高与最低电压
+  const minVoltage = cellMinVoltage * cellCount;
+  const voltageRange = cellVoltageRange * cellCount;
 
-    // 3. 计算电池总体的最高与最低电压
-    const minVoltage = cellMinVoltage * cellCount;
-    const voltageRange = cellVoltageRange * cellCount;
+  // 4. 计算出原始比例
+  const rawRate = (voltage - minVoltage) / voltageRange;
 
-    // 4. 计算出原始比例
-    const rawRate = (voltage - minVoltage) / voltageRange;
+  // 5. 限制在 0.0 ~ 1.0 之间
+  const clampedRate = Math.max(0.0, Math.min(1.0, rawRate));
 
-    // 5. 限制在 0.0 ~ 1.0 之间
-    const clampedRate = Math.max(0.0, Math.min(1.0, rawRate));
+  // 6. 转换为百分比
+  // 方案 A：如果你需要整数百分比（推荐用于 UI 展示，如 7%）
+  // return Math.round(clampedRate * 100);
 
-    // 6. 转换为百分比
-    // 方案 A：如果你需要整数百分比（推荐用于 UI 展示，如 7%）
-    // return Math.round(clampedRate * 100);
+  // 方案 B：如果你确实需要保留两位小数的浮点数（如 7.14），需包裹 Number 强转
 
-    // 方案 B：如果你确实需要保留两位小数的浮点数（如 7.14），需包裹 Number 强转
-  
-    return Number((clampedRate * 100).toFixed(2));
-}
-
-
+  return Number((clampedRate * 100).toFixed(2));
+};
 
 export const createReverseMapper = (inMin, inMax, outMin, outMax) => {
   return (value) => {
@@ -190,8 +182,7 @@ export const createReverseMapper = (inMin, inMax, outMin, outMax) => {
       inMin + ((clampedValue - outMin) * (inMax - inMin)) / (outMax - outMin);
     return parseFloat(result.toFixed(1));
   };
-}
-
+};
 
 export const createMapperNew = (inMin, inMax, outMin, outMax, value) => {
   // 1. 防止除以 0 导致 NaN 或 Infinity
@@ -204,4 +195,16 @@ export const createMapperNew = (inMin, inMax, outMin, outMax, value) => {
   return (
     outMin + ((clampedValue - inMin) * (outMax - outMin)) / (inMax - inMin)
   );
-}
+};
+
+export const getPlatform = () => {
+  // #ifdef MP-WEIXIN
+  if (wx.getDeviceInfo) {
+    return wx.getDeviceInfo().platform; // 基础库 2.20.1+ 推荐
+  }
+  return wx.getSystemInfoSync().platform; // 旧 API，已不推荐但兼容
+  // #endif
+  // #ifdef H5
+  return "ios";
+  // #endif
+};
