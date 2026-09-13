@@ -339,8 +339,8 @@
             <!-- 场景1：黑屏提示 -->
             <cover-view v-show="type === 'tip'">
 
-             
-              <cover-view class="tip-content" v-show="!isIosFlag" :style="{ display: !isIosFlag ? 'block' : 'none' }"> 
+
+              <cover-view class="tip-content" v-show="!isIosFlag" :style="{ display: !isIosFlag ? 'block' : 'none' }">
                 <cover-view class="time">倒计时{{ count }}s</cover-view>
                 <cover-view class="tit">是否黑屏？</cover-view>
                 <cover-view class="text">
@@ -375,7 +375,7 @@
               </cover-view>
             </cover-view>
 
-       
+
 
             <!-- 场景2：退出驾驶 -->
             <cover-view v-show="type === 'logout'">
@@ -814,6 +814,7 @@ const GetDeviceInfo = (data) => {
   DeviceDetails({ ...data })
     .then((res) => {
       if (res.data?.rows?.length) {
+        console.log("device_id", carDetails.value.front_camera)
         const base = "https://vedioafz.fzbkapp.com/";
         const query = `?device_id=${encodeURIComponent(carDetails.value.front_camera)}&token=${encodeURIComponent(data.token)}&initAction=video_only&videoDefinition=${carDetails.value.video_definition}&defaultCameraClarity=${carDetails.value.default_camera_clarity}&orderNo=${orderNo.value}&ios=${isIos}&_t=${Date.now()}`;
         // const query = `?device_id=${encodeURIComponent('1002211')}&token=${encodeURIComponent(data.token)}&initAction=video_only&videoDefinition=${carDetails.value.video_definition}&defaultCameraClarity=${carDetails.value.default_camera_clarity}&closeFlag=0&_t=${Date.now()}`;
@@ -825,6 +826,25 @@ const GetDeviceInfo = (data) => {
         //   type.value = "iosTip"
         // }
         console.log("请求接口之后的url:", videoUrl.value);
+
+
+        if (getPlatform() == 'ios') {
+
+          count.value = 5;
+          countdownTimer = setInterval(() => {
+            count.value -= 1;
+            if (count.value == 0) {
+              count.value = 0;
+              clearInterval(countdownTimer);
+              countdownTimer = null;
+              allPopupVisible.value = false;
+              // 自动调开始驾驶的接口
+              handlePopupAction("driving");
+            }
+          }, 1000);
+
+        }
+
       }
     })
     .catch(() => { });
@@ -1125,8 +1145,8 @@ onMounted(() => {
   initTopVideo();
   clearCountdown();
 
-
-  if (uni.getStorageSync("loadingOne") !== "1") {
+  if (getPlatform() != 'ios') {
+    if (uni.getStorageSync("loadingOne") !== "1") {
     allPopupVisible.value = true;
 
     countdownTimer = setInterval(() => {
@@ -1145,6 +1165,9 @@ onMounted(() => {
   } else {
     allPopupVisible.value = false;
   }
+  }
+
+  
 
 
 
