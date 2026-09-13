@@ -489,16 +489,42 @@ const GetDeviceInfo = (data) => {
   DeviceDetails({ ...data })
     .then((res) => {
       if (res.data?.rows?.length) {
+        console.log("device_id", carDetails.value.front_camera)
         const base = "https://vedioafz.fzbkapp.com/";
         const query = `?device_id=${encodeURIComponent(carDetails.value.front_camera)}&token=${encodeURIComponent(data.token)}&initAction=video_only&videoDefinition=${carDetails.value.video_definition}&defaultCameraClarity=${carDetails.value.default_camera_clarity}&orderNo=${orderNo.value}&ios=${isIos}&_t=${Date.now()}`;
         // const query = `?device_id=${encodeURIComponent('1002211')}&token=${encodeURIComponent(data.token)}&initAction=video_only&videoDefinition=${carDetails.value.video_definition}&defaultCameraClarity=${carDetails.value.default_camera_clarity}&closeFlag=0&_t=${Date.now()}`;
         videoUrl.value = base + query;
 
+        // if (isIos == 'ios') {
+        //   console.log(0)
+        //   allPopupVisible.value = true;
+        //   type.value = "iosTip"
+        // }
         console.log("请求接口之后的url:", videoUrl.value);
+
+
+        if (getPlatform() == 'ios') {
+
+          count.value = 5;
+          countdownTimer = setInterval(() => {
+            count.value -= 1;
+            if (count.value == 0) {
+              count.value = 0;
+              clearInterval(countdownTimer);
+              countdownTimer = null;
+              allPopupVisible.value = false;
+              // 自动调开始驾驶的接口
+              handlePopupAction("driving");
+            }
+          }, 1000);
+
+        }
+
       }
     })
     .catch(() => { });
 };
+
 
 // 初始化摄像头播放
 const initTopVideo = () => {
@@ -722,8 +748,8 @@ onMounted(() => {
   initSendLoop();
   initTopVideo();
   clearCountdown();
-  // 注意：uni-app 不支持 sessionStorage，需改用 uni.getStorageSync
-  if (uni.getStorageSync("loadingOne") !== "1") {
+   if (getPlatform() != 'ios') {
+    if (uni.getStorageSync("loadingOne") !== "1") {
     allPopupVisible.value = true;
 
     countdownTimer = setInterval(() => {
@@ -741,6 +767,7 @@ onMounted(() => {
     }, 1000);
   } else {
     allPopupVisible.value = false;
+  }
   }
   text.value = "车辆翻车";
 });
