@@ -10,7 +10,7 @@
         </view>
         <!-- #endif -->
 
-        <!-- #ifdef MP-WEIXIN -->
+        <!-- #ifdef MP-WEIXIN || MP-KUAISHOU -->
         <custom-nav-bar title="我的电池" url="/subpkg_mine/pages/mine/battery" flag="0"></custom-nav-bar>
         <!-- #endif -->
 

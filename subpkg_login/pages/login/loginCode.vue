@@ -86,13 +86,18 @@ const handleLogin = async () => {
 
 
 	let loginRes = {};
+	// #ifdef MP-WEIXIN  || MP-KUAISHOU
+
+
+	let provider = 'kuaishou';
+
 	// #ifdef MP-WEIXIN
-
-
+	provider = "weixin";
+	// #endif
 	// 2. 获取微信登录的临时凭证 code
 	loginRes = await new Promise((resolve, reject) => {
 		uni.login({
-			provider: "weixin",
+			provider,
 			success: (res) => resolve(res),
 			fail: (err) => reject(err),
 		});
@@ -120,7 +125,7 @@ const handleLogin = async () => {
 				})
 			}).catch()
 		} else {
-			uni.showToast({title: res.msg, icon: "none"});
+			uni.showToast({ title: res.msg, icon: "none" });
 		}
 	}).catch()
 	// 这里写你的登录接口

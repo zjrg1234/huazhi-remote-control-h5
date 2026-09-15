@@ -10,7 +10,7 @@
         <cover-view>开始驾驶</cover-view>
       </cover-view> -->
 
-      <!-- #ifdef MP-WEIXIN -->
+      <!-- #ifdef MP-WEIXIN || MP-KUAISHOU -->
       <web-view :src="videoUrl" ref="iframeView"></web-view>
       <!-- #endif -->
       <!-- #ifdef H5 -->
@@ -1318,7 +1318,7 @@ const initSocket = () => {
   const wssUrl = uni.getStorageSync("wssUrl");
   const wssPort = uni.getStorageSync("wssPort");
   console.log(wssUrl, wssPort);
-  // #ifdef MP-WEIXIN
+  // #ifdef MP-WEIXIN || MP-KUAISHOU
 
   if (UDPSocket.value) {
     console.log("关闭UDPSocket");

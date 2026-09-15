@@ -198,7 +198,7 @@ export const createMapperNew = (inMin, inMax, outMin, outMax, value) => {
 };
 
 export const getPlatform = () => {
-  // #ifdef MP-WEIXIN
+  // #ifdef MP-WEIXIN || MP-KUAISHOU
   if (wx.getDeviceInfo) {
     return wx.getDeviceInfo().platform; // 基础库 2.20.1+ 推荐
   }

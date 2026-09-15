@@ -11,7 +11,7 @@
         {{ currentTime }}
       </cover-view>
 
-      <!-- #ifdef MP-WEIXIN -->
+      <!-- #ifdef MP-WEIXIN || MP-KUAISHOU -->
 
       <web-view :src="videoUrl" ref="iframeView"></web-view>
 
@@ -888,7 +888,7 @@ const initSocket = () => {
   const wssUrl = uni.getStorageSync("wssUrl");
   const wssPort = uni.getStorageSync("wssPort");
   console.log(wssUrl, wssPort);
-  // #ifdef MP-WEIXIN
+  // #ifdef MP-WEIXIN || MP-KUAISHOU
 
   if (UDPSocket.value) {
     console.log("关闭UDPSocket");

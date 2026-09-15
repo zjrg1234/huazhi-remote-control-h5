@@ -4,7 +4,7 @@
     <NavBar title="我的预约" url="/pages/mine/index" flag="1"></NavBar>
     <!-- #endif -->
 
-    <!-- #ifdef MP-WEIXIN -->
+    <!-- #ifdef MP-WEIXIN || MP-KUAISHOU -->
     <custom-nav-bar title="我的预约" url="/pages/mine/index" flag="1"></custom-nav-bar>
     <!-- #endif -->
 

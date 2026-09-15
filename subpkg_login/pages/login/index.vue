@@ -5,7 +5,7 @@
     </view>
 
     <view class="form">
-      <!-- #ifdef MP-WEIXIN -->
+      <!-- #ifdef MP-WEIXIN || MP-KUAISHOU -->
       <!-- 必须使用原生 button 组件才能触发手机号授权 -->
       <button
         class="login-btn"
