@@ -64,7 +64,7 @@
       <ExLeft @action="handleLeftDrive" @reset="onUserActivity">
       </ExLeft>
       <ExRight @action="handleRightDrive" :mode="operMode" @reset="onUserActivity"></ExRight>
-
+      
       <!-- 时间显示 -->
 
       <cover-view v-show="setVisible" :style="{ display: setVisible ? 'block' : 'none' }" class="custom-popup-mask"
