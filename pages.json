@@ -249,12 +249,6 @@
         "selectedIconPath": "static/images/tabBar/icon_home_selected@2x.png"
       },
       {
-        "text": "发现",
-        "pagePath": "pages/find/index",
-        "iconPath": "static/images/tabBar/icon_mine@2x.png",
-        "selectedIconPath": "static/images/tabBar/icon_mine_selected@2x.png"
-      },
-      {
         "text": "我的",
         "pagePath": "pages/mine/index",
         "iconPath": "static/images/tabBar/icon_mine@2x.png",
