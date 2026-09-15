@@ -35,10 +35,12 @@
 				<image class="check-icon" src="/static/images/login/checked@2x.png" mode="aspectFill" v-if="agree" />
 				<image class="un-check-icon" src="/static/images/login/circle@2x.png" mode="aspectFill" v-if="!agree" />
 			</view>
-			<text class="text">
-				我已同意<text class="highlight" @click="goto('/subpkg_set/pages/set/userPolicy')">用户协议</text> 和
+			<view class="text">
+				<text>我已同意</text>
+				<text class="highlight" @click="goto('/subpkg_set/pages/set/userPolicy')">用户协议</text>
+				<text>和</text>
 				<text @click="goto('/subpkg_set/pages/set/privacy')" class="highlight">隐私条款</text>
-			</text>
+			</view>
 		</view>
 
 	</view>
@@ -58,7 +60,7 @@ const form = ref({
 	code: ''
 })
 
-const agree = ref(true)
+const agree = ref(false)
 const userStore = useUserStore()
 // 登录
 const handleLogin = async () => {
@@ -120,7 +122,7 @@ const handleLogin = async () => {
 				})
 			}).catch()
 		} else {
-			uni.showToast({title: res.msg, icon: "none"});
+			uni.showToast({ title: res.msg, icon: "none" });
 		}
 	}).catch()
 	// 这里写你的登录接口
