@@ -62,17 +62,11 @@
           v-if="!agree"
         />
       </view>
-      <text class="text">
+      <view class="text">
         我已同意<text
           class="highlight"
-          @click="goto('/subpkg_set/pages/set/userPolicy')"
-          >用户协议</text
-        >
-        和
-        <text @click="goto('/subpkg_set/pages/set/privacy')" class="highlight"
-          >隐私条款</text
-        >
-      </text>
+          @click="goto('/subpkg_set/pages/set/userPolicy')">用户协议</text>和<text @click="goto('/subpkg_set/pages/set/privacy')" class="highlight">隐私条款</text>
+      </view>
     </view>
   </view>
 </template>
