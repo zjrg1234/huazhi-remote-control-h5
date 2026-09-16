@@ -276,10 +276,11 @@ const handleClickDownLeave = () => {
   doDownAction(false);
 };
 
+// flag true 按住向下箭头 false 停止按
 const doDownAction = (flag) => {
   emit("action2", { type: "down", isLeft: true, flag: flag ? 1 : 0 });
 };
-
+// flag true 按住向上箭头 false 停止按
 const doUpAction = (flag) => {
   emit("action2", { type: "up", isLeft: true, flag: flag ? 1 : 0 });
 };
