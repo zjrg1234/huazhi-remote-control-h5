@@ -115,13 +115,12 @@ export class ExcavatorControlHandler {
         this.ch3 = ch3Center - (ch3Center - ch3Close) * rateValue;
       }
 
-  
-      if (down) {
-        this.ch4 = ch4Center - (ch4Center - ch4Close) * rateValue;
-      }
-
       if (up) {
         this.ch4 = ch4Center + (ch4Open - ch4Center) * rateValue;
+      }
+
+      if (down) {
+        this.ch4 = ch4Center - (ch4Center - ch4Close) * rateValue;
       }
     }
   }
