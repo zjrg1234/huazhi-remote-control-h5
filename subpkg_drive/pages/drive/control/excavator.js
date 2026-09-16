@@ -127,11 +127,14 @@ export class ExcavatorControlHandler {
 
     // ---- 3. 新手模式 ----
     if (type === "left") {
+      console.log("新手模式")
       // 左侧摇杆：上下控制 ch1（前后），左右控制 ch2（转向）
       // 注意：原逻辑中 ch2 的方向也直接使用了 positionType（上下方向），这可能不合理，但保留
       const isUp = toBoolean(positionType);
-      const dir1 = getDirWithReverse(isUp); // ch1 受反向影响
+      // const dir1 = getDirWithReverse(isUp); // ch1 受反向影响
+      const dir1 = isUp ? -1 : 1;
       const dir2 = isUp ? 1 : -1; // ch2 受反向影响
+      console.log(dir1, dir2)
       setChannel("ch1", center1, offset1, dir1);
       setChannel("ch2", center2, offset2, dir2); // 不用dir2
       console.log("ch1", "ch2", this.ch1, this.ch2);
@@ -144,14 +147,16 @@ export class ExcavatorControlHandler {
         // const isUp = toBoolean(positionType);
 
         const isUp = toBoolean(positionType);
-        const dir1 = getDirWithReverse(isUp);
+        const dir1 = isUp ? -1 : 1;
 
         // 控制 ch1，方向为正
         setChannel("ch1", center1, offset1, dir1);
+        console.log(this.ch1)
       } else {
         // 控制 ch2，方向为负（原逻辑使用 !!positionType 转为 1，但这里是 down，应该为负？保留原样）
         // 注意：原代码 direction = !!positionType ? 1 : -1，对于 'down'，!!'down' 为 true，所以方向为 1，这里保留
         setChannel("ch2", center2, offset2, 1);
+        console.log(this.ch2)
       }
     }
   }

@@ -1513,6 +1513,8 @@ const handleUpDownDrive = (param) => {
         chValue.value.ch2 = ch.ch2;
       }
 
+      console.log("新手",ch.ch1, ch.ch2)
+
     } else {
 
       // 新手模式
@@ -1523,6 +1525,8 @@ const handleUpDownDrive = (param) => {
 
       chValue.value.ch1 =
         carDetails.value.vehicle_config_detail.ch1.center_value.current_value;
+
+      console.log("111",chValue.value.ch2, chValue.value.ch1)
     }
   } else {
     if (param.flag == 1) {
