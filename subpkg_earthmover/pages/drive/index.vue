@@ -57,9 +57,9 @@
         <cover-image class="image" v-show="!isShowLight" :style="{ display: !isShowLight ? 'block' : 'none' }" @click="setCh6" src="./static/icon_lights_close@2x.png" mode="aspectFit" />
       </cover-view>
 
-       <cover-view class="right-cont-refresh" @click="refresh">
+      <!-- <cover-view class="right-cont-refresh" @click="refresh">
         <cover-image class="image" src="./static/refresh@2x.png" mode="aspectFit" />
-      </cover-view>
+      </cover-view> -->
 
       <ExLeft @action="handleLeftDrive" @reset="onUserActivity">
       </ExLeft>

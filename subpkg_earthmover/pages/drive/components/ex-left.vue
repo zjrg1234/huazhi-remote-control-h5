@@ -90,52 +90,81 @@ const emitCurrentState = () => {
   const distance = Math.sqrt(dx * dx + dy * dy);
   const speed = Math.min(distance / MAX_RADIUS, 1);
 
-  // 默认无方向
+  // 默认全部关闭
   let up = false, down = false, left = false, right = false;
 
+  // 只在超出死区时判断方向（SWIPE_THRESHOLD 默认 10）
   if (distance >= SWIPE_THRESHOLD) {
-    // 计算角度，以左为0度顺时针
-    let angle = Math.atan2(dy, dx) * (180 / Math.PI); // 正右为0
-    angle = (angle + 180) % 360; // 左为0
-    if (angle < 0) angle += 360;
+    // 计算角度（单位：度）
+    // Math.atan2(dy, dx) 返回范围 [-180, 180]
+    //   - dx>0, dy>0 → 0~90      (右下)
+    //   - dx<0, dy>0 → 90~180    (左下)
+    //   - dx<0, dy<0 → -180~-90  (左上)
+    //   - dx>0, dy<0 → -90~0     (右上)
+    let angle = Math.atan2(dy, dx) * (180 / Math.PI);
+    // 平移 +180 使 0°指向"左"
+    angle = (angle + 180 + 360) % 360;
 
-    // 判断区间
-    if ((angle >= 330 && angle < 360) || (angle >= 0 && angle < 30)) {
+    // -------- 方向判定（8 个扇区）--------
+    //        90°(上)
+    //         ↑
+    //  135°↖  │  ↗45° (等下，这里 45° 是右上)
+    //
+    // 修正: 0=左, 45=左上, 90=上, 135=右上,
+    //       180=右, 225=右下, 270=下, 315=左下
+    if (angle >= 330 || angle < 30) {
+      // 0° ± 30°：左
       left = true;
+      console.log("左")
+
     } else if (angle >= 30 && angle < 60) {
+      // 45° ± 15°：左上 ✅ 你要的区间
       left = true;
       up = true;
+      console.log("左上")
     } else if (angle >= 60 && angle < 120) {
+      // 90° ± 30°：上
       up = true;
+      console.log("上")
+
     } else if (angle >= 120 && angle < 150) {
+      // 135° ± 15°：右上
       up = true;
       right = true;
+      console.log("右上")
+
     } else if (angle >= 150 && angle < 210) {
+      // 180° ± 30°：右
       right = true;
+      console.log("右")
+
     } else if (angle >= 210 && angle < 240) {
+      // 225° ± 15°：右下
       right = true;
       down = true;
+      console.log("右下")
+
     } else if (angle >= 240 && angle < 300) {
+      // 270° ± 30°：下
       down = true;
+      console.log("下")
+
     } else if (angle >= 300 && angle < 330) {
+      // 315° ± 15°：左下
       down = true;
       left = true;
+      console.log("左下")
+
     }
   }
 
-  // 更新活性（用于样式）
+  // 同步到响应式状态（供样式/模板使用）
   isUpActive.value = up;
   isDownActive.value = down;
   isLeftActive.value = left;
   isRightActive.value = right;
 
-  emit("action", {
-    up,
-    down,
-    left,
-    right,
-    speed,
-  });
+  emit("action", { up, down, left, right, speed });
 };
 
 // ----- 更新箭头（启动/停止定时器）-----
