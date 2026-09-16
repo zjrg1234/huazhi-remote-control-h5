@@ -1117,8 +1117,6 @@ const onUserActivity = () => {
     logoutTimer = null;
     logoutCont.value = 5;
   }
-
-  console.log("123")
 };
 
 // ------------------- 生命周期 -------------------
@@ -1299,6 +1297,7 @@ const initVehicleConfig = () => {
       chValue.value.ch1 = config["ch1"].center_value.current_value;
       chValue.value.ch2 = config["ch2"].center_value.current_value;
       chValue.value.ch8 = config["ch8"].close_value.current_value;
+      operMode.value = carDetails.value.change_ui_control == 1  ? true : false
 
       carHandler.value = new ExcavatorControlHandler({
         reverseUpDownState: operFB.value,

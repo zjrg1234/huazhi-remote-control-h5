@@ -110,9 +110,9 @@ export class ExcavatorControlHandler {
     // ---- 2. 老司机模式 ----
     if (mode === false) {
       if (type === "left") {
-        // 左侧：控制 ch1（前后），方向受 reverseUpDownState 影响 up 向左 down 向右
+        // 左侧：控制 ch1（前后），方向受 reverseUpDownState 影响 up 向左 down 向右 ch1 小值向右 大值向左
         const isUp = toBoolean(positionType);
-        const dir = getDirWithReverse(isUp);
+        const dir = isUp ? -1 : 1;
         setChannel("ch1", center1, offset1, dir);
       } else {
         // type === 'right'
