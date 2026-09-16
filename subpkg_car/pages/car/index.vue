@@ -747,13 +747,14 @@ const continuePay = async () => {
         font-weight: 400;
         font-size: 20rpx;
         color: #555555;
+        width: 300rpx;
       }
 
       .action-btn {
         background: #ffc838;
-        padding: 0 30rpx;
-        height: 54rpx;
-        line-height: 54rpx;
+        padding: 0 5rpx;
+        height: 55rpx;
+        line-height: 55rpx;
         margin: 0;
         font-family:
           PingFangSC,
@@ -761,7 +762,6 @@ const continuePay = async () => {
         font-weight: 400;
         font-size: 24rpx;
         color: #1a1a1a;
-        height: 54rpx;
         background: #ffc838;
         border-radius: 12rpx;
         /* 去除默认外边距 */
