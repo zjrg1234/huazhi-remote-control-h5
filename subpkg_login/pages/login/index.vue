@@ -85,6 +85,7 @@ const handleGetPhoneNumber = async (e) => {
     uni.showToast({ title: "请同意用户协议、隐私条款", icon: "none" });
     return;
   }
+  console.log(e)
   // 1. 判断用户是否同意授权
   if (e.detail.errMsg !== "getPhoneNumber:ok") {
     uni.showToast({ title: "已取消授权", icon: "none" });
