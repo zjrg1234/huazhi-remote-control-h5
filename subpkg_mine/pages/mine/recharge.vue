@@ -87,28 +87,28 @@
     <view class="section">
       <text class="section-title">支付方式</text>
       <view class="pay-list">
-        <!-- <view
+         <view
           class="pay-item"
           :class="{ active: payType === 'alipay' }"
           @click="payType = 'alipay'"
         >
           <image class="pay-icon" src="/static/images/common/icon_zfb@2x.png" />
           <text>支付宝支付</text>
-        </view> -->
+        </view>
 
-        <!-- #ifdef MP-WEIXIN -->
+        
         <view class="pay-item" :class="{ active: payType === 'wechat' }" @click="payType = 'wechat'">
           <image class="pay-icon" src="/static/images/common/icon_wx@2x.png" />
           <text>微信支付</text>
         </view>
-        <!-- #endif -->
+       
 
-        <!-- #ifdef MP-KUAISHOU || H5 -->
-        <view class="pay-item" :class="{ kuaishou : payType === 'kuaishou' }" @click="payType = 'kuaishou'">
+<!--     
+        <view class="pay-item" :class="{ kuaishou: payType === 'kuaishou' }" @click="payType = 'kuaishou'">
           <image class="pay-icon" src="/static/images/common/ks.png" />
           <text>快手支付</text>
-        </view>
-        <!-- #endif -->
+        </view> -->
+        
 
       </view>
     </view>
@@ -211,14 +211,7 @@ watch(customNum, (newValue, oldValue) => {
 });
 
 // 支付方式
-// #ifdef MP-WEIXIN
-const payType = ref("wechat");
-
-// #endif
-
-// #ifdef MP-KUAISHOU || H5
-const payType = ref("kuaishou");
-// #endif
+const payType = ref("alipay");
 
 // 套餐列表
 const packageList = ref();
@@ -268,60 +261,83 @@ const handleSubmit = async () => {
     uid: userStore.getUserInfo().id,
     amount,
     activity_id: activityId.value || undefined,
-    login_code: uni.getStorageSync("openid") || undefined
+    login_code: uni.getStorageSync("openid") || undefined,
+    ks_code: uni.getStorageSync("openid") || undefined,
+     pay_channel: payType.value
   };
+    res = await KsPay(obj);
+    const payParams = res.data;
+    await uni.requestPayment({
+      provider: 'kspay',
+      ...payParams,
+      success: (res) => {
+        uni.showToast({ title: '支付成功', icon: 'success' })
+        selectedPackage.value = -1;
+        customNum.value = ''
+
+        GetUserInfo().then(res => {
+          userStore.setUser(res.data)
+        }).catch()
+      },
+      fail: (err) => {
+        uni.showToast({ title: '支付失败', icon: 'none' })
+
+      }
+    });
 
 
-  if (payType.value == "alipay") {
-    const {
-      code,
-      data: { order_str },
-    } = await AlipayDeposit(obj);
-    const payUrl = "https://mapi.alipay.com/gateway.do?" + order_str;
-    window.location.href = payUrl;
+  // if (payType.value == "alipay") {
+    
+  // } else if (payType.value == 'weixin') {
+  //   res = await WechatPay(obj);
+  //   if (res.code == 200) {
+  //     wx.requestPayment({
+  //       timeStamp: res.data.timeStamp,
+  //       nonceStr: res.data.nonceStr,
+  //       package: res.data.package, // 格式为: 'prepay_id=***'
+  //       signType: res.data.signType, // 通常为 'RSA'
+  //       paySign: res.data.paySign,
+  //       success: (res) => {
+  //         // 支付成功
+  //         uni.showToast({ title: '支付成功', icon: 'success' })
+  //         selectedPackage.value = -1;
+  //         customNum.value = ''
 
-    const rawPayUrl = "https://mapi.alipay.com/gateway.do?" + order_str;
-    const encodedUrl = encodeURIComponent(rawPayUrl);
-    const scheme = `alipays://platformapi/startapp?appId=20000067&url=${encodedUrl}`;
+  //         GetUserInfo().then(res => {
+  //           userStore.setUser(res.data)
+  //         }).catch()
+  //       },
+  //       fail: (err) => {
+  //         // 支付失败或取消
+  //         uni.showToast({ title: '支付失败', icon: 'none' })
 
-    // 尝试唤起App
-    window.location.href = scheme;
+  //       }
+  //     });
+  //   } else {
+  //     uni.showToast({ title: res.msg, icon: 'none' })
+  //   }
+  // } else if (payType.value == 'kuaishou') {
+  //   res = await KsPay(obj);
+  //   const payParams = res.data;
+  //   await uni.requestPayment({
+  //     provider: 'kspay',
+  //     ...payParams,
+  //     success: (res) => {
+  //       uni.showToast({ title: '支付成功', icon: 'success' })
+  //       selectedPackage.value = -1;
+  //       customNum.value = ''
 
-    // 若未安装，3秒后跳转H5收银台
-    setTimeout(() => {
-      window.location.href = rawPayUrl;
-    }, 3000);
-  } else if (payType.value == 'weixin'){
-    res = await WechatPay(obj);
-    if (res.code == 200) {
-      wx.requestPayment({
-        timeStamp: res.data.timeStamp,
-        nonceStr: res.data.nonceStr,
-        package: res.data.package, // 格式为: 'prepay_id=***'
-        signType: res.data.signType, // 通常为 'RSA'
-        paySign: res.data.paySign,
-        success: (res) => {
-          // 支付成功
-          uni.showToast({ title: '支付成功', icon: 'success' })
-          selectedPackage.value = -1;
-          customNum.value = ''
+  //       GetUserInfo().then(res => {
+  //         userStore.setUser(res.data)
+  //       }).catch()
+  //     },
+  //     fail: (err) => {
+  //       uni.showToast({ title: '支付失败', icon: 'none' })
 
-          GetUserInfo().then(res => {
-            userStore.setUser(res.data)
-          }).catch()
-        },
-        fail: (err) => {
-          // 支付失败或取消
-          uni.showToast({ title: '支付失败', icon: 'none' })
+  //     }
+  //   });
 
-        }
-      });
-    } else {
-      uni.showToast({ title: res.msg, icon: 'none' })
-    }
-  } else if (payType.value == 'kuaishou') {
-
-  }
+  // }
 
   console.log(res);
 };

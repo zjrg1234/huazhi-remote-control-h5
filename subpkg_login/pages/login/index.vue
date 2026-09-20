@@ -127,7 +127,7 @@ const handleGetPhoneNumber = async (e) => {
 
      // #ifdef MP-KUAISHOU
 
-    const res = await ksLogin({
+    const res = await KsLogin({
       phone_code: e.detail.code,
       encrypted_data: e.detail.encryptedData,
       iv: e.detail.iv,

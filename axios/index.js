@@ -113,8 +113,13 @@ export function CheckCarStatus(data) {
 }
 
 
-export function ksLogin(data) {
-  return post("/api/ks/applet/login ", data);
+export function KsLogin(data) {
+  return post("/api/ks/applet/login", data);
 }
+
+export function KsPay(data) {
+  return post("/api/user/ks/deposit", data);
+}
+
 
 
