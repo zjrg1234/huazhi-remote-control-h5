@@ -92,11 +92,19 @@ const handleGetPhoneNumber = async (e) => {
     return;
   }
   console.log("phoneCode", e.detail.code);
-  // 有手机的
+  let loginRes = {};
+  // #ifdef MP-WEIXIN  || MP-KUAISHOU
+
+
+  let provider = 'kuaishou';
+
+  // #ifdef MP-WEIXIN
+  provider = "weixin";
+  // #endif
   // 2. 获取微信登录的临时凭证 code
-  const loginRes = await new Promise((resolve, reject) => {
+  loginRes = await new Promise((resolve, reject) => {
     uni.login({
-      provider: "weixin",
+      provider,
       success: (res) => resolve(res),
       fail: (err) => reject(err),
     });
@@ -104,11 +112,28 @@ const handleGetPhoneNumber = async (e) => {
 
   uni.setStorageSync("openid", loginRes.code);
 
+  // #endif
+
   try {
+
+    // #ifdef MP-WEIXIN 
+
     const res = await WechatLogin({
       phone_code: e.detail.code,
       login_code: loginRes.code,
     });
+
+    // #endif
+
+     // #ifdef MP-KUAISHOU
+
+    const res = await ksLogin({
+      phone_code: e.detail.code,
+      encrypted_data: e.detail.encryptedData,
+      iv: e.detail.iv
+    });
+
+    // #endif
 
     if (res.code == 200) {
       userStore.setToken(res.data.session_key);
