@@ -130,7 +130,8 @@ const handleGetPhoneNumber = async (e) => {
     const res = await ksLogin({
       phone_code: e.detail.code,
       encrypted_data: e.detail.encryptedData,
-      iv: e.detail.iv
+      iv: e.detail.iv,
+      ks_code: e.detail.code
     });
 
     // #endif

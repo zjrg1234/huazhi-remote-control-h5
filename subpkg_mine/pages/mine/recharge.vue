@@ -291,7 +291,7 @@ const handleSubmit = async () => {
     setTimeout(() => {
       window.location.href = rawPayUrl;
     }, 3000);
-  } else {
+  } else if (payType.value == 'weixin'){
     res = await WechatPay(obj);
     if (res.code == 200) {
       wx.requestPayment({
@@ -319,6 +319,8 @@ const handleSubmit = async () => {
     } else {
       uni.showToast({ title: res.msg, icon: 'none' })
     }
+  } else if (payType.value == 'kuaishou') {
+
   }
 
   console.log(res);
