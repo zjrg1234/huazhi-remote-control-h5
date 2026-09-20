@@ -111,3 +111,10 @@ export function SetKey(data) {
 export function CheckCarStatus(data) {
   return post("/api/user/check/vehicle/status", data);
 }
+
+
+export function ksLogin(data) {
+  return post("/api/ks/applet/login ", data);
+}
+
+
