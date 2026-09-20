@@ -95,10 +95,21 @@
           <image class="pay-icon" src="/static/images/common/icon_zfb@2x.png" />
           <text>支付宝支付</text>
         </view> -->
+
+        <!-- #ifdef MP-WEIXIN -->
         <view class="pay-item" :class="{ active: payType === 'wechat' }" @click="payType = 'wechat'">
           <image class="pay-icon" src="/static/images/common/icon_wx@2x.png" />
           <text>微信支付</text>
         </view>
+        <!-- #endif -->
+
+        <!-- #ifdef MP-KUAISHOU || H5 -->
+        <view class="pay-item" :class="{ kuaishou : payType === 'kuaishou' }" @click="payType = 'kuaishou'">
+          <image class="pay-icon" src="/static/images/common/ks.png" />
+          <text>快手支付</text>
+        </view>
+        <!-- #endif -->
+
       </view>
     </view>
 
@@ -200,7 +211,14 @@ watch(customNum, (newValue, oldValue) => {
 });
 
 // 支付方式
+// #ifdef MP-WEIXIN
 const payType = ref("wechat");
+
+// #endif
+
+// #ifdef MP-KUAISHOU || H5
+const payType = ref("kuaishou");
+// #endif
 
 // 套餐列表
 const packageList = ref();
@@ -238,7 +256,7 @@ const handleSubmit = async () => {
     });
     return
   }
-   else {
+  else {
     uni.showToast({
       title: "请选择或输入充值数量",
       icon: "none",
@@ -250,10 +268,10 @@ const handleSubmit = async () => {
     uid: userStore.getUserInfo().id,
     amount,
     activity_id: activityId.value || undefined,
-    login_code: uni.getStorageSync("openid" ) || undefined
+    login_code: uni.getStorageSync("openid") || undefined
   };
 
-  
+
   if (payType.value == "alipay") {
     const {
       code,
@@ -587,6 +605,13 @@ page {
       border-radius: 12rpx;
       border: 1rpx solid #ffc838;
       color: #1a1a1a;
+    }
+
+    &.kuaishou {
+      background: #ff4908;
+      border-radius: 12rpx;
+      border: 1rpx solid #ff4908;
+      color: #fff;
     }
   }
 }
