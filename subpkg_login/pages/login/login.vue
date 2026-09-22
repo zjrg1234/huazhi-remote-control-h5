@@ -8,24 +8,12 @@
       <!-- 手机号 -->
       <view class="input-item">
         <text class="prefix">+86</text>
-        <input
-          class="input"
-          type="number"
-          maxlength="11"
-          placeholder="请输入手机号"
-          v-model="form.phone"
-        />
+        <input class="input" type="number" maxlength="11" placeholder="请输入手机号" v-model="form.phone" />
       </view>
 
       <!-- 密码 -->
       <view class="input-item">
-        <input
-          class="input"
-          type="password"
-          maxlength="10"
-          placeholder="请输入密码"
-          v-model="form.password"
-        />
+        <input class="input" type="password" maxlength="10" placeholder="请输入密码" v-model="form.password" />
       </view>
 
       <!-- 忘记密码 / 验证码登录 -->
@@ -44,35 +32,16 @@
     </view>
 
     <view class="agreement">
-      <view
-        class="checkbox"
-        :class="{ checked: agree }"
-        @click="agree = !agree"
-      >
-        <image
-          class="check-icon"
-          src="/static/images/login/checked@2x.png"
-          mode="aspectFill"
-          v-if="agree"
-        />
-        <image
-          class="un-check-icon"
-          src="/static/images/login/circle@2x.png"
-          mode="aspectFill"
-          v-if="!agree"
-        />
+      <view class="checkbox" :class="{ checked: agree }" @click="agree = !agree">
+        <image class="check-icon" src="/static/images/login/checked@2x.png" mode="aspectFill" v-if="agree" />
+        <image class="un-check-icon" src="/static/images/login/circle@2x.png" mode="aspectFill" v-if="!agree" />
       </view>
-      <text class="text">
-        我已同意<text
-          class="highlight"
-          @click="goto('/subpkg_set/pages/set/userPolicy')"
-          >用户协议</text
-        >
-        和
-        <text @click="goto('/subpkg_set/pages/set/privacy')" class="highlight"
-          >隐私条款</text
-        >
-      </text>
+      <view class="text">
+        <text>我已同意</text>
+        <text class="highlight" @click="goto('/subpkg_set/pages/set/userPolicy')">用户协议</text>
+        <text>和</text>
+        <text @click="goto('/subpkg_set/pages/set/privacy')" class="highlight">隐私条款</text>
+      </view>
     </view>
   </view>
 </template>
@@ -92,7 +61,7 @@ const userStore = useUserStore();
 const handleLogin = async () => {
   if (!agree.value) {
     uni.showToast({
-      title: "请先同意用户协议和隐私条款",
+      title: "请同意用户协议、隐私条款",
       icon: "none",
     });
     return;
@@ -112,28 +81,35 @@ const handleLogin = async () => {
     });
     return;
   }
-  let loginRes = null;
+  let loginRes = {};
+  let provider = '';
+  // #ifdef MP-WEIXIN  || MP-KUAISHOU
+  provider = 'kuaishou';
   // #ifdef MP-WEIXIN
-  try {
-    loginRes = await new Promise((resolve, reject) => {
-      uni.login({
-        provider: "weixin",
-        success: resolve,
-        fail: reject,
-      });
-    });
-    uni.setStorageSync("openid", loginRes.code);
-  } catch (err) {
-    uni.showToast({ title: "授权失败，请重试", icon: "none" });
-    console.error("uni.login error:", err);
-    return;
-  }
+  provider = "weixin";
   // #endif
+  // 2. 获取微信登录的临时凭证 code
+  loginRes = await new Promise((resolve, reject) => {
+    uni.login({
+      provider,
+      success: (res) => {
+        uni.setStorageSync("openid", res.code);
+
+      },
+      fail: (err) => {
+        uni.showToast({ title: "获取登录凭证失败,请刷新", icon: "none" });
+      },
+    });
+  })
+  // #endif
+
 
   Login({
     ...form.value,
     password: form.value.password,
     type: 1,
+    login_code: loginRes?.code || undefined,
+    ks_code: loginRes?.code || undefined,
   })
     .then((res) => {
       if (res.code == 200) {
@@ -157,7 +133,7 @@ const handleLogin = async () => {
         });
       }
     })
-    .catch(()=>{
+    .catch(() => {
       uni.showToast({ title: "网络异常，请稍后再试", icon: "none" });
       console.error("登录请求错误:", err);
     });

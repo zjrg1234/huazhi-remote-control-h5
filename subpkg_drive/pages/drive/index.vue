@@ -5,15 +5,12 @@
       <cover-view class="logout" @click="logout">
         <cover-image src="./static/icon_exit@2x.png" class="image" mode="aspectFit" />
       </cover-view>
-      <!-- #ifdef MP-WEIXIN || MP-KUAISHOU  -->
 
-      <!-- <view class="logout-wrapper" @click="logout">
-         内层依然是 cover-view 保证能悬浮在 web-view 上 
-       
-      </view> -->
-
+      <!-- #ifdef MP-WEIXIN || MP-KUAISHOU -->
       <web-view :src="videoUrl" ref="iframeView"></web-view>
-
+      <!-- #endif -->
+      <!-- #ifdef H5 -->
+      <iframe :src="videoUrl" ref="iframeView" width="100%" height="100%" style="width: 100%;height: 100%;"></iframe>
       <!-- #endif -->
       <!-- 退出按钮 -->
 
@@ -44,7 +41,11 @@
         <cover-view>距离本次结束驾驶还有{{ 31 - numTip }}s</cover-view>
       </cover-view>
 
-      <!-- 设置按钮 -->
+
+      <!-- <cover-view class="right-cont-refresh" @click="refresh">
+        <cover-image class="image" src="./static/refresh@2x.png" mode="aspectFit" />
+      </cover-view> -->
+
       <cover-view class="right-cont" @click="set">
         <cover-image class="image" src="./static/icon_set@2x.png" mode="aspectFit" />
       </cover-view>
@@ -333,12 +334,23 @@
           <cover-view class="popup-container" :class="{ contmax: type === 'repair' }" @tap.stop>
             <!-- 场景1：黑屏提示 -->
             <cover-view v-show="type === 'tip'">
-              <cover-view class="tip-content">
+
+
+              <cover-view class="tip-content" v-show="!isIosFlag" :style="{ display: !isIosFlag ? 'block' : 'none' }">
                 <cover-view class="time">倒计时{{ count }}s</cover-view>
                 <cover-view class="tit">是否黑屏？</cover-view>
                 <cover-view class="text">
                   <cover-view class="text1">开始驾驶前如遇黑屏或者车辆故障上报不扣费，开始驾驶后开始计费。</cover-view>
                   <cover-view class="text1">如果一切正常，请点击“开始驾驶”</cover-view>
+                </cover-view>
+              </cover-view>
+
+              <cover-view class="tip-content" v-show="isIosFlag" :style="{ display: isIosFlag ? 'block' : 'none' }">
+                <cover-view class="time">倒计时{{ count }}s</cover-view>
+                <cover-view class="tit">请您点击屏幕中的播放按钮</cover-view>
+                <cover-view class="text">
+                  <cover-view class="text1">点击开始驾驶之后，继续点击屏幕中的播放按钮，才会出现视频画面</cover-view>
+                  <cover-view class="text1">如果有问题，可退出，可报修</cover-view>
                 </cover-view>
               </cover-view>
 
@@ -358,6 +370,8 @@
                 </cover-view>
               </cover-view>
             </cover-view>
+
+
 
             <!-- 场景2：退出驾驶 -->
             <cover-view v-show="type === 'logout'">
@@ -495,6 +509,7 @@ import {
   handleBattery,
   createReverseMapper,
   createMapperNew,
+  getPlatform
 } from "./utils/utils.js";
 import UDPSocketClient from "./utils/udpSocket.js";
 import { handleDriverSocketData } from "./utils/socketHelper.js";
@@ -562,6 +577,8 @@ const numTip = ref(0);
 const { handleReceive, model } = useHESbus();
 const batteryPer = ref(100);
 const vlot = ref("");
+
+const isShowBtn = ref(false)
 // 菜单配置
 const menuList = computed(() => {
   if (carType.value == 1) {
@@ -789,15 +806,41 @@ const continueDrive = async () => {
 //video_only:自动打开视频
 //video_audio:自动打开视频+音频
 const GetDeviceInfo = (data) => {
+  const isIos = getPlatform();
   DeviceDetails({ ...data })
     .then((res) => {
       if (res.data?.rows?.length) {
+        console.log("device_id", carDetails.value.front_camera)
         const base = "https://vedioafz.fzbkapp.com/";
-        const query = `?device_id=${encodeURIComponent(carDetails.value.front_camera)}&token=${encodeURIComponent(data.token)}&initAction=video_only&videoDefinition=${carDetails.value.video_definition}&defaultCameraClarity=${carDetails.value.default_camera_clarity}&orderNo=${orderNo.value}&_t=${Date.now()}`;
+        const query = `?device_id=${encodeURIComponent(carDetails.value.front_camera)}&token=${encodeURIComponent(data.token)}&initAction=video_only&videoDefinition=${carDetails.value.video_definition}&defaultCameraClarity=${carDetails.value.default_camera_clarity}&orderNo=${orderNo.value}&ios=${isIos}&_t=${Date.now()}`;
         // const query = `?device_id=${encodeURIComponent('1002211')}&token=${encodeURIComponent(data.token)}&initAction=video_only&videoDefinition=${carDetails.value.video_definition}&defaultCameraClarity=${carDetails.value.default_camera_clarity}&closeFlag=0&_t=${Date.now()}`;
         videoUrl.value = base + query;
 
+        // if (isIos == 'ios') {
+        //   console.log(0)
+        //   allPopupVisible.value = true;
+        //   type.value = "iosTip"
+        // }
         console.log("请求接口之后的url:", videoUrl.value);
+
+
+        if (getPlatform() == 'ios') {
+
+          count.value = 5;
+          countdownTimer = setInterval(() => {
+            count.value -= 1;
+            if (count.value == 0) {
+              count.value = 0;
+              clearInterval(countdownTimer);
+              countdownTimer = null;
+              allPopupVisible.value = false;
+              // 自动调开始驾驶的接口
+              handlePopupAction("driving");
+            }
+          }, 1000);
+
+        }
+
       }
     })
     .catch(() => { });
@@ -1011,6 +1054,17 @@ const set = () => {
 
 };
 
+// const refresh = () => {
+
+//   const newUrl = videoUrl.value.replace(/([?&]_t=)[^&]*/, `$1${Date.now()}`);
+//   videoUrl.value = newUrl;
+//   console.log(videoUrl.value)
+// }
+
+const handleStartDrive = () => {
+  isShowBtn.value = false;
+}
+
 const logout = () => {
   onUserActivity();
   allPopupVisible.value = true;
@@ -1059,6 +1113,8 @@ const onUserActivity = () => {
     logoutTimer = null;
     logoutCont.value = 5;
   }
+
+  console.log("123")
 };
 
 // ------------------- 生命周期 -------------------
@@ -1070,7 +1126,11 @@ onLoad((options) => {
 });
 
 const count = ref(15);
+const isIosFlag = ref(false)
 onMounted(() => {
+
+  isIosFlag.value = getPlatform() == 'ios'
+
   console.log("onMounted");
   if (!uni.getStorageSync("sendNum")) uni.setStorageSync("sendNum", 0);
   initTimer(); // 时钟
@@ -1080,8 +1140,9 @@ onMounted(() => {
   initSendLoop();
   initTopVideo();
   clearCountdown();
-  // 注意：uni-app 不支持 sessionStorage，需改用 uni.getStorageSync
-  if (uni.getStorageSync("loadingOne") !== "1") {
+
+  if (getPlatform() != 'ios') {
+    if (uni.getStorageSync("loadingOne") !== "1") {
     allPopupVisible.value = true;
 
     countdownTimer = setInterval(() => {
@@ -1100,8 +1161,18 @@ onMounted(() => {
   } else {
     allPopupVisible.value = false;
   }
-  text.value = "车辆翻车";
+  }
+
+  
+
+
+
+
 });
+
+const confirm = () => {
+  allPopupVisible.value = false;
+}
 
 const clearCountdown = () => {
   if (countdownTimer) {
@@ -1243,7 +1314,7 @@ const initSocket = () => {
   const wssUrl = uni.getStorageSync("wssUrl");
   const wssPort = uni.getStorageSync("wssPort");
   console.log(wssUrl, wssPort);
-  // #ifdef MP-WEIXIN
+  // #ifdef MP-WEIXIN || MP-KUAISHOU
 
   if (UDPSocket.value) {
     console.log("关闭UDPSocket");
@@ -1871,6 +1942,31 @@ const report = (text) => {
     height: 27px;
   }
 }
+
+.start-drive {
+  position: fixed;
+  z-index: 99999;
+  top: 50px;
+  left: 112px;
+  width: 60px;
+  font-size: 15px;
+  padding: 0 4px;
+  border: 1px solid #f5c542;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+// .right-cont-refresh {
+//   position: fixed;
+//   z-index: 9999;
+//   top: 42px;
+//   right: 60px;
+
+//   .image {
+//     width: 23px;
+//     height: 23px;
+//   }
+// }
 
 .right-cont {
   position: fixed;
@@ -2596,6 +2692,7 @@ const report = (text) => {
       word-wrap: break-word;
       white-space: break-spaces;
       line-height: 25px;
+      font-size: 16px;
     }
 
     .ct {

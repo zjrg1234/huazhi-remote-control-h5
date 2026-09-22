@@ -5,7 +5,7 @@
     </view>
 
     <view class="form">
-      <!-- #ifdef MP-WEIXIN -->
+      <!-- #ifdef MP-WEIXIN || MP-KUAISHOU -->
       <!-- 必须使用原生 button 组件才能触发手机号授权 -->
       <button
         class="login-btn"
@@ -42,16 +42,17 @@
           v-if="!agree"
         />
       </view>
-      <text class="text">
-        我已同意<text
+      <view class="text">
+        <text>我已同意</text>
+        <text
           class="highlight"
           @click="goto('/subpkg_set/pages/set/userPolicy')"
-          >用户协议和</text
-        >
+          >用户协议</text>
+        <text>和</text>
         <text @click="goto('/subpkg_set/pages/set/privacy')" class="highlight"
           >隐私条款</text
         >
-      </text>
+      </view>
     </view>
   </view>
 </template>
@@ -81,20 +82,29 @@ const goto = (url) => {
 
 const handleGetPhoneNumber = async (e) => {
   if (!agree.value) {
-    uni.showToast({ title: "请先同意用户协议和隐私条款", icon: "none" });
+    uni.showToast({ title: "请同意用户协议、隐私条款", icon: "none" });
     return;
   }
+  console.log(e)
   // 1. 判断用户是否同意授权
   if (e.detail.errMsg !== "getPhoneNumber:ok") {
     uni.showToast({ title: "已取消授权", icon: "none" });
     return;
   }
   console.log("phoneCode", e.detail.code);
-  // 有手机的
+  let loginRes = {};
+  // #ifdef MP-WEIXIN  || MP-KUAISHOU
+
+
+  let provider = 'kuaishou';
+
+  // #ifdef MP-WEIXIN
+  provider = "weixin";
+  // #endif
   // 2. 获取微信登录的临时凭证 code
-  const loginRes = await new Promise((resolve, reject) => {
+  loginRes = await new Promise((resolve, reject) => {
     uni.login({
-      provider: "weixin",
+      provider,
       success: (res) => resolve(res),
       fail: (err) => reject(err),
     });
@@ -102,11 +112,29 @@ const handleGetPhoneNumber = async (e) => {
 
   uni.setStorageSync("openid", loginRes.code);
 
+  // #endif
+
   try {
+
+    // #ifdef MP-WEIXIN 
+
     const res = await WechatLogin({
       phone_code: e.detail.code,
       login_code: loginRes.code,
     });
+
+    // #endif
+
+     // #ifdef MP-KUAISHOU
+
+    const res = await KsLogin({
+      phone_code: e.detail.code,
+      encrypted_data: e.detail.encryptedData,
+      iv: e.detail.iv,
+      ks_code: e.detail.code
+    });
+
+    // #endif
 
     if (res.code == 200) {
       userStore.setToken(res.data.session_key);

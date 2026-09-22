@@ -94,7 +94,8 @@ const handleLogin = async () => {
           ...form.value,
           password: form.value.password,
           type: 1,
-          login_code: loginRes.code
+          login_code: loginRes?.code || undefined,
+          ks_code: loginRes?.code || undefined,
         })
           .then((res) => {
             if (res.code == 200) {

@@ -45,7 +45,7 @@ export function useInactivityAlarm(timeout = 180000, onAlarm) {
     });
     // #endif
 
-    // #ifdef MP-WEIXIN
+    // #ifdef MP-WEIXIN || MP-KUAISHOU
     // 小程序没有 window 对象，使用页面生命周期和触摸事件
     const pages = getCurrentPages();
     const currentPage = pages[pages.length - 1];
@@ -81,7 +81,7 @@ export function useInactivityAlarm(timeout = 180000, onAlarm) {
     });
     // #endif
 
-    // #ifdef MP-WEIXIN
+    // #ifdef MP-WEIXIN || MP-KUAISHOU
     // 小程序无法移除页面生命周期，通过标志位控制
     // #endif
 

@@ -35,10 +35,12 @@
 				<image class="check-icon" src="/static/images/login/checked@2x.png" mode="aspectFill" v-if="agree" />
 				<image class="un-check-icon" src="/static/images/login/circle@2x.png" mode="aspectFill" v-if="!agree" />
 			</view>
-			<text class="text">
-				我已同意<text class="highlight" @click="goto('/subpkg_set/pages/set/userPolicy')">用户协议</text> 和
+			<view class="text">
+				<text>我已同意</text>
+				<text class="highlight" @click="goto('/subpkg_set/pages/set/userPolicy')">用户协议</text>
+				<text>和</text>
 				<text @click="goto('/subpkg_set/pages/set/privacy')" class="highlight">隐私条款</text>
-			</text>
+			</view>
 		</view>
 
 	</view>
@@ -58,7 +60,7 @@ const form = ref({
 	code: ''
 })
 
-const agree = ref(true)
+const agree = ref(false)
 const userStore = useUserStore()
 // 登录
 const handleLogin = async () => {
@@ -78,24 +80,40 @@ const handleLogin = async () => {
 	}
 	if (!agree.value) {
 		uni.showToast({
-			title: '请先同意用户协议和隐私条款',
+			title: '请同意用户协议、隐私条款',
 			icon: 'none'
 		})
 		return
 	}
 
-	// const loginRes = await new Promise((resolve, reject) => {
-	// 	uni.login({
-	// 		provider: "weixin",
-	// 		success: (res) => resolve(res),
-	// 		fail: (err) => reject(err),
-	// 	});
-	// });
+
+	let loginRes = {};
+	let provider = '';
+	// #ifdef MP-WEIXIN  || MP-KUAISHOU
+	provider = 'kuaishou';
+	// #ifdef MP-WEIXIN
+	provider = "weixin";
+	// #endif
+	// 2. 获取微信登录的临时凭证 code
+	 loginRes = await new Promise((resolve, reject) => {
+    uni.login({
+      provider,
+      success: (res) => {
+        uni.setStorageSync("openid", res.code);
+      },
+      fail: (err) => {
+        uni.showToast({ title: "获取登录凭证失败,请刷新", icon: "none" });
+      },
+    });
+  })
+	// #endif
 
 	Login({
 		...form.value,
+		noteVerify: form.value.code,
 		type: 1,
-		// login_code: loginRes.code
+		login_code: loginRes?.code || undefined,
+		ks_code: loginRes?.code || undefined
 	}).then(res => {
 		console.log(res)
 		if (res.code == 200) {
@@ -108,6 +126,8 @@ const handleLogin = async () => {
 					url: "/pages/index/index"
 				})
 			}).catch()
+		} else {
+			uni.showToast({ title: res.msg, icon: "none" });
 		}
 	}).catch()
 }

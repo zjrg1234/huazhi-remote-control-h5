@@ -38,6 +38,8 @@
         <cover-view>距离本次结束驾驶还有{{ 31 - numTip }}s</cover-view>
       </cover-view>
 
+     
+
       <!-- 设置按钮 -->
       <cover-view class="right-cont">
         <cover-view class="flex">
@@ -55,10 +57,14 @@
         <cover-image class="image" v-show="!isShowLight" :style="{ display: !isShowLight ? 'block' : 'none' }" @click="setCh6" src="./static/icon_lights_close@2x.png" mode="aspectFit" />
       </cover-view>
 
+       <!-- <cover-view class="right-cont-refresh" @click="refresh">
+        <cover-image class="image" src="./static/refresh@2x.png" mode="aspectFit" />
+      </cover-view> -->
+
       <ExLeft @action="handleLeftDrive" @reset="onUserActivity">
       </ExLeft>
       <ExRight @action="handleRightDrive" :mode="operMode" @reset="onUserActivity"></ExRight>
-
+      
       <!-- 时间显示 -->
 
       <cover-view v-show="setVisible" :style="{ display: setVisible ? 'block' : 'none' }" class="custom-popup-mask"
@@ -106,12 +112,21 @@
           <cover-view class="popup-container" :class="{ contmax: type === 'repair' }" @tap.stop>
             <!-- 场景1：黑屏提示 -->
             <cover-view v-show="type === 'tip'">
-              <cover-view class="tip-content">
+               <cover-view class="tip-content" v-show="!isIosFlag" :style="{ display: !isIosFlag ? 'block' : 'none' }"> 
                 <cover-view class="time">倒计时{{ count }}s</cover-view>
                 <cover-view class="tit">是否黑屏？</cover-view>
                 <cover-view class="text">
                   <cover-view class="text1">开始驾驶前如遇黑屏或者车辆故障上报不扣费，开始驾驶后开始计费。</cover-view>
-                  <cover-view>如果一切正常，请点击“开始驾驶”</cover-view>
+                  <cover-view class="text1">如果一切正常，请点击“开始驾驶”</cover-view>
+                </cover-view>
+              </cover-view>
+
+              <cover-view class="tip-content" v-show="isIosFlag" :style="{ display: isIosFlag ? 'block' : 'none' }">
+                <cover-view class="time">倒计时{{ count }}s</cover-view>
+                <cover-view class="tit">请您点击屏幕中的播放按钮</cover-view>
+                <cover-view class="text">
+                  <cover-view class="text1">点击开始驾驶之后，继续点击屏幕中的播放按钮，才会出现视频画面</cover-view>
+                  <cover-view class="text1">如果有问题，可退出，可报修</cover-view>
                 </cover-view>
               </cover-view>
 
@@ -273,6 +288,7 @@ import ExRight from "./components/ex-right.vue";
 import {
   formatTime,
   handleBattery,
+  getPlatform
 } from "./utils/utils.js";
 import UDPSocketClient from "./utils/udpSocket.js";
 import { handleDriverSocketData } from "./utils/socketHelper.js";
@@ -469,19 +485,46 @@ const continueDrive = async () => {
 //video_only:自动打开视频
 //video_audio:自动打开视频+音频
 const GetDeviceInfo = (data) => {
+  const isIos = getPlatform();
   DeviceDetails({ ...data })
     .then((res) => {
       if (res.data?.rows?.length) {
+        console.log("device_id", carDetails.value.front_camera)
         const base = "https://vedioafz.fzbkapp.com/";
-        const query = `?device_id=${encodeURIComponent(carDetails.value.front_camera)}&token=${encodeURIComponent(data.token)}&initAction=video_only&videoDefinition=${carDetails.value.video_definition}&defaultCameraClarity=${carDetails.value.default_camera_clarity}&orderNo=${orderNo.value}&_t=${Date.now()}`;
+        const query = `?device_id=${encodeURIComponent(carDetails.value.front_camera)}&token=${encodeURIComponent(data.token)}&initAction=video_only&videoDefinition=${carDetails.value.video_definition}&defaultCameraClarity=${carDetails.value.default_camera_clarity}&orderNo=${orderNo.value}&ios=${isIos}&_t=${Date.now()}`;
         // const query = `?device_id=${encodeURIComponent('1002211')}&token=${encodeURIComponent(data.token)}&initAction=video_only&videoDefinition=${carDetails.value.video_definition}&defaultCameraClarity=${carDetails.value.default_camera_clarity}&closeFlag=0&_t=${Date.now()}`;
         videoUrl.value = base + query;
 
+        // if (isIos == 'ios') {
+        //   console.log(0)
+        //   allPopupVisible.value = true;
+        //   type.value = "iosTip"
+        // }
         console.log("请求接口之后的url:", videoUrl.value);
+
+
+        if (getPlatform() == 'ios') {
+
+          count.value = 5;
+          countdownTimer = setInterval(() => {
+            count.value -= 1;
+            if (count.value == 0) {
+              count.value = 0;
+              clearInterval(countdownTimer);
+              countdownTimer = null;
+              allPopupVisible.value = false;
+              // 自动调开始驾驶的接口
+              handlePopupAction("driving");
+            }
+          }, 1000);
+
+        }
+
       }
     })
     .catch(() => { });
 };
+
 
 // 初始化摄像头播放
 const initTopVideo = () => {
@@ -627,6 +670,11 @@ const handlePopupAction = (val) => {
 };
 
 
+const refresh = () => {
+  const newUrl = videoUrl.value.replace(/([?&]_t=)[^&]*/, `$1${Date.now()}`);
+  videoUrl.value = newUrl;  
+  console.log(videoUrl.value)
+}
 
 const set = () => {
   onUserActivity();
@@ -685,7 +733,11 @@ onLoad((options) => {
 });
 
 const count = ref(15);
+const isIosFlag = ref(false)
 onMounted(() => {
+
+  isIosFlag.value = getPlatform() == 'ios'
+
   startListening();
   console.log("onMounted");
   if (!uni.getStorageSync("sendNum")) uni.setStorageSync("sendNum", 0);
@@ -696,8 +748,8 @@ onMounted(() => {
   initSendLoop();
   initTopVideo();
   clearCountdown();
-  // 注意：uni-app 不支持 sessionStorage，需改用 uni.getStorageSync
-  if (uni.getStorageSync("loadingOne") !== "1") {
+   if (getPlatform() != 'ios') {
+    if (uni.getStorageSync("loadingOne") !== "1") {
     allPopupVisible.value = true;
 
     countdownTimer = setInterval(() => {
@@ -715,6 +767,7 @@ onMounted(() => {
     }, 1000);
   } else {
     allPopupVisible.value = false;
+  }
   }
   text.value = "车辆翻车";
 });
@@ -835,7 +888,7 @@ const initSocket = () => {
   const wssUrl = uni.getStorageSync("wssUrl");
   const wssPort = uni.getStorageSync("wssPort");
   console.log(wssUrl, wssPort);
-  // #ifdef MP-WEIXIN
+  // #ifdef MP-WEIXIN || MP-KUAISHOU
 
   if (UDPSocket.value) {
     console.log("关闭UDPSocket");
@@ -1133,6 +1186,19 @@ const handleReport = () => {
   color: #fff;
   font-style: normal;
 
+}
+
+
+.right-cont-refresh {
+  position: fixed;
+  z-index: 9999;
+  top: 80px;
+  right: 70px;
+
+  .image {
+    width: 27px;
+    height: 27px;
+  }
 }
 
 .right-cont {

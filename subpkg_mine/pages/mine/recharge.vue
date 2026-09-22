@@ -1,6 +1,131 @@
 <template>
   <view class="page">
-     正在开发，敬请期待
+
+    <view class="sticky-content">
+      <view class="wrap-content">
+        <!-- #ifdef H5 -->
+        <NavBar title="我的电池" url="/pages/mine/index"></NavBar>
+        <view class="bg-image bg-image-h5">
+          <image class="image" src="/static/images/mine/bg2@2x.png" mode="widthFix"></image>
+        </view>
+        <!-- #endif -->
+
+        <!-- #ifdef MP-WEIXIN || MP-KUAISHOU -->
+        <custom-nav-bar title="我的电池" url="/subpkg_mine/pages/mine/battery" flag="0"></custom-nav-bar>
+        <!-- #endif -->
+
+        <!-- #ifndef H5 -->
+        <!-- 顶部背景图 小程序-->
+        <view class="bg-image">
+          <image class="image" src="/static/images/mine/bg2@2x.png" mode="widthFix"></image>
+        </view>
+        <!-- #endif -->
+
+        <!-- 电池卡片 -->
+        <view class="card">
+          <view class="card-bg">
+            <image class="card-bg-img" src="/static/images/mine/bg_battery@2x.png" mode="widthFix"></image>
+          </view>
+          <view class="card-content">
+            <view class="card-left">
+              <view class="label">
+                <view class="label-text"> 我的电池 </view>
+                <image class="battery" src="/static/images/mine/icon_battery@2x.png" mode="widthFix">
+                </image>
+              </view>
+              <view class="num">{{ balance }}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+
+      <view class="tabs">
+        <view v-for="item in tabs" :key="item.id" class="tab-item" :class="{ active: tab === item.id }"
+          @click="handleSelect(item.id)">
+          <text>{{ item.name }}</text>
+          <!-- 底部激活横线 -->
+          <view v-if="tab === item.id" class="line"></view>
+        </view>
+      </view>
+    </view>
+
+
+    <!-- 充值套餐 -->
+    <view class="section">
+      <text class="section-title">充值套餐</text>
+      <view class="package-list" v-if="tab == 'normal'">
+        <view class="package-item" :class="{ active: selectedPackage === item.amount }" v-for="item in packageList"
+          :key="item.amount" @click="selectedPackageIndex(1, item.amount)">
+          <view class="num">
+            <text> {{ item.amount }} </text>
+            <image class="icon" src="/static/images/common/icon_battery@2x.png" />
+          </view>
+          <view class="price">¥{{ item.amount.toFixed(2) }}</view>
+        </view>
+      </view>
+      <view class="package-list" v-if="tab == 'first'">
+        <view class="package-item" :class="{ active: selectedPackage === item.payment_amount }"
+          v-for="item in packageFirstList" :key="item.payment_amount" @click="selectedPackageIndex(2, item)">
+          <view class="num">
+            <text> {{ item.payment_amount }} </text>
+            <image class="icon" src="/static/images/common/icon_battery@2x.png" />
+          </view>
+          <view class="energy">送{{ item.send_energy }}能量</view>
+          <view class="price">¥{{ item.payment_amount.toFixed(2) }}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 自定义充值 -->
+    <view class="section">
+      <text class="section-title">自定义数量充值</text>
+      <input class="custom-input" type="number" placeholder="请输入电池数量（不低于3个）" v-model.number="customNum" />
+    </view>
+
+    <!-- 支付方式 -->
+    <view class="section">
+      <text class="section-title">支付方式</text>
+      <view class="pay-list">
+         <view
+          class="pay-item"
+          :class="{ active: payType === 'alipay' }"
+          @click="payType = 'alipay'"
+        >
+          <image class="pay-icon" src="/static/images/common/icon_zfb@2x.png" />
+          <text>支付宝支付</text>
+        </view>
+
+        
+        <view class="pay-item" :class="{ active: payType === 'wechat' }" @click="payType = 'wechat'">
+          <image class="pay-icon" src="/static/images/common/icon_wx@2x.png" />
+          <text>微信支付</text>
+        </view>
+       
+
+<!--     
+        <view class="pay-item" :class="{ kuaishou: payType === 'kuaishou' }" @click="payType = 'kuaishou'">
+          <image class="pay-icon" src="/static/images/common/ks.png" />
+          <text>快手支付</text>
+        </view> -->
+        
+
+      </view>
+    </view>
+
+    <!-- 说明文字 -->
+    <view class="desc">
+      <text class="desc-title">充值说明：</text>
+      <view class="desc-item">1. 禁止未成年人充值；</view>
+      <view class="desc-item">2. 如您未满18岁，请在监护人陪同下操作；</view>
+      <view class="desc-item">3. 如对充值有其它疑问，请联系客服。</view>
+    </view>
+
+    <!-- 确定按钮 -->
+    <view class="submit-btn">
+      <button class="btn" @click="handleSubmit">确定</button>
+
+    </view>
   </view>
 </template>
 
@@ -86,7 +211,7 @@ watch(customNum, (newValue, oldValue) => {
 });
 
 // 支付方式
-const payType = ref("wechat");
+const payType = ref("alipay");
 
 // 套餐列表
 const packageList = ref();
@@ -124,7 +249,7 @@ const handleSubmit = async () => {
     });
     return
   }
-   else {
+  else {
     uni.showToast({
       title: "请选择或输入充值数量",
       icon: "none",
@@ -136,58 +261,83 @@ const handleSubmit = async () => {
     uid: userStore.getUserInfo().id,
     amount,
     activity_id: activityId.value || undefined,
-    login_code: uni.getStorageSync("openid" ) || undefined
+    login_code: uni.getStorageSync("openid") || undefined,
+    ks_code: uni.getStorageSync("openid") || undefined,
+    pay_channel: payType.value
   };
+    res = await KsPay(obj);
+    const payParams = res.data;
+    await uni.requestPayment({
+      provider: 'kspay',
+      ...payParams,
+      success: (res) => {
+        uni.showToast({ title: '支付成功', icon: 'success' })
+        selectedPackage.value = -1;
+        customNum.value = ''
 
-  
-  if (payType.value == "alipay") {
-    const {
-      code,
-      data: { order_str },
-    } = await AlipayDeposit(obj);
-    const payUrl = "https://mapi.alipay.com/gateway.do?" + order_str;
-    window.location.href = payUrl;
+        GetUserInfo().then(res => {
+          userStore.setUser(res.data)
+        }).catch()
+      },
+      fail: (err) => {
+        uni.showToast({ title: '支付失败', icon: 'none' })
 
-    const rawPayUrl = "https://mapi.alipay.com/gateway.do?" + order_str;
-    const encodedUrl = encodeURIComponent(rawPayUrl);
-    const scheme = `alipays://platformapi/startapp?appId=20000067&url=${encodedUrl}`;
+      }
+    });
 
-    // 尝试唤起App
-    window.location.href = scheme;
 
-    // 若未安装，3秒后跳转H5收银台
-    setTimeout(() => {
-      window.location.href = rawPayUrl;
-    }, 3000);
-  } else {
-    res = await WechatPay(obj);
-    if (res.code == 200) {
-      wx.requestPayment({
-        timeStamp: res.data.timeStamp,
-        nonceStr: res.data.nonceStr,
-        package: res.data.package, // 格式为: 'prepay_id=***'
-        signType: res.data.signType, // 通常为 'RSA'
-        paySign: res.data.paySign,
-        success: (res) => {
-          // 支付成功
-          uni.showToast({ title: '支付成功', icon: 'success' })
-          selectedPackage.value = -1;
-          customNum.value = ''
+  // if (payType.value == "alipay") {
+    
+  // } else if (payType.value == 'weixin') {
+  //   res = await WechatPay(obj);
+  //   if (res.code == 200) {
+  //     wx.requestPayment({
+  //       timeStamp: res.data.timeStamp,
+  //       nonceStr: res.data.nonceStr,
+  //       package: res.data.package, // 格式为: 'prepay_id=***'
+  //       signType: res.data.signType, // 通常为 'RSA'
+  //       paySign: res.data.paySign,
+  //       success: (res) => {
+  //         // 支付成功
+  //         uni.showToast({ title: '支付成功', icon: 'success' })
+  //         selectedPackage.value = -1;
+  //         customNum.value = ''
 
-          GetUserInfo().then(res => {
-            userStore.setUser(res.data)
-          }).catch()
-        },
-        fail: (err) => {
-          // 支付失败或取消
-          uni.showToast({ title: '支付失败', icon: 'none' })
+  //         GetUserInfo().then(res => {
+  //           userStore.setUser(res.data)
+  //         }).catch()
+  //       },
+  //       fail: (err) => {
+  //         // 支付失败或取消
+  //         uni.showToast({ title: '支付失败', icon: 'none' })
 
-        }
-      });
-    } else {
-      uni.showToast({ title: res.msg, icon: 'none' })
-    }
-  }
+  //       }
+  //     });
+  //   } else {
+  //     uni.showToast({ title: res.msg, icon: 'none' })
+  //   }
+  // } else if (payType.value == 'kuaishou') {
+  //   res = await KsPay(obj);
+  //   const payParams = res.data;
+  //   await uni.requestPayment({
+  //     provider: 'kspay',
+  //     ...payParams,
+  //     success: (res) => {
+  //       uni.showToast({ title: '支付成功', icon: 'success' })
+  //       selectedPackage.value = -1;
+  //       customNum.value = ''
+
+  //       GetUserInfo().then(res => {
+  //         userStore.setUser(res.data)
+  //       }).catch()
+  //     },
+  //     fail: (err) => {
+  //       uni.showToast({ title: '支付失败', icon: 'none' })
+
+  //     }
+  //   });
+
+  // }
 
   console.log(res);
 };
@@ -477,6 +627,13 @@ page {
       border-radius: 12rpx;
       border: 1rpx solid #ffc838;
       color: #1a1a1a;
+    }
+
+    &.kuaishou {
+      background: #ff4908;
+      border-radius: 12rpx;
+      border: 1rpx solid #ff4908;
+      color: #fff;
     }
   }
 }
