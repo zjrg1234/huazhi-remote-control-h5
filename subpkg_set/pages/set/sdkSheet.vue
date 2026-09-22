@@ -4,12 +4,12 @@
 		<div class="container">
 			<!-- 顶部通用声明 -->
 			<div class="intro-text">
-				为保障掌中视界APP的稳定运行或实现相关功能，我们可能会接入由第三方提供的软件开发包（SDK）实现上述目的。我们会尽到审慎义务，对合作方获取信息的软件工具开发包（SDK）进行严格的安全监测，以保护数据安全。我们接入的第三方SDK主要服务于您以及其他的用户的需求，因此在满足新的服务需求及业务功能变更时，我们可能会调整我们接入的第三方SDK。我们会及时在本说明中向您公开说明接入第三方SDK的最新情况。目前掌中视界APP接入的第三方SDK列明如下:
+				为保障八方远控小程序的稳定运行或实现相关功能，我们可能会接入由第三方提供的软件开发包（SDK）实现上述目的。我们会尽到审慎义务，对合作方获取信息的软件工具开发包（SDK）进行严格的安全监测，以保护数据安全。我们接入的第三方SDK主要服务于您以及其他的用户的需求，因此在满足新的服务需求及业务功能变更时，我们可能会调整我们接入的第三方SDK。我们会及时在本说明中向您公开说明接入第三方SDK的最新情况。目前八方远控小程序接入的第三方SDK列明如下:
 			</div>
 
 			<!-- 1. 支付宝 -->
 			<div class="sdk-item">
-				<div class="sdk-title">APP支付宝客户端SDK</div>
+				<div class="sdk-title">小程序支付宝客户端SDK</div>
 				<div class="info-row"><span class="info-label">开发者信息</span><span class="info-content">支付宝（杭州）信息技术有限公司</span>
 				</div>
 				<div class="info-row"><span class="info-label">收集信息范围：</span><span
@@ -17,9 +17,9 @@
 				<div class="info-row"><span class="info-label">收集方式：</span><span class="info-content">SDK本机采集</span></div>
 				<div class="info-row"><span class="info-label">使用目的：</span><span class="info-content">为用户提供支付宝支付功能</span></div>
 				<div class="info-row"><span class="info-label">使用场景：</span><span class="info-content">用户支付订单时</span></div>
-				<a href="https://opendocs.alipay.com/open/54/01g6qm#%25E6%2594%25AF%25E4%25BB%2598%25E5%25AE%259D%2520App%2520%25E6%2594%25A"
+				<a href="https://opendocs.alipay.com/open/54/01g6qm#%25E6%2594%25AF%25E4%25BB%2598%25E5%25AE%259D%2520小程序%2520%25E6%2594%25A"
 					target="_blank"
-					class="privacy-link">隐私政策链接：https://opendocs.alipay.com/open/54/01g6qm#%25E6%2594%25AF%25E4%25BB%2598%25E5%25AE%259D%2520App%2520%25E6%2594%25A</a>
+					class="privacy-link">隐私政策链接：https://opendocs.alipay.com/open/54/01g6qm#%25E6%2594%25AF%25E4%25BB%2598%25E5%25AE%259D%2520小程序%2520%25E6%2594%25A</a>
 			</div>
 
 			<!-- 2. 微信 OpenSDK -->
