@@ -13,7 +13,8 @@ const whiteList = ["/api/login",
   "/api/user/mine",
   '/api/get/login/code',
   '/api/login/save',
-  '/api/user/venue/detail'
+  '/api/user/venue/detail',
+  'api/ks/applet/login'
 ];
 
 const request = (options) => {

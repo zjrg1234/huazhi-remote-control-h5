@@ -7,11 +7,7 @@
     <view class="form">
       <!-- #ifdef MP-WEIXIN || MP-KUAISHOU -->
       <!-- 必须使用原生 button 组件才能触发手机号授权 -->
-      <button
-        class="login-btn"
-        open-type="getPhoneNumber"
-        @getphonenumber="handleGetPhoneNumber"
-      >
+      <button class="login-btn" open-type="getPhoneNumber" @getphonenumber="handleGetPhoneNumber">
         手机号一键登录
       </button>
       <!-- #endif -->
@@ -24,49 +20,45 @@
     </view>
 
     <view class="agreement">
-      <view
-        class="checkbox"
-        :class="{ checked: agree }"
-        @click="agree = !agree"
-      >
-        <image
-          class="check-icon"
-          src="/static/images/login/checked@2x.png"
-          mode="aspectFill"
-          v-if="agree"
-        />
-        <image
-          class="un-check-icon"
-          src="/static/images/login/circle@2x.png"
-          mode="aspectFill"
-          v-if="!agree"
-        />
+      <view class="checkbox" :class="{ checked: agree }" @click="agree = !agree">
+        <image class="check-icon" src="/static/images/login/checked@2x.png" mode="aspectFill" v-if="agree" />
+        <image class="un-check-icon" src="/static/images/login/circle@2x.png" mode="aspectFill" v-if="!agree" />
       </view>
       <view class="text">
         <text>我已同意</text>
-        <text
-          class="highlight"
-          @click="goto('/subpkg_set/pages/set/userPolicy')"
-          >用户协议</text>
+        <text class="highlight" @click="goto('/subpkg_set/pages/set/userPolicy')">用户协议</text>
         <text>和</text>
-        <text @click="goto('/subpkg_set/pages/set/privacy')" class="highlight"
-          >隐私条款</text
-        >
+        <text @click="goto('/subpkg_set/pages/set/privacy')" class="highlight">隐私条款</text>
       </view>
     </view>
   </view>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 
-import { WechatLogin, GetUserInfo } from "@/axios/index.js";
+import { WechatLogin, GetUserInfo, KsLogin } from "@/axios/index.js";
 import { useUserStore } from "@/store/modules/user";
 
 const userStore = useUserStore();
 
 const agree = ref(false);
 
+onMounted(() => {
+
+  // #ifdef MP-KUAISHOU
+  let provider = "kuaishou";
+  uni.login({
+    provider,
+    success: (res) => {
+      uni.setStorageSync("openid", res.code);
+    },
+    fail: (err) => {
+      uni.showToast({ title: "获取登录凭证失败,请刷新", icon: "none" });
+    },
+  });
+  // #endif
+})
 // 登录
 const handleLogin = () => {
   uni.navigateTo({
@@ -85,32 +77,47 @@ const handleGetPhoneNumber = async (e) => {
     uni.showToast({ title: "请同意用户协议、隐私条款", icon: "none" });
     return;
   }
-  console.log(e)
+
   // 1. 判断用户是否同意授权
   if (e.detail.errMsg !== "getPhoneNumber:ok") {
     uni.showToast({ title: "已取消授权", icon: "none" });
     return;
   }
-  console.log("phoneCode", e.detail.code);
+  console.log("phoneCode", e);
   let loginRes = {};
-  // #ifdef MP-WEIXIN  || MP-KUAISHOU
+  // #ifdef  MP-KUAISHOU
 
+  const provider = 'kuaishou';
 
-  let provider = 'kuaishou';
+  const res = await new Promise((resolve, reject) => {
+    uni.checkSession({
+      success: (res) => {
+        uni.login({
+          provider,
+          success: (res) => {
+            console.log("res", res)
+            uni.setStorageSync("openid", res.code);
+            resolve(res)
+          },
+          fail: (err) => {
+            uni.showToast({ title: "获取登录凭证失败,请刷新", icon: "none" });
+          },
+        });
+      },
+      fail: () => {
+        uni.login({
+          provider,
+          success: (res) => {
+            uni.setStorageSync("openid", res.code);
 
-  // #ifdef MP-WEIXIN
-  provider = "weixin";
-  // #endif
-  // 2. 获取微信登录的临时凭证 code
-  loginRes = await new Promise((resolve, reject) => {
-    uni.login({
-      provider,
-      success: (res) => resolve(res),
-      fail: (err) => reject(err),
+          },
+          fail: (err) => {
+            uni.showToast({ title: "获取登录凭证失败,请刷新", icon: "none" });
+          },
+        });
+      }
     });
   });
-
-  uni.setStorageSync("openid", loginRes.code);
 
   // #endif
 
@@ -125,13 +132,13 @@ const handleGetPhoneNumber = async (e) => {
 
     // #endif
 
-     // #ifdef MP-KUAISHOU
+    // #ifdef MP-KUAISHOU
 
     const res = await KsLogin({
       phone_code: e.detail.code,
       encrypted_data: e.detail.encryptedData,
       iv: e.detail.iv,
-      ks_code: e.detail.code
+      ks_code: uni.getStorageSync("openid")
     });
 
     // #endif
@@ -147,7 +154,7 @@ const handleGetPhoneNumber = async (e) => {
           url: "/subpkg_mine/pages/mine/changeArea", // 你的首页路径
         });
       } else {
-        
+
         GetUserInfo().then(res => {
           userStore.setUser(res.data)
         }).catch()
@@ -360,9 +367,8 @@ page {
   /* 2. 应用你原本的设计样式 */
   background: linear-gradient(90deg, #ffc838 0%, #ffc838 100%);
   border-radius: 24rpx;
-  font-family:
-    PingFangSC,
-    PingFang SC;
+  font-family: PingFangSC,
+  PingFang SC;
   font-weight: 400;
   font-size: 32rpx;
   color: #1a1a1a;
