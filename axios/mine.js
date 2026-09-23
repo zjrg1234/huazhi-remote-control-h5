@@ -54,7 +54,7 @@ export function ChangePhone(data) {
 
 
 export function logoutAccount(data) {
-  return get('/api/user/account/cancel', data)
+  return post('/api/user/account/cancel', data)
 }
 
 export function  GetUserWalletLog(data) {
