@@ -142,7 +142,8 @@ import {
 } from "../axios/recharge.js";
 import {
   WechatPay,
-  GetUserInfo
+  GetUserInfo,
+  KsPay
 } from "@/axios/index.js";
 
 
@@ -263,7 +264,7 @@ const handleSubmit = async () => {
     activity_id: activityId.value || undefined,
     login_code: uni.getStorageSync("openid") || undefined,
     ks_code: uni.getStorageSync("openid") || undefined,
-    pay_channel: payType.value
+    pay_channel: payType.value == 'alipay' ? 'ZFB' : 'WECHAT'
   };
     res = await KsPay(obj);
     const payParams = res.data;
