@@ -1,26 +1,11 @@
 <template>
   <view class="page">
-
     <view class="sticky-content">
       <view class="wrap-content">
-        <!-- #ifdef H5 -->
-        <NavBar title="我的电池" url="/pages/mine/index"></NavBar>
-        <view class="bg-image bg-image-h5">
-          <image class="image" src="/static/images/mine/bg2@2x.png" mode="widthFix"></image>
-        </view>
-        <!-- #endif -->
-
-        <!-- #ifdef MP-WEIXIN || MP-KUAISHOU -->
         <custom-nav-bar title="我的电池" url="/subpkg_mine/pages/mine/battery" flag="0"></custom-nav-bar>
-        <!-- #endif -->
-
-        <!-- #ifndef H5 -->
-        <!-- 顶部背景图 小程序-->
         <view class="bg-image">
           <image class="image" src="/static/images/mine/bg2@2x.png" mode="widthFix"></image>
         </view>
-        <!-- #endif -->
-
         <!-- 电池卡片 -->
         <view class="card">
           <view class="card-bg">
@@ -94,22 +79,11 @@
         >
           <image class="pay-icon" src="/static/images/common/icon_zfb@2x.png" />
           <text>支付宝支付</text>
-        </view>
-
-        
+        </view> 
         <view class="pay-item" :class="{ active: payType === 'wechat' }" @click="payType = 'wechat'">
           <image class="pay-icon" src="/static/images/common/icon_wx@2x.png" />
           <text>微信支付</text>
         </view>
-       
-
-<!--     
-        <view class="pay-item" :class="{ kuaishou: payType === 'kuaishou' }" @click="payType = 'kuaishou'">
-          <image class="pay-icon" src="/static/images/common/ks.png" />
-          <text>快手支付</text>
-        </view> -->
-        
-
       </view>
     </view>
 
@@ -160,7 +134,7 @@ const tab = ref("normal");
 // 选中的套餐
 const selectedPackage = ref(null);
 
-const packageFirstList = ref(null);
+const packageFirstList = ref([]);
 
 const activityId = ref(null);
 
@@ -250,14 +224,16 @@ const handleSubmit = async () => {
     });
     return
   }
-  else {
+   else {
     uni.showToast({
       title: "请选择或输入充值数量",
       icon: "none",
     });
     return;
   }
-  let res;
+
+  try {
+    let res;
   let obj = {
     uid: userStore.getUserInfo().id,
     amount,
@@ -285,83 +261,21 @@ const handleSubmit = async () => {
 
       }
     });
-
-
-  // if (payType.value == "alipay") {
-    
-  // } else if (payType.value == 'weixin') {
-  //   res = await WechatPay(obj);
-  //   if (res.code == 200) {
-  //     wx.requestPayment({
-  //       timeStamp: res.data.timeStamp,
-  //       nonceStr: res.data.nonceStr,
-  //       package: res.data.package, // 格式为: 'prepay_id=***'
-  //       signType: res.data.signType, // 通常为 'RSA'
-  //       paySign: res.data.paySign,
-  //       success: (res) => {
-  //         // 支付成功
-  //         uni.showToast({ title: '支付成功', icon: 'success' })
-  //         selectedPackage.value = -1;
-  //         customNum.value = ''
-
-  //         GetUserInfo().then(res => {
-  //           userStore.setUser(res.data)
-  //         }).catch()
-  //       },
-  //       fail: (err) => {
-  //         // 支付失败或取消
-  //         uni.showToast({ title: '支付失败', icon: 'none' })
-
-  //       }
-  //     });
-  //   } else {
-  //     uni.showToast({ title: res.msg, icon: 'none' })
-  //   }
-  // } else if (payType.value == 'kuaishou') {
-  //   res = await KsPay(obj);
-  //   const payParams = res.data;
-  //   await uni.requestPayment({
-  //     provider: 'kspay',
-  //     ...payParams,
-  //     success: (res) => {
-  //       uni.showToast({ title: '支付成功', icon: 'success' })
-  //       selectedPackage.value = -1;
-  //       customNum.value = ''
-
-  //       GetUserInfo().then(res => {
-  //         userStore.setUser(res.data)
-  //       }).catch()
-  //     },
-  //     fail: (err) => {
-  //       uni.showToast({ title: '支付失败', icon: 'none' })
-
-  //     }
-  //   });
-
-  // }
-
-  console.log(res);
+  } catch(e) {
+    uni.showToast({ title: '支付失败error', icon: 'none' })
+  }
+  
 };
 </script>
 
 <style lang="scss" scoped>
-page {
-  background: #f8f8f8;
-  padding: 0 !important;
-  margin: 0 !important;
-  box-sizing: border-box;
-}
+
 
 .page {
-  height: 100vh;
+  min-height: 100vh;
   background: #f8f8f8;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-around;
+  padding-bottom: calc(180rpx + env(safe-area-inset-bottom));
 }
-
 .sticky-content {
   position: sticky;
   top: 0;
@@ -404,9 +318,7 @@ page {
     height: 196rpx;
     margin: 10rpx;
     margin-bottom: 0;
-    padding: 20rpx;
-    padding-bottom: 0;
-    padding-left: 30rpx;
+    padding: 20rpx 20rpx 0 30rpx;
 
   }
 
@@ -609,7 +521,7 @@ page {
     align-items: center;
     justify-content: center;
     gap: 10rpx;
-    font-size: 28rpx;
+  
 
     font-family:
       PingFangSC,
@@ -628,13 +540,6 @@ page {
       border-radius: 12rpx;
       border: 1rpx solid #ffc838;
       color: #1a1a1a;
-    }
-
-    &.kuaishou {
-      background: #ff4908;
-      border-radius: 12rpx;
-      border: 1rpx solid #ff4908;
-      color: #fff;
     }
   }
 }
@@ -683,6 +588,8 @@ page {
   font-size: 24rpx;
   color: #1a1a1a;
   padding: 10rpx 40rpx;
+
+  z-index: 100;
 }
 
 /* 列表 */
