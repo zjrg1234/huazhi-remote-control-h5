@@ -92,6 +92,7 @@ const handleGetPhoneNumber = async (e) => {
   const res = await new Promise((resolve, reject) => {
     uni.checkSession({
       success: (res) => {
+        console.log(res,"======checkSession")
         uni.login({
           provider,
           success: (res) => {
@@ -109,7 +110,6 @@ const handleGetPhoneNumber = async (e) => {
           provider,
           success: (res) => {
             uni.setStorageSync("openid", res.code);
-
           },
           fail: (err) => {
             uni.showToast({ title: "获取登录凭证失败,请刷新", icon: "none" });

@@ -48,7 +48,7 @@
 
 <script setup>
 import { ref } from "vue";
-import { Login, GetUserInfo } from "@/axios/index.js";
+import { Login, GetUserInfo, KsLogin } from "@/axios/index.js";
 import { useUserStore } from "@/store/modules/user";
 const form = ref({
   phone: "",
@@ -93,8 +93,9 @@ const handleLogin = async () => {
     uni.login({
       provider,
       success: (res) => {
+        console.log(res)
         uni.setStorageSync("openid", res.code);
-
+        resolve(res)
       },
       fail: (err) => {
         uni.showToast({ title: "获取登录凭证失败,请刷新", icon: "none" });
@@ -103,40 +104,47 @@ const handleLogin = async () => {
   })
   // #endif
 
-
-  Login({
-    ...form.value,
-    password: form.value.password,
-    type: 1,
-    login_code: loginRes?.code || undefined,
-    ks_code: loginRes?.code || undefined,
-  })
-    .then((res) => {
-      if (res.code == 200) {
-        userStore.setToken(res.data.session_key);
-        userStore.setAreaId(res.data.special_area);
-        userStore.setId(res.data.id);
-
-        GetUserInfo({ uid: res.data.id })
-          .then((res) => {
-            userStore.setUser(res.data);
-
-            uni.switchTab({
-              url: "/pages/index/index",
-            });
-          })
-          .catch();
-      } else {
-        uni.showToast({
-          title: res.msg,
-          icon: "none",
-        });
-      }
+  try {
+    // 快手登录
+    KsLogin({
+      ...form.value,
+      password: form.value.password,
+      type: 1,
+      login_code: loginRes?.code || undefined,
+      ks_code: loginRes?.code || undefined,
     })
-    .catch(() => {
-      uni.showToast({ title: "网络异常，请稍后再试", icon: "none" });
-      console.error("登录请求错误:", err);
-    });
+      .then((res) => {
+        if (res.code == 200) {
+          userStore.setToken(res.data.session_key);
+          userStore.setAreaId(res.data.special_area);
+          userStore.setId(res.data.id);
+
+          GetUserInfo({ uid: res.data.id })
+            .then((res) => {
+              userStore.setUser(res.data);
+
+              uni.switchTab({
+                url: "/pages/index/index",
+              });
+            })
+            .catch();
+        } else {
+          uni.showToast({
+            title: res.msg,
+            icon: "none",
+          });
+        }
+      })
+      .catch(() => {
+        uni.showToast({ title: "网络异常，请稍后再试", icon: "none" });
+        console.error("登录请求错误:", err);
+      });
+  } catch (e) {
+    console.error("登录请求错误e:", e);
+
+  }
+
+
 
 };
 
