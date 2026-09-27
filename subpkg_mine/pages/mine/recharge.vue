@@ -72,15 +72,11 @@
     <view class="section">
       <text class="section-title">支付方式</text>
       <view class="pay-list">
-         <view
-          class="pay-item"
-          :class="{ active: payType === 'alipay' }"
-          @click="payType = 'alipay'"
-        >
+        <view class="pay-item" :class="{ active: payType === 'alipay' }" @click="handlePay('alipay')">
           <image class="pay-icon" src="/static/images/common/icon_zfb@2x.png" />
           <text>支付宝支付</text>
-        </view> 
-        <view class="pay-item" :class="{ active: payType === 'wechat' }" @click="payType = 'wechat'">
+        </view>
+        <view class="pay-item" :class="{ active: payType === 'wechat' }" @click="handlePay('wechat')">
           <image class="pay-icon" src="/static/images/common/icon_wx@2x.png" />
           <text>微信支付</text>
         </view>
@@ -210,6 +206,10 @@ const goBack = () => {
   uni.navigateBack();
 };
 
+const handlePay = (val) => {
+  payType.value = val
+}
+
 // 提交
 const handleSubmit = async () => {
   let amount = 0;
@@ -224,7 +224,7 @@ const handleSubmit = async () => {
     });
     return
   }
-   else {
+  else {
     uni.showToast({
       title: "请选择或输入充值数量",
       icon: "none",
@@ -234,19 +234,22 @@ const handleSubmit = async () => {
 
   try {
     let res;
-  let obj = {
-    uid: userStore.getUserInfo().id,
-    amount,
-    activity_id: activityId.value || undefined,
-    login_code: uni.getStorageSync("openid") || undefined,
-    ks_code: uni.getStorageSync("openid") || undefined,
-    pay_channel: payType.value == 'alipay' ? 'ZFB' : 'WECHAT'
-  };
+    let obj = {
+      uid: userStore.getUserInfo().id,
+      amount,
+      activity_id: activityId.value || undefined,
+      login_code: uni.getStorageSync("openid") || undefined,
+      ks_code: uni.getStorageSync("openid") || undefined,
+      pay_channel: payType.value == 'alipay' ? 'ZFB' : 'WECHAT'
+    };
+    console.log(obj)
     res = await KsPay(obj);
-    const payParams = res.data;
+    const payParams = res.data.order_info;
+    console.log("payParams", payParams);
     await uni.requestPayment({
       provider: 'kspay',
       ...payParams,
+      orderInfo: payParams,
       success: (res) => {
         uni.showToast({ title: '支付成功', icon: 'success' })
         selectedPackage.value = -1;
@@ -258,24 +261,23 @@ const handleSubmit = async () => {
       },
       fail: (err) => {
         uni.showToast({ title: '支付失败', icon: 'none' })
-
       }
     });
-  } catch(e) {
-    uni.showToast({ title: '支付失败error', icon: 'none' })
+  } catch (e) {
+    uni.showToast({ title: e, icon: 'none' })
+    // uni.showToast({ title: '支付失败error', icon: 'none' })
   }
-  
+
 };
 </script>
 
 <style lang="scss" scoped>
-
-
 .page {
   min-height: 100vh;
   background: #f8f8f8;
   padding-bottom: calc(180rpx + env(safe-area-inset-bottom));
 }
+
 .sticky-content {
   position: sticky;
   top: 0;
@@ -521,7 +523,7 @@ const handleSubmit = async () => {
     align-items: center;
     justify-content: center;
     gap: 10rpx;
-  
+
 
     font-family:
       PingFangSC,

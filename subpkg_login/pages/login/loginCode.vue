@@ -50,7 +50,7 @@
 import {
 	ref
 } from 'vue'
-import { Login, GetUserInfo } from "@/axios/index.js"
+import { KsLogin, GetUserInfo } from "@/axios/index.js"
 import VerifyCodeInput from '@/components/verify-code/verify-code.vue';
 import {
 	useUserStore
@@ -108,7 +108,7 @@ const handleLogin = async () => {
   })
 	// #endif
 
-	Login({
+	KsLogin({
 		...form.value,
 		noteVerify: form.value.code,
 		type: 1,

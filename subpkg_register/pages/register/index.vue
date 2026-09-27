@@ -22,7 +22,7 @@
 
 <script setup>
 import { ref } from "vue";
-import { Register, Login, GetUserInfo } from "@/axios/index.js";
+import { Register, KsLogin, GetUserInfo } from "@/axios/index.js";
 
 import {
   useUserStore
@@ -90,7 +90,7 @@ const handleLogin = async () => {
           icon: "success",
         });
         uni.setStorageSync('new_user', 1)
-        Login({
+        KsLogin({
           ...form.value,
           password: form.value.password,
           type: 1,
