@@ -1123,6 +1123,18 @@ const onUserActivity = () => {
 onLoad((options) => {
   initRouteData(options);
   startListening();
+  // #ifdef MP-KUAISHOU
+  ks.setPageOrientation({
+    orientation: 'landscape', // 可选值：portrait / landscape / auto
+    success() {
+      console.log('设置横屏成功');
+    },
+    fail() {
+      console.log('设置横屏失败');
+    }
+  });
+  // #endif
+
 });
 
 const count = ref(15);
@@ -1143,27 +1155,27 @@ onMounted(() => {
 
   if (getPlatform() != 'ios') {
     if (uni.getStorageSync("loadingOne") !== "1") {
-    allPopupVisible.value = true;
+      allPopupVisible.value = true;
 
-    countdownTimer = setInterval(() => {
-      count.value -= 1;
-      if (count.value == 0) {
-        count.value = 0;
-        clearInterval(countdownTimer);
-        countdownTimer = null;
-        allPopupVisible.value = false;
-        console.log("自动调驾驶接口");
-        // 自动调开始驾驶的接口
-        handlePopupAction("driving");
-        uni.setStorageSync("loadingOne", "1");
-      }
-    }, 1000);
-  } else {
-    allPopupVisible.value = false;
-  }
+      countdownTimer = setInterval(() => {
+        count.value -= 1;
+        if (count.value == 0) {
+          count.value = 0;
+          clearInterval(countdownTimer);
+          countdownTimer = null;
+          allPopupVisible.value = false;
+          console.log("自动调驾驶接口");
+          // 自动调开始驾驶的接口
+          handlePopupAction("driving");
+          uni.setStorageSync("loadingOne", "1");
+        }
+      }, 1000);
+    } else {
+      allPopupVisible.value = false;
+    }
   }
 
-  
+
 
 
 

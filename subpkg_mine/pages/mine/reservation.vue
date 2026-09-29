@@ -132,6 +132,18 @@ const tipText = ref("下拉刷新");
 
 onPageShow(() => {
   fetchData();
+
+  // #ifdef MP-KUAISHOU
+  ks.setPageOrientation({
+    orientation: 'portrait', // 可选值：portrait / landscape / auto
+    success() {
+      console.log('设置横屏成功');
+    },
+    fail() {
+      console.log('设置横屏成功');
+    }
+  });
+  // #endif
 });
 
 // ✅ 拉动过程：根据距离切换汉字
