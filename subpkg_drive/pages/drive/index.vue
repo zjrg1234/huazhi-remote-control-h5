@@ -1,18 +1,16 @@
 <template>
   <view class="landscape-page">
     <view class="page-content" @touchstart="onUserActivity" @touchmove="onUserActivity">
-      <!-- @touchstart="onUserActivity" @touchmove="onUserActivity" -->
+
       <cover-view class="logout" @click="logout">
         <cover-image src="./static/icon_exit@2x.png" class="image" mode="aspectFit" />
       </cover-view>
 
-      <!-- #ifdef MP-WEIXIN || MP-KUAISHOU -->
+  
       <web-view :src="videoUrl" ref="iframeView"></web-view>
-      <!-- #endif -->
-      <!-- #ifdef H5 -->
-      <iframe :src="videoUrl" ref="iframeView" width="100%" height="100%" style="width: 100%;height: 100%;"></iframe>
-      <!-- #endif -->
-      <!-- 退出按钮 -->
+ 
+ 
+
 
       <!-- 顶部状态栏 -->
       <cover-view class="status-bar-capsule">
@@ -1124,14 +1122,10 @@ onLoad((options) => {
   initRouteData(options);
   startListening();
   // #ifdef MP-KUAISHOU
-  ks.setPageOrientation({
-    orientation: 'landscape', // 可选值：portrait / landscape / auto
+  ks.disableUserScreenRecord({
     success() {
-      console.log('设置横屏成功');
+      // 防录屏功能开启成功
     },
-    fail() {
-      console.log('设置横屏失败');
-    }
   });
   // #endif
 
