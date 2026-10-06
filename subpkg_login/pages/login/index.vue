@@ -7,7 +7,8 @@
     <view class="form">
       <!-- #ifdef MP-WEIXIN || MP-KUAISHOU -->
       <!-- 必须使用原生 button 组件才能触发手机号授权 -->
-      <button class="login-btn" open-type="getPhoneNumber" @getphonenumber="handleGetPhoneNumber">
+      <button class="login-btn" :key="agree ? 'phone' : 'normal'" :open-type="agree ? 'getPhoneNumber' : ''"
+        @getphonenumber="handleGetPhoneNumber" @click="handlePhoneBtnTap">
         手机号一键登录
       </button>
       <!-- #endif -->
@@ -31,6 +32,24 @@
         <text @click="goto('/subpkg_set/pages/set/privacy')" class="highlight">隐私条款</text>
       </view>
     </view>
+
+
+    <TipModal title="提示" v-model:visible="tipVisible" key="1" confirmText="同意" cancelText="仍不同意"
+      @confirm="handleConfirm" @cancel="cancel">
+      <template #content>
+        <view class="content">
+
+          <view class="cont-text">
+            <text>您需要同意</text>
+            <text class="highlight" @click="goto('/subpkg_set/pages/set/userPolicy')">用户协议</text>
+            <text>和</text>
+            <text @click="goto('/subpkg_set/pages/set/privacy')" class="highlight">隐私条款</text>
+            <text>，才能继续使用</text>
+          </view>
+        </view>
+      </template>
+    </TipModal>
+
   </view>
 </template>
 
@@ -39,10 +58,13 @@ import { ref, onMounted } from "vue";
 
 import { WechatLogin, GetUserInfo, KsLogin } from "@/axios/index.js";
 import { useUserStore } from "@/store/modules/user";
+import TipModal from "@/components/tip-modal/tip-modal.vue"
 
 const userStore = useUserStore();
 
 const agree = ref(false);
+const tipVisible = ref(false)
+
 
 onMounted(() => {
 
@@ -123,16 +145,7 @@ const handleGetPhoneNumber = async (e) => {
 
   try {
 
-    // #ifdef MP-WEIXIN 
 
-    const res = await WechatLogin({
-      phone_code: e.detail.code,
-      login_code: loginRes.code,
-    });
-
-    // #endif
-
-    // #ifdef MP-KUAISHOU
 
     const res = await KsLogin({
       phone_code: e.detail.code,
@@ -141,7 +154,7 @@ const handleGetPhoneNumber = async (e) => {
       ks_code: uni.getStorageSync("openid")
     });
 
-    // #endif
+  
 
     if (res.code == 200) {
       userStore.setToken(res.data.session_key);
@@ -178,6 +191,26 @@ const goUrl = () => {
   uni.switchTab({
     url: "/pages/index/index",
   });
+};
+
+
+
+const handleConfirm = async () => {
+  agree.value = true;
+  cancel();
+}
+
+const cancel = () => {
+  tipVisible.value = false;
+}
+
+const handlePhoneBtnTap = () => {
+
+  if (!agree.value) {
+    tipVisible.value = true;
+    return
+
+  }
 };
 </script>
 
@@ -308,7 +341,7 @@ page {
 
 .agreement {
   position: absolute;
-  bottom: 50rpx;
+  bottom: 60rpx;
   left: 50%;
   width: 100%;
   transform: translatex(-50%);
@@ -375,5 +408,21 @@ page {
   text-align: center;
   margin-bottom: 50rpx;
   padding: 25rpx 0;
+}
+
+.cont-text {
+  font-family:
+    PingFangSC,
+    PingFang SC;
+  font-weight: 400;
+  font-size: 28rpx;
+  color: #29220a;
+  margin-bottom: 40rpx;
+  padding: 0 20rpx;
+  text-align: left;
+
+  .highlight {
+    color: #ffc838;
+  }
 }
 </style>

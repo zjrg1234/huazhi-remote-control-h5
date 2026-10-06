@@ -43,13 +43,36 @@
         <text @click="goto('/subpkg_set/pages/set/privacy')" class="highlight">隐私条款</text>
       </view>
     </view>
+
+
+    <TipModal title="提示" v-model:visible="tipVisible" key="1" confirmText="同意" cancelText="仍不同意"
+      @confirm="handleConfirm" @cancel="cancel">
+      <template #content>
+        <view class="content">
+
+          <view class="cont-text">
+            <text>您需要同意</text>
+            <text class="highlight" @click="goto('/subpkg_set/pages/set/userPolicy')">用户协议</text>
+            <text>和</text>
+            <text @click="goto('/subpkg_set/pages/set/privacy')" class="highlight">隐私条款</text>
+            <text>，才能继续使用</text>
+          </view>
+        </view>
+      </template>
+    </TipModal>
+
+
   </view>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import { Login, GetUserInfo, KsLogin } from "@/axios/index.js";
+import { GetUserInfo, KsLogin } from "@/axios/index.js";
 import { useUserStore } from "@/store/modules/user";
+import TipModal from "@/components/tip-modal/tip-modal.vue"
+
+
+const tipVisible = ref(false)
 const form = ref({
   phone: "",
   password: "",
@@ -59,13 +82,7 @@ const agree = ref(false);
 const userStore = useUserStore();
 // 登录
 const handleLogin = async () => {
-  if (!agree.value) {
-    uni.showToast({
-      title: "请同意用户协议、隐私条款",
-      icon: "none",
-    });
-    return;
-  }
+
 
   if (!form.value.phone) {
     uni.showToast({
@@ -81,13 +98,20 @@ const handleLogin = async () => {
     });
     return;
   }
+
+
+  if (!agree.value) {
+    tipVisible.value = true;
+
+    return;
+  }
+
+
   let loginRes = {};
   let provider = '';
-  // #ifdef MP-WEIXIN  || MP-KUAISHOU
+  // #ifdef MP-KUAISHOU
   provider = 'kuaishou';
-  // #ifdef MP-WEIXIN
-  provider = "weixin";
-  // #endif
+ 
   // 2. 获取微信登录的临时凭证 code
   loginRes = await new Promise((resolve, reject) => {
     uni.login({
@@ -102,7 +126,7 @@ const handleLogin = async () => {
       },
     });
   })
-  // #endif
+  
 
   try {
     // 快手登录
@@ -148,6 +172,14 @@ const handleLogin = async () => {
 
 };
 
+const handleConfirm = async () => {
+  agree.value = true;
+  cancel();
+}
+
+const cancel = () => {
+  tipVisible.value = false;
+}
 // 跳转
 const goForgetPwd = () => {
   uni.navigateTo({
@@ -299,7 +331,7 @@ page {
 
 .agreement {
   position: absolute;
-  bottom: 50rpx;
+  bottom: 60rpx;
   left: 50%;
   width: 100%;
   transform: translatex(-50%);
@@ -308,17 +340,17 @@ page {
   justify-content: center;
 
   .checkbox {
-    width: 46rpx;
-    height: 46rpx;
-    border-radius: 4rpx;
+    width: 50rpx;
+    height: 50rpx;
+    border-radius: 5rpx;
     margin-right: 12rpx;
     display: flex;
     align-items: center;
     justify-content: center;
 
     .check-icon {
-      width: 40rpx;
-      height: 40rpx;
+      width: 45rpx;
+      height: 45rpx;
     }
 
     .un-check-icon {
@@ -332,12 +364,29 @@ page {
       PingFangSC,
       PingFang SC;
     font-weight: 400;
-    font-size: 24rpx;
+    font-size: 26rpx;
     color: #29220a;
 
     .highlight {
       color: #ffc838;
     }
+  }
+
+}
+
+.cont-text {
+  font-family:
+    PingFangSC,
+    PingFang SC;
+  font-weight: 400;
+  font-size: 28rpx;
+  color: #29220a;
+  margin-bottom: 40rpx;
+  padding: 0 20rpx;
+  text-align: left;
+
+  .highlight {
+    color: #ffc838;
   }
 }
 </style>
