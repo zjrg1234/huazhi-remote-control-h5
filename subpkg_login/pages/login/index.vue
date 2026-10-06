@@ -7,11 +7,8 @@
     <view class="form">
       <!-- #ifdef MP-WEIXIN -->
       <!-- 必须使用原生 button 组件才能触发手机号授权 -->
-      <button
-        class="login-btn"
-        open-type="getPhoneNumber"
-        @getphonenumber="handleGetPhoneNumber"
-      >
+      <button class="login-btn" :key="agree ? 'phone' : 'normal'" :open-type="agree ? 'getPhoneNumber' : ''"
+        @getphonenumber="handleGetPhoneNumber" @click="handlePhoneBtnTap">
         手机号一键登录
       </button>
       <!-- #endif -->
@@ -24,36 +21,35 @@
     </view>
 
     <view class="agreement">
-      <view
-        class="checkbox"
-        :class="{ checked: agree }"
-        @click="agree = !agree"
-      >
-        <image
-          class="check-icon"
-          src="/static/images/login/checked@2x.png"
-          mode="aspectFill"
-          v-if="agree"
-        />
-        <image
-          class="un-check-icon"
-          src="/static/images/login/circle@2x.png"
-          mode="aspectFill"
-          v-if="!agree"
-        />
+      <view class="checkbox" :class="{ checked: agree }" @click="agree = !agree">
+        <image class="check-icon" src="/static/images/login/checked@2x.png" mode="aspectFill" v-if="agree" />
+        <image class="un-check-icon" src="/static/images/login/circle@2x.png" mode="aspectFill" v-if="!agree" />
       </view>
       <view class="text">
         <text>我已同意</text>
-        <text
-          class="highlight"
-          @click="goto('/subpkg_set/pages/set/userPolicy')"
-          >用户协议</text>
+        <text class="highlight" @click="goto('/subpkg_set/pages/set/userPolicy')">用户协议</text>
         <text>和</text>
-        <text @click="goto('/subpkg_set/pages/set/privacy')" class="highlight"
-          >隐私条款</text
-        >
+        <text @click="goto('/subpkg_set/pages/set/privacy')" class="highlight">隐私条款</text>
       </view>
     </view>
+
+
+    <TipModal title="提示" v-model:visible="tipVisible" key="1" confirmText="同意" cancelText="仍不同意"
+      @confirm="handleConfirm" @cancel="cancel">
+      <template #content>
+        <view class="content">
+
+          <view class="cont-text">
+            <text>您需要同意</text>
+            <text class="highlight" @click="goto('/subpkg_set/pages/set/userPolicy')">用户协议</text>
+            <text>和</text>
+            <text @click="goto('/subpkg_set/pages/set/privacy')" class="highlight">隐私条款</text>
+            <text>，才能继续使用</text>
+          </view>
+        </view>
+      </template>
+    </TipModal>
+
   </view>
 </template>
 
@@ -62,10 +58,13 @@ import { ref } from "vue";
 
 import { WechatLogin, GetUserInfo } from "@/axios/index.js";
 import { useUserStore } from "@/store/modules/user";
+import TipModal from "@/components/tip-modal/tip-modal.vue"
 
 const userStore = useUserStore();
 
 const agree = ref(false);
+const tipVisible = ref(false)
+
 
 // 登录
 const handleLogin = () => {
@@ -120,7 +119,7 @@ const handleGetPhoneNumber = async (e) => {
           url: "/subpkg_mine/pages/mine/changeArea", // 你的首页路径
         });
       } else {
-        
+
         GetUserInfo().then(res => {
           userStore.setUser(res.data)
         }).catch()
@@ -144,6 +143,26 @@ const goUrl = () => {
   uni.switchTab({
     url: "/pages/index/index",
   });
+};
+
+
+
+const handleConfirm = async () => {
+  agree.value = true;
+  cancel();
+}
+
+const cancel = () => {
+  tipVisible.value = false;
+}
+
+const handlePhoneBtnTap = () => {
+
+  if (!agree.value) {
+    tipVisible.value = true;
+    return
+
+  }
 };
 </script>
 
@@ -274,7 +293,7 @@ page {
 
 .agreement {
   position: absolute;
-  bottom: 50rpx;
+  bottom: 60rpx;
   left: 50%;
   width: 100%;
   transform: translatex(-50%);
@@ -333,14 +352,29 @@ page {
   /* 2. 应用你原本的设计样式 */
   background: linear-gradient(90deg, #ffc838 0%, #ffc838 100%);
   border-radius: 24rpx;
-  font-family:
-    PingFangSC,
-    PingFang SC;
+  font-family: PingFangSC,
+  PingFang SC;
   font-weight: 400;
   font-size: 32rpx;
   color: #1a1a1a;
   text-align: center;
   margin-bottom: 50rpx;
   padding: 25rpx 0;
+}
+
+.cont-text {
+  font-family:
+    PingFangSC,
+    PingFang SC;
+  font-weight: 400;
+  font-size: 28rpx;
+  color: #29220a;
+  margin-bottom: 40rpx;
+  padding: 0 20rpx;
+  text-align: left;
+
+  .highlight {
+    color: #ffc838;
+  }
 }
 </style>
