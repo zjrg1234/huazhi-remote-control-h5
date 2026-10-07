@@ -1,13 +1,13 @@
 <template>
   <view class="container">
     <!-- 顶部 Banner -->
-    <view class="banner-section">
+    <!-- <view class="banner-section">
       <image :src="imgUrl" mode="scaleToFill" class="banner-img" lazy-load></image>
-    </view>
+    </view> -->
 
 
-     <view class="banner-section">
-      <image :src="imgUrl" mode="scaleToFill" class="banner-img" lazy-load></image>
+     <view class="bg">
+      <image src="/static/images/1.jpg" mode="scaleToFill" class="bg-img" lazy-load></image>
     </view>
 
 
