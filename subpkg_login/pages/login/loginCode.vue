@@ -50,7 +50,7 @@
 import {
 	ref
 } from 'vue'
-import { KsLogin, GetUserInfo } from "@/axios/index.js"
+import { Login, GetUserInfo } from "@/axios/index.js"
 import VerifyCodeInput from '@/components/verify-code/verify-code.vue';
 import {
 	useUserStore
@@ -89,26 +89,24 @@ const handleLogin = async () => {
 
 	let loginRes = {};
 	let provider = '';
-	// #ifdef MP-WEIXIN  || MP-KUAISHOU
+	// #ifdef  MP-KUAISHOU
 	provider = 'kuaishou';
-	// #ifdef MP-WEIXIN
-	provider = "weixin";
-	// #endif
+
 	// 2. 获取微信登录的临时凭证 code
-	 loginRes = await new Promise((resolve, reject) => {
-    uni.login({
-      provider,
-      success: (res) => {
-        uni.setStorageSync("openid", res.code);
-      },
-      fail: (err) => {
-        uni.showToast({ title: "获取登录凭证失败,请刷新", icon: "none" });
-      },
-    });
-  })
+	loginRes = await new Promise((resolve, reject) => {
+		uni.login({
+			provider,
+			success: (res) => {
+				uni.setStorageSync("openid", res.code);
+			},
+			fail: (err) => {
+				uni.showToast({ title: "获取登录凭证失败,请刷新", icon: "none" });
+			},
+		});
+	})
 	// #endif
 
-	KsLogin({
+	Login({
 		...form.value,
 		noteVerify: form.value.code,
 		type: 1,

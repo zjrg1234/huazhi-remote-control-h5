@@ -67,7 +67,7 @@
 
 <script setup>
 import { ref } from "vue";
-import { GetUserInfo, KsLogin } from "@/axios/index.js";
+import { GetUserInfo, Login } from "@/axios/index.js";
 import { useUserStore } from "@/store/modules/user";
 import TipModal from "@/components/tip-modal/tip-modal.vue"
 
@@ -130,12 +130,12 @@ const handleLogin = async () => {
 
   try {
     // 快手登录
-    KsLogin({
+    Login({
       ...form.value,
       password: form.value.password,
       type: 1,
-      login_code: loginRes?.code || undefined,
       ks_code: loginRes?.code || undefined,
+      login_code: loginRes?.code || undefined,
     })
       .then((res) => {
         if (res.code == 200) {
