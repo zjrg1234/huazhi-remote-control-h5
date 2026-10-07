@@ -5,7 +5,8 @@ import { useUserStore } from "@/store/modules/user";
 const TIME_OUT = 10000;
 
 // 接口白名单：无需登录
-const whiteList = ["/api/login", 
+const whiteList = [
+  "/api/login", 
   "api/wechat/applet/login",
   "/api/user/index",
   "/api/user/banner",
