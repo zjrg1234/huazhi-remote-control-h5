@@ -71,14 +71,14 @@ const request = (options) => {
         console.log("返回成功"+apiUrl, res);
 
          if (data.code === 401) {
-          uni.showToast({
-            title: "登录已过期，请重新登录",
-            icon: "none",
-          });
+          // uni.showToast({
+          //   title: "登录已过期，请重新登录",
+          //   icon: "none",
+          // });
           // userStore.logout()
           const timer = setTimeout(() => {
             uni.reLaunch({
-              url: "/subpkg_login/pages/login/index",
+              url: "/pages/index",
             });
           }, 2000);
           reject(data);

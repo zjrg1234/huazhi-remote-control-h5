@@ -4,92 +4,9 @@
     <!-- <custom-nav-bar title="我的"></custom-nav-bar> -->
     <!-- #endif -->
 
-    <view class="bg-image">
-      <!-- <image
-        class="image"
-        src="/static/images/mine/bg@2x.png"
-        mode="scaleToFill"
-      ></image> -->
-    </view>
-    <!-- 顶部用户信息区域 -->
-    <view class="header" v-if="userInfo.username">
-      <view class="user-info">
-        <view class="avatar-image">
-          <image class="avatar" :src="headShot" mode="aspectFill" />
-          <image
-            class="arrow-edit"
-            src="/static/images/mine/icon_edit@2x.png"
-            mode="aspectFit"
-            @click="changeHeader"
-          />
-        </view>
-        <view class="user-text">
-          <text class="username" @click="gotoProfile">{{
-            userInfo.username
-          }}</text>
-          <text class="user-id">ID: {{ userInfo.show_id }}</text>
-        </view>
-      </view>
-    </view>
-
-    <view class="header" v-if="!userInfo.username">
-      <view class="user-info">
-        <view class="avatar-image">
-          <image class="avatar" src="/static/logo.png" mode="aspectFill" />
-        </view>
-        <view class="user-text">
-          <text class="username" @click="gotoUrl"> 登录/注册 </text>
-        </view>
-      </view>
-    </view>
-
-    <!-- 我的资产卡片 -->
-    <view class="asset-card">
-      <view class="card-title">我的资产</view>
-      <view class="card-content">
-        <view class="asset-item">
-          <text class="asset-num">{{ balance }}</text>
-          <view class="asset-label" >
-            <view class="text">我的电池</view>
-            <!-- <image
-              class="arrow-icon"
-              src="/static/images/common/icon_arrows@2x.png"
-              mode="aspectFit"
-            /> -->
-          </view>
-        </view>
-        <view class="asset-item">
-          <text class="asset-num">{{ energy }}</text>
-          <text class="asset-label text">我的能量</text>
-        </view>
-      </view>
-    </view>
-
-    <!-- 功能列表 -->
-    <view class="menu-list">
-      <view
-        class="menu-item"
-        v-for="(item, index) in menuList"
-        :key="index"
-        @click="handleClick(item.key, item.url)"
-      >
-        <view class="menu-left">
-          <image class="menu-icon" :src="item.icon" mode="aspectFit" />
-          <text class="menu-text">{{ item.name }}</text>
-        </view>
-        <image
-          class="menu-icon"
-          src="/static/images/common/icon_arrows_gray@2x.png"
-          mode="aspectFit"
-        />
-      </view>
-    </view>
-
-   
-
 
      <view class="bg">
-      <image src="/static/images/2.jpg" mode="scaleToFill" class="bg-img" lazy-load></image>
+      <image src="/static/images/22.png" mode="scaleToFill" class="bg-img" lazy-load></image>
     </view>
 
 
