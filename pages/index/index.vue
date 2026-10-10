@@ -7,11 +7,11 @@
 
 
     <view class="bg">
-      <image src="/static/images/11.png" mode="scaleToFill" class="bg-img" lazy-load></image>
+      <image src="/static/images/1.jpg" mode="scaleToFill" class="bg-img" lazy-load></image>
     </view>
 
     <view class="bg">
-      <image src="/static/images/22.png" mode="scaleToFill" class="bg-img" lazy-load></image>
+      <image src="/static/images/2.jpg" mode="scaleToFill" class="bg-img" lazy-load></image>
     </view>
 
 
