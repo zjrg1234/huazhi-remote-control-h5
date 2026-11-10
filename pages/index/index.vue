@@ -117,6 +117,7 @@ import { GetHomeBanner, GetHomeTabTitle, GetHomeDataList, GetNotice } from "@/ax
 import NoticePopup from '@/components/notice-popup/notice-popup.vue';
 import SkeletonCard from '@/components/skeleton-card/skeleton-card.vue'
 import { shouldFetchNotice, resetNoticeFlag } from '@/utils/notice';
+
 // --- 数据定义 ---
 const categories = ref([]);
 const currentCategory = ref("");
@@ -130,18 +131,48 @@ const imgUrl = ref("");
 const isRefreshing = ref(false); // ✅ 控制刷新状态
 const totalData = ref([]);
 
+// ✅ 分类缓存：key 用 String(id)
+const categoryCache = ref({});
+
 const showNotice = ref(false);
 const noticeContent = ref('');
 const isLoggedIn = ref(!!uni.getStorageSync('token'));
 
+// 左右列分发
+const splitToColumns = (list = []) => {
+  const left = [];
+  const right = [];
+  list.forEach((item, index) => {
+    if (index % 2 === 0) left.push(item);
+    else right.push(item);
+  });
+  return { left, right };
+};
 
 const fetchData = async (isRefresh = false) => {
-  if (loading.value || noMore.value) return;
+  const key = String(currentCategory.value ?? "");
+
+  // ✅ 非刷新且该分类已有缓存，直接渲染缓存，不再请求
+  if (!isRefresh && Object.prototype.hasOwnProperty.call(categoryCache.value, key)) {
+    const cache = categoryCache.value[key];
+    leftList.value = cache.left;
+    rightList.value = cache.right;
+    noMore.value = cache.raw.length === 0;
+    return;
+  }
+
+  if (loading.value) return;
 
   loading.value = true;
-  if (isRefresh) {
-    page.value = 1;
-    noMore.value = false;
+  page.value = 1;
+  noMore.value = false;
+
+  // ✅ 非刷新场景（首次加载 / 切换分类）清空旧列表，保证骨架屏能显示
+  //    下拉刷新场景保留列表，由 isRefreshing 控制刷新动画
+  if (!isRefresh) {
+    leftList.value = [];
+    rightList.value = [];
+  } else {
     await nextTick(() => {
       leftList.value = [];
       rightList.value = [];
@@ -149,36 +180,29 @@ const fetchData = async (isRefresh = false) => {
   }
 
   try {
-    const { code, data: { venueList } } = await GetHomeDataList({ type: currentCategory.value, size: 9999 });
+    const { code, data: { venueList } } = await GetHomeDataList({ size: 9999 });
     if (venueList && currentCategory.value == '') {
       totalData.value = venueList
     }
     if (code == 200) {
-      if (venueList && venueList.length) {
-        // 简单的左右分发逻辑
-        venueList.forEach((item, index) => {
-          if (index % 2 === 0) {
-            leftList.value.push(item);
-          } else {
-            rightList.value.push(item);
-          }
-        });
-      } else {
-        if (currentCategory.value != '' && venueList.length == 0) {
-          totalData.value.forEach((item, index) => {
-            if (index % 2 === 0) {
-              leftList.value.push(item);
-            } else {
-              rightList.value.push(item);
-            }
-          });
-        }
+      // 保留原兜底逻辑：非全部分类无数据时用全部数据兜底
+      let renderData = venueList || [];
+      if (!renderData.length && currentCategory.value != '') {
+        renderData = totalData.value || [];
       }
+
+      const { left, right } = splitToColumns(renderData);
+
+      leftList.value = left;
+      rightList.value = right;
+      noMore.value = renderData.length === 0;
+
+      // ✅ 写入缓存
+      categoryCache.value[key] = { left, right, raw: renderData };
     }
     else if (isRefresh) {
       noMore.value = true;
     }
-
   } catch (error) {
     console.error("获取数据失败", error);
   } finally {
@@ -186,10 +210,13 @@ const fetchData = async (isRefresh = false) => {
   }
 };
 
-// ✅ 自定义下拉刷新逻辑
+// ✅ 自定义下拉刷新逻辑（强制请求并清掉当前分类缓存）
 const onRefresh = async () => {
   isRefreshing.value = true;
   try {
+    const key = String(currentCategory.value ?? "");
+    delete categoryCache.value[key]; // 清掉当前分类缓存，强制重新请求
+
     await fetchData(true);
   } finally {
     isRefreshing.value = false; // 数据加载完成后关闭刷新动画
@@ -200,12 +227,25 @@ const onRefresh = async () => {
 
 // 分类点击节流 (300ms内只能点一次)
 const handleCategoryClick = throttle((item) => {
+  const key = String(item.id ?? "");
 
-  if (currentCategory.value === item.id) return;
+  // 点击当前分类不处理
+  if (String(currentCategory.value ?? "") === key) return;
+
   currentCategory.value = item.id;
   noMore.value = false;
-  // 切换分类时重新加载第一页
-  fetchData(true);
+
+  // ✅ 有缓存直接渲染，不再请求
+  if (Object.prototype.hasOwnProperty.call(categoryCache.value, key)) {
+    const cache = categoryCache.value[key];
+    leftList.value = cache.left;
+    rightList.value = cache.right;
+    noMore.value = cache.raw.length === 0;
+    return;
+  }
+
+  // 没缓存才请求（fetchData 内部会清空列表，骨架屏正常显示）
+  fetchData();
 }, 300);
 
 const handleCar = (item) => {
@@ -221,13 +261,10 @@ onLoad(() => {
   fetchData();
   if (shouldFetchNotice(isLoggedIn.value)) {
     getNotice()
-
   }
 })
 
-
 const getNotice = () => {
-
   GetNotice().then(res => {
     if (res.data && res.data.status == 1) {
       showNotice.value = true
@@ -237,8 +274,6 @@ const getNotice = () => {
     resetNoticeFlag();
   })
 }
-
-
 </script>
 
 <style lang="scss" scoped>
